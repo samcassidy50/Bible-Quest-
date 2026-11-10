@@ -1,3 +1,5 @@
+import { SPECIAL_IDS, type SpecialId } from './battle/types';
+
 /**
  * Debug/test URL parameters (see docs/DESIGN.md §8.2).
  * Parsing is pure so it can be unit-tested; main.ts decides whether to honour them.
@@ -10,6 +12,10 @@ export interface DebugParams {
   encounter?: string;
   seed?: number;
   autoAnswer?: 'correct' | 'wrong';
+  /** Specials unlocked without collecting orbs, e.g. `?specials=sword,shield`. */
+  specials?: SpecialId[];
+  /** Starting Faith meter, e.g. `?faith=5` to test the ultimate. */
+  faith?: number;
   fast: boolean;
   freeze: boolean;
   fps: boolean;
@@ -34,6 +40,17 @@ export function parseDebugParams(search: string): DebugParams {
 
   const auto = p.get('autoAnswer');
   if (auto === 'correct' || auto === 'wrong') result.autoAnswer = auto;
+
+  const specials = p.get('specials');
+  if (specials !== null) {
+    const ids = specials
+      .split(',')
+      .filter((s): s is SpecialId => (SPECIAL_IDS as readonly string[]).includes(s));
+    result.specials = [...new Set(ids)];
+  }
+
+  const faith = p.get('faith');
+  if (faith !== null && /^\d{1,2}$/.test(faith)) result.faith = Number(faith);
 
   return result;
 }

@@ -28,3 +28,19 @@ describe('parseDebugParams', () => {
     ).toEqual({ fast: false, freeze: false, fps: false });
   });
 });
+
+describe('parseDebugParams: battle params', () => {
+  it('parses specials, dropping unknown ids and duplicates', () => {
+    expect(parseDebugParams('?specials=sword,laser,shield,sword').specials).toEqual([
+      'sword',
+      'shield',
+    ]);
+    expect(parseDebugParams('?specials=').specials).toEqual([]);
+  });
+
+  it('parses faith as a small integer only', () => {
+    expect(parseDebugParams('?faith=5').faith).toBe(5);
+    expect(parseDebugParams('?faith=abc').faith).toBeUndefined();
+    expect(parseDebugParams('?faith=999').faith).toBeUndefined();
+  });
+});
