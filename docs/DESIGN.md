@@ -51,26 +51,28 @@ The target _layout and feel_ is the screenshot the project started from: a side-
 
 ### 2.1 Scripture intro scene
 
-| Element    | Behavior                                                                                                                                                                                              |
-| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Background | Parallax layers (sky, far hills, near ground) scroll left to suggest running.                                                                                                                         |
-| Hero       | Run-cycle animation. The hero moves from the left edge toward the center/right over the length of the reading.                                                                                        |
-| Verse text | A banner along the bottom with a semi-opaque backdrop. Text scrolls right to left like a news ticker, and the scroll speed is synced to the narration length. Reference shown (e.g. _Genesis 1:1–2_). |
-| Narration  | Audio reads the verse. Phase 1 uses the browser's Web Speech API (TTS). Recorded narration comes later.                                                                                               |
-| Controls   | **Skip** (after the first time the verse is heard), **Replay**, and **Show full text** (a static readable panel for slow readers and accessibility).                                                  |
-| Exit       | When narration ends, the hero reaches the foe and the scene cross-fades into battle.                                                                                                                  |
+| Element      | Behavior                                                                                                                                                                                                                           |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Background   | Parallax layers (sky, far hills, near ground) scroll left to suggest running.                                                                                                                                                      |
+| Hero         | Run-cycle animation. The hero moves from the left edge toward the center/right over the length of the reading.                                                                                                                     |
+| Verse text   | A banner along the bottom with a semi-opaque backdrop. Text scrolls right to left like a news ticker, and the scroll speed is synced to the narration length. Reference shown (e.g. _Genesis 1:1–2_).                              |
+| Narration    | Audio reads the verse. Phase 1 uses the browser's Web Speech API (TTS). Recorded narration comes later.                                                                                                                            |
+| Glowing orbs | While the verse is read, glowing **Armor orbs** float up along the hero's path. Tapping an orb unlocks that special attack **for the upcoming fight only**. See §2.6.                                                              |
+| Controls     | **Skip** (after the first time the verse is heard; skipping forfeits any orbs not yet collected), **Replay** (uncollected orbs appear again), and **Show full text** (a static readable panel for slow readers and accessibility). |
+| Exit         | When narration ends, the hero reaches the foe and the scene cross-fades into battle.                                                                                                                                               |
 
 ### 2.2 Battle
 
 - **Turn-based:** Hero turn → Enemy turn → repeat.
 - **Waves:** 1–3 foes per encounter, shown as pips at the top of the screen (our own icon, not skulls copied from the reference).
 - **Hero turn:**
-  1. A question card slides in (it pauses combat).
-  2. The player answers. Formats are multiple choice (4 options), true/false, or "fill in the missing word".
-  3. **Correct:** a **Powered Attack** with a 2× damage multiplier, special VFX, and a +1 Faith combo.
-  4. **Wrong:** a **Normal Attack** at 1× damage. The correct answer is shown with the relevant phrase of the verse highlighted. Learning comes first, so there is no extra punishment.
-  5. _Optional, setting-controlled:_ a timer (off by default, 20 s when on). Answering fast gives a small bonus but is never required.
-- **Faith combo:** consecutive correct answers build a meter. At 3, the hero unlocks a **Special** ability for one turn (e.g. "Shield of Faith" blocks the next enemy hit).
+  1. **Choose an action** from the action bar: **Attack**, one of the **special attacks** unlocked by orbs this fight (§2.6), or the **Faith Ultimate** when the Faith meter is full.
+  2. A question card slides in (it pauses combat). The Faith Ultimate skips this step, because it was already earned by answering questions.
+  3. The player answers. Formats are multiple choice (4 options), true/false, or "fill in the missing word".
+  4. **Correct:** the action's **powered** version: Attack does 2× damage, a special has its full effect, special VFX play, and the Faith meter gains +1.
+  5. **Wrong:** the action's **base** version: Attack does 1× damage and a special has its weaker effect. The correct answer is shown with the relevant phrase of the verse highlighted. Learning comes first, so there is no extra punishment.
+  6. _Optional, setting-controlled:_ a timer (off by default, 20 s when on). Answering fast gives a small bonus but is never required.
+- **Faith meter:** +1 for each correct answer, plus a +1 bonus for 3 correct in a row. Wrong answers don't drain it. At 5 it is full and the **Faith Ultimate** is ready (§2.6). The meter carries across waves within a fight and resets after each fight.
 - **Enemy turn:** the foe attacks on simple timing; damage is fixed per foe with light variance.
 - **Lose state:** if hero HP reaches 0, the player sees "Try again". The verse can be replayed first. There is no permanent loss.
 
@@ -98,8 +100,46 @@ This is an open question for review: confirm the tone with the stakeholders (see
 
 - **Chapters** map to Bible books; **stages** map to passages.
 - Stars per stage (1–3) based on how many questions were answered correctly.
-- A light upgrade track: HP, attack, and unlockable Specials earned with stars. No grinding is required to keep reading forward.
+- A light upgrade track: HP, attack, and upgrades to each special attack and the Faith Ultimate, bought with stars. No grinding is required to keep reading forward.
 - A "Verse Journal" collects every passage completed, so players can reread it outside of battle.
+
+### 2.6 Special attacks, Faith Ultimate, and Armor orbs
+
+The hero has **4 special attacks** and **1 Faith Ultimate**, themed on the armor of God (Ephesians 6:13–17). The names and effects are working drafts; all numbers are tuned by the balance simulation (§8.4).
+
+| Ability                                | Unlocked by          | Powered effect (correct answer)                                                   | Base effect (wrong answer)               |
+| -------------------------------------- | -------------------- | --------------------------------------------------------------------------------- | ---------------------------------------- |
+| **Sword of the Spirit**                | Sword orb            | Heavy strike: 3× damage                                                           | 1.5× damage                              |
+| **Shield of Faith**                    | Shield orb           | Normal hit, and blocks the next 2 enemy attacks                                   | Blocks the next enemy attack             |
+| **Breastplate of Righteousness**       | Breastplate orb      | Heals 35% of max HP                                                               | Heals 15% of max HP                      |
+| **Sandals of Peace**                   | Sandals orb          | Normal hit, and the foe loses its next turn                                       | The foe loses its next turn, with no hit |
+| **Full Armor of God** (Faith Ultimate) | Full Faith meter (5) | 5× damage to the current foe and heals 20%. Needs no question. Meter resets to 0. | —                                        |
+
+**Rules**
+
+- Each unlocked special can be used **once per fight**. The ultimate can be used whenever the meter is full, so it can happen more than once in a long fight.
+- **Attack** is always available, so a player who collected no orbs can still win.
+- Specials are unlocked **for the next fight only**. The orbs have to be collected again for each encounter, which keeps the player watching the verse.
+
+**Armor orbs (Scripture intro scene)**
+
+- Each encounter defines which orbs appear (`orbs` in the content file). The early Genesis encounters introduce them gradually: 1 orb in the first fight, 2 in the next, and so on up to all 4. This works as a tutorial.
+- Orbs appear **one at a time**, spread evenly across the narration. Each one floats up for about 4 s and then fades. The time scales with the text-speed setting.
+- An orb may be **anchored to a key word** in the verse (`orbs[].word`): it rises as that word scrolls past and the word glows. This links the reward to paying attention to the text (Phase 2 stretch goal).
+- A tap target of at least 64 px. A collected orb flies into its slot on the action bar, with a chime and haptic feedback.
+- **Accessibility:** an "Auto-collect orbs" setting for players with motor difficulties.
+- Skip forfeits uncollected orbs; Replay brings back uncollected orbs.
+
+**Content schema addition**
+
+```jsonc
+"orbs": [
+  { "special": "sword", "word": "created" },
+  { "special": "shield", "word": "Spirit" }
+]
+```
+
+Validation: `special` must be one of `sword | shield | breastplate | sandals`, with no duplicates. `word` (optional) must appear in the verse text.
 
 ---
 
@@ -171,8 +211,10 @@ tests/
 #### Battle state machine (`BattleEngine`)
 
 ```
-INTRO → HERO_QUESTION → HERO_ATTACK(powered|normal) → CHECK_WIN
-      → ENEMY_ATTACK → CHECK_LOSE → HERO_QUESTION … → NEXT_WAVE | VICTORY | DEFEAT
+INTRO → HERO_CHOOSE ─(attack | special)─▶ HERO_QUESTION → HERO_ACTION(powered|base) → CHECK_WIN
+                    └─(ultimate)──────────────────────────▶ HERO_ACTION(ultimate)  ┘
+      → ENEMY_ATTACK (skipped if stunned, absorbed if shielded) → CHECK_LOSE
+      → HERO_CHOOSE … → NEXT_WAVE | VICTORY | DEFEAT
 ```
 
 ### 3.2 Content schema (draft)
@@ -264,7 +306,7 @@ Later arcs: Abraham (12–25), Isaac and Jacob (25–36), Joseph (37–50), and 
 - **Interruptions:** the game auto-pauses on app background or phone call and resumes on the same question.
 - **Audio:** audio unlocks on the first tap (iOS requirement) and respects the device's silent switch for music while still letting narration play when enabled.
 - **Performance budget:** 60 fps on an iPhone 11 and Pixel 6a; 30 fps minimum on a low-end Android device (about 3 GB of RAM). Cold start under 3 s. App size under 150 MB.
-- **HUD:** wave pips (top), pause/settings (top right), hero portrait with HP and Faith bars (bottom), damage numbers (floating).
+- **HUD:** wave pips (top), pause/settings (top right), hero portrait with HP and Faith meter (bottom left), **action bar** with Attack, 4 special slots and the Ultimate button (bottom right, thumb zone), damage numbers (floating).
 - **Question card:** large tap targets (at least 48 px), readable font (at least 24 px at 720p), and the verse reference shown on the card.
 - **Accessibility:** a text-speed slider, narration on/off, captions always on, a high-contrast option, colorblind-safe right/wrong feedback (icon plus color), and no reliance on the timer.
 - **Audio:** music bed, SFX for hits and powered hits, narration ducking (music volume drops during the verse).
@@ -297,18 +339,23 @@ Each phase ends in something playable, deployed to a preview URL.
 ### Phase 1: Battle vertical slice with placeholder art (≈2 weeks)
 
 - `BattleEngine` state machine, damage, and waves, fully unit-tested.
-- `BattleScene` with rectangles or CC0 sprites: hero, one foe, HP bars, damage numbers, wave pips.
-- `QuestionOverlay` with multiple-choice questions; correct gives a powered attack and wrong gives a normal one.
+- **The 4 special attacks and the Faith Ultimate** (§2.6) in `BattleEngine`: powered and base effects, once-per-fight use, shield, stun, heal, and the Faith meter. Fully unit-tested.
+- `BattleScene` with rectangles or CC0 sprites: hero, one foe, HP bars, damage numbers, wave pips, Faith meter.
+- **Action bar** (bottom right, thumb zone): Attack, 4 special slots (locked or unlocked), and the Ultimate button, which glows when ready.
+- `QuestionOverlay` with multiple-choice questions; correct gives the powered action and wrong gives the base one.
+- Because orbs don't exist until Phase 2, specials are unlocked with a debug param: `?specials=sword,shield,breastplate,sandals`.
 - One hard-coded encounter (Gen 1:1–2).
-- **Exit:** a full fight can be won or lost by answering questions.
+- **Exit:** a full fight can be won or lost by answering questions, using every special and the ultimate.
 
 ### Phase 2: Scripture intro scene (≈1–2 weeks)
 
 - Parallax background, hero run cycle, scrolling verse ticker.
 - `NarrationService` using TTS; scroll speed synced to narration length.
 - Skip, replay, and full-text panel.
+- **Armor orbs** (§2.6): spawn timing across the narration (pure logic in `core/`, unit-tested), tap to collect, fly into the action bar. Collected orbs are passed to the battle as that fight's unlocked specials. Auto-collect setting.
+- Stretch goal: orbs anchored to key words that glow as they scroll past.
 - Scene flow: Scripture → Battle → Result.
-- **Exit:** the complete loop works for one encounter.
+- **Exit:** the complete loop works for one encounter, and the orbs collected during the verse decide which specials are available in the fight.
 
 ### Phase 3: Content pipeline and Genesis arc 1 (≈2 weeks)
 
@@ -323,12 +370,13 @@ Each phase ends in something playable, deployed to a preview URL.
 - Original hero design: idle, run, attack, powered attack, hit, and victory animations.
 - Foe sprites for the arc, plus backgrounds per setting (void, garden, wilderness, flood, Babel).
 - VFX: powered-attack glow and particles, hit sparks.
+- A unique animation and effect for each special attack and the Faith Ultimate; orb glow, collect, and fly-to-slot effects.
 - Music, SFX, and recorded narration for arc 1 (optional at this point).
 - **Exit:** the slice looks and sounds like the target feel.
 
 ### Phase 5: Progression and retention (≈2 weeks)
 
-- Save/load, stars, upgrades, Faith combo and Specials, Verse Journal.
+- Save/load, stars, upgrades (including special attack and ultimate upgrades), Verse Journal.
 - Settings: timer, text speed, difficulty, translation (WEB/KJV).
 - **Exit:** a player can play for several sessions with persistent progress.
 
@@ -365,6 +413,8 @@ Each phase ends in something playable, deployed to a preview URL.
 - `?scene=<name>&encounter=<id>`: jump straight to a scene.
 - `?seed=<n>`: deterministic RNG.
 - `?autoAnswer=correct|wrong`: answer questions automatically, to soak-test balance.
+- `?specials=sword,shield,breastplate,sandals`: unlock specials without collecting orbs.
+- `?faith=5`: start the fight with the Faith meter at that value (to test the ultimate).
 - `?fast=1`: speeds up tweens and narration 10×.
 - `?freeze=1`: disables idle animations for screenshots.
 - `window.__TEST__`: read-only game state for Playwright assertions.
@@ -411,6 +461,7 @@ A Vitest script runs 10,000 simulated battles per encounter at answer accuracies
 5. ~~Platform priority~~: **decided, mobile-first (iOS + Android).** Which ships first, or both at once? (An Apple Developer account costs $99/yr; Google Play is a one-time $25.)
 6. Hero identity: a named original character, or a customizable "pilgrim"?
 7. Art: AI-generated, purchased packs, or a commissioned artist (§11.3)?
+8. Are the special-attack names and effects in §2.6 right? (Armor-of-God theme, draft.)
 
 ---
 
