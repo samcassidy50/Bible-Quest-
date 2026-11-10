@@ -6,6 +6,7 @@ import { initPlatform, onAppActiveChange, platformName } from './services/platfo
 import { updateTestState } from './services/testHooks';
 import { BootScene } from './scenes/BootScene';
 import { TitleScene } from './scenes/TitleScene';
+import { BattleScene } from './scenes/battle/BattleScene';
 
 async function start(): Promise<void> {
   await initPlatform();
@@ -28,7 +29,7 @@ async function start(): Promise<void> {
     render: { antialias: true, roundPixels: false },
     fps: { target: 60 },
     input: { activePointers: 2 },
-    scene: [BootScene, TitleScene],
+    scene: [BootScene, TitleScene, BattleScene],
     callbacks: {
       preBoot: (g) => {
         g.registry.set('debug', debug);

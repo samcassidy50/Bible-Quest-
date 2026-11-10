@@ -40,8 +40,14 @@ Before saying a task is done, run: `npm run lint && npm run typecheck && npm run
 - Debug URL params (dev and e2e builds only): `?scene= &encounter= &seed= &autoAnswer=correct|wrong &fast=1 &freeze=1 &fps=1`. Parsed in `core/debugParams.ts`.
 - For UI changes, look at the screenshot yourself (Playwright `outputPath`, or `adb exec-out screencap -p` on the emulator) before claiming it works, and attach screenshots to the PR.
 
+## Android emulator tips
+
+- If the emulator crashes with `bad color buffer handle`, start it with `-gpu swiftshader_indirect`.
+- Debug builds allow WebView devtools: `adb forward tcp:9333 localabstract:webview_devtools_remote_$(adb shell pidof com.biblequest.app)` then connect Playwright with `chromium.connectOverCDP('http://localhost:9333')`.
+- The emulator window on the Mac also accepts clicks. If state changes unexpectedly, check whether someone was clicking in it.
+
 ## Workflow
 
-- One issue → one branch → one small PR. Fill in `.github/pull_request_template.md`.
+- Commit directly to `main` once all checks pass, then push (solo project, no PRs for now).
 - Don't add dependencies without saying why in the PR. Pin to a major version.
 - Don't commit generated native output (`ios/App/App/public`, `android/app/src/main/assets/public` are gitignored); do commit native project config changes.

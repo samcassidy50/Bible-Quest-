@@ -42,7 +42,7 @@ export class TitleScene extends Phaser.Scene {
       )
       .setOrigin(0.5);
     this.tapHint = this.add
-      .text(0, 0, `Phase 0 · ${platformName()} · tap anywhere`, {
+      .text(0, 0, `Tap to begin · ${platformName()}`, {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '22px',
         color: COLORS.subtext,
@@ -59,8 +59,9 @@ export class TitleScene extends Phaser.Scene {
       });
     }
 
-    this.input.on('pointerdown', () => {
-      this.cameras.main.flash(150, 244, 201, 93);
+    this.input.once('pointerdown', () => {
+      this.cameras.main.fadeOut(250, 27, 21, 48);
+      this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start('battle'));
     });
 
     this.layout();
