@@ -1,17 +1,16 @@
 import Phaser from 'phaser';
-import type { Clip } from '../../core/anim/clip';
+import { frameStart, type Clip } from '../../core/anim/clip';
+import { HERO_SHEET } from '../../core/anim/heroSheet';
 import { HERO_CLIPS, HERO_CLIP_NAMES, type HeroClipName } from '../../core/anim/heroClips';
 import type { DebugParams } from '../../core/debugParams';
 import { updateTestState } from '../../services/testHooks';
 import { Button } from '../ui/Button';
 import { FONT_TITLE, FONT_UI } from '../util';
-import { HeroRig } from './HeroRig';
-
-const FRAMES = 7;
+import { HERO_SCALE, HeroSprite } from './HeroSprite';
 
 /**
  * Hero animation viewer (dev builds, `?scene=rig`). Tap a clip to play it on a large hero.
- * `?scene=rig&clip=slash` shows a contact sheet of evenly spaced frames instead.
+ * `?scene=rig&clip=slash` shows a contact sheet of the clip's frames instead.
  */
 export class AnimViewerScene extends Phaser.Scene {
   constructor() {
@@ -44,25 +43,27 @@ export class AnimViewerScene extends Phaser.Scene {
         color: '#f4c95d',
       })
       .setOrigin(0.5, 0);
-    const step = (W - 120) / (FRAMES - 1);
-    for (let i = 0; i < FRAMES; i++) {
-      const t = Math.round((clip.duration * i) / (FRAMES - 1));
-      const x = 60 + i * step;
-      const rig = new HeroRig(this, x, H * 0.72).setScale(0.95);
-      rig.showFrame(name, t);
+    const n = clip.frames.length;
+    const step = (W - 120) / n;
+    const scale = Math.min(HERO_SCALE, step / HERO_SHEET.frameWidth);
+    clip.frames.forEach((f, i) => {
+      const x = 60 + step * (i + 0.5);
+      const rig = new HeroSprite(this, x, H * 0.72).setScale(scale);
+      rig.showFrame(name, frameStart(clip, i));
       this.add
-        .text(x, H * 0.72 + 30, `${t} ms`, {
+        .text(x, H * 0.72 + 30, `${f.frame}\n${frameStart(clip, i)} ms`, {
           fontFamily: FONT_UI,
           fontSize: '22px',
           color: '#fdf6e3',
+          align: 'center',
         })
         .setOrigin(0.5, 0);
-    }
+    });
     updateTestState({ ready: true, scene: 'rig', battle: null, scripture: null });
   }
 
   private player(W: number, H: number): void {
-    const rig = new HeroRig(this, W * 0.3, H * 0.72).setScale(1.6);
+    const rig = new HeroSprite(this, W * 0.3, H * 0.72).setScale(HERO_SCALE * 1.6);
     const label = this.add
       .text(W * 0.3, 40, 'idle', { fontFamily: FONT_TITLE, fontSize: '44px', color: '#f4c95d' })
       .setOrigin(0.5, 0);
@@ -88,7 +89,7 @@ export class AnimViewerScene extends Phaser.Scene {
         fill: 0x2e86de,
         onTap: () => {
           label.setText(name);
-          void rig.play(name).then(() => {
+          void rig.act(name).then(() => {
             if (!(HERO_CLIPS[name] as Clip).hold) label.setText(rig.currentClip);
           });
         },

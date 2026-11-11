@@ -1,16 +1,17 @@
 import Phaser from 'phaser';
 import type { HeroClipName } from '../../core/anim/heroClips';
-import { HeroRig } from '../hero/HeroRig';
+import { HERO_SCALE, HeroSprite } from '../hero/HeroSprite';
+import { HERO_SHEET } from '../../core/anim/heroSheet';
 import { FONT_UI } from '../util';
 
 /**
- * A combatant on the field. The hero is the animated cutout rig (scenes/hero/HeroRig.ts);
+ * A combatant on the field. The hero is the pixel-art sprite (scenes/hero/HeroSprite.ts);
  * foes are still placeholder shapes until their sprites land.
  * Origin is at the fighter's feet so both stand on the same ground line.
  */
 export class Fighter extends Phaser.GameObjects.Container {
   readonly figure: Phaser.GameObjects.Container;
-  readonly rig?: HeroRig;
+  readonly rig?: HeroSprite;
   private shieldBubble?: Phaser.GameObjects.Arc;
   private stunText?: Phaser.GameObjects.Text;
 
@@ -26,7 +27,7 @@ export class Fighter extends Phaser.GameObjects.Container {
     this.figure = scene.add.container(0, 0);
     this.add(this.figure);
     if (kind === 'hero') {
-      this.rig = new HeroRig(scene, 0, 0);
+      this.rig = new HeroSprite(scene, 0, 0);
       this.figure.add(this.rig);
     } else {
       this.drawFoe(color);
@@ -37,7 +38,8 @@ export class Fighter extends Phaser.GameObjects.Container {
 
   /** Height of the drawn figure, for placing HP bars and effects above it. */
   get figureHeight(): number {
-    return 190 * this.figure.scaleY;
+    const h = this.rig ? HERO_SHEET.standingHeight * HERO_SCALE : 190;
+    return h * this.figure.scaleY;
   }
 
   private drawFoe(color: number): void {
@@ -81,7 +83,7 @@ export class Fighter extends Phaser.GameObjects.Container {
       onEvent?.('impact');
       return Promise.resolve();
     }
-    return this.rig.play(name, onEvent);
+    return this.rig.act(name, onEvent);
   }
 
   face(dir: 1 | -1): void {

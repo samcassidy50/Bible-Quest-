@@ -45,7 +45,8 @@ Before saying a task is done, run: `npm run lint && npm run typecheck && npm run
 
 ## Hero art
 
-- The hero is an original chibi cutout rig drawn in code (`src/scenes/hero/HeroRig.ts`). Clips are keyframed poses in `src/core/anim/heroClips.ts`; pose conventions are documented in `src/core/anim/pose.ts`.
+- The hero is original pixel art (`src/scenes/hero/HeroSprite.ts`), drafted as strips in ChatGPT and kept in `art/hero-raw/` (see `art/README.md`). `python3 scripts/art/process_hero.py --preview` rebuilds `src/assets/hero/hero.png` and the generated `src/core/anim/heroSheet.ts`; never edit those by hand.
+- Clips are frame sequences in `src/core/anim/heroClips.ts` (frame name + ms). Some clips are placeholders that borrow other frames until their own art arrives (listed at the top of that file).
 - Attack clips must have `swing` and `impact` events; the battle plays the whoosh on `swing` and lands damage and the hit sound on `impact`.
 
 ## Sound
