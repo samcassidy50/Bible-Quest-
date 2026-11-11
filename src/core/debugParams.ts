@@ -4,7 +4,7 @@ import { SPECIAL_IDS, type SpecialId } from './battle/types';
  * Debug/test URL parameters (see docs/DESIGN.md §8.2).
  * Parsing is pure so it can be unit-tested; main.ts decides whether to honour them.
  */
-export const SCENE_KEYS = ['boot', 'title', 'battle', 'scripture'] as const;
+export const SCENE_KEYS = ['boot', 'title', 'map', 'scripture', 'battle'] as const;
 export type SceneKey = (typeof SCENE_KEYS)[number];
 
 export interface DebugParams {

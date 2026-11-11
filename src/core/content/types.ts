@@ -1,7 +1,10 @@
 import type { FoeSpec, SpecialId } from '../battle/types';
 import type { Difficulty } from '../quiz/QuestionDeck';
 
-/** Content types (docs/DESIGN.md §3.2). Phase 3 moves encounters to JSON validated by Zod. */
+/**
+ * Content types (docs/DESIGN.md §3.2). Encounter files live in content/encounters/ as JSON and
+ * are validated and resolved by core/content/build.ts.
+ */
 
 export interface Verse {
   ref: string;
@@ -38,7 +41,12 @@ export interface Orb {
 
 export interface Encounter {
   id: string;
+  /** Short name shown on the passage select screen. */
+  title: string;
   book: string;
+  /** Source reference, e.g. "GEN 1:1-2". */
+  passage: string;
+  /** Display reference, e.g. "Genesis 1:1–2". */
   reference: string;
   translation: 'WEB';
   verses: readonly Verse[];

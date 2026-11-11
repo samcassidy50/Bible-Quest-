@@ -4,7 +4,7 @@ import { BattleEngine } from '../../src/core/battle/BattleEngine';
 import type { SpecialId } from '../../src/core/battle/types';
 import { createRng } from '../../src/core/rng';
 import { oneWave, threeWaves } from './fixtures';
-import { GEN_001 } from '../../src/content/genesis/gen-001';
+import { ENCOUNTERS } from '../../src/content';
 import { HERO_BASE } from '../../src/core/battle/hero';
 
 /**
@@ -55,12 +55,18 @@ describe('balance: 3-wave encounter', () => {
   });
 });
 
-describe('balance: real encounters', () => {
-  it('Genesis 1:1–2 meets the 60% / 90% targets with no orbs', () => {
-    const config = { hero: HERO_BASE, waves: GEN_001.waves, unlockedSpecials: [] };
-    expect(winRate(config, 0.6, RUNS)).toBeGreaterThanOrEqual(0.8);
-    expect(winRate(config, 0.9, RUNS)).toBeGreaterThanOrEqual(0.98);
-  });
+describe('balance: real encounters (no orbs)', () => {
+  it.each(ENCOUNTERS.map((e) => [e.id, e] as [string, typeof e]))(
+    '%s meets the 60%% / 90%% targets',
+    (_id, e) => {
+      const config = { hero: HERO_BASE, waves: e.waves, unlockedSpecials: [] };
+      const r60 = winRate(config, 0.6, RUNS);
+      const r90 = winRate(config, 0.9, RUNS);
+      console.info(`[balance] ${e.id} 60%: ${pct(r60)}  90%: ${pct(r90)}`);
+      expect(r60).toBeGreaterThanOrEqual(0.8);
+      expect(r90).toBeGreaterThanOrEqual(0.98);
+    },
+  );
 });
 
 describe('auto-play policy', () => {

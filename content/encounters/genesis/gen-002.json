@@ -1,0 +1,102 @@
+{
+  "id": "gen-002",
+  "title": "Let There Be Light",
+  "passage": "GEN 1:3-5",
+  "waves": [
+    {
+      "id": "wisp-1",
+      "name": "Shadow Wisp",
+      "maxHp": 45,
+      "attack": 9,
+      "color": "#4b3b78",
+      "size": 0.8
+    },
+    {
+      "id": "wisp-2",
+      "name": "Shadow Wisp",
+      "maxHp": 45,
+      "attack": 10,
+      "color": "#3d2f66",
+      "size": 0.9
+    },
+    {
+      "id": "shade",
+      "name": "Shade of the Deep",
+      "maxHp": 75,
+      "attack": 12,
+      "color": "#241a45",
+      "size": 1.25
+    }
+  ],
+  "orbs": [
+    {
+      "special": "sword",
+      "word": "light"
+    },
+    {
+      "special": "shield",
+      "word": "good"
+    }
+  ],
+  "questions": [
+    {
+      "id": "gen-002-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did God say?",
+      "choices": [
+        "Let there be light",
+        "Let there be water",
+        "Let there be animals",
+        "Let there be land"
+      ],
+      "answerIndex": 0,
+      "highlight": "Let there be light"
+    },
+    {
+      "id": "gen-002-q2",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "True or false: God saw that the light was good.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "saw that it was good"
+    },
+    {
+      "id": "gen-002-q3",
+      "type": "fill_blank",
+      "difficulty": "medium",
+      "prompt": "God divided the light from the ____.",
+      "choices": ["darkness", "water", "land", "sky"],
+      "answerIndex": 0,
+      "highlight": "God divided the light from the darkness"
+    },
+    {
+      "id": "gen-002-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did God call the light?",
+      "choices": ["Night", "Day", "Morning", "Sun"],
+      "answerIndex": 1,
+      "highlight": "God called the light “day”"
+    },
+    {
+      "id": "gen-002-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did God call the darkness?",
+      "choices": ["Evening", "Shadow", "Night", "Sky"],
+      "answerIndex": 2,
+      "highlight": "the darkness he called “night”"
+    },
+    {
+      "id": "gen-002-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Which day was this?",
+      "choices": ["The seventh day", "The first day", "The third day", "The last day"],
+      "answerIndex": 1,
+      "highlight": "the first day"
+    }
+  ]
+}

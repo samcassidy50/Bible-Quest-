@@ -71,7 +71,9 @@ export class ScriptureScene extends Phaser.Scene {
 
   create(): void {
     this.debug = this.registry.get('debug') as DebugParams;
-    this.encounter = getEncounter(this.debug.encounter);
+    this.encounter = getEncounter(
+      (this.registry.get('encounterId') as string | undefined) ?? this.debug.encounter,
+    );
     this.timeScale = (this.registry.get('timeScale') as number | undefined) ?? 1;
     this.tweens.timeScale = this.timeScale;
     this.time.timeScale = this.timeScale;

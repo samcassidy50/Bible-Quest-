@@ -11,6 +11,7 @@ The design doc is the source of truth: `docs/DESIGN.md`. Read the relevant secti
 | Unit tests / with coverage              | `npm test` / `npm run test:coverage`                    |
 | E2E (phone-landscape Chromium + WebKit) | `npm run test:e2e`                                      |
 | Lint / typecheck / format               | `npm run lint` / `npm run typecheck` / `npm run format` |
+| Validate encounter content              | `npm run validate:content`                              |
 | Build web + copy into native projects   | `npm run cap:sync`                                      |
 | Run on Android emulator / iOS simulator | `npm run android` / `npm run ios`                       |
 | Android debug APK                       | `cd android && ./gradlew assembleDebug`                 |
@@ -28,7 +29,9 @@ Before saying a task is done, run: `npm run lint && npm run typecheck && npm run
 
 ## Scripture and content rules (non-negotiable)
 
-- **Never type, paraphrase, or "fix" Bible text from memory.** Verse text must come from the vendored public-domain WEB source in `content/source/` (arrives in Phase 3). Any hard-coded verse is a temporary placeholder and must be marked as such.
+- **Never type, paraphrase, or "fix" Bible text from memory.** Verse text comes only from the vendored public-domain WEB source in `content/source/web/` (see its README for provenance and how to add a book).
+- Encounter files (`content/encounters/<book>/<id>.json`) store a passage reference like `"GEN 1:1-2"`, never verse text. The Zod schema rejects a `verses` field. `src/content/index.ts` resolves the text and validates every rule at startup.
+- Run `npm run validate:content` after editing content. It checks the schema, that every `highlight` and orb `word` appears in the verse text, unique ids, and canonical order.
 - Every question must be answerable from the verse(s) read in that encounter; its `highlight` must appear word for word in the verse text.
 - Foes are personified obstacles, chaos, or temptations, never biblical people.
 - AI-drafted questions are **drafts**: say so in the PR so a human reviews them.

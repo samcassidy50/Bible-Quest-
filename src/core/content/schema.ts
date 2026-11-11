@@ -1,0 +1,54 @@
+import { z } from 'zod';
+import { SPECIAL_IDS } from '../battle/types';
+
+/** Shape of an encounter file in content/encounters/ (docs/DESIGN.md §3.2). */
+
+const id = z.string().regex(/^[a-z0-9-]{1,40}$/, 'lowercase letters, digits and dashes');
+const hexColor = z.string().regex(/^#[0-9a-fA-F]{6}$/, 'a colour like "#4b3b78"');
+
+const choiceQuestion = z.object({
+  id,
+  difficulty: z.enum(['easy', 'medium', 'hard']).optional(),
+  prompt: z.string().min(5),
+  choices: z.array(z.string().min(1)),
+  answerIndex: z.number().int().min(0),
+  highlight: z.string().min(2),
+});
+
+export const questionSchema = z.discriminatedUnion('type', [
+  choiceQuestion.extend({
+    type: z.literal('multiple_choice'),
+    choices: z.array(z.string().min(1)).length(4),
+  }),
+  choiceQuestion.extend({
+    type: z.literal('fill_blank'),
+    choices: z.array(z.string().min(1)).length(4),
+  }),
+  choiceQuestion.extend({
+    type: z.literal('true_false'),
+    choices: z.tuple([z.literal('True'), z.literal('False')]),
+  }),
+]);
+
+export const foeSchema = z.object({
+  id,
+  name: z.string().min(1),
+  maxHp: z.number().int().positive(),
+  attack: z.number().int().positive(),
+  color: hexColor,
+  size: z.number().min(0.5).max(2),
+});
+
+export const encounterFileSchema = z
+  .object({
+    id,
+    title: z.string().min(1),
+    /** Reference into the vendored source, e.g. "GEN 1:1-2". Never verse text. */
+    passage: z.string(),
+    waves: z.array(foeSchema).min(1).max(3),
+    orbs: z.array(z.object({ special: z.enum(SPECIAL_IDS), word: z.string().optional() })).max(4),
+    questions: z.array(questionSchema).min(6),
+  })
+  .strict();
+
+export type EncounterFile = z.infer<typeof encounterFileSchema>;

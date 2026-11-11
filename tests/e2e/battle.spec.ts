@@ -95,11 +95,36 @@ test('locked specials do nothing when tapped', async ({ page }) => {
   expect(b.phase).toBe('HERO_CHOOSE');
 });
 
-test('title screen tap starts the reading', async ({ page }) => {
-  await page.goto('/?seed=1');
+test('title → passage select → chosen passage', async ({ page }) => {
+  await page.goto('/?seed=1&narration=off');
   await waitFor(page, "s.ready && s.scene === 'title'");
   const box = (await page.locator('#game canvas').boundingBox())!;
   await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
+  await waitFor(page, "s.scene === 'map' && !!s.targets['stage:gen-011']");
+  await snap(page, test.info().outputPath('map.png'));
+  await tap(page, 'stage:gen-005');
   await waitFor(page, "s.scene === 'scripture' && !!s.scripture");
-  expect((await state(page)).scripture!.encounter).toBe('gen-001');
+  expect((await state(page)).scripture!.encounter).toBe('gen-005');
+  expect((await state(page)).scripture!.orbs).toHaveLength(4);
+});
+
+test('victory → Next passage goes to the next reading', async ({ page }) => {
+  await page.goto('/?scene=battle&encounter=gen-001&seed=1&autoAnswer=correct&fast=1');
+  await waitFor(page, "s.battle && s.battle.result === 'VICTORY' && !!s.targets.primary", 60_000);
+  await tap(page, 'primary');
+  await waitFor(page, "s.scene === 'scripture' && !!s.scripture");
+  expect((await state(page)).scripture!.encounter).toBe('gen-002');
+});
+
+test('answer choices are shuffled, not always first', async ({ page }) => {
+  const positions = new Set<number>();
+  for (const seed of [1, 2, 3, 4, 5]) {
+    await page.goto(`/?scene=battle&encounter=gen-004&seed=${seed}&freeze=1&fast=1`);
+    await heroTurn(page);
+    await tap(page, 'action:attack');
+    await waitFor(page, 's.battle.question && s.targets["answer:0"]');
+    const q = (await battle(page)).question!;
+    if (q.choices === 4) positions.add(q.answerIndex);
+  }
+  expect(positions.size).toBeGreaterThan(1);
 });

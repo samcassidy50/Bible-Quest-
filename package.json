@@ -16,7 +16,8 @@
     "test:e2e": "playwright test",
     "cap:sync": "npm run build && cap sync",
     "ios": "npm run cap:sync && cap run ios",
-    "android": "npm run cap:sync && cap run android"
+    "android": "npm run cap:sync && cap run android",
+    "validate:content": "vitest run tests/unit/content.test.ts tests/unit/contentBuild.test.ts"
   },
   "dependencies": {
     "@capacitor-community/text-to-speech": "^6.1.0",
@@ -25,7 +26,8 @@
     "@capacitor/haptics": "^7.0.5",
     "@capacitor/screen-orientation": "^7.0.4",
     "@capacitor/splash-screen": "^7.0.5",
-    "phaser": "^3.90.0"
+    "phaser": "^3.90.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@capacitor/android": "^7.6.10",

@@ -1,0 +1,125 @@
+{
+  "id": "gen-005",
+  "title": "The Temptation",
+  "passage": "GEN 3:1-6",
+  "waves": [
+    {
+      "id": "hissling-1",
+      "name": "Hissling",
+      "maxHp": 45,
+      "attack": 10,
+      "color": "#2e7d5b",
+      "size": 0.8
+    },
+    {
+      "id": "hissling-2",
+      "name": "Hissling",
+      "maxHp": 50,
+      "attack": 11,
+      "color": "#256b4d",
+      "size": 0.9
+    },
+    {
+      "id": "serpent",
+      "name": "The Serpent",
+      "maxHp": 85,
+      "attack": 13,
+      "color": "#123d2b",
+      "size": 1.3
+    }
+  ],
+  "orbs": [
+    {
+      "special": "sword",
+      "word": "subtle"
+    },
+    {
+      "special": "shield",
+      "word": "touch"
+    },
+    {
+      "special": "breastplate",
+      "word": "eyes"
+    },
+    {
+      "special": "sandals",
+      "word": "wise"
+    }
+  ],
+  "questions": [
+    {
+      "id": "gen-005-q1",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "How is the serpent described?",
+      "choices": [
+        "More subtle than any animal of the field",
+        "The biggest animal",
+        "The kindest animal",
+        "The fastest animal"
+      ],
+      "answerIndex": 0,
+      "highlight": "more subtle than any animal of the field"
+    },
+    {
+      "id": "gen-005-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Which tree did God say they must not eat from or touch?",
+      "choices": [
+        "The tree in the middle of the garden",
+        "The tallest tree",
+        "Every tree",
+        "The tree by the river"
+      ],
+      "answerIndex": 0,
+      "highlight": "the tree which is in the middle of the garden"
+    },
+    {
+      "id": "gen-005-q3",
+      "type": "fill_blank",
+      "difficulty": "medium",
+      "prompt": "The serpent said to the woman, “You won’t really ____.”",
+      "choices": ["die", "eat", "sleep", "leave"],
+      "answerIndex": 0,
+      "highlight": "You won’t really die"
+    },
+    {
+      "id": "gen-005-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the serpent say would happen to their eyes?",
+      "choices": [
+        "They would be opened",
+        "They would close",
+        "They would see in the dark",
+        "Nothing"
+      ],
+      "answerIndex": 0,
+      "highlight": "your eyes will be opened"
+    },
+    {
+      "id": "gen-005-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did the woman see about the tree?",
+      "choices": [
+        "It was good for food and a delight to the eyes",
+        "It was dry and dead",
+        "It was too high to reach",
+        "It had no fruit"
+      ],
+      "answerIndex": 0,
+      "highlight": "the tree was good for food"
+    },
+    {
+      "id": "gen-005-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who did the woman give some of the fruit to?",
+      "choices": ["Her husband", "The serpent", "An angel", "No one"],
+      "answerIndex": 0,
+      "highlight": "she gave some to her husband with her"
+    }
+  ]
+}

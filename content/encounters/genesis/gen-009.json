@@ -1,0 +1,115 @@
+{
+  "id": "gen-009",
+  "title": "The Flood",
+  "passage": "GEN 7:11-12",
+  "waves": [
+    {
+      "id": "wave-1",
+      "name": "Rising Wave",
+      "maxHp": 50,
+      "attack": 10,
+      "color": "#2f6f9a",
+      "size": 0.85
+    },
+    {
+      "id": "wave-2",
+      "name": "Rising Wave",
+      "maxHp": 55,
+      "attack": 11,
+      "color": "#285f85",
+      "size": 0.9
+    },
+    {
+      "id": "surge",
+      "name": "Flood Surge",
+      "maxHp": 80,
+      "attack": 13,
+      "color": "#173e5c",
+      "size": 1.3
+    }
+  ],
+  "orbs": [
+    {
+      "special": "sword",
+      "word": "month"
+    },
+    {
+      "special": "shield",
+      "word": "fountains"
+    },
+    {
+      "special": "breastplate",
+      "word": "windows"
+    },
+    {
+      "special": "sandals",
+      "word": "forty"
+    }
+  ],
+  "questions": [
+    {
+      "id": "gen-009-q1",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "In which year of Noah’s life did the flood begin?",
+      "choices": [
+        "The six hundredth year",
+        "The fortieth year",
+        "The hundredth year",
+        "The nine hundredth year"
+      ],
+      "answerIndex": 0,
+      "highlight": "In the six hundredth year of Noah’s life"
+    },
+    {
+      "id": "gen-009-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What burst open?",
+      "choices": [
+        "All the fountains of the great deep",
+        "The doors of the ship",
+        "The tower",
+        "The garden gate"
+      ],
+      "answerIndex": 0,
+      "highlight": "all the fountains of the great deep burst open"
+    },
+    {
+      "id": "gen-009-q3",
+      "type": "fill_blank",
+      "difficulty": "easy",
+      "prompt": "It rained on the earth forty days and forty ____.",
+      "choices": ["nights", "weeks", "years", "hours"],
+      "answerIndex": 0,
+      "highlight": "forty days and forty nights"
+    },
+    {
+      "id": "gen-009-q4",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "True or false: the sky’s windows opened.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "the sky’s windows opened"
+    },
+    {
+      "id": "gen-009-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "In which month did it begin?",
+      "choices": ["The second month", "The first month", "The seventh month", "The last month"],
+      "answerIndex": 0,
+      "highlight": "in the second month"
+    },
+    {
+      "id": "gen-009-q6",
+      "type": "multiple_choice",
+      "difficulty": "hard",
+      "prompt": "On which day of the month?",
+      "choices": ["The seventeenth day", "The first day", "The fortieth day", "The tenth day"],
+      "answerIndex": 0,
+      "highlight": "on the seventeenth day of the month"
+    }
+  ]
+}

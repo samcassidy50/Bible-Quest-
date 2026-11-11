@@ -69,17 +69,20 @@ test('Full text panel opens and closes without stopping the reading', async ({ p
 });
 
 test('Skip appears after the verse has been heard once, and forfeits orbs', async ({ page }) => {
-  // First reading (fast, auto-win) marks the verse as heard; "Play again" returns to the reading.
+  // First reading (fast, auto-win) marks the verse as heard; go back to it via Passages.
   await page.goto('/?scene=scripture&seed=1&fast=1&autoAnswer=correct');
-  await waitFor(page, "s.battle && s.battle.result === 'VICTORY' && !!s.targets.primary", 60_000);
-  await tap(page, 'primary');
+  await waitFor(page, "s.battle && s.battle.result === 'VICTORY' && !!s.targets.secondary", 60_000);
+  await tap(page, 'secondary');
+  await waitFor(page, "s.scene === 'map' && !!s.targets['stage:gen-001']");
+  await tap(page, 'stage:gen-001');
   await waitFor(
     page,
     "s.scene === 'scripture' && s.scripture && s.scripture.canSkip && !!s.targets.skip",
   );
   await tap(page, 'skip');
   await waitFor(page, "s.scene === 'battle' && !!s.battle");
-  expect((await state(page)).targets).toBeDefined();
+  // Auto-play is still on from the first fight, so check the unlocked specials, not this turn's actions.
+  expect((await battle(page)).unlocked).toEqual([]); // skipped orbs are forfeited
 });
 
 test('defeat offers Read again, which returns to the verse', async ({ page }) => {

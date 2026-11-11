@@ -11,8 +11,9 @@ import type {
 import type { Encounter, EncounterFoe, Question } from '../../core/content/types';
 import type { DebugParams } from '../../core/debugParams';
 import { QuestionDeck } from '../../core/quiz/QuestionDeck';
-import { createRng } from '../../core/rng';
-import { getEncounter } from '../../content';
+import { createRng, type Rng } from '../../core/rng';
+import { shuffleChoices } from '../../core/quiz/shuffleChoices';
+import { getEncounter, nextEncounter } from '../../content';
 import { readSafeAreaInsets, toGameInsets, type Insets } from '../../services/safeArea';
 import { updateTestState } from '../../services/testHooks';
 import { FONT_TITLE, FONT_UI, tweenAsync, wait } from '../util';
@@ -32,6 +33,7 @@ export class BattleScene extends Phaser.Scene {
   private encounter!: Encounter;
   private engine!: BattleEngine;
   private deck!: QuestionDeck<Question>;
+  private rng!: Rng;
   private insets: Insets = { top: 0, right: 0, bottom: 0, left: 0 };
 
   private bg!: Phaser.GameObjects.Graphics;
@@ -68,10 +70,13 @@ export class BattleScene extends Phaser.Scene {
     this.correct = 0;
 
     this.debug = this.registry.get('debug') as DebugParams;
-    this.encounter = getEncounter(this.debug.encounter);
+    this.encounter = getEncounter(
+      (this.registry.get('encounterId') as string | undefined) ?? this.debug.encounter,
+    );
     const attempt = (this.registry.get('attempt') as number | undefined) ?? 0;
     const seed = ((this.registry.get('seed') as number) + attempt) >>> 0;
     const rng = createRng(seed);
+    this.rng = rng;
 
     const timeScale = (this.registry.get('timeScale') as number | undefined) ?? 1;
     this.tweens.timeScale = timeScale;
@@ -254,7 +259,7 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
 
-    const q = this.deck.draw();
+    const q = shuffleChoices(this.deck.draw(), this.rng);
     this.question = q;
     this.feedback = null;
     this.asked++;
@@ -438,13 +443,27 @@ export class BattleScene extends Phaser.Scene {
       this.scene.restart();
     };
     const readAgain = () => this.scene.start('scripture');
+    const next = nextEncounter(this.encounter.id);
+    if (victory) {
+      const done = new Set((this.registry.get('completed') as string[] | undefined) ?? []);
+      done.add(this.encounter.id);
+      this.registry.set('completed', [...done]);
+    }
+    const goNext = () => {
+      if (!next) return readAgain();
+      this.registry.set('encounterId', next.id);
+      this.registry.remove('collectedOrbs');
+      this.scene.start('scripture');
+    };
     this.result = new ResultPanel(
       this,
       victory,
       { correct: this.correct, asked: this.asked },
-      victory ? { label: 'Play again', onTap: readAgain } : { label: 'Retry', onTap: retry },
       victory
-        ? { label: 'Title', onTap: () => this.scene.start('title') }
+        ? { label: next ? 'Next passage' : 'Play again', onTap: goNext }
+        : { label: 'Retry', onTap: retry },
+      victory
+        ? { label: 'Passages', onTap: () => this.scene.start('map') }
         : { label: 'Read again', onTap: readAgain },
     );
     await this.result.appear();

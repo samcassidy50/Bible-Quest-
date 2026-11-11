@@ -1,0 +1,115 @@
+{
+  "id": "gen-004",
+  "title": "The Garden",
+  "passage": "GEN 2:15-17",
+  "waves": [
+    {
+      "id": "thornling-1",
+      "name": "Thornling",
+      "maxHp": 50,
+      "attack": 10,
+      "color": "#3f6b3a",
+      "size": 0.8
+    },
+    {
+      "id": "thornling-2",
+      "name": "Thornling",
+      "maxHp": 50,
+      "attack": 10,
+      "color": "#355c31",
+      "size": 0.9
+    },
+    {
+      "id": "sentinel",
+      "name": "Thorn Sentinel",
+      "maxHp": 75,
+      "attack": 12,
+      "color": "#24401f",
+      "size": 1.2
+    }
+  ],
+  "orbs": [
+    {
+      "special": "sword",
+      "word": "garden"
+    },
+    {
+      "special": "shield",
+      "word": "commanded"
+    },
+    {
+      "special": "breastplate",
+      "word": "knowledge"
+    },
+    {
+      "special": "sandals",
+      "word": "die"
+    }
+  ],
+  "questions": [
+    {
+      "id": "gen-004-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where did Yahweh God put the man?",
+      "choices": ["The garden of Eden", "A city", "A ship", "A mountain"],
+      "answerIndex": 0,
+      "highlight": "put him into the garden of Eden"
+    },
+    {
+      "id": "gen-004-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What was the man’s work in the garden?",
+      "choices": [
+        "To cultivate and keep it",
+        "To build a tower",
+        "To name the stars",
+        "To catch fish"
+      ],
+      "answerIndex": 0,
+      "highlight": "to cultivate and keep it"
+    },
+    {
+      "id": "gen-004-q3",
+      "type": "true_false",
+      "difficulty": "medium",
+      "prompt": "True or false: God said the man could freely eat of every tree of the garden.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "You may freely eat of every tree of the garden"
+    },
+    {
+      "id": "gen-004-q4",
+      "type": "fill_blank",
+      "difficulty": "medium",
+      "prompt": "You shall not eat of the tree of the knowledge of good and ____.",
+      "choices": ["evil", "light", "life", "joy"],
+      "answerIndex": 0,
+      "highlight": "the tree of the knowledge of good and evil"
+    },
+    {
+      "id": "gen-004-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did God say would happen in the day the man ate of that tree?",
+      "choices": [
+        "He would surely die",
+        "He would fly",
+        "He would be king",
+        "Nothing would happen"
+      ],
+      "answerIndex": 0,
+      "highlight": "you will surely die"
+    },
+    {
+      "id": "gen-004-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who commanded the man?",
+      "choices": ["Yahweh God", "The serpent", "An angel", "The woman"],
+      "answerIndex": 0,
+      "highlight": "Yahweh God commanded the man"
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "id": "gen-011",
+  "title": "The Tower of Babel",
+  "passage": "GEN 11:4-7",
+  "waves": [
+    {
+      "id": "brick-1",
+      "name": "Brick Golem",
+      "maxHp": 50,
+      "attack": 10,
+      "color": "#9a6a3f",
+      "size": 0.85
+    },
+    {
+      "id": "brick-2",
+      "name": "Brick Golem",
+      "maxHp": 55,
+      "attack": 11,
+      "color": "#855a33",
+      "size": 0.95
+    },
+    {
+      "id": "tower",
+      "name": "Tower Golem",
+      "maxHp": 85,
+      "attack": 12,
+      "color": "#5c3d22",
+      "size": 1.45
+    }
+  ],
+  "orbs": [
+    {
+      "special": "sword",
+      "word": "tower"
+    },
+    {
+      "special": "shield",
+      "word": "name"
+    },
+    {
+      "special": "breastplate",
+      "word": "language"
+    },
+    {
+      "special": "sandals",
+      "word": "confuse"
+    }
+  ],
+  "questions": [
+    {
+      "id": "gen-011-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the people want to build?",
+      "choices": ["A city and a tower", "A ship", "A garden", "A bridge"],
+      "answerIndex": 0,
+      "highlight": "let’s build ourselves a city, and a tower"
+    },
+    {
+      "id": "gen-011-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How high did they want the tower to reach?",
+      "choices": ["To the sky", "To the mountains", "Just above the houses", "To the sea"],
+      "answerIndex": 0,
+      "highlight": "a tower whose top reaches to the sky"
+    },
+    {
+      "id": "gen-011-q3",
+      "type": "fill_blank",
+      "difficulty": "medium",
+      "prompt": "Let’s make a ____ for ourselves.",
+      "choices": ["name", "home", "ship", "garden"],
+      "answerIndex": 0,
+      "highlight": "let’s make a name for ourselves"
+    },
+    {
+      "id": "gen-011-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who came down to see the city and the tower?",
+      "choices": ["Yahweh", "An angel", "Noah", "A king"],
+      "answerIndex": 0,
+      "highlight": "Yahweh came down to see the city and the tower"
+    },
+    {
+      "id": "gen-011-q5",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "True or false: the people all had one language.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "they all have one language"
+    },
+    {
+      "id": "gen-011-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Yahweh say he would confuse?",
+      "choices": ["Their language", "Their tower", "Their food", "Their animals"],
+      "answerIndex": 0,
+      "highlight": "confuse their language"
+    }
+  ]
+}

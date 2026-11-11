@@ -1,44 +1,60 @@
 import { describe, expect, it } from 'vitest';
-import { ENCOUNTERS, getEncounter } from '../../src/content';
+import { BIBLE, ENCOUNTERS, getEncounter, nextEncounter } from '../../src/content';
+import { parseVpl } from '../../src/core/content/bible';
 import { encounterText } from '../../src/core/content/types';
-import { SPECIAL_IDS } from '../../src/core/battle/types';
 
-/** Early version of `validate:content` (docs/DESIGN.md §3.2). */
-describe.each(ENCOUNTERS.map((e) => [e.id, e] as const))('content %s', (_id, e) => {
-  const text = encounterText(e);
-
-  it('has at least 6 questions with unique ids', () => {
-    expect(e.questions.length).toBeGreaterThanOrEqual(6);
-    expect(new Set(e.questions.map((q) => q.id)).size).toBe(e.questions.length);
+/**
+ * `npm run validate:content` (docs/DESIGN.md §3.2). Loading src/content already validates every
+ * file and throws on any mistake; these tests make the guarantees explicit.
+ */
+describe('content: Genesis 1–11', () => {
+  it('has the 11 Beginnings encounters in reading order', () => {
+    expect(ENCOUNTERS.map((e) => e.id)).toEqual(
+      Array.from({ length: 11 }, (_, i) => `gen-${String(i + 1).padStart(3, '0')}`),
+    );
   });
 
-  it.each(e.questions.map((q) => [q.id, q] as const))(
-    '%s is grounded and well-formed',
-    (_qid, q) => {
-      expect(text, `highlight "${q.highlight}" must appear in the verse`).toContain(q.highlight);
-      expect(q.answerIndex).toBeGreaterThanOrEqual(0);
-      expect(q.answerIndex).toBeLessThan(q.choices.length);
-      expect(new Set(q.choices).size).toBe(q.choices.length);
-      expect(q.choices.length).toBe(q.type === 'true_false' ? 2 : 4);
+  it.each(ENCOUNTERS.map((e) => [e.id, e] as [string, typeof e]))(
+    '%s: verses come word for word from the WEB source',
+    (_id, e) => {
+      const gen = BIBLE.get('GEN')!;
+      expect(e.verses.length).toBeGreaterThan(0);
+      for (const v of e.verses) expect(v.text).toBe(gen.get(v.ref));
+      expect(e.translation).toBe('WEB');
     },
   );
 
-  it('has 1–3 waves and valid orbs', () => {
-    expect(e.waves.length).toBeGreaterThanOrEqual(1);
-    expect(e.waves.length).toBeLessThanOrEqual(3);
-    const specials = e.orbs.map((o) => o.special);
-    expect(new Set(specials).size).toBe(specials.length);
-    for (const o of e.orbs) {
-      expect(SPECIAL_IDS).toContain(o.special);
-      if (o.word) expect(text).toContain(o.word);
-    }
+  it.each(ENCOUNTERS.map((e) => [e.id, e] as [string, typeof e]))(
+    '%s: every highlight and orb word is in the verses',
+    (_id, e) => {
+      const text = encounterText(e);
+      for (const q of e.questions) expect(text, q.id).toContain(q.highlight);
+      for (const o of e.orbs) if (o.word) expect(text, o.special).toContain(o.word);
+    },
+  );
+
+  it('introduces orbs gradually (1, 2, 3, then all 4)', () => {
+    expect(ENCOUNTERS.slice(0, 4).map((e) => e.orbs.length)).toEqual([1, 2, 3, 4]);
+    for (const e of ENCOUNTERS.slice(4)) expect(e.orbs.length).toBe(4);
+  });
+
+  it('getEncounter / nextEncounter walk the list', () => {
+    expect(getEncounter('gen-005').title).toBe('The Temptation');
+    expect(getEncounter('nope').id).toBe('gen-001');
+    expect(nextEncounter('gen-001')?.id).toBe('gen-002');
+    expect(nextEncounter('gen-011')).toBeNull();
+    expect(nextEncounter('nope')).toBeNull();
   });
 });
 
-describe('getEncounter', () => {
-  it('finds by id and falls back to the first encounter', () => {
-    expect(getEncounter('gen-001').id).toBe('gen-001');
-    expect(getEncounter('nope').id).toBe('gen-001');
-    expect(getEncounter(undefined).id).toBe('gen-001');
+describe('vendored WEB source', () => {
+  it('has all 1,533 verses of Genesis', () => {
+    expect(BIBLE.get('GEN')!.size).toBe(1533);
+  });
+
+  it('parses the first verse exactly', () => {
+    expect(parseVpl('GEN 1:1 In the beginning.\n').get('GEN')!.get('1:1')).toBe(
+      'In the beginning.',
+    );
   });
 });

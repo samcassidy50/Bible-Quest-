@@ -1,0 +1,105 @@
+{
+  "id": "gen-008",
+  "title": "Build the Ship",
+  "passage": "GEN 6:13-14",
+  "waves": [
+    {
+      "id": "gust-1",
+      "name": "Gust",
+      "maxHp": 50,
+      "attack": 10,
+      "color": "#5b6b8a",
+      "size": 0.8
+    },
+    {
+      "id": "gust-2",
+      "name": "Gust",
+      "maxHp": 55,
+      "attack": 11,
+      "color": "#4d5c78",
+      "size": 0.9
+    },
+    {
+      "id": "storm",
+      "name": "Storm Cloud",
+      "maxHp": 80,
+      "attack": 12,
+      "color": "#2c3650",
+      "size": 1.3
+    }
+  ],
+  "orbs": [
+    {
+      "special": "sword",
+      "word": "violence"
+    },
+    {
+      "special": "shield",
+      "word": "ship"
+    },
+    {
+      "special": "breastplate",
+      "word": "rooms"
+    },
+    {
+      "special": "sandals",
+      "word": "pitch"
+    }
+  ],
+  "questions": [
+    {
+      "id": "gen-008-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who did God speak to?",
+      "choices": ["Noah", "Adam", "Cain", "Moses"],
+      "answerIndex": 0,
+      "highlight": "God said to Noah"
+    },
+    {
+      "id": "gen-008-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What was the earth filled with?",
+      "choices": ["Violence", "Water", "Gold", "Music"],
+      "answerIndex": 0,
+      "highlight": "the earth is filled with violence"
+    },
+    {
+      "id": "gen-008-q3",
+      "type": "fill_blank",
+      "difficulty": "medium",
+      "prompt": "Make a ship of ____ wood.",
+      "choices": ["gopher", "oak", "cedar", "pine"],
+      "answerIndex": 0,
+      "highlight": "Make a ship of gopher wood"
+    },
+    {
+      "id": "gen-008-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did God tell Noah to make in the ship?",
+      "choices": ["Rooms", "Gardens", "Towers", "Wells"],
+      "answerIndex": 0,
+      "highlight": "You shall make rooms in the ship"
+    },
+    {
+      "id": "gen-008-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What was the ship to be sealed with?",
+      "choices": ["Pitch", "Paint", "Glue", "Mud"],
+      "answerIndex": 0,
+      "highlight": "seal it inside and outside with pitch"
+    },
+    {
+      "id": "gen-008-q6",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "True or false: the ship was to be sealed only on the outside.",
+      "choices": ["True", "False"],
+      "answerIndex": 1,
+      "highlight": "inside and outside"
+    }
+  ]
+}

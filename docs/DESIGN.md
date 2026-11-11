@@ -217,7 +217,9 @@ INTRO → HERO_CHOOSE ─(attack | special)─▶ HERO_QUESTION → HERO_ACTION(
       → HERO_CHOOSE … → NEXT_WAVE | VICTORY | DEFEAT
 ```
 
-### 3.2 Content schema (draft)
+### 3.2 Content schema
+
+> **Implemented in Phase 3 with one change:** encounter files store a `passage` reference (e.g. `"GEN 1:1-2"`) instead of verse text. The game resolves the text from the vendored WEB source at load time, so Scripture can't be mistyped in content files. The draft below is kept for history; see `content/encounters/genesis/` and `src/core/content/schema.ts` for the real format.
 
 ```jsonc
 // content/genesis/001-creation.json
@@ -280,19 +282,19 @@ INTRO → HERO_CHOOSE ─(attack | special)─▶ HERO_QUESTION → HERO_ACTION(
 
 Content is authored as **passage → encounter** pairs. The first arc ("Beginnings") covers Genesis 1–11:
 
-| #   | Passage     | Theme                      | Foe                        |
-| --- | ----------- | -------------------------- | -------------------------- |
-| 1   | Gen 1:1–2   | In the beginning           | Shade of the Deep          |
-| 2   | Gen 1:3–5   | Let there be light         | Shade of the Deep (wave 2) |
-| 3   | Gen 1:26–27 | Made in God's image        | Dust Wraith                |
-| 4   | Gen 2:15–17 | The garden and the command | Thornling                  |
-| 5   | Gen 3:1–6   | The temptation             | The Serpent                |
-| 6   | Gen 3:17–19 | Thorns and thistles        | Thornbeast                 |
-| 7   | Gen 4:6–7   | Sin crouching at the door  | Crouching Shadow           |
-| 8   | Gen 6:13–14 | Build an ark               | Storm Cloud                |
-| 9   | Gen 7:11–12 | The flood                  | Flood Surge                |
-| 10  | Gen 9:12–13 | The rainbow covenant       | Boss: Tempest              |
-| 11  | Gen 11:4–7  | Babel                      | Boss: Tower Golem          |
+| #   | Passage     | Theme                            | Foe                        |
+| --- | ----------- | -------------------------------- | -------------------------- |
+| 1   | Gen 1:1–2   | In the beginning                 | Shade of the Deep          |
+| 2   | Gen 1:3–5   | Let there be light               | Shade of the Deep (wave 2) |
+| 3   | Gen 1:26–27 | Made in God's image              | Dust Wraith                |
+| 4   | Gen 2:15–17 | The garden and the command       | Thornling                  |
+| 5   | Gen 3:1–6   | The temptation                   | The Serpent                |
+| 6   | Gen 3:17–19 | Thorns and thistles              | Thornbeast                 |
+| 7   | Gen 4:6–7   | Sin crouching at the door        | Crouching Shadow           |
+| 8   | Gen 6:13–14 | Build the ship (WEB says “ship”) | Storm Cloud                |
+| 9   | Gen 7:11–12 | The flood                        | Flood Surge                |
+| 10  | Gen 9:12–13 | The rainbow covenant             | Boss: Tempest              |
+| 11  | Gen 11:4–7  | Babel                            | Boss: Tower Golem          |
 
 Later arcs: Abraham (12–25), Isaac and Jacob (25–36), Joseph (37–50), and then Exodus.
 
@@ -363,7 +365,9 @@ Each phase ends in something playable, deployed to a preview URL.
 - All question types (multiple choice, true/false, fill in the blank).
 - The 11 Genesis 1–11 encounters from §4 with reviewed questions.
 - Map/stage select (simple list is fine).
+- Answer choices are shuffled each time a question is shown (true/false stays in order).
 - **Exit:** Genesis 1–11 is playable end to end.
+- **Status (2026-11-11):** done. Questions are AI drafts awaiting human review.
 
 ### Phase 4: Art, animation, and audio (≈3–4 weeks, can start in parallel with Phase 3)
 
