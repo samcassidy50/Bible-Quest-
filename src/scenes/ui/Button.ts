@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { FONT_UI } from '../util';
+import { sfx } from '../../services/sfx';
 
 export interface ButtonOptions {
   width: number;
@@ -50,6 +51,7 @@ export class Button extends Phaser.GameObjects.Container {
     this.hit.on('pointerdown', () => {
       if (!this.enabled) return;
       this.setScale(0.95);
+      sfx.play('uiTap');
       opts.onTap();
     });
     this.hit.on('pointerup', () => this.setScale(1));

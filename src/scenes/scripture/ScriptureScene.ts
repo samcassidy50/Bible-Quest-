@@ -6,6 +6,7 @@ import { OrbTracker, scheduleOrbs, type ScheduledOrb } from '../../core/scriptur
 import { estimateNarrationMs, tickerX, wordAnchorFraction } from '../../core/scripture/timing';
 import { getEncounter } from '../../content';
 import { hapticTap } from '../../services/haptics';
+import { sfx } from '../../services/sfx';
 import { createNarration, type Narration } from '../../services/narration';
 import { readSafeAreaInsets, toGameInsets, type Insets } from '../../services/safeArea';
 import { updateTestState } from '../../services/testHooks';
@@ -372,6 +373,7 @@ export class ScriptureScene extends Phaser.Scene {
     );
     this.active.set(special, orb);
     orb.appear(ORB_RISE);
+    sfx.play('orbSpawn');
     this.wordGlows.get(special)?.setVisible(true);
     this.sync();
     if (this.debug.autoCollect) this.time.delayedCall(500, () => void this.collect(orb));
@@ -382,6 +384,7 @@ export class ScriptureScene extends Phaser.Scene {
     this.active.delete(orb.special);
     this.wordGlows.get(orb.special)?.setVisible(false);
     void hapticTap();
+    sfx.play('orbCollect');
     this.floatText(orb.x, orb.y - 80, `${ACTION_INFO[orb.special].name} unlocked!`);
     this.sync();
     const slot = this.slots.get(orb.special)!;

@@ -233,7 +233,10 @@ export const HERO_CLIPS = {
     name: 'punch',
     duration: 420,
     loop: false,
-    events: [{ at: 190, name: 'impact' }],
+    events: [
+      { at: 110, name: 'swing' },
+      { at: 190, name: 'impact' },
+    ],
     keys: [
       at(0, IDLE),
       at(
@@ -260,7 +263,10 @@ export const HERO_CLIPS = {
     name: 'slash',
     duration: 520,
     loop: false,
-    events: [{ at: 250, name: 'impact' }],
+    events: [
+      { at: 170, name: 'swing' },
+      { at: 250, name: 'impact' },
+    ],
     keys: [
       at(0, IDLE),
       at(
@@ -289,7 +295,10 @@ export const HERO_CLIPS = {
     name: 'slashPowered',
     duration: 760,
     loop: false,
-    events: [{ at: 470, name: 'impact' }],
+    events: [
+      { at: 330, name: 'swing' },
+      { at: 470, name: 'impact' },
+    ],
     keys: [
       at(0, IDLE),
       at(

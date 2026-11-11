@@ -172,7 +172,7 @@ describe('hero clips', () => {
     '%s lands its hit with an impact event',
     (name) => {
       const c: Clip = HERO_CLIPS[name];
-      expect(eventsBetween(c, 0, c.duration)).toEqual(['impact']);
+      expect(eventsBetween(c, 0, c.duration)).toEqual(['swing', 'impact']);
     },
   );
 

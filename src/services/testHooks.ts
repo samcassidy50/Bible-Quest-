@@ -51,6 +51,8 @@ export interface TestState {
   targets: Record<string, { x: number; y: number }>;
   battle: BattleTestState | null;
   scripture: ScriptureTestState | null;
+  /** Sound effect cues played, newest last. */
+  sounds: string[];
 }
 
 declare global {
@@ -71,6 +73,7 @@ let state: TestState = {
   targets: {},
   battle: null,
   scripture: null,
+  sounds: [],
 };
 
 export function updateTestState(patch: Partial<TestState>): void {

@@ -4,12 +4,14 @@ import { parseDebugParams, type DebugParams } from './core/debugParams';
 import { randomSeed } from './core/rng';
 import { initPlatform, onAppActiveChange, platformName } from './services/platform';
 import { updateTestState } from './services/testHooks';
+import { sfx } from './services/sfx';
 import { BootScene } from './scenes/BootScene';
 import { TitleScene } from './scenes/TitleScene';
 import { BattleScene } from './scenes/battle/BattleScene';
 import { ScriptureScene } from './scenes/scripture/ScriptureScene';
 import { MapScene } from './scenes/map/MapScene';
 import { AnimViewerScene } from './scenes/hero/AnimViewerScene';
+import { SoundBoardScene } from './scenes/debug/SoundBoardScene';
 
 async function start(): Promise<void> {
   await initPlatform();
@@ -32,7 +34,15 @@ async function start(): Promise<void> {
     render: { antialias: true, roundPixels: false },
     fps: { target: 60 },
     input: { activePointers: 2 },
-    scene: [BootScene, TitleScene, MapScene, ScriptureScene, BattleScene, AnimViewerScene],
+    scene: [
+      BootScene,
+      TitleScene,
+      MapScene,
+      ScriptureScene,
+      BattleScene,
+      AnimViewerScene,
+      SoundBoardScene,
+    ],
     callbacks: {
       preBoot: (g) => {
         g.registry.set('debug', debug);
@@ -42,6 +52,8 @@ async function start(): Promise<void> {
     },
   });
 
+  // The sound manager exists once the game has booted.
+  game.events.once(Phaser.Core.Events.READY, () => sfx.attach(game));
   updateTestState({ platform: platformName(), seed });
 
   await onAppActiveChange((active) => {

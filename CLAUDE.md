@@ -46,7 +46,13 @@ Before saying a task is done, run: `npm run lint && npm run typecheck && npm run
 ## Hero art
 
 - The hero is an original chibi cutout rig drawn in code (`src/scenes/hero/HeroRig.ts`). Clips are keyframed poses in `src/core/anim/heroClips.ts`; pose conventions are documented in `src/core/anim/pose.ts`.
-- Attack clips must have an `impact` event; the battle lands damage on that frame.
+- Attack clips must have `swing` and `impact` events; the battle plays the whoosh on `swing` and lands damage and the hit sound on `impact`.
+
+## Sound
+
+- All sound effects are synthesized in code (`src/core/audio/synth.ts`, recipes in `sfxRecipes.ts`). No audio files.
+- Play cues with `sfx.play(name)` from `src/services/sfx.ts`; it records every cue in `window.__TEST__.sounds` for tests.
+- Sound board for listening: `?scene=sounds`. Keep wrong-answer feedback gentle (a unit test checks it is quieter than the powered-up cue).
 - For UI changes, look at the screenshot yourself (Playwright `outputPath`, or `adb exec-out screencap -p` on the emulator) before claiming it works, and attach screenshots to the PR.
 
 ## Android emulator tips

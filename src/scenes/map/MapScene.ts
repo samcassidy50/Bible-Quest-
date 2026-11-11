@@ -3,6 +3,7 @@ import { ENCOUNTERS } from '../../content';
 import type { Encounter } from '../../core/content/types';
 import { readSafeAreaInsets, toGameInsets } from '../../services/safeArea';
 import { updateTestState } from '../../services/testHooks';
+import { sfx } from '../../services/sfx';
 import { COLOR } from '../battle/actionInfo';
 import { Button } from '../ui/Button';
 import { FONT_TITLE, FONT_UI } from '../util';
@@ -89,6 +90,7 @@ export class MapScene extends Phaser.Scene {
     });
     const hit = this.add.rectangle(0, 0, 10, 10, 0, 0).setOrigin(0).setInteractive();
     hit.on('pointerdown', () => {
+      sfx.play('uiTap');
       this.registry.set('encounterId', e.id);
       this.registry.remove('collectedOrbs');
       this.cameras.main.fadeOut(200, 27, 21, 48);

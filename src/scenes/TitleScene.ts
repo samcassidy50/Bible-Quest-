@@ -3,6 +3,7 @@ import { COLORS } from '../config';
 import { readSafeAreaInsets, toGameInsets } from '../services/safeArea';
 import { hideSplash, platformName } from '../services/platform';
 import { updateTestState } from '../services/testHooks';
+import { sfx } from '../services/sfx';
 import type { DebugParams } from '../core/debugParams';
 
 /** Phase 0 placeholder: proves rendering, scaling, safe areas and input work on every platform. */
@@ -60,6 +61,7 @@ export class TitleScene extends Phaser.Scene {
     }
 
     this.input.once('pointerdown', () => {
+      sfx.play('start');
       this.cameras.main.fadeOut(250, 27, 21, 48);
       this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start('map'));
     });

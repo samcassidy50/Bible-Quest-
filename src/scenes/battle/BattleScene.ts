@@ -24,10 +24,21 @@ import { HpBar } from './HpBar';
 import { QuestionCard } from './QuestionCard';
 import { ResultPanel } from './ResultPanel';
 import { hapticTap } from '../../services/haptics';
+import { sfx } from '../../services/sfx';
+import type { SfxName } from '../../core/audio/sfxRecipes';
 import type { HeroClipName } from '../../core/anim/heroClips';
 
+/** The sound of each swing landing. */
+type StrikeClip = Extract<HeroClipName, 'punch' | 'slash' | 'slashPowered'>;
+
+const IMPACT_SOUND: Record<StrikeClip, SfxName> = {
+  punch: 'punch',
+  slash: 'swordHit',
+  slashPowered: 'slam',
+};
+
 /** Which swing the hero uses for a damaging action. */
-function strikeClip(action: ActionId, powered: boolean): HeroClipName {
+function strikeClip(action: ActionId, powered: boolean): StrikeClip {
   if (action === 'ultimate' || (action === 'sword' && powered)) return 'slashPowered';
   if (action === 'attack') return powered ? 'slash' : 'punch';
   if (action === 'sandals') return 'punch';
@@ -243,6 +254,7 @@ export class BattleScene extends Phaser.Scene {
   // ── Turn flow ──────────────────────────────────────────────────────────────
 
   private async intro(): Promise<void> {
+    sfx.play('wave');
     await this.banner(`Wave 1 · ${this.engine.foe.name}`);
     this.setBusy(false);
   }
@@ -294,6 +306,7 @@ export class BattleScene extends Phaser.Scene {
     const card = this.card;
     if (!q || !card) return;
     const correct = index === q.answerIndex;
+    sfx.play(correct ? 'poweredUp' : 'wrong');
     if (correct) this.correct++;
     this.feedback = correct ? 'correct' : 'wrong';
     this.sync();
@@ -343,14 +356,19 @@ export class BattleScene extends Phaser.Scene {
     if (res.action === 'ultimate') {
       this.cameras.main.flash(400, 244, 201, 93);
       void this.hero.act('cast');
+      sfx.play('ultimate');
       await this.banner(`${info.icon} ${info.name}! ${info.icon}`, '#f4c95d');
     } else if (res.action !== 'attack') {
       void this.banner(`${info.icon} ${info.name}`, powered ? '#f4c95d' : '#ffffff', 700);
     }
 
-    if (res.action === 'breastplate') await this.hero.act('cast');
+    if (res.action === 'breastplate') {
+      sfx.play('heal');
+      await this.hero.act('cast');
+    }
     if (res.damage > 0) await this.heroStrike(res, powered);
     if (res.blocksAdded > 0) {
+      sfx.play('shield');
       void this.hero.act('block');
       this.hero.setShield(this.engine.blocks);
       this.floatText(
@@ -365,7 +383,10 @@ export class BattleScene extends Phaser.Scene {
       this.floatText(this.hero.x, this.hero.y - 220, `+${res.healed}`, COLOR.heal, 44);
       this.heroBar.setValue(this.engine.heroHp);
     }
-    if (res.stunned) this.foe.setStunned(true);
+    if (res.stunned) {
+      sfx.play('calm');
+      this.foe.setStunned(true);
+    }
     if (res.faithGained > 0 || res.action === 'ultimate') this.drawFaith();
     this.sync();
     await wait(this, 350);
@@ -406,7 +427,14 @@ export class BattleScene extends Phaser.Scene {
       this.foeBar.setValue(this.engine.foeHp);
       void tweenAsync(this, { targets: this.foe, x: this.foe.x + 24, duration: 70, yoyo: true });
     };
-    await this.hero.act(strikeClip(res.action, powered), (e) => e === 'impact' && land());
+    const clip = strikeClip(res.action, powered);
+    await this.hero.act(clip, (e) => {
+      if (e === 'swing') sfx.play(clip === 'punch' ? 'swingLight' : 'swing', { vary: true });
+      if (e === 'impact') {
+        sfx.play(IMPACT_SOUND[clip], { vary: true });
+        land();
+      }
+    });
     land(); // in case the clip had no impact event
 
     this.hero.face(-1);
@@ -418,6 +446,7 @@ export class BattleScene extends Phaser.Scene {
 
   private async playEnemy(res: EnemyTurnResult): Promise<void> {
     if (res.skippedStunned) {
+      sfx.play('calm');
       this.floatText(
         this.foe.x,
         this.foe.y - this.foe.figureHeight - 70,
@@ -431,6 +460,7 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
     const startX = this.foe.x;
+    sfx.play('foeAttack', { vary: true });
     await tweenAsync(this, {
       targets: this.foe,
       x: this.hero.x + 170,
@@ -440,8 +470,10 @@ export class BattleScene extends Phaser.Scene {
     if (res.blocked) {
       this.floatText(this.hero.x, this.hero.y - 230, 'Blocked!', '#85c1e9', 40);
       this.hero.setShield(this.engine.blocks);
+      sfx.play('block');
       void this.hero.act('block');
     } else {
+      sfx.play('hurt', { vary: true });
       void this.hero.act('hurt');
       this.cameras.main.shake(150, 0.006);
       this.floatText(this.hero.x, this.hero.y - 220, `-${res.damage}`, '#ff6b6b', 48);
@@ -452,6 +484,7 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private async foeDefeated(): Promise<void> {
+    sfx.play('foeDefeat');
     this.tweens.killTweensOf(this.foe.figure);
     await tweenAsync(this, { targets: this.foe, alpha: 0, y: this.foe.y - 40, duration: 450 });
   }
@@ -466,6 +499,7 @@ export class BattleScene extends Phaser.Scene {
     this.foeBar.setPosition(this.foe.x, this.groundY - this.foe.figureHeight - 40);
     if (!this.debug.freeze) this.foe.idle();
     this.drawWaves();
+    sfx.play('wave');
     await this.banner(`Wave ${this.engine.waveIndex + 1} · ${spec.name}`);
     await tweenAsync(this, { targets: this.foe, alpha: 1, duration: 300 });
   }
@@ -490,6 +524,7 @@ export class BattleScene extends Phaser.Scene {
       this.registry.remove('collectedOrbs');
       this.scene.start('scripture');
     };
+    sfx.play(victory ? 'victory' : 'defeat');
     this.result = new ResultPanel(
       this,
       victory,

@@ -377,6 +377,7 @@ Each phase ends in something playable, deployed to a preview URL.
 - VFX: powered-attack glow and particles, hit sparks.
 - A unique animation and effect for each special attack and the Faith Ultimate; orb glow, collect, and fly-to-slot effects.
 - Music, SFX, and recorded narration for arc 1 (optional at this point).
+  - **Status (2026-11-11):** 22 sound effects done, synthesized in code (no files or licences): hits timed to animation frames, specials, answer feedback, orbs, waves, victory and defeat. Sound board at `?scene=sounds`. Music and recorded narration not started.
 - **Exit:** the slice looks and sounds like the target feel.
 
 ### Phase 5: Progression and retention (≈2 weeks)
