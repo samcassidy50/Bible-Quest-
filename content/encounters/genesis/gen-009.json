@@ -2,6 +2,8 @@
   "id": "gen-009",
   "title": "The Flood",
   "passage": "GEN 7:11-12",
+  "setting": "flood",
+  "weather": "storm",
   "waves": [
     {
       "id": "wave-1",

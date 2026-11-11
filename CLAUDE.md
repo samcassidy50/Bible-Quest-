@@ -49,6 +49,11 @@ Before saying a task is done, run: `npm run lint && npm run typecheck && npm run
 - Clips are frame sequences in `src/core/anim/heroClips.ts` (frame name + ms). Some clips are placeholders that borrow other frames until their own art arrives (listed at the top of that file).
 - Attack clips must have `swing` and `impact` events; the battle plays the whoosh on `swing` and lands damage and the hit sound on `impact`.
 
+## Backgrounds
+
+- Six original environments drawn in code (`src/scenes/backdrop/Backdrop.ts`): deep, light, garden, wilderness, flood (weather `storm` or `clearing`), babel. Each passage picks one with `setting` (and `weather` for flood) in its encounter JSON.
+- Text-free viewer: `?scene=backdrops` (tap or → for the next, `&env=garden` to start on one, `&freeze=1` for still screenshots).
+
 ## Sound
 
 - All sound effects are synthesized in code (`src/core/audio/synth.ts`, recipes in `sfxRecipes.ts`). No audio files.

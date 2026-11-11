@@ -26,6 +26,7 @@ const file = (extra: Record<string, unknown> = {}) => ({
   id: 'test-1',
   title: 'Test',
   passage: 'GEN 1:1-2',
+  setting: 'deep',
   waves: [{ id: 'foe', name: 'Foe', maxHp: 10, attack: 1, color: '#123456', size: 1 }],
   orbs: [{ special: 'sword', word: 'epsilon' }],
   questions: [1, 2, 3, 4, 5, 6].map((n) => q(n)),
@@ -161,5 +162,16 @@ describe('shuffleChoices', () => {
   it('leaves True/False in order', () => {
     const tf = { ...base, type: 'true_false' as const, choices: ['True', 'False'], answerIndex: 1 };
     expect(shuffleChoices(tf, createRng(3))).toBe(tf);
+  });
+});
+
+describe('settings', () => {
+  it('requires a known setting and accepts flood weather', () => {
+    expect(() => buildEncounter(file({ setting: 'moon' }), bible)).toThrow(/setting/);
+    expect(buildEncounter(file({ setting: 'flood', weather: 'clearing' }), bible)).toMatchObject({
+      setting: 'flood',
+      weather: 'clearing',
+    });
+    expect(buildEncounter(file(), bible).weather).toBeUndefined();
   });
 });

@@ -48,6 +48,12 @@ export class Fighter extends Phaser.GameObjects.Container {
     g.fillStyle(color, 0.55).fillCircle(0, -95, 92);
     g.fillStyle(color, 0.85).fillCircle(-18, -85, 70).fillCircle(26, -100, 62);
     g.fillStyle(color).fillCircle(0, -95, 58);
+    // Dark outline and rim light so foes read clearly against any backdrop.
+    g.lineStyle(5, 0x0b0816, 0.85).strokeCircle(0, -95, 92);
+    g.lineStyle(3, 0xffffff, 0.35)
+      .beginPath()
+      .arc(0, -95, 86, Math.PI * 1.15, Math.PI * 1.6)
+      .strokePath();
     g.fillStyle(0xff4d6d).fillEllipse(-22, -110, 22, 14).fillEllipse(14, -110, 22, 14); // eyes (facing left)
     g.fillStyle(0x0b0816).fillEllipse(-4, -72, 46, 14); // mouth
     this.figure.add(g);

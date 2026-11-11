@@ -17,6 +17,7 @@ import { Fighter } from '../battle/Fighter';
 import { Button } from '../ui/Button';
 import { FONT_TITLE, FONT_UI, tweenAsync, wait } from '../util';
 import { Orb } from './Orb';
+import { Backdrop } from '../backdrop/Backdrop';
 
 const BANNER_H = 118;
 const REF_BOX_W = 250;
@@ -39,10 +40,7 @@ export class ScriptureScene extends Phaser.Scene {
   private timeScale = 1;
   private insets: Insets = { top: 0, right: 0, bottom: 0, left: 0 };
 
-  private far!: Phaser.GameObjects.TileSprite;
-  private near!: Phaser.GameObjects.TileSprite;
-  private ground!: Phaser.GameObjects.TileSprite;
-  private sky!: Phaser.GameObjects.Graphics;
+  private backdrop!: Backdrop;
   private hero!: Fighter;
   private banner!: Phaser.GameObjects.Graphics;
   private refLabel!: Phaser.GameObjects.Text;
@@ -118,12 +116,12 @@ export class ScriptureScene extends Phaser.Scene {
   // ── Build ──────────────────────────────────────────────────────────────────
 
   private buildScene(): void {
-    this.makeTextures();
-    const { width: W, height: H } = this.scale.gameSize;
-    this.sky = this.add.graphics();
-    this.far = this.add.tileSprite(0, 0, W, 220, 'px-far').setOrigin(0, 1);
-    this.near = this.add.tileSprite(0, 0, W, 160, 'px-near').setOrigin(0, 1);
-    this.ground = this.add.tileSprite(0, 0, W, H, 'px-ground').setOrigin(0, 0);
+    this.backdrop = new Backdrop(
+      this,
+      this.encounter.setting,
+      this.encounter.weather,
+      this.debug.freeze,
+    );
 
     this.hero = new Fighter(this, 0, 0, 'hero');
     this.hero.run();
@@ -207,30 +205,6 @@ export class ScriptureScene extends Phaser.Scene {
     this.skipBtn = pill('Skip ⏭', () => this.skip(), 130).setVisible(this.canSkip);
   }
 
-  /** Placeholder parallax art generated once (Phase 4 swaps in painted layers). */
-  private makeTextures(): void {
-    if (this.textures.exists('px-far')) return;
-    const g = this.make.graphics({}, false);
-    g.fillStyle(0x2a1f4d).beginPath().moveTo(0, 220);
-    for (let x = 0; x <= 512; x += 64) g.lineTo(x, 220 - 90 - ((x / 64) % 2 ? 70 : 0));
-    g.lineTo(512, 220).closePath().fillPath();
-    g.generateTexture('px-far', 512, 220).clear();
-
-    g.fillStyle(0x3b2a52);
-    g.fillEllipse(80, 160, 220, 150)
-      .fillEllipse(300, 170, 280, 130)
-      .fillEllipse(470, 160, 200, 140);
-    g.generateTexture('px-near', 512, 160).clear();
-
-    g.fillStyle(0x3a2a1f).fillRect(0, 0, 256, 512);
-    g.fillStyle(0x4d3828).fillRect(0, 0, 256, 14);
-    g.fillStyle(0x2f2219)
-      .fillRect(40, 40, 30, 8)
-      .fillRect(170, 90, 40, 8)
-      .fillRect(100, 150, 26, 8);
-    g.generateTexture('px-ground', 256, 512).destroy();
-  }
-
   private get groundY(): number {
     return this.scale.gameSize.height - BANNER_H - 60;
   }
@@ -241,13 +215,7 @@ export class ScriptureScene extends Phaser.Scene {
     const ins = this.insets;
     const gy = this.groundY;
 
-    this.sky
-      .clear()
-      .fillGradientStyle(0x1b1340, 0x1b1340, 0x6b3a6b, 0x6b3a6b, 1)
-      .fillRect(0, 0, W, gy);
-    this.far.setPosition(0, gy).setSize(W, 220);
-    this.near.setPosition(0, gy + 4).setSize(W, 160);
-    this.ground.setPosition(0, gy - 6).setSize(W, H - gy + 6);
+    this.backdrop.layout(W, H, gy);
 
     const bannerY = H - BANNER_H;
     this.banner
@@ -335,9 +303,7 @@ export class ScriptureScene extends Phaser.Scene {
   }
 
   private scrollParallax(dt: number): void {
-    this.far.tilePositionX += dt * 0.02;
-    this.near.tilePositionX += dt * 0.06;
-    this.ground.tilePositionX += dt * 0.3;
+    this.backdrop.scroll(dt);
   }
 
   private updateTicker(): void {

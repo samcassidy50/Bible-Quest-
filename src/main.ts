@@ -16,6 +16,7 @@ import { JournalScene } from './scenes/menus/JournalScene';
 import { SettingsScene } from './scenes/menus/SettingsScene';
 import { AnimViewerScene } from './scenes/hero/AnimViewerScene';
 import { SoundBoardScene } from './scenes/debug/SoundBoardScene';
+import { BackdropViewerScene } from './scenes/debug/BackdropViewerScene';
 
 async function start(): Promise<void> {
   await initPlatform();
@@ -57,6 +58,7 @@ async function start(): Promise<void> {
       BattleScene,
       AnimViewerScene,
       SoundBoardScene,
+      BackdropViewerScene,
     ],
     callbacks: {
       preBoot: (g) => {

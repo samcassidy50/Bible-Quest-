@@ -8,6 +8,8 @@ const scripture = async (page: Parameters<typeof state>[0]) =>
   (await state(page)).scripture as ScriptureTestState;
 
 test('tapping the orb during the reading unlocks Sword for the fight', async ({ page }) => {
+  // Real-time reading plus a fight; software rendering in the slower browser profile needs headroom.
+  test.setTimeout(150_000);
   await page.goto('/?scene=scripture&seed=1&narration=off');
   await waitFor(page, "s.scene === 'scripture' && !!s.scripture");
   const s0 = await scripture(page);

@@ -375,6 +375,7 @@ Each phase ends in something playable, deployed to a preview URL.
 - Original hero design: idle, run, attack, powered attack, hit, and victory animations.
   - **Status (2026-11-11):** done as an original chibi cutout rig drawn in code, with keyframed clips: idle, run, punch, slash, powered slam, hurt, die, victory, block, cast. Wrong-answer attacks punch, right answers slash; hits land on each clip's `impact` frame. Viewer at `?scene=rig`.
 - Foe sprites for the arc, plus backgrounds per setting (void, garden, wilderness, flood, Babel).
+  - **Backgrounds status (2026-11-12):** six original environments drawn in code, matched to the verses: The Deep (1:1–2), First Light (1:3–5), The Garden (1:26–3:6), The Wilderness (3:17–4:7), The Flood in storm (6:13–7:12) and clearing with a rainbow (9:12–13), and Shinar with the tower (11:4–7). Parallax layers, living effects (mist, rays, butterflies, dust, rain and lightning, sparkles). Viewer at `?scene=backdrops`.
 - VFX: powered-attack glow and particles, hit sparks.
 - A unique animation and effect for each special attack and the Faith Ultimate; orb glow, collect, and fly-to-slot effects.
 - Music, SFX, and recorded narration for arc 1 (optional at this point).

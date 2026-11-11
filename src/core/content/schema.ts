@@ -39,12 +39,20 @@ export const foeSchema = z.object({
   size: z.number().min(0.5).max(2),
 });
 
+/** The six environments a passage can be set in (docs/DESIGN.md §2.1). */
+export const SETTINGS = ['deep', 'light', 'garden', 'wilderness', 'flood', 'babel'] as const;
+export type Setting = (typeof SETTINGS)[number];
+
 export const encounterFileSchema = z
   .object({
     id,
     title: z.string().min(1),
     /** Reference into the vendored source, e.g. "GEN 1:1-2". Never verse text. */
     passage: z.string(),
+    /** Environment drawn behind the reading and the battle. */
+    setting: z.enum(SETTINGS),
+    /** Flood only: a storm, or the storm clearing with a rainbow. */
+    weather: z.enum(['storm', 'clearing']).optional(),
     waves: z.array(foeSchema).min(1).max(3),
     orbs: z.array(z.object({ special: z.enum(SPECIAL_IDS), word: z.string().optional() })).max(4),
     questions: z.array(questionSchema).min(6),

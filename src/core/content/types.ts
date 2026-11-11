@@ -1,4 +1,5 @@
 import type { FoeSpec, SpecialId } from '../battle/types';
+import type { Setting } from './schema';
 import type { Difficulty } from '../quiz/QuestionDeck';
 
 /**
@@ -48,6 +49,8 @@ export interface Encounter {
   passage: string;
   /** Display reference, e.g. "Genesis 1:1–2". */
   reference: string;
+  setting: Setting;
+  weather?: 'storm' | 'clearing';
   translation: 'WEB';
   verses: readonly Verse[];
   waves: readonly EncounterFoe[];

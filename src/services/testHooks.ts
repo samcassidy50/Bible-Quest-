@@ -62,6 +62,8 @@ export interface TestState {
   mapRevealing: boolean;
   /** Map: the location whose card is open. */
   mapCard: string | null;
+  /** Backdrop viewer: the environment on screen. */
+  backdrop: string | null;
   /** Verse Journal: the passage currently shown. */
   journalOpen: string | null;
 }
@@ -89,6 +91,7 @@ let state: TestState = {
   map: null,
   mapRevealing: false,
   mapCard: null,
+  backdrop: null,
   journalOpen: null,
 };
 

@@ -2,6 +2,8 @@
   "id": "gen-008",
   "title": "Build the Ship",
   "passage": "GEN 6:13-14",
+  "setting": "flood",
+  "weather": "storm",
   "waves": [
     {
       "id": "gust-1",

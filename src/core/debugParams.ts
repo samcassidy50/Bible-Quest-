@@ -15,6 +15,7 @@ export const SCENE_KEYS = [
   'settings',
   'rig',
   'sounds',
+  'backdrops',
 ] as const;
 export type SceneKey = (typeof SCENE_KEYS)[number];
 
@@ -31,6 +32,8 @@ export interface DebugParams {
   narrationOff: boolean;
   /** `?clip=slash` with `?scene=rig`: contact sheet of one hero animation. */
   clip?: string;
+  /** `?env=garden` with `?scene=backdrops`: which environment to show first. */
+  env?: string;
   /** `?unlockAll=1`: every passage open on the passage screen. */
   unlockAll: boolean;
   /** `?autoCollect=1`: orbs collect themselves (accessibility setting, until Phase 5 settings). */
@@ -77,6 +80,9 @@ export function parseDebugParams(search: string): DebugParams {
 
   const clip = p.get('clip');
   if (clip && /^[a-zA-Z]{1,20}$/.test(clip)) result.clip = clip;
+
+  const env = p.get('env');
+  if (env && /^[a-z-]{1,20}$/.test(env)) result.env = env;
 
   const faith = p.get('faith');
   if (faith !== null && /^\d{1,2}$/.test(faith)) result.faith = Number(faith);

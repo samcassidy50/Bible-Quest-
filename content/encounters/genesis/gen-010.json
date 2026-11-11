@@ -2,6 +2,8 @@
   "id": "gen-010",
   "title": "The Rainbow",
   "passage": "GEN 9:12-13",
+  "setting": "flood",
+  "weather": "clearing",
   "waves": [
     {
       "id": "squall-1",

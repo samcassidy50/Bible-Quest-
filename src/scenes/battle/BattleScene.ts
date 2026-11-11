@@ -24,6 +24,7 @@ import { Fighter } from './Fighter';
 import { HpBar } from './HpBar';
 import { QuestionCard } from './QuestionCard';
 import { ResultPanel } from './ResultPanel';
+import { Backdrop } from '../backdrop/Backdrop';
 import { hapticTap } from '../../services/haptics';
 import { sfx } from '../../services/sfx';
 import type { SfxName } from '../../core/audio/sfxRecipes';
@@ -58,7 +59,7 @@ export class BattleScene extends Phaser.Scene {
   private rng!: Rng;
   private insets: Insets = { top: 0, right: 0, bottom: 0, left: 0 };
 
-  private bg!: Phaser.GameObjects.Graphics;
+  private backdrop!: Backdrop;
   private hero!: Fighter;
   private foe!: Fighter;
   private heroPanel!: Phaser.GameObjects.Container;
@@ -139,7 +140,12 @@ export class BattleScene extends Phaser.Scene {
   // ── Build & layout ─────────────────────────────────────────────────────────
 
   private buildScene(): void {
-    this.bg = this.add.graphics();
+    this.backdrop = new Backdrop(
+      this,
+      this.encounter.setting,
+      this.encounter.weather,
+      this.debug.freeze,
+    );
     this.hero = new Fighter(this, 0, 0, 'hero');
     this.foe = this.makeFoe(this.engine.foe as EncounterFoe);
 
@@ -199,7 +205,7 @@ export class BattleScene extends Phaser.Scene {
     this.insets = toGameInsets(readSafeAreaInsets(), W, this.scale.displaySize.width);
     const ins = this.insets;
 
-    this.drawBackground(W, H);
+    this.backdrop.layout(W, H, this.groundY);
     this.hero.setPosition(ins.left + W * 0.22, this.groundY);
     this.foe.setPosition(W * 0.58, this.groundY);
     this.foeBar.setPosition(this.foe.x, this.groundY - this.foe.figureHeight - 40);
@@ -210,17 +216,6 @@ export class BattleScene extends Phaser.Scene {
     this.result?.setPosition(W / 2, H / 2);
     this.drawWaves();
     this.sync();
-  }
-
-  private drawBackground(W: number, H: number): void {
-    const g = this.bg.clear();
-    const ground = H * 0.7;
-    g.fillGradientStyle(0x1b1340, 0x1b1340, 0x6b3a6b, 0x6b3a6b, 1).fillRect(0, 0, W, ground);
-    g.fillStyle(0x2a1f4d, 1);
-    for (let x = -100; x < W + 200; x += 260)
-      g.fillTriangle(x, ground, x + 160, ground - 150, x + 320, ground);
-    g.fillStyle(0x3a2a1f).fillRect(0, ground - 6, W, H - ground + 6);
-    g.fillStyle(0x4d3828).fillRect(0, ground - 6, W, 14);
   }
 
   private drawFaith(): void {

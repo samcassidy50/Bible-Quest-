@@ -38,6 +38,23 @@ describe('content: Genesis 1–11', () => {
     for (const e of ENCOUNTERS.slice(4)) expect(e.orbs.length).toBe(4);
   });
 
+  it('uses all six environments, matched to each passage', () => {
+    expect(ENCOUNTERS.map((e) => e.setting)).toEqual([
+      'deep',
+      'light',
+      'garden',
+      'garden',
+      'garden',
+      'wilderness',
+      'wilderness',
+      'flood',
+      'flood',
+      'flood',
+      'babel',
+    ]);
+    expect(getEncounter('gen-010').weather).toBe('clearing');
+  });
+
   it('getEncounter / nextEncounter walk the list', () => {
     expect(getEncounter('gen-005').title).toBe('The Temptation');
     expect(getEncounter('nope').id).toBe('gen-001');
