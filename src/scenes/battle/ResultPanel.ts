@@ -5,15 +5,15 @@ import { COLOR } from './actionInfo';
 
 /** Victory / defeat overlay with Retry (no permanent loss; docs/DESIGN.md §2.2). */
 export class ResultPanel extends Phaser.GameObjects.Container {
-  readonly retryButton: Button;
-  readonly titleButton: Button;
+  readonly primaryButton: Button;
+  readonly secondaryButton: Button;
 
   constructor(
     scene: Phaser.Scene,
     victory: boolean,
     stats: { correct: number; asked: number },
-    onRetry: () => void,
-    onTitle: () => void,
+    primary: { label: string; onTap: () => void },
+    secondary: { label: string; onTap: () => void },
   ) {
     const { width: W, height: H } = scene.scale.gameSize;
     super(scene, W / 2, H / 2);
@@ -54,26 +54,26 @@ export class ResultPanel extends Phaser.GameObjects.Container {
       )
       .setOrigin(0.5, 0);
 
-    this.retryButton = new Button(scene, 130, ph / 2 - 80, {
+    this.primaryButton = new Button(scene, 130, ph / 2 - 80, {
       width: 220,
       height: 84,
       radius: 42,
-      label: victory ? 'Play again' : 'Retry',
+      label: primary.label,
       fontSize: 28,
       fill: COLOR.correct,
-      onTap: onRetry,
+      onTap: primary.onTap,
     });
-    this.titleButton = new Button(scene, -130, ph / 2 - 80, {
+    this.secondaryButton = new Button(scene, -130, ph / 2 - 80, {
       width: 220,
       height: 84,
       radius: 42,
-      label: 'Title',
+      label: secondary.label,
       fontSize: 28,
       fill: 0x4a4560,
-      onTap: onTitle,
+      onTap: secondary.onTap,
     });
 
-    this.add([backdrop, panel, title, detail, this.retryButton, this.titleButton]);
+    this.add([backdrop, panel, title, detail, this.primaryButton, this.secondaryButton]);
     this.setDepth(200).setScale(0.6).setAlpha(0);
     scene.add.existing(this);
   }

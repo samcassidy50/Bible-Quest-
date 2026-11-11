@@ -8,7 +8,7 @@ test.describe.configure({ timeout: 90_000 });
 
 test('auto-play with correct answers wins all three waves', async ({ page }) => {
   await page.goto('/?scene=battle&seed=1&autoAnswer=correct&fast=1');
-  await waitFor(page, "s.battle && s.battle.result === 'VICTORY' && !!s.targets.retry", 60_000);
+  await waitFor(page, "s.battle && s.battle.result === 'VICTORY' && !!s.targets.primary", 60_000);
   const b = await battle(page);
   expect(b.wave).toBe(2);
   expect(b.foeHp).toBe(0);
@@ -18,11 +18,11 @@ test('auto-play with correct answers wins all three waves', async ({ page }) => 
 
 test('auto-play with wrong answers loses, and Retry restarts the fight', async ({ page }) => {
   await page.goto('/?scene=battle&seed=1&autoAnswer=wrong&fast=1&specials=');
-  await waitFor(page, "s.battle && s.battle.result === 'DEFEAT' && !!s.targets.retry", 60_000);
+  await waitFor(page, "s.battle && s.battle.result === 'DEFEAT' && !!s.targets.primary", 60_000);
   expect((await battle(page)).heroHp).toBe(0);
   await snap(page, test.info().outputPath('defeat.png'));
 
-  await tap(page, 'retry');
+  await tap(page, 'primary');
   await waitFor(page, 's.battle.result === null && s.battle.heroHp === 100 && s.battle.wave === 0');
 });
 
@@ -95,11 +95,11 @@ test('locked specials do nothing when tapped', async ({ page }) => {
   expect(b.phase).toBe('HERO_CHOOSE');
 });
 
-test('title screen tap starts the battle', async ({ page }) => {
+test('title screen tap starts the reading', async ({ page }) => {
   await page.goto('/?seed=1');
   await waitFor(page, "s.ready && s.scene === 'title'");
   const box = (await page.locator('#game canvas').boundingBox())!;
   await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
-  await waitFor(page, "s.scene === 'battle' && !!s.battle");
-  expect((await state(page)).battle!.encounter).toBe('gen-001');
+  await waitFor(page, "s.scene === 'scripture' && !!s.scripture");
+  expect((await state(page)).scripture!.encounter).toBe('gen-001');
 });

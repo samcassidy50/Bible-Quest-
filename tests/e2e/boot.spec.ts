@@ -21,8 +21,8 @@ test('game boots to the title scene in landscape', async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
-test('a scene that is not built yet falls back to title', async ({ page }) => {
-  await page.goto('/?scene=scripture&seed=1');
+test('an unknown scene param falls back to title', async ({ page }) => {
+  await page.goto('/?scene=nowhere&seed=1');
   await page.waitForFunction(() => window.__TEST__?.ready === true);
   expect(await page.evaluate(() => window.__TEST__?.scene)).toBe('title');
 });

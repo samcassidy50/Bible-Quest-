@@ -7,13 +7,14 @@ import { updateTestState } from './services/testHooks';
 import { BootScene } from './scenes/BootScene';
 import { TitleScene } from './scenes/TitleScene';
 import { BattleScene } from './scenes/battle/BattleScene';
+import { ScriptureScene } from './scenes/scripture/ScriptureScene';
 
 async function start(): Promise<void> {
   await initPlatform();
 
   const debug: DebugParams = TEST_HOOKS_ENABLED
     ? parseDebugParams(window.location.search)
-    : { fast: false, freeze: false, fps: false };
+    : { fast: false, freeze: false, fps: false, narrationOff: false, autoCollect: false };
   const seed = debug.seed ?? randomSeed();
 
   const game = new Phaser.Game({
@@ -29,7 +30,7 @@ async function start(): Promise<void> {
     render: { antialias: true, roundPixels: false },
     fps: { target: 60 },
     input: { activePointers: 2 },
-    scene: [BootScene, TitleScene, BattleScene],
+    scene: [BootScene, TitleScene, ScriptureScene, BattleScene],
     callbacks: {
       preBoot: (g) => {
         g.registry.set('debug', debug);

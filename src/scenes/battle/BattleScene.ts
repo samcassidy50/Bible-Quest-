@@ -95,7 +95,7 @@ export class BattleScene extends Phaser.Scene {
     this.events.on('card-continue-ready', () => this.sync());
 
     this.engine.start();
-    updateTestState({ ready: true, scene: 'battle' });
+    updateTestState({ ready: true, scene: 'battle', scripture: null });
     void this.intro();
   }
 
@@ -432,18 +432,20 @@ export class BattleScene extends Phaser.Scene {
 
   private async showResult(victory: boolean): Promise<void> {
     this.actionBar.refresh(this.engine, false);
+    const retry = () => {
+      // Same orbs, new rolls: the collected specials stay in the registry.
+      this.registry.set('attempt', ((this.registry.get('attempt') as number | undefined) ?? 0) + 1);
+      this.scene.restart();
+    };
+    const readAgain = () => this.scene.start('scripture');
     this.result = new ResultPanel(
       this,
       victory,
       { correct: this.correct, asked: this.asked },
-      () => {
-        this.registry.set(
-          'attempt',
-          ((this.registry.get('attempt') as number | undefined) ?? 0) + 1,
-        );
-        this.scene.restart();
-      },
-      () => this.scene.start('title'),
+      victory ? { label: 'Play again', onTap: readAgain } : { label: 'Retry', onTap: retry },
+      victory
+        ? { label: 'Title', onTap: () => this.scene.start('title') }
+        : { label: 'Read again', onTap: readAgain },
     );
     await this.result.appear();
     this.sync();
@@ -506,8 +508,8 @@ export class BattleScene extends Phaser.Scene {
     this.card?.answerButtons.forEach((b, i) => (targets[`answer:${i}`] = center(b)));
     if (this.card?.continueButton) targets['continue'] = center(this.card.continueButton);
     if (this.result) {
-      targets['retry'] = center(this.result.retryButton);
-      targets['title'] = center(this.result.titleButton);
+      targets['primary'] = center(this.result.primaryButton);
+      targets['secondary'] = center(this.result.secondaryButton);
     }
 
     const { width, height } = this.scale.gameSize;

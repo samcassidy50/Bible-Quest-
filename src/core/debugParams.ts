@@ -16,6 +16,10 @@ export interface DebugParams {
   specials?: SpecialId[];
   /** Starting Faith meter, e.g. `?faith=5` to test the ultimate. */
   faith?: number;
+  /** `?narration=off`: silent reading that waits the estimated time (tests). */
+  narrationOff: boolean;
+  /** `?autoCollect=1`: orbs collect themselves (accessibility setting, until Phase 5 settings). */
+  autoCollect: boolean;
   fast: boolean;
   freeze: boolean;
   fps: boolean;
@@ -27,7 +31,13 @@ export function parseDebugParams(search: string): DebugParams {
   const p = new URLSearchParams(search);
   const flag = (name: string) => p.get(name) === '1' || p.get(name) === 'true';
 
-  const result: DebugParams = { fast: flag('fast'), freeze: flag('freeze'), fps: flag('fps') };
+  const result: DebugParams = {
+    fast: flag('fast'),
+    freeze: flag('freeze'),
+    fps: flag('fps'),
+    narrationOff: p.get('narration') === 'off',
+    autoCollect: flag('autoCollect'),
+  };
 
   const scene = p.get('scene');
   if (scene && (SCENE_KEYS as readonly string[]).includes(scene)) result.scene = scene as SceneKey;

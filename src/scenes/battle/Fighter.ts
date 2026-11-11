@@ -32,10 +32,21 @@ export class Fighter extends Phaser.GameObjects.Container {
     return 190 * this.figure.scaleY;
   }
 
+  private legs: Phaser.GameObjects.Graphics[] = [];
+  private runTweens: Phaser.Tweens.Tween[] = [];
+
   private drawHero(): void {
+    const shadow = this.scene.add.graphics();
+    shadow.fillStyle(0x000000, 0.25).fillEllipse(0, 0, 110, 22);
+    // Legs pivot at the hip so they can swing in the run cycle.
+    this.legs = [-19, 19].map((x) =>
+      this.scene.add
+        .graphics()
+        .fillStyle(0x2c3e50)
+        .fillRoundedRect(-11, 0, 22, 62, 8)
+        .setPosition(x, -60),
+    );
     const g = this.scene.add.graphics();
-    g.fillStyle(0x000000, 0.25).fillEllipse(0, 0, 110, 22); // shadow
-    g.fillStyle(0x2c3e50).fillRoundedRect(-30, -60, 22, 60, 8).fillRoundedRect(8, -60, 22, 60, 8); // legs
     g.fillStyle(0x3b6fd8).fillRoundedRect(-40, -135, 80, 85, 18); // tunic
     g.fillStyle(0xf4c95d).fillRect(-40, -78, 80, 10); // belt
     g.fillStyle(0xf1c27d).fillCircle(0, -160, 32); // head
@@ -45,7 +56,35 @@ export class Fighter extends Phaser.GameObjects.Container {
     sword.fillStyle(0xdfe6ee).fillRect(0, -6, 80, 12); // blade
     sword.fillStyle(0xf4c95d).fillRect(-8, -14, 8, 28).fillRect(-26, -5, 18, 10); // guard + grip
     sword.setPosition(44, -100).setRotation(-0.6);
-    this.figure.add([g, sword]);
+    this.figure.add([shadow, ...this.legs, g, sword]);
+  }
+
+  /** Run cycle: legs swing in opposite directions and the body bobs (hero only). */
+  run(): void {
+    if (this.runTweens.length > 0 || this.legs.length === 0) return;
+    const [back, front] = this.legs as [Phaser.GameObjects.Graphics, Phaser.GameObjects.Graphics];
+    back.setRotation(-0.6);
+    front.setRotation(0.6);
+    const swing = { duration: 220, yoyo: true, repeat: -1, ease: 'Sine.inOut' };
+    this.runTweens = [
+      this.scene.tweens.add({ targets: back, rotation: 0.6, ...swing }),
+      this.scene.tweens.add({ targets: front, rotation: -0.6, ...swing }),
+      this.scene.tweens.add({
+        targets: this.figure,
+        y: -10,
+        duration: 110,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.out',
+      }),
+    ];
+  }
+
+  stopRun(): void {
+    this.runTweens.forEach((t) => t.stop());
+    this.runTweens = [];
+    this.legs.forEach((l) => l.setRotation(0));
+    this.figure.setY(0);
   }
 
   private drawFoe(color: number): void {

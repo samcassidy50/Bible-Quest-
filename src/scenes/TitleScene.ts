@@ -61,7 +61,7 @@ export class TitleScene extends Phaser.Scene {
 
     this.input.once('pointerdown', () => {
       this.cameras.main.fadeOut(250, 27, 21, 48);
-      this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start('battle'));
+      this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start('scripture'));
     });
 
     this.layout();

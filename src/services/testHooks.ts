@@ -22,6 +22,19 @@ export interface BattleTestState {
   correct: number;
 }
 
+export interface ScriptureTestState {
+  encounter: string;
+  durationMs: number;
+  elapsedMs: number;
+  narrationDone: boolean;
+  orbs: { special: string; status: string; atMs: number }[];
+  collected: string[];
+  canSkip: boolean;
+  fullTextOpen: boolean;
+  finishing: boolean;
+  readings: number;
+}
+
 export interface TestState {
   ready: boolean;
   scene: string | null;
@@ -35,6 +48,7 @@ export interface TestState {
   /** Centres of tappable things, in game coordinates (convert with the canvas box). */
   targets: Record<string, { x: number; y: number }>;
   battle: BattleTestState | null;
+  scripture: ScriptureTestState | null;
 }
 
 declare global {
@@ -54,6 +68,7 @@ let state: TestState = {
   gameHeight: 0,
   targets: {},
   battle: null,
+  scripture: null,
 };
 
 export function updateTestState(patch: Partial<TestState>): void {

@@ -5,6 +5,9 @@ const PORT = 4173;
 export default defineConfig({
   testDir: 'tests/e2e',
   fullyParallel: true,
+  // Each test renders WebGL in software; more workers starve the CPU and timing-based tests
+  // (orbs live 4 s) start missing. Real phones aren't starved like this.
+  workers: process.env.CI ? 2 : 3,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
