@@ -83,8 +83,14 @@ test('Skip appears after the verse has been heard once, and forfeits orbs', asyn
   await page.goto('/?scene=scripture&seed=1&fast=1&autoAnswer=correct');
   await waitFor(page, "s.battle && s.battle.result === 'VICTORY' && !!s.targets.secondary", 60_000);
   await tap(page, 'secondary');
-  await waitFor(page, "s.scene === 'map' && !!s.targets['stage:gen-001']");
+  await waitFor(
+    page,
+    "s.scene === 'map' && !s.mapRevealing && !!s.targets['stage:gen-001']",
+    30_000,
+  );
   await tap(page, 'stage:gen-001');
+  await waitFor(page, '!!s.targets.begin');
+  await tap(page, 'begin');
   await waitFor(
     page,
     "s.scene === 'scripture' && s.scripture && s.scripture.canSkip && !!s.targets.skip",

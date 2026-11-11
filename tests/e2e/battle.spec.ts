@@ -100,11 +100,13 @@ test('title → passage select → chosen passage', async ({ page }) => {
   await waitFor(page, "s.ready && s.scene === 'title'");
   const box = (await page.locator('#game canvas').boundingBox())!;
   await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
-  await waitFor(page, "s.scene === 'map' && !!s.targets['stage:gen-011']");
+  await waitFor(page, "s.scene === 'map' && !s.mapRevealing && !!s.targets['stage:gen-011']");
   await snap(page, test.info().outputPath('map.png'));
-  await tap(page, 'stage:gen-005');
+  await tap(page, 'stage:gen-011'); // ?unlockAll centres the map on the last location
+  await waitFor(page, '!!s.targets.begin');
+  await tap(page, 'begin');
   await waitFor(page, "s.scene === 'scripture' && !!s.scripture");
-  expect((await state(page)).scripture!.encounter).toBe('gen-005');
+  expect((await state(page)).scripture!.encounter).toBe('gen-011');
   expect((await state(page)).scripture!.orbs).toHaveLength(4);
 });
 

@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import type { SaveData } from '../../src/core/progress/progress';
-import { battle, heroTurn, state, tap, waitFor } from './helpers';
+import { battle, heroTurn, snap, state, tap, waitFor } from './helpers';
 
 test.describe.configure({ timeout: 90_000 });
 
@@ -9,6 +9,7 @@ const base = (): SaveData => ({
   version: 1,
   completed: {},
   heard: [],
+  seenOnMap: [],
   upgrades: { health: 0, strength: 0, armor: 0, faith: 0 },
   settings: {
     sound: true,
@@ -33,31 +34,58 @@ async function seed(page: Page, save: SaveData): Promise<void> {
 const stored = (page: Page) =>
   page.evaluate((k) => JSON.parse(window.localStorage.getItem(k) ?? 'null'), KEY);
 
-test('new players see only the first passage open', async ({ page }) => {
-  await page.goto('/?scene=map');
-  await waitFor(page, "s.scene === 'map' && !!s.map");
+test('new players see only the first location on the map', async ({ page }) => {
+  await page.goto('/?scene=map&fast=1');
+  await waitFor(page, "s.scene === 'map' && !!s.map && !s.mapRevealing");
   const map = (await state(page)).map!;
   expect(map.filter((m) => m.open).map((m) => m.id)).toEqual(['gen-001']);
-  await tap(page, 'stage:gen-002'); // locked: nothing happens
-  await page.waitForTimeout(400);
-  expect((await state(page)).scene).toBe('map');
+  const targets = Object.keys((await state(page)).targets);
+  expect(targets).toContain('stage:gen-001');
+  expect(targets).not.toContain('stage:gen-002');
 });
 
-test('winning earns stars, saves them, and opens the next passage', async ({ page }) => {
+test('tapping a location opens its card; Begin starts the reading', async ({ page }) => {
+  await page.goto('/?scene=map&fast=1');
+  await waitFor(page, "s.scene === 'map' && !s.mapRevealing && !!s.targets['stage:gen-001']");
+  await snap(page, test.info().outputPath('map.png'));
+  await tap(page, 'stage:gen-001');
+  await waitFor(page, "s.mapCard === 'gen-001' && !!s.targets.begin");
+  await snap(page, test.info().outputPath('map-card.png'));
+  await tap(page, 'begin');
+  await waitFor(
+    page,
+    "s.scene === 'scripture' && s.scripture && s.scripture.encounter === 'gen-001'",
+  );
+});
+
+test('map buttons still work when the map is scrolled', async ({ page }) => {
+  await page.goto('/?scene=map&unlockAll=1&fast=1'); // centred on the far end, so scrolled
+  await waitFor(page, "s.scene === 'map' && !s.mapRevealing && !!s.targets.journal");
+  await tap(page, 'journal');
+  await waitFor(page, "s.scene === 'journal'");
+});
+
+test('winning earns stars and reveals the next location once', async ({ page }) => {
   await page.goto('/?scene=battle&encounter=gen-001&seed=1&autoAnswer=correct&fast=1');
   await waitFor(page, "s.battle && s.battle.result === 'VICTORY' && !!s.targets.secondary", 60_000);
   expect((await state(page)).save!.completed['gen-001']!.stars).toBe(3);
   await expect.poll(() => stored(page)).toMatchObject({ completed: { 'gen-001': { stars: 3 } } });
 
-  await tap(page, 'secondary'); // Passages
-  await waitFor(page, "s.scene === 'map' && !!s.map");
+  await tap(page, 'secondary'); // Passages → map
+  await waitFor(page, "s.scene === 'map' && s.mapRevealing === true");
+  await waitFor(page, '!s.mapRevealing && !!s.targets["stage:gen-002"]', 30_000);
+  await snap(page, test.info().outputPath('map-revealed.png'));
   const map = (await state(page)).map!;
-  expect(map.find((m) => m.id === 'gen-001')).toMatchObject({ open: true, stars: 3 });
-  expect(map.find((m) => m.id === 'gen-002')!.open).toBe(true);
+  expect(map.find((m) => m.id === 'gen-001')).toMatchObject({ state: 'done', stars: 3 });
+  expect(map.find((m) => m.id === 'gen-002')!.state).toBe('open');
+  expect((await state(page)).save!.seenOnMap).toEqual(
+    expect.arrayContaining(['gen-001', 'gen-002']),
+  );
 
-  // Survives a reload.
-  await page.goto('/?scene=map');
+  // After a reload the new location is already there: no second reveal.
+  await page.goto('/?scene=map&fast=1');
   await waitFor(page, "s.scene === 'map' && !!s.map");
+  expect((await state(page)).mapRevealing).toBe(false);
   expect((await state(page)).map!.find((m) => m.id === 'gen-002')!.open).toBe(true);
 });
 

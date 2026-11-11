@@ -81,6 +81,8 @@ export const saveSchema = z.object({
     )
     .catch({}),
   heard: z.array(z.string()).catch([]),
+  /** Map locations whose reveal animation has played. */
+  seenOnMap: z.array(z.string()).catch([]),
   upgrades: z
     .object({ health: levelSchema, strength: levelSchema, armor: levelSchema, faith: levelSchema })
     .catch({ health: 0, strength: 0, armor: 0, faith: 0 }),
@@ -109,6 +111,7 @@ export function newSave(): SaveData {
     version: SAVE_VERSION,
     completed: {},
     heard: [],
+    seenOnMap: [],
     upgrades: {},
     settings: {},
   });
@@ -199,4 +202,10 @@ export function updateSettings(save: SaveData, patch: Partial<Settings>): SaveDa
 
 export function resetProgress(save: SaveData): SaveData {
   return { ...newSave(), settings: save.settings };
+}
+
+/** Records that these map locations have been shown (so their reveal plays only once). */
+export function markSeenOnMap(save: SaveData, ids: readonly string[]): SaveData {
+  const add = ids.filter((id) => !save.seenOnMap.includes(id));
+  return add.length === 0 ? save : { ...save, seenOnMap: [...save.seenOnMap, ...add] };
 }

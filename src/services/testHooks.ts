@@ -57,7 +57,11 @@ export interface TestState {
   /** The player's save as currently held in memory. */
   save: SaveData | null;
   /** Passage select: each passage, whether it is open, and its best stars. */
-  map: { id: string; open: boolean; stars: number }[] | null;
+  map: { id: string; open: boolean; state: string; stars: number }[] | null;
+  /** Map: a reveal animation is playing. */
+  mapRevealing: boolean;
+  /** Map: the location whose card is open. */
+  mapCard: string | null;
   /** Verse Journal: the passage currently shown. */
   journalOpen: string | null;
 }
@@ -83,6 +87,8 @@ let state: TestState = {
   sounds: [],
   save: null,
   map: null,
+  mapRevealing: false,
+  mapCard: null,
   journalOpen: null,
 };
 

@@ -102,6 +102,7 @@ This is an open question for review: confirm the tone with the stakeholders (see
 - Stars per stage (1–3) based on how many questions were answered correctly.
 - A light upgrade track: HP, attack, and upgrades to each special attack and the Faith Ultimate, bought with stars. No grinding is required to keep reading forward.
 - A "Verse Journal" collects every passage completed, so players can reread it outside of battle.
+- **Passage map (2026-11-12):** passage select is an original parchment map of the Genesis 1–11 lands (The Deep, Eden, Land of Nod, Ararat, Shinar), drawn in code. Only won and playable locations show; winning reveals the next one once (trail draws itself, the hero walks it). Drag to pan; tap a location for its card and Begin.
 
 ### 2.6 Special attacks, Faith Ultimate, and Armor orbs
 
