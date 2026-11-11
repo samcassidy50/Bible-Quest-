@@ -2,9 +2,9 @@
 
 /** Hero sprite sheet layout: equal cells, row-major, feet of every frame at (originX, originY). */
 export const HERO_SHEET = {
-  frameWidth: 98,
+  frameWidth: 136,
   frameHeight: 93,
-  originX: 49,
+  originX: 68,
   originY: 92,
   /** Height of the standing hero in native pixels. */
   standingHeight: 64,
@@ -25,16 +25,18 @@ export const HERO_FRAMES = {
   slash_1: 11,
   slash_2: 12,
   slash_3: 13,
-  power_0: 14,
-  power_1: 15,
-  power_2: 16,
-  power_3: 17,
-  power_4: 18,
-  power_5: 19,
-  walk: 20,
-  thrust: 21,
-  hurt: 22,
-  victory: 23,
+  slash_4: 14,
+  slash_5: 15,
+  power_0: 16,
+  power_1: 17,
+  power_2: 18,
+  power_3: 19,
+  power_4: 20,
+  power_5: 21,
+  walk: 22,
+  thrust: 23,
+  hurt: 24,
+  victory: 25,
 } as const;
 
 export type HeroFrame = keyof typeof HERO_FRAMES;

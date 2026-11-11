@@ -34,7 +34,7 @@ export const HERO_CLIPS = {
   ),
   punch: frameClip(
     'punch',
-    [f('slash_0', 110), f('slash_1', 80), f('thrust', 150), f('idle_0', 80)],
+    [f('slash_0', 110), f('slash_2', 80), f('thrust', 150), f('idle_0', 80)],
     {
       events: [
         { at: 110, name: 'swing' },
@@ -42,13 +42,21 @@ export const HERO_CLIPS = {
       ],
     },
   ),
+  // Ready, anticipation (held), swing (fast), impact, follow-through, recovery.
   slash: frameClip(
     'slash',
-    [f('slash_0', 140), f('slash_1', 90), f('slash_2', 170), f('slash_3', 140)],
+    [
+      f('slash_0', 80),
+      f('slash_1', 180),
+      f('slash_2', 60),
+      f('slash_3', 140),
+      f('slash_4', 110),
+      f('slash_5', 120),
+    ],
     {
       events: [
-        { at: 140, name: 'swing' },
-        { at: 230, name: 'impact' },
+        { at: 260, name: 'swing' },
+        { at: 320, name: 'impact' },
       ],
     },
   ),
