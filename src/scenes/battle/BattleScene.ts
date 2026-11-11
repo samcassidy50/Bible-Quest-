@@ -23,6 +23,16 @@ import { Fighter } from './Fighter';
 import { HpBar } from './HpBar';
 import { QuestionCard } from './QuestionCard';
 import { ResultPanel } from './ResultPanel';
+import { hapticTap } from '../../services/haptics';
+import type { HeroClipName } from '../../core/anim/heroClips';
+
+/** Which swing the hero uses for a damaging action. */
+function strikeClip(action: ActionId, powered: boolean): HeroClipName {
+  if (action === 'ultimate' || (action === 'sword' && powered)) return 'slashPowered';
+  if (action === 'attack') return powered ? 'slash' : 'punch';
+  if (action === 'sandals') return 'punch';
+  return 'slash';
+}
 
 /**
  * Battle scene (docs/DESIGN.md §2.2). Renders and sequences only: every rule lives in
@@ -158,10 +168,8 @@ export class BattleScene extends Phaser.Scene {
 
     this.actionBar = new ActionBar(this, (a) => void this.onAction(a));
 
-    if (!this.debug.freeze) {
-      this.hero.idle();
-      this.foe.idle();
-    }
+    this.hero.setFrozen(this.debug.freeze);
+    if (!this.debug.freeze) this.foe.idle();
     this.drawFaith();
     this.drawWaves();
   }
@@ -306,6 +314,7 @@ export class BattleScene extends Phaser.Scene {
     if (res.victory) {
       await this.foeDefeated();
       this.drawWaves();
+      await this.hero.act('victory');
       await this.showResult(true);
       return;
     }
@@ -319,6 +328,7 @@ export class BattleScene extends Phaser.Scene {
     const enemy = this.engine.enemyTurn();
     await this.playEnemy(enemy);
     if (enemy.defeat) {
+      await this.hero.act('die');
       await this.showResult(false);
       return;
     }
@@ -332,13 +342,16 @@ export class BattleScene extends Phaser.Scene {
     const powered = res.correct !== false;
     if (res.action === 'ultimate') {
       this.cameras.main.flash(400, 244, 201, 93);
+      void this.hero.act('cast');
       await this.banner(`${info.icon} ${info.name}! ${info.icon}`, '#f4c95d');
     } else if (res.action !== 'attack') {
       void this.banner(`${info.icon} ${info.name}`, powered ? '#f4c95d' : '#ffffff', 700);
     }
 
-    if (res.damage > 0) await this.heroStrike(res.damage, powered, res.action === 'ultimate');
+    if (res.action === 'breastplate') await this.hero.act('cast');
+    if (res.damage > 0) await this.heroStrike(res, powered);
     if (res.blocksAdded > 0) {
+      void this.hero.act('block');
       this.hero.setShield(this.engine.blocks);
       this.floatText(
         this.hero.x,
@@ -358,27 +371,49 @@ export class BattleScene extends Phaser.Scene {
     await wait(this, 350);
   }
 
-  private async heroStrike(damage: number, powered: boolean, ultimate: boolean): Promise<void> {
+  /**
+   * Hero runs up, swings, and the hit lands on the clip's "impact" frame, then runs back.
+   * Wrong-answer attacks are a punch; right answers swing the sword (docs/DESIGN.md §2.2).
+   */
+  private async heroStrike(res: HeroActionResult, powered: boolean): Promise<void> {
+    const ultimate = res.action === 'ultimate';
     const startX = this.hero.x;
+    this.hero.run();
     await tweenAsync(this, {
       targets: this.hero,
-      x: this.foe.x - 170,
-      duration: 220,
+      x: this.foe.x - 150,
+      duration: 260,
       ease: 'Quad.in',
     });
-    this.foe.figure.setAlpha(0.4);
-    this.time.delayedCall(90, () => this.foe.figure.setAlpha(1));
-    if (powered) this.cameras.main.shake(ultimate ? 400 : 180, ultimate ? 0.02 : 0.008);
-    this.floatText(
-      this.foe.x,
-      this.foe.y - this.foe.figureHeight - 70,
-      `${damage}`,
-      powered ? COLOR.powered : COLOR.damage,
-      ultimate ? 84 : powered ? 60 : 44,
-    );
-    this.foeBar.setValue(this.engine.foeHp);
-    void tweenAsync(this, { targets: this.foe, x: this.foe.x + 24, duration: 70, yoyo: true });
-    await tweenAsync(this, { targets: this.hero, x: startX, duration: 260, ease: 'Quad.out' });
+
+    let landed = false;
+    const land = () => {
+      if (landed) return;
+      landed = true;
+      this.foe.figure.setAlpha(0.4);
+      this.time.delayedCall(90, () => this.foe.figure.setAlpha(1));
+      if (powered) {
+        this.cameras.main.shake(ultimate ? 400 : 180, ultimate ? 0.02 : 0.008);
+        void hapticTap(true);
+      }
+      this.floatText(
+        this.foe.x,
+        this.foe.y - this.foe.figureHeight - 70,
+        `${res.damage}`,
+        powered ? COLOR.powered : COLOR.damage,
+        ultimate ? 84 : powered ? 60 : 44,
+      );
+      this.foeBar.setValue(this.engine.foeHp);
+      void tweenAsync(this, { targets: this.foe, x: this.foe.x + 24, duration: 70, yoyo: true });
+    };
+    await this.hero.act(strikeClip(res.action, powered), (e) => e === 'impact' && land());
+    land(); // in case the clip had no impact event
+
+    this.hero.face(-1);
+    this.hero.run();
+    await tweenAsync(this, { targets: this.hero, x: startX, duration: 300, ease: 'Quad.out' });
+    this.hero.face(1);
+    this.hero.idle();
   }
 
   private async playEnemy(res: EnemyTurnResult): Promise<void> {
@@ -405,9 +440,9 @@ export class BattleScene extends Phaser.Scene {
     if (res.blocked) {
       this.floatText(this.hero.x, this.hero.y - 230, 'Blocked!', '#85c1e9', 40);
       this.hero.setShield(this.engine.blocks);
+      void this.hero.act('block');
     } else {
-      this.hero.figure.setAlpha(0.4);
-      this.time.delayedCall(90, () => this.hero.figure.setAlpha(1));
+      void this.hero.act('hurt');
       this.cameras.main.shake(150, 0.006);
       this.floatText(this.hero.x, this.hero.y - 220, `-${res.damage}`, '#ff6b6b', 48);
       this.heroBar.setValue(this.engine.heroHp);
@@ -562,6 +597,7 @@ export class BattleScene extends Phaser.Scene {
         result: e.phase === 'VICTORY' || e.phase === 'DEFEAT' ? e.phase : null,
         asked: this.asked,
         correct: this.correct,
+        heroAnims: this.hero.animHistory,
       },
     });
   }

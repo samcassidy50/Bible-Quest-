@@ -54,3 +54,13 @@ describe('parseDebugParams: battle params', () => {
     expect(parseDebugParams('?faith=999').faith).toBeUndefined();
   });
 });
+
+describe('parseDebugParams: hero viewer', () => {
+  it('accepts a simple clip name only', () => {
+    expect(parseDebugParams('?scene=rig&clip=slash')).toMatchObject({
+      scene: 'rig',
+      clip: 'slash',
+    });
+    expect(parseDebugParams('?clip=<b>').clip).toBeUndefined();
+  });
+});

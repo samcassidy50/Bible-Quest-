@@ -20,6 +20,8 @@ export interface BattleTestState {
   result: 'VICTORY' | 'DEFEAT' | null;
   asked: number;
   correct: number;
+  /** Hero animation clips started this fight, oldest first. */
+  heroAnims: string[];
 }
 
 export interface ScriptureTestState {

@@ -4,7 +4,7 @@ import { SPECIAL_IDS, type SpecialId } from './battle/types';
  * Debug/test URL parameters (see docs/DESIGN.md §8.2).
  * Parsing is pure so it can be unit-tested; main.ts decides whether to honour them.
  */
-export const SCENE_KEYS = ['boot', 'title', 'map', 'scripture', 'battle'] as const;
+export const SCENE_KEYS = ['boot', 'title', 'map', 'scripture', 'battle', 'rig'] as const;
 export type SceneKey = (typeof SCENE_KEYS)[number];
 
 export interface DebugParams {
@@ -18,6 +18,8 @@ export interface DebugParams {
   faith?: number;
   /** `?narration=off`: silent reading that waits the estimated time (tests). */
   narrationOff: boolean;
+  /** `?clip=slash` with `?scene=rig`: contact sheet of one hero animation. */
+  clip?: string;
   /** `?autoCollect=1`: orbs collect themselves (accessibility setting, until Phase 5 settings). */
   autoCollect: boolean;
   fast: boolean;
@@ -58,6 +60,9 @@ export function parseDebugParams(search: string): DebugParams {
       .filter((s): s is SpecialId => (SPECIAL_IDS as readonly string[]).includes(s));
     result.specials = [...new Set(ids)];
   }
+
+  const clip = p.get('clip');
+  if (clip && /^[a-zA-Z]{1,20}$/.test(clip)) result.clip = clip;
 
   const faith = p.get('faith');
   if (faith !== null && /^\d{1,2}$/.test(faith)) result.faith = Number(faith);

@@ -9,6 +9,7 @@ import { TitleScene } from './scenes/TitleScene';
 import { BattleScene } from './scenes/battle/BattleScene';
 import { ScriptureScene } from './scenes/scripture/ScriptureScene';
 import { MapScene } from './scenes/map/MapScene';
+import { AnimViewerScene } from './scenes/hero/AnimViewerScene';
 
 async function start(): Promise<void> {
   await initPlatform();
@@ -31,7 +32,7 @@ async function start(): Promise<void> {
     render: { antialias: true, roundPixels: false },
     fps: { target: 60 },
     input: { activePointers: 2 },
-    scene: [BootScene, TitleScene, MapScene, ScriptureScene, BattleScene],
+    scene: [BootScene, TitleScene, MapScene, ScriptureScene, BattleScene, AnimViewerScene],
     callbacks: {
       preBoot: (g) => {
         g.registry.set('debug', debug);

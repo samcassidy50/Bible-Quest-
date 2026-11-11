@@ -372,6 +372,7 @@ Each phase ends in something playable, deployed to a preview URL.
 ### Phase 4: Art, animation, and audio (≈3–4 weeks, can start in parallel with Phase 3)
 
 - Original hero design: idle, run, attack, powered attack, hit, and victory animations.
+  - **Status (2026-11-11):** done as an original chibi cutout rig drawn in code, with keyframed clips: idle, run, punch, slash, powered slam, hurt, die, victory, block, cast. Wrong-answer attacks punch, right answers slash; hits land on each clip's `impact` frame. Viewer at `?scene=rig`.
 - Foe sprites for the arc, plus backgrounds per setting (void, garden, wilderness, flood, Babel).
 - VFX: powered-attack glow and particles, hit sparks.
 - A unique animation and effect for each special attack and the Faith Ultimate; orb glow, collect, and fly-to-slot effects.

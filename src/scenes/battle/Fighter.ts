@@ -1,12 +1,16 @@
 import Phaser from 'phaser';
+import type { HeroClipName } from '../../core/anim/heroClips';
+import { HeroRig } from '../hero/HeroRig';
 import { FONT_UI } from '../util';
 
 /**
- * Placeholder fighter art drawn with shapes (Phase 4 swaps in sprites).
+ * A combatant on the field. The hero is the animated cutout rig (scenes/hero/HeroRig.ts);
+ * foes are still placeholder shapes until their sprites land.
  * Origin is at the fighter's feet so both stand on the same ground line.
  */
 export class Fighter extends Phaser.GameObjects.Container {
   readonly figure: Phaser.GameObjects.Container;
+  readonly rig?: HeroRig;
   private shieldBubble?: Phaser.GameObjects.Arc;
   private stunText?: Phaser.GameObjects.Text;
 
@@ -21,8 +25,12 @@ export class Fighter extends Phaser.GameObjects.Container {
     super(scene, x, y);
     this.figure = scene.add.container(0, 0);
     this.add(this.figure);
-    if (kind === 'hero') this.drawHero();
-    else this.drawFoe(color);
+    if (kind === 'hero') {
+      this.rig = new HeroRig(scene, 0, 0);
+      this.figure.add(this.rig);
+    } else {
+      this.drawFoe(color);
+    }
     this.figure.setScale(size);
     scene.add.existing(this);
   }
@@ -30,61 +38,6 @@ export class Fighter extends Phaser.GameObjects.Container {
   /** Height of the drawn figure, for placing HP bars and effects above it. */
   get figureHeight(): number {
     return 190 * this.figure.scaleY;
-  }
-
-  private legs: Phaser.GameObjects.Graphics[] = [];
-  private runTweens: Phaser.Tweens.Tween[] = [];
-
-  private drawHero(): void {
-    const shadow = this.scene.add.graphics();
-    shadow.fillStyle(0x000000, 0.25).fillEllipse(0, 0, 110, 22);
-    // Legs pivot at the hip so they can swing in the run cycle.
-    this.legs = [-19, 19].map((x) =>
-      this.scene.add
-        .graphics()
-        .fillStyle(0x2c3e50)
-        .fillRoundedRect(-11, 0, 22, 62, 8)
-        .setPosition(x, -60),
-    );
-    const g = this.scene.add.graphics();
-    g.fillStyle(0x3b6fd8).fillRoundedRect(-40, -135, 80, 85, 18); // tunic
-    g.fillStyle(0xf4c95d).fillRect(-40, -78, 80, 10); // belt
-    g.fillStyle(0xf1c27d).fillCircle(0, -160, 32); // head
-    g.fillStyle(0x3a2a1a).fillEllipse(0, -182, 70, 30); // hair
-    g.fillStyle(0x222222).fillCircle(11, -160, 4).fillCircle(-5, -160, 4); // eyes (facing right)
-    const sword = this.scene.add.graphics();
-    sword.fillStyle(0xdfe6ee).fillRect(0, -6, 80, 12); // blade
-    sword.fillStyle(0xf4c95d).fillRect(-8, -14, 8, 28).fillRect(-26, -5, 18, 10); // guard + grip
-    sword.setPosition(44, -100).setRotation(-0.6);
-    this.figure.add([shadow, ...this.legs, g, sword]);
-  }
-
-  /** Run cycle: legs swing in opposite directions and the body bobs (hero only). */
-  run(): void {
-    if (this.runTweens.length > 0 || this.legs.length === 0) return;
-    const [back, front] = this.legs as [Phaser.GameObjects.Graphics, Phaser.GameObjects.Graphics];
-    back.setRotation(-0.6);
-    front.setRotation(0.6);
-    const swing = { duration: 220, yoyo: true, repeat: -1, ease: 'Sine.inOut' };
-    this.runTweens = [
-      this.scene.tweens.add({ targets: back, rotation: 0.6, ...swing }),
-      this.scene.tweens.add({ targets: front, rotation: -0.6, ...swing }),
-      this.scene.tweens.add({
-        targets: this.figure,
-        y: -10,
-        duration: 110,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.out',
-      }),
-    ];
-  }
-
-  stopRun(): void {
-    this.runTweens.forEach((t) => t.stop());
-    this.runTweens = [];
-    this.legs.forEach((l) => l.setRotation(0));
-    this.figure.setY(0);
   }
 
   private drawFoe(color: number): void {
@@ -98,16 +51,50 @@ export class Fighter extends Phaser.GameObjects.Container {
     this.figure.add(g);
   }
 
-  /** Gentle breathing loop (skipped with ?freeze=1). */
+  /** Idle loop: the hero's breathing clip, or a gentle pulse for foes. */
   idle(): void {
+    if (this.rig) {
+      this.rig.loop('idle');
+      return;
+    }
     this.scene.tweens.add({
       targets: this.figure,
       scaleY: this.figure.scaleY * 1.04,
-      duration: this.kind === 'hero' ? 900 : 1300,
+      duration: 1300,
       yoyo: true,
       repeat: -1,
       ease: 'Sine.inOut',
     });
+  }
+
+  run(): void {
+    this.rig?.loop('run');
+  }
+
+  stopRun(): void {
+    this.rig?.loop('idle');
+  }
+
+  /** Plays a hero animation (no-op for foes). Resolves when it ends. */
+  act(name: HeroClipName, onEvent?: (event: string) => void): Promise<void> {
+    if (!this.rig) {
+      onEvent?.('impact');
+      return Promise.resolve();
+    }
+    return this.rig.play(name, onEvent);
+  }
+
+  face(dir: 1 | -1): void {
+    this.rig?.face(dir);
+  }
+
+  /** Keeps loops on their first frame for stable screenshots (?freeze=1). */
+  setFrozen(frozen: boolean): void {
+    if (this.rig) this.rig.frozen = frozen;
+  }
+
+  get animHistory(): string[] {
+    return this.rig ? [...this.rig.history] : [];
   }
 
   setShield(blocks: number): void {

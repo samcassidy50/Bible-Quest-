@@ -57,3 +57,11 @@ export async function snap(page: Page, path: string): Promise<void> {
   await page.waitForTimeout(150);
   await page.screenshot({ path });
 }
+
+/** Taps a target only if it still exists (for things that move or disappear, like orbs). */
+export async function tapIfPresent(page: Page, key: string): Promise<boolean> {
+  const s = await state(page);
+  if (!s.targets[key]) return false;
+  await tap(page, key);
+  return true;
+}

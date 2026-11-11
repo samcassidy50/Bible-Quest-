@@ -40,7 +40,13 @@ Before saying a task is done, run: `npm run lint && npm run typecheck && npm run
 
 - New `core/` logic ⇒ new Vitest tests in `tests/unit/`.
 - New scene/UI behaviour ⇒ a Playwright test in `tests/e2e/` using the debug params and `window.__TEST__` (`services/testHooks.ts`). Add fields to `TestState` instead of scraping pixels.
-- Debug URL params (dev and e2e builds only): `?scene= &encounter= &seed= &autoAnswer=correct|wrong &fast=1 &freeze=1 &fps=1`. Parsed in `core/debugParams.ts`.
+- Debug URL params (dev and e2e builds only): `?scene= &encounter= &seed= &autoAnswer=correct|wrong &fast=1 &freeze=1 &fps=1 &specials= &faith= &narration=off &autoCollect=1`. Parsed in `core/debugParams.ts`.
+- Hero animation viewer: `?scene=rig` (tap a clip to play it) or `?scene=rig&clip=slash` (contact sheet of frames). Check new or changed hero clips here before using them in scenes.
+
+## Hero art
+
+- The hero is an original chibi cutout rig drawn in code (`src/scenes/hero/HeroRig.ts`). Clips are keyframed poses in `src/core/anim/heroClips.ts`; pose conventions are documented in `src/core/anim/pose.ts`.
+- Attack clips must have an `impact` event; the battle lands damage on that frame.
 - For UI changes, look at the screenshot yourself (Playwright `outputPath`, or `adb exec-out screencap -p` on the emulator) before claiming it works, and attach screenshots to the PR.
 
 ## Android emulator tips

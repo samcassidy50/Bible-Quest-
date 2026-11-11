@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import type { ScriptureTestState } from '../../src/services/testHooks';
-import { battle, heroTurn, snap, state, tap, waitFor } from './helpers';
+import { battle, heroTurn, snap, state, tap, tapIfPresent, waitFor } from './helpers';
 
 test.describe.configure({ timeout: 90_000 });
 
@@ -19,8 +19,8 @@ test('tapping the orb during the reading unlocks Sword for the fight', async ({ 
   // The orb drifts upward, so re-read its position and retry if a slow machine misses it.
   for (let i = 0; i < 5; i++) {
     const s = await state(page);
-    if (s.scripture?.collected.includes('sword') || !s.targets['orb:sword']) break;
-    await tap(page, 'orb:sword');
+    if (s.scripture?.collected.includes('sword')) break;
+    if (!(await tapIfPresent(page, 'orb:sword'))) break;
     await page.waitForTimeout(150);
   }
   await waitFor(page, "s.scripture && s.scripture.collected.includes('sword')");
