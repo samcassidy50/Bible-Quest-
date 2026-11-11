@@ -1,4 +1,5 @@
 import { TEST_HOOKS_ENABLED } from '../config';
+import type { SaveData } from '../core/progress/progress';
 
 /** Read-only game state for Playwright/Maestro assertions (docs/DESIGN.md §8.2). */
 export interface BattleTestState {
@@ -53,6 +54,12 @@ export interface TestState {
   scripture: ScriptureTestState | null;
   /** Sound effect cues played, newest last. */
   sounds: string[];
+  /** The player's save as currently held in memory. */
+  save: SaveData | null;
+  /** Passage select: each passage, whether it is open, and its best stars. */
+  map: { id: string; open: boolean; stars: number }[] | null;
+  /** Verse Journal: the passage currently shown. */
+  journalOpen: string | null;
 }
 
 declare global {
@@ -74,6 +81,9 @@ let state: TestState = {
   battle: null,
   scripture: null,
   sounds: [],
+  save: null,
+  map: null,
+  journalOpen: null,
 };
 
 export function updateTestState(patch: Partial<TestState>): void {

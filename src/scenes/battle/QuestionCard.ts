@@ -17,6 +17,8 @@ export class QuestionCard extends Phaser.GameObjects.Container {
   private readonly cardW: number;
   private readonly cardH: number;
   private answered = false;
+  private timerBar?: Phaser.GameObjects.Graphics;
+  private timerTween?: Phaser.Tweens.Tween;
 
   constructor(
     scene: Phaser.Scene,
@@ -108,10 +110,36 @@ export class QuestionCard extends Phaser.GameObjects.Container {
     this.destroy();
   }
 
-  /** Programmatic answer (used by ?autoAnswer). */
+  /**
+   * Optional countdown (settings → question timer). A gold bar drains along the top of the card;
+   * running out counts as a wrong answer (index -1), which then shows the right answer.
+   */
+  startTimer(ms: number): void {
+    const cw = this.cardW;
+    const y = -this.cardH / 2 + 12;
+    this.timerBar = this.scene.add.graphics();
+    this.add(this.timerBar);
+    const draw = (k: number) => {
+      this.timerBar
+        ?.clear()
+        .fillStyle(k > 0.25 ? COLOR.gold : 0xe74c3c, 1)
+        .fillRoundedRect(-cw / 2 + 28, y, (cw - 56) * k, 8, 4);
+    };
+    draw(1);
+    this.timerTween = this.scene.tweens.addCounter({
+      from: 1,
+      to: 0,
+      duration: ms,
+      onUpdate: (t) => draw(t.getValue() ?? 0),
+      onComplete: () => this.choose(-1),
+    });
+  }
+
+  /** Programmatic answer (used by ?autoAnswer and the timer; -1 = time ran out). */
   choose(index: number): void {
     if (this.answered) return;
     this.answered = true;
+    this.timerTween?.stop();
     this.answerButtons.forEach((b) => b.setEnabled(false).setAlpha(1));
     this.onAnswer(index);
   }
@@ -148,7 +176,8 @@ export class QuestionCard extends Phaser.GameObjects.Container {
     }
 
     const answer = q.choices[q.answerIndex];
-    const fb = this.scene.add.text(left, fbY, `Not quite. The answer is “${answer}”.`, {
+    const lead = chosen < 0 ? '⏰ Time’s up!' : 'Not quite.';
+    const fb = this.scene.add.text(left, fbY, `${lead} The answer is “${answer}”.`, {
       fontFamily: FONT_UI,
       fontSize: '24px',
       fontStyle: 'bold',

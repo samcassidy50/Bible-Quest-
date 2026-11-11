@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { BattleEngine } from '../../core/battle/BattleEngine';
-import { HERO_BASE } from '../../core/battle/hero';
+import { heroBuild, QUESTION_TIME_S, recordVictory } from '../../core/progress/progress';
+import { progress } from '../../services/progress';
 import { pickAction } from '../../core/battle/simulate';
 import type {
   ActionId,
@@ -105,7 +106,7 @@ export class BattleScene extends Phaser.Scene {
 
     this.engine = new BattleEngine(
       {
-        hero: HERO_BASE,
+        ...heroBuild(progress.save.upgrades),
         waves: this.encounter.waves,
         unlockedSpecials: this.unlockedSpecials(),
         startingFaith: this.debug.faith,
@@ -291,6 +292,8 @@ export class BattleScene extends Phaser.Scene {
       (i) => void this.onAnswer(i),
     );
     await this.card.slideIn();
+    if (progress.save.settings.timer && !this.debug.autoAnswer)
+      this.card.startTimer(QUESTION_TIME_S * 1000);
     this.sync();
 
     if (this.debug.autoAnswer) {
@@ -513,10 +516,15 @@ export class BattleScene extends Phaser.Scene {
     };
     const readAgain = () => this.scene.start('scripture');
     const next = nextEncounter(this.encounter.id);
+    let stars: number | undefined;
+    let newBest = false;
     if (victory) {
-      const done = new Set((this.registry.get('completed') as string[] | undefined) ?? []);
-      done.add(this.encounter.id);
-      this.registry.set('completed', [...done]);
+      let result!: ReturnType<typeof recordVictory>;
+      progress.update(
+        (s) => (result = recordVictory(s, this.encounter.id, this.correct, this.asked)).save,
+      );
+      stars = result.stars;
+      newBest = result.newBest;
     }
     const goNext = () => {
       if (!next) return readAgain();
@@ -528,7 +536,7 @@ export class BattleScene extends Phaser.Scene {
     this.result = new ResultPanel(
       this,
       victory,
-      { correct: this.correct, asked: this.asked },
+      { correct: this.correct, asked: this.asked, stars, newBest },
       victory
         ? { label: next ? 'Next passage' : 'Play again', onTap: goNext }
         : { label: 'Retry', onTap: retry },

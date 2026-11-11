@@ -23,11 +23,13 @@ export const NARRATION_RATE = 0.9;
 const TIMEOUT_FACTOR = 1.6;
 
 export class SilentNarration implements Narration {
-  readonly rate = NARRATION_RATE;
   private cancel?: () => void;
 
   /** `wait` lets the caller use scene time so `?fast=1` speeds it up. */
-  constructor(private readonly wait: (ms: number) => Promise<void>) {}
+  constructor(
+    private readonly wait: (ms: number) => Promise<void>,
+    readonly rate = NARRATION_RATE,
+  ) {}
 
   speak(text: string): Promise<void> {
     return new Promise((resolve) => {
@@ -42,7 +44,7 @@ export class SilentNarration implements Narration {
 }
 
 export class WebSpeechNarration implements Narration {
-  readonly rate = NARRATION_RATE;
+  constructor(readonly rate = NARRATION_RATE) {}
   private finish?: () => void;
 
   static available(): boolean {
@@ -77,7 +79,7 @@ export class WebSpeechNarration implements Narration {
 }
 
 export class NativeNarration implements Narration {
-  readonly rate = NARRATION_RATE;
+  constructor(readonly rate = NARRATION_RATE) {}
   private finish?: () => void;
 
   async speak(text: string): Promise<void> {
@@ -108,9 +110,12 @@ export class NativeNarration implements Narration {
 export function createNarration(opts: {
   enabled: boolean;
   wait: (ms: number) => Promise<void>;
+  /** Reading speed (settings); also sets the silent reading's pace. */
+  rate?: number;
 }): Narration {
-  if (!opts.enabled) return new SilentNarration(opts.wait);
-  if (Capacitor.isNativePlatform()) return new NativeNarration();
-  if (WebSpeechNarration.available()) return new WebSpeechNarration();
-  return new SilentNarration(opts.wait);
+  const rate = opts.rate ?? NARRATION_RATE;
+  if (!opts.enabled) return new SilentNarration(opts.wait, rate);
+  if (Capacitor.isNativePlatform()) return new NativeNarration(rate);
+  if (WebSpeechNarration.available()) return new WebSpeechNarration(rate);
+  return new SilentNarration(opts.wait, rate);
 }

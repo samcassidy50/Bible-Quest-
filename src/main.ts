@@ -5,20 +5,32 @@ import { randomSeed } from './core/rng';
 import { initPlatform, onAppActiveChange, platformName } from './services/platform';
 import { updateTestState } from './services/testHooks';
 import { sfx } from './services/sfx';
+import { progress } from './services/progress';
 import { BootScene } from './scenes/BootScene';
 import { TitleScene } from './scenes/TitleScene';
 import { BattleScene } from './scenes/battle/BattleScene';
 import { ScriptureScene } from './scenes/scripture/ScriptureScene';
 import { MapScene } from './scenes/map/MapScene';
+import { UpgradesScene } from './scenes/menus/UpgradesScene';
+import { JournalScene } from './scenes/menus/JournalScene';
+import { SettingsScene } from './scenes/menus/SettingsScene';
 import { AnimViewerScene } from './scenes/hero/AnimViewerScene';
 import { SoundBoardScene } from './scenes/debug/SoundBoardScene';
 
 async function start(): Promise<void> {
   await initPlatform();
+  await progress.load();
 
   const debug: DebugParams = TEST_HOOKS_ENABLED
     ? parseDebugParams(window.location.search)
-    : { fast: false, freeze: false, fps: false, narrationOff: false, autoCollect: false };
+    : {
+        fast: false,
+        freeze: false,
+        fps: false,
+        narrationOff: false,
+        autoCollect: false,
+        unlockAll: false,
+      };
   const seed = debug.seed ?? randomSeed();
 
   const game = new Phaser.Game({
@@ -38,6 +50,9 @@ async function start(): Promise<void> {
       BootScene,
       TitleScene,
       MapScene,
+      UpgradesScene,
+      JournalScene,
+      SettingsScene,
       ScriptureScene,
       BattleScene,
       AnimViewerScene,

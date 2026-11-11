@@ -50,6 +50,10 @@ export class BattleEngine {
 
   // ── State ────────────────────────────────────────────────────────────────
 
+  private get specialPower(): number {
+    return this.config.specialPower ?? 1;
+  }
+
   get phase(): BattlePhase {
     return this._phase;
   }
@@ -155,7 +159,7 @@ export class BattleEngine {
         hit(correct ? TUNING.attack.powered : TUNING.attack.base);
         break;
       case 'sword':
-        hit(correct ? TUNING.sword.powered : TUNING.sword.base);
+        hit((correct ? TUNING.sword.powered : TUNING.sword.base) * this.specialPower);
         break;
       case 'shield':
         result.blocksAdded = correct ? TUNING.shield.poweredBlocks : TUNING.shield.baseBlocks;
@@ -164,7 +168,8 @@ export class BattleEngine {
         break;
       case 'breastplate':
         result.healed = this.healHero(
-          correct ? TUNING.breastplate.poweredHeal : TUNING.breastplate.baseHeal,
+          (correct ? TUNING.breastplate.poweredHeal : TUNING.breastplate.baseHeal) *
+            this.specialPower,
         );
         break;
       case 'sandals':
@@ -214,7 +219,7 @@ export class BattleEngine {
   private resolveUltimate(): HeroActionResult {
     this._faith = 0;
     const result = this.emptyResult('ultimate', null, 0);
-    result.damage = this.damageFoe(TUNING.ultimate.damage);
+    result.damage = this.damageFoe(TUNING.ultimate.damage + (this.config.ultimateBonus ?? 0));
     result.healed = this.healHero(TUNING.ultimate.heal);
     return this.finishHeroAction(result);
   }

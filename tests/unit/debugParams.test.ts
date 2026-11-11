@@ -9,6 +9,7 @@ describe('parseDebugParams', () => {
       fps: false,
       narrationOff: false,
       autoCollect: false,
+      unlockAll: false,
     });
   });
 
@@ -27,6 +28,7 @@ describe('parseDebugParams', () => {
       fps: true,
       narrationOff: true,
       autoCollect: true,
+      unlockAll: false,
     });
   });
 
@@ -35,7 +37,14 @@ describe('parseDebugParams', () => {
       parseDebugParams(
         '?scene=hacker&encounter=<script>&seed=-5&autoAnswer=maybe&fast=yes&narration=loud',
       ),
-    ).toEqual({ fast: false, freeze: false, fps: false, narrationOff: false, autoCollect: false });
+    ).toEqual({
+      fast: false,
+      freeze: false,
+      fps: false,
+      narrationOff: false,
+      autoCollect: false,
+      unlockAll: false,
+    });
   });
 });
 

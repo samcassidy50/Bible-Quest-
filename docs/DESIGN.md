@@ -383,6 +383,7 @@ Each phase ends in something playable, deployed to a preview URL.
 ### Phase 5: Progression and retention (≈2 weeks)
 
 - Save/load, stars, upgrades (including special attack and ultimate upgrades), Verse Journal.
+- **Status (2026-11-11):** done. Saves (native Preferences / localStorage, validated and self-repairing), stars 1–3 by accuracy, passages unlock in order, upgrades (Health, Strength, Armor Mastery, Faith; 3 levels at 2/3/4 stars), Verse Journal, Settings (sound, narration, reading speed, auto-collect orbs, 20 s question timer, reset). Not done: KJV toggle (only WEB is vendored), fast-answer timer bonus.
 - Settings: timer, text speed, difficulty, translation (WEB/KJV).
 - **Exit:** a player can play for several sessions with persistent progress.
 

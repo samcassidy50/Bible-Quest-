@@ -11,7 +11,7 @@ export class ResultPanel extends Phaser.GameObjects.Container {
   constructor(
     scene: Phaser.Scene,
     victory: boolean,
-    stats: { correct: number; asked: number },
+    stats: { correct: number; asked: number; stars?: number; newBest?: boolean },
     primary: { label: string; onTap: () => void },
     secondary: { label: string; onTap: () => void },
   ) {
@@ -74,6 +74,34 @@ export class ResultPanel extends Phaser.GameObjects.Container {
     });
 
     this.add([backdrop, panel, title, detail, this.primaryButton, this.secondaryButton]);
+
+    if (victory && stats.stars) {
+      for (let i = 0; i < 3; i++) {
+        const star = scene.add
+          .text(-70 + i * 70, -ph / 2 + 135, '★', {
+            fontFamily: FONT_UI,
+            fontSize: '54px',
+            color: i < stats.stars ? '#f4c95d' : '#4a4560',
+            stroke: '#000000',
+            strokeThickness: 4,
+          })
+          .setOrigin(0.5);
+        this.add(star);
+      }
+      detail.setY(-ph / 2 + 180);
+      if (stats.newBest) {
+        this.add(
+          scene.add
+            .text(pw / 2 - 30, -ph / 2 + 30, 'New best!', {
+              fontFamily: FONT_UI,
+              fontSize: '22px',
+              fontStyle: 'bold',
+              color: '#5ee08a',
+            })
+            .setOrigin(1, 0),
+        );
+      }
+    }
     this.setDepth(200).setScale(0.6).setAlpha(0);
     scene.add.existing(this);
   }

@@ -7,6 +7,8 @@ import { estimateNarrationMs, tickerX, wordAnchorFraction } from '../../core/scr
 import { getEncounter } from '../../content';
 import { hapticTap } from '../../services/haptics';
 import { sfx } from '../../services/sfx';
+import { progress } from '../../services/progress';
+import { markHeard, READING_SPEEDS } from '../../core/progress/progress';
 import { createNarration, type Narration } from '../../services/narration';
 import { readSafeAreaInsets, toGameInsets, type Insets } from '../../services/safeArea';
 import { updateTestState } from '../../services/testHooks';
@@ -80,9 +82,11 @@ export class ScriptureScene extends Phaser.Scene {
     this.time.timeScale = this.timeScale;
 
     this.text = this.encounter.verses.map((v) => v.text).join('  ');
+    const settings = progress.save.settings;
     this.narration = createNarration({
-      enabled: !this.debug.narrationOff && !this.debug.fast,
+      enabled: settings.narration && !this.debug.narrationOff && !this.debug.fast,
       wait: (ms) => wait(this, ms),
+      rate: READING_SPEEDS[settings.readingSpeed],
     });
     this.durationMs = estimateNarrationMs(this.text, this.narration.rate);
 
@@ -108,8 +112,7 @@ export class ScriptureScene extends Phaser.Scene {
   }
 
   private get canSkip(): boolean {
-    const heard = this.registry.get('heard') as string[] | undefined;
-    return heard?.includes(this.encounter.id) ?? false;
+    return progress.save.heard.includes(this.encounter.id);
   }
 
   // ── Build ──────────────────────────────────────────────────────────────────
@@ -376,7 +379,9 @@ export class ScriptureScene extends Phaser.Scene {
     sfx.play('orbSpawn');
     this.wordGlows.get(special)?.setVisible(true);
     this.sync();
-    if (this.debug.autoCollect) this.time.delayedCall(500, () => void this.collect(orb));
+    if (this.debug.autoCollect || progress.save.settings.autoCollect) {
+      this.time.delayedCall(500, () => void this.collect(orb));
+    }
   }
 
   private async collect(orb: Orb): Promise<void> {
@@ -468,9 +473,7 @@ export class ScriptureScene extends Phaser.Scene {
     this.finishing = true;
     this.schedule = [];
     if (completed) {
-      const heard = new Set((this.registry.get('heard') as string[] | undefined) ?? []);
-      heard.add(this.encounter.id);
-      this.registry.set('heard', [...heard]);
+      progress.update((s) => markHeard(s, this.encounter.id));
     }
     for (const b of [this.skipBtn, this.replayBtn, this.fullTextBtn]) b.setVisible(false);
     this.fullText?.destroy();

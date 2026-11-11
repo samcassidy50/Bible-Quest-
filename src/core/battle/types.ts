@@ -23,6 +23,10 @@ export interface BattleConfig {
   unlockedSpecials: readonly SpecialId[];
   /** Faith meter at the start of the fight (debug `?faith=`); defaults to 0. */
   startingFaith?: number;
+  /** Upgrade: multiplier on special damage and healing (default 1). */
+  specialPower?: number;
+  /** Upgrade: extra ultimate damage multiplier (default 0). */
+  ultimateBonus?: number;
 }
 
 export type BattlePhase =

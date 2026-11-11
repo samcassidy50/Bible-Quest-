@@ -61,7 +61,13 @@ export async function snap(page: Page, path: string): Promise<void> {
 /** Taps a target only if it still exists (for things that move or disappear, like orbs). */
 export async function tapIfPresent(page: Page, key: string): Promise<boolean> {
   const s = await state(page);
-  if (!s.targets[key]) return false;
-  await tap(page, key);
+  const t = s.targets[key];
+  if (!t) return false;
+  const box = await page.locator('#game canvas').boundingBox();
+  if (!box) return false;
+  await page.touchscreen.tap(
+    box.x + (t.x * box.width) / s.gameWidth,
+    box.y + (t.y * box.height) / s.gameHeight,
+  );
   return true;
 }

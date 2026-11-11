@@ -4,7 +4,18 @@ import { SPECIAL_IDS, type SpecialId } from './battle/types';
  * Debug/test URL parameters (see docs/DESIGN.md §8.2).
  * Parsing is pure so it can be unit-tested; main.ts decides whether to honour them.
  */
-export const SCENE_KEYS = ['boot', 'title', 'map', 'scripture', 'battle', 'rig', 'sounds'] as const;
+export const SCENE_KEYS = [
+  'boot',
+  'title',
+  'map',
+  'scripture',
+  'battle',
+  'upgrades',
+  'journal',
+  'settings',
+  'rig',
+  'sounds',
+] as const;
 export type SceneKey = (typeof SCENE_KEYS)[number];
 
 export interface DebugParams {
@@ -20,6 +31,8 @@ export interface DebugParams {
   narrationOff: boolean;
   /** `?clip=slash` with `?scene=rig`: contact sheet of one hero animation. */
   clip?: string;
+  /** `?unlockAll=1`: every passage open on the passage screen. */
+  unlockAll: boolean;
   /** `?autoCollect=1`: orbs collect themselves (accessibility setting, until Phase 5 settings). */
   autoCollect: boolean;
   fast: boolean;
@@ -39,6 +52,7 @@ export function parseDebugParams(search: string): DebugParams {
     fps: flag('fps'),
     narrationOff: p.get('narration') === 'off',
     autoCollect: flag('autoCollect'),
+    unlockAll: flag('unlockAll'),
   };
 
   const scene = p.get('scene');

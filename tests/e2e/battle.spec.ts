@@ -96,7 +96,7 @@ test('locked specials do nothing when tapped', async ({ page }) => {
 });
 
 test('title → passage select → chosen passage', async ({ page }) => {
-  await page.goto('/?seed=1&narration=off');
+  await page.goto('/?seed=1&narration=off&unlockAll=1');
   await waitFor(page, "s.ready && s.scene === 'title'");
   const box = (await page.locator('#game canvas').boundingBox())!;
   await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);

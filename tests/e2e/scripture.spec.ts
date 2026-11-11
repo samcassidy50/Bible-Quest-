@@ -14,16 +14,26 @@ test('tapping the orb during the reading unlocks Sword for the fight', async ({ 
   expect(s0.canSkip).toBe(false); // first time hearing this verse
   expect(s0.orbs).toEqual([{ special: 'sword', status: 'pending', atMs: expect.any(Number) }]);
 
-  await waitFor(page, "s.scripture.orbs[0].status === 'active' && !!s.targets['orb:sword']");
-  await snap(page, test.info().outputPath('reading-orb.png'));
-  // The orb drifts upward, so re-read its position and retry if a slow machine misses it.
-  for (let i = 0; i < 5; i++) {
-    const s = await state(page);
-    if (s.scripture?.collected.includes('sword')) break;
-    if (!(await tapIfPresent(page, 'orb:sword'))) break;
-    await page.waitForTimeout(150);
+  // Like a real player: tap the orb as it drifts up; if it fades before the tap lands (a busy
+  // test machine can be slow), press Replay — missed orbs come back — and try again.
+  for (let reading = 0; reading < 3; reading++) {
+    await waitFor(
+      page,
+      "s.scripture && (s.scripture.collected.includes('sword') || (s.scripture.orbs[0].status === 'active' && !!s.targets['orb:sword']))",
+      45_000,
+    );
+    if (reading === 0) await snap(page, test.info().outputPath('reading-orb.png'));
+    while (true) {
+      const s = (await state(page)).scripture;
+      if (!s || s.collected.includes('sword') || s.orbs[0]!.status !== 'active') break;
+      await tapIfPresent(page, 'orb:sword');
+      await page.waitForTimeout(150);
+    }
+    const s = (await state(page)).scripture;
+    if (s?.collected.includes('sword')) break;
+    if (s && !s.finishing) await tapIfPresent(page, 'replay');
   }
-  await waitFor(page, "s.scripture && s.scripture.collected.includes('sword')");
+  await waitFor(page, "s.scripture && s.scripture.collected.includes('sword')", 45_000);
 
   await waitFor(page, "s.scene === 'battle' && !!s.battle", 60_000);
   await heroTurn(page);
