@@ -7,7 +7,7 @@ the game only uses the processed sheet.
 | File                 | Frames                                                                             |
 | -------------------- | ---------------------------------------------------------------------------------- |
 | `idle.webp`          | `idle_0`–`idle_3` (breathing loop)                                                 |
-| `run.webp`           | `run_0`–`run_5`                                                                    |
+| `run.webp`           | `run_0`–`run_7`                                                                    |
 | `slash.webp`         | `slash_0`–`slash_5` (ready, anticipation, swing, impact, follow-through, recovery) |
 | `slash-powered.webp` | `power_0`–`power_5` (crouch, leap, overhead, strike…)                              |
 | `poses.webp`         | (unused idle), `walk`, `thrust`, `hurt`, `victory`                                 |

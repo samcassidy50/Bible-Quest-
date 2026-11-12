@@ -51,7 +51,11 @@ class Strip:
 
 STRIPS = [
     Strip('idle.webp', ['idle_0', 'idle_1', 'idle_2', 'idle_3'], 1.0),
-    Strip('run.webp', ['run_0', 'run_1', 'run_2', 'run_3', 'run_4', 'run_5'], 0.77),
+    Strip(
+        'run.webp',
+        ['run_0', 'run_1', 'run_2', 'run_3', 'run_4', 'run_5', 'run_6', 'run_7'],
+        0.48,
+    ),
     Strip(
         'slash.webp',
         ['slash_0', 'slash_1', 'slash_2', 'slash_3', 'slash_4', 'slash_5'],

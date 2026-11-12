@@ -29,6 +29,8 @@ export const HERO_CLIPS = {
       f('run_3', 75),
       f('run_4', 75),
       f('run_5', 75),
+      f('run_6', 75),
+      f('run_7', 75),
     ],
     { loop: true },
   ),
