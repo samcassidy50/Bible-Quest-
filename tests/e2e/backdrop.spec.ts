@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { snap, waitFor } from './helpers';
+import { snap, state, waitFor } from './helpers';
 
 test.describe.configure({ timeout: 90_000 });
 
@@ -28,10 +28,21 @@ for (const [name, id] of ENVIRONMENTS) {
   });
 }
 
+/** Painted pixel-art layers (scripts/art/paint_backdrops.py); the rest falls back to code. */
+const PAINTED: Record<string, string[]> = {
+  'flood-storm': ['sky', 'far', 'mid', 'ground', 'landmark'],
+  'flood-clearing': ['sky', 'far', 'mid', 'ground', 'landmark'],
+  babel: ['sky', 'far', 'mid', 'ground', 'landmark'],
+};
+
 test('backdrop viewer shows every environment with no text, tap for the next', async ({ page }) => {
   await page.goto('/?scene=backdrops&freeze=1');
   for (const [name] of ENVIRONMENTS) {
     await waitFor(page, `s.scene === 'backdrops' && s.backdrop === '${name}'`);
+    const painted = (await state(page)).backdropPainted;
+    expect(painted, `${name} painted layers`).toEqual(
+      PAINTED[name] ?? ['sky', 'far', 'mid', 'ground'],
+    );
     await snap(page, test.info().outputPath(`clean-${name}.png`));
     const box = (await page.locator('#game canvas').boundingBox())!;
     await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);

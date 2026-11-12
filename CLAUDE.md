@@ -51,7 +51,8 @@ Before saying a task is done, run: `npm run lint && npm run typecheck && npm run
 
 ## Backgrounds
 
-- Six original environments drawn in code (`src/scenes/backdrop/Backdrop.ts`): deep, light, garden, wilderness, flood (weather `storm` or `clearing`), babel. Each passage picks one with `setting` (and `weather` for flood) in its encounter JSON.
+- Six original environments (`src/scenes/backdrop/Backdrop.ts`): deep, light, garden, wilderness, flood (weather `storm` or `clearing`), babel. Each passage picks one with `setting` (and `weather` for flood) in its encounter JSON.
+- Their layers are pixel art painted by `python3 scripts/art/paint_backdrops.py [env…] [--preview]` (needs Pillow) into `src/assets/backdrops/<env>-<layer>.png` (sky, far, mid, ground, optional landmark). Never edit those PNGs by hand; change the painter and re-run it. It checks that strips tile seamlessly. Default `--res 2` (2 screen px per painted pixel) is the chosen look. Any layer without a PNG is drawn in code instead, and the code effects (mist, rays, rain…) always play on top.
 - Text-free viewer: `?scene=backdrops` (tap or → for the next, `&env=garden` to start on one, `&freeze=1` for still screenshots).
 
 ## Sound

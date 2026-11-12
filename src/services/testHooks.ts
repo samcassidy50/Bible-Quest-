@@ -64,6 +64,8 @@ export interface TestState {
   mapCard: string | null;
   /** Backdrop viewer: the environment on screen. */
   backdrop: string | null;
+  /** Backdrop viewer: layers of that environment drawn from painted images (sky, far, mid…). */
+  backdropPainted: string[];
   /** Verse Journal: the passage currently shown. */
   journalOpen: string | null;
 }
@@ -92,6 +94,7 @@ let state: TestState = {
   mapRevealing: false,
   mapCard: null,
   backdrop: null,
+  backdropPainted: [],
   journalOpen: null,
 };
 

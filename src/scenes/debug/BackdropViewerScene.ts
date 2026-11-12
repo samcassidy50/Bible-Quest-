@@ -62,6 +62,7 @@ export class BackdropViewerScene extends Phaser.Scene {
       battle: null,
       scripture: null,
       backdrop: v.id,
+      backdropPainted: this.backdrop.paintedLayers,
     });
   }
 

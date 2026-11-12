@@ -16,6 +16,63 @@ const PAD = 4;
 type G = Phaser.GameObjects.Graphics;
 export type Weather = 'storm' | 'clearing';
 
+// ── Painted layers ───────────────────────────────────────────────────────────
+
+/**
+ * Painted layers are drawn in native units (a 512-wide strip, a 560-wide sky) shown 3x larger,
+ * like the hero. A layer painted at a finer resolution is simply a larger image: the game
+ * derives its scale from its width, so one native unit always covers 3 design pixels.
+ */
+export const BACKDROP_PX = 3;
+const STRIP_DESIGN_W = 512 * BACKDROP_PX;
+const SKY_DESIGN_W = 560 * BACKDROP_PX;
+/** Transparent rows (native) under the painted far and middle strips. */
+const IMG_PAD = 2;
+type Layer = 'sky' | 'far' | 'mid' | 'ground' | 'landmark';
+type Strip = 'far' | 'mid' | 'ground';
+
+/**
+ * Pixel-art layers painted by scripts/art/paint_backdrops.py, named `<env>-<layer>.png`.
+ * Any layer without an image falls back to the code-drawn version below.
+ */
+const IMAGE_URLS = import.meta.glob<string>('../../assets/backdrops/*.png', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+});
+const IMAGES = Object.entries(IMAGE_URLS).map(([path, url]) => ({
+  key: `bdimg-${path
+    .split('/')
+    .pop()!
+    .replace(/\.png$/, '')}`,
+  url,
+}));
+const imageKey = (env: string, layer: Layer) => `bdimg-${env}-${layer}`;
+
+/** Where each painted landmark stands: x as a fraction of the width, bottom below the ground line. */
+const LANDMARK_AT: Record<string, { x: number; dy: number }> = {
+  'flood-storm': { x: 0.78, dy: -48 }, // riding high enough that the waves only hide its keel
+  'flood-clearing': { x: 0.78, dy: -48 },
+  babel: { x: 0.72, dy: -6 },
+};
+
+/** The light painted into a sky (native sky pixels, 560x200): effects gather around it. */
+const SKY_LIGHT: Record<string, [number, number]> = {
+  deep: [306, 99], // the light hovering over the waters
+  light: [330, 150], // the rising sun
+};
+
+/** Queues every painted backdrop layer on a loader (call from a scene's preload). */
+export function loadBackdropImages(load: Phaser.Loader.LoaderPlugin): void {
+  for (const { key, url } of IMAGES) load.image(key, url);
+}
+
+/** Keeps the painted layers crisp when scaled up (call once they have loaded). */
+export function useNearestFilterForBackdrops(textures: Phaser.Textures.TextureManager): void {
+  for (const { key } of IMAGES)
+    if (textures.exists(key)) textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST);
+}
+
 interface Look {
   sky: [number, number, number]; // top, middle, horizon
 }
@@ -71,6 +128,12 @@ export class Backdrop {
   private readonly ground: Phaser.GameObjects.TileSprite;
   private readonly fx: Phaser.GameObjects.Container;
   private readonly flash: Phaser.GameObjects.Rectangle;
+  /** Painted layers (pixel-art images); a missing one is drawn in code instead. */
+  private readonly skyImage?: Phaser.GameObjects.Image;
+  private readonly landmarkImage?: Phaser.GameObjects.Image;
+  private readonly painted: Record<Layer, boolean>;
+  /** Design pixels per painted image pixel (see BACKDROP_PX). */
+  private readonly px: number;
   private fxTimers: Phaser.Time.TimerEvent[] = [];
   private W = 0;
   private H = 0;
@@ -83,23 +146,62 @@ export class Backdrop {
     private readonly freeze = false,
   ) {
     this.key = setting === 'flood' ? `flood-${weather ?? 'storm'}` : setting;
+    const has = (layer: Layer) => scene.textures.exists(imageKey(this.key, layer));
+    this.painted = {
+      sky: has('sky'),
+      far: has('far'),
+      mid: has('mid'),
+      ground: has('ground'),
+      landmark: has('landmark'),
+    };
+    this.px = this.imageScale();
     this.makeTextures();
     this.sky = scene.add.graphics().setDepth(-30);
+    if (this.painted.sky)
+      this.skyImage = scene.add
+        .image(0, 0, imageKey(this.key, 'sky'))
+        .setOrigin(0.5, 1)
+        .setDepth(-29);
     this.landmarks = scene.add.graphics().setDepth(-27);
-    this.far = scene.add
-      .tileSprite(0, 0, 10, FAR_H + PAD, `bd-${this.key}-far`)
-      .setOrigin(0, 1)
-      .setDepth(-28);
-    this.mid = scene.add
-      .tileSprite(0, 0, 10, MID_H + PAD, `bd-${this.key}-mid`)
-      .setOrigin(0, 1)
-      .setDepth(-26);
-    this.ground = scene.add
-      .tileSprite(0, 0, 10, GROUND_H, `bd-${this.key}-ground`)
-      .setOrigin(0, 0)
-      .setDepth(-25);
+    if (this.painted.landmark)
+      this.landmarkImage = scene.add
+        .image(0, 0, imageKey(this.key, 'landmark'))
+        .setOrigin(0.5, 1)
+        .setScale(this.px)
+        .setDepth(-27);
+    this.far = this.strip('far', FAR_H + PAD, 1, -28);
+    this.mid = this.strip('mid', MID_H + PAD, 1, -26);
+    this.ground = this.strip('ground', GROUND_H, 0, -25);
     this.fx = scene.add.container(0, 0).setDepth(-24);
     this.flash = scene.add.rectangle(0, 0, 10, 10, 0xffffff, 0).setOrigin(0).setDepth(-23);
+  }
+
+  /** A tiling layer: the painted strip scaled up crisply, or the code-drawn texture. */
+  private strip(layer: Strip, codeH: number, originY: number, depth: number) {
+    const key = this.painted[layer] ? imageKey(this.key, layer) : `bd-${this.key}-${layer}`;
+    const h = this.painted[layer] ? this.scene.textures.getFrame(key).height * this.px : codeH;
+    const s = this.scene.add.tileSprite(0, 0, 10, h, key).setOrigin(0, originY).setDepth(depth);
+    if (this.painted[layer]) s.setTileScale(this.px);
+    return s;
+  }
+
+  /** Design pixels per image pixel: 3 for chunky pixel art, 1 for layers painted at full size. */
+  private imageScale(): number {
+    const width = (layer: Layer) => this.scene.textures.getFrame(imageKey(this.key, layer)).width;
+    const strip = (['ground', 'mid', 'far'] as const).find((l) => this.painted[l]);
+    if (strip) return STRIP_DESIGN_W / width(strip);
+    if (this.painted.sky) return SKY_DESIGN_W / width('sky');
+    return BACKDROP_PX;
+  }
+
+  /** Height of a painted layer, in design pixels. */
+  private paintedH(layer: Layer): number {
+    return this.scene.textures.getFrame(imageKey(this.key, layer)).height * this.px;
+  }
+
+  /** Colour of one pixel of a painted layer (to extend its edges past the image). */
+  private pixel(layer: Layer, x: number, y: number): number {
+    return this.scene.textures.getPixel(x, y, imageKey(this.key, layer))?.color ?? 0;
   }
 
   /** Re-lays out every layer for the current screen size and ground line. */
@@ -110,37 +212,84 @@ export class Backdrop {
     this.drawSky();
     this.drawLandmarks();
     const gy = Math.round(groundY);
-    this.far.setPosition(0, gy - 18 + PAD).setSize(W, FAR_H + PAD);
-    this.mid.setPosition(0, gy + 12 + PAD).setSize(W, MID_H + PAD);
-    this.ground.setPosition(0, gy - 14).setSize(W, Math.max(GROUND_H, H - gy + 14));
+    const pad = IMG_PAD * BACKDROP_PX;
+    if (this.painted.far) this.far.setPosition(0, gy - 15 + pad).setSize(W, this.far.height);
+    else this.far.setPosition(0, gy - 18 + PAD).setSize(W, FAR_H + PAD);
+    if (this.painted.mid) this.mid.setPosition(0, gy + 15 + pad).setSize(W, this.mid.height);
+    else this.mid.setPosition(0, gy + 12 + PAD).setSize(W, MID_H + PAD);
+    if (this.painted.ground) this.ground.setPosition(0, gy - 15).setSize(W, this.ground.height);
+    else this.ground.setPosition(0, gy - 14).setSize(W, Math.max(GROUND_H, H - gy + 14));
     this.flash.setSize(W, H);
     this.startFx();
   }
 
-  /** Parallax: the ground moves fastest, distant layers slowest. */
+  /** Which layers are painted images rather than drawn in code (exposed to tests). */
+  get paintedLayers(): Layer[] {
+    return (Object.keys(this.painted) as Layer[]).filter((l) => this.painted[l]);
+  }
+
+  /** Parallax: the ground moves fastest, distant layers slowest (same screen speed either way). */
   scroll(dt: number): void {
-    this.far.tilePositionX += dt * 0.02;
-    this.mid.tilePositionX += dt * 0.07;
-    this.ground.tilePositionX += dt * 0.3;
+    const k = (layer: Strip) => (this.painted[layer] ? 1 / this.px : 1);
+    this.far.tilePositionX += dt * 0.02 * k('far');
+    this.mid.tilePositionX += dt * 0.07 * k('mid');
+    this.ground.tilePositionX += dt * 0.3 * k('ground');
   }
 
   destroy(): void {
     this.fxTimers.forEach((t) => t.remove());
     for (const o of [
       this.sky,
+      this.skyImage,
       this.landmarks,
+      this.landmarkImage,
       this.far,
       this.mid,
       this.ground,
       this.fx,
       this.flash,
     ])
-      o.destroy();
+      o?.destroy();
   }
 
   // ── Sky and landmarks (not tiled) ──────────────────────────────────────────
 
+  /** Lays out the painted sky (centred, bottom just under the ground line) and fills around it. */
+  private placePaintedSky(): void {
+    const { W, groundY: gy } = this;
+    const img = this.skyImage!;
+    const scale = Math.max(this.px, W / img.width);
+    img.setScale(scale).setPosition(Math.round(W / 2), Math.round(gy) + 12);
+    const g = this.sky.clear();
+    g.fillStyle(this.pixel('sky', 0, 0), 1).fillRect(0, 0, W, img.y - img.height * scale + 1);
+    this.fillUnderGround(g);
+  }
+
+  /** Where an effect's light source is: on the painted sky if there is one, else the fallback. */
+  private lightAt(fallbackX: number, fallbackY: number): { x: number; y: number } {
+    const at = SKY_LIGHT[this.key];
+    const img = this.skyImage;
+    if (!img || !at) return { x: fallbackX, y: fallbackY };
+    return {
+      x: img.x + (at[0] - 280) * (img.displayWidth / 560),
+      y: img.y - (200 - at[1]) * (img.displayHeight / 200),
+    };
+  }
+
+  /** Below a painted ground strip (tall screens), continue its bottom colour. */
+  private fillUnderGround(g: G): void {
+    if (!this.painted.ground) return;
+    const bottom = Math.round(this.groundY) - 15 + this.paintedH('ground');
+    const c = this.pixel(
+      'ground',
+      0,
+      this.scene.textures.getFrame(imageKey(this.key, 'ground')).height - 1,
+    );
+    if (bottom < this.H) g.fillStyle(c, 1).fillRect(0, bottom - 1, this.W, this.H - bottom + 1);
+  }
+
   private drawSky(): void {
+    if (this.painted.sky) return this.placePaintedSky();
     const { W, groundY: gy } = this;
     const [top, middle, horizon] = LOOKS[this.key]!.sky;
     const g = this.sky.clear();
@@ -224,11 +373,17 @@ export class Backdrop {
         g.fillStyle(0xfffbe8, 1).fillCircle(W * 0.2, gy * 0.24, 46);
         break;
     }
+    this.fillUnderGround(g);
   }
 
   private drawLandmarks(): void {
     const { W, groundY: gy } = this;
     const g = this.landmarks.clear();
+    if (this.landmarkImage) {
+      const at = LANDMARK_AT[this.key] ?? { x: 0.75, dy: 0 };
+      this.landmarkImage.setPosition(Math.round(W * at.x), Math.round(gy + at.dy));
+      return;
+    }
     if (this.key === 'flood-clearing') {
       // Rainbow over the calming water.
       const bands = [0xe74c3c, 0xf39c12, 0xf1c40f, 0x2ecc71, 0x3498db, 0x5b4bd8, 0x8e44ad];
@@ -290,10 +445,11 @@ export class Backdrop {
 
   // ── Tiled layers ───────────────────────────────────────────────────────────
 
+  /** Code-drawn textures for every tiling layer that has no painted image. */
   private makeTextures(): void {
-    if (this.scene.textures.exists(`bd-${this.key}-far`)) return;
     const rng = createRng(this.key.length * 97 + 13);
-    const make = (name: string, h: number, draw: (g: G, rng: Rng) => void) => {
+    const make = (name: Strip, h: number, draw: (g: G, rng: Rng) => void) => {
+      if (this.painted[name] || this.scene.textures.exists(`bd-${this.key}-${name}`)) return;
       const g = this.scene.make.graphics({}, false);
       draw(g, rng);
       g.generateTexture(`bd-${this.key}-${name}`, T, h);
@@ -823,7 +979,7 @@ export class Backdrop {
     };
 
     switch (this.key) {
-      case 'deep':
+      case 'deep': {
         for (let i = 0; i < 6; i++) {
           const m = add(
             this.scene.add.ellipse(
@@ -842,11 +998,12 @@ export class Backdrop {
             ease: 'Sine.inOut',
           });
         }
+        const hover = this.lightAt(W * 0.56, gy * 0.42);
         for (let i = 0; i < 14; i++) {
           const d = add(
             this.scene.add.circle(
-              W * 0.56 + (rng.next() - 0.5) * 260,
-              gy * 0.42 + rng.next() * 120,
+              hover.x + (rng.next() - 0.5) * 260,
+              hover.y + rng.next() * 120,
               2,
               0xfff3c4,
               0.7,
@@ -860,8 +1017,10 @@ export class Backdrop {
           });
         }
         break;
+      }
       case 'light': {
-        const rays = add(this.scene.add.container(W * 0.64, gy - 30));
+        const sun = this.lightAt(W * 0.64, gy - 30);
+        const rays = add(this.scene.add.container(sun.x, sun.y));
         for (let i = 0; i < 12; i++) {
           const a = (i / 12) * Math.PI * 2;
           const r = this.scene.add
@@ -903,7 +1062,8 @@ export class Backdrop {
         break;
       }
       case 'garden':
-        for (let i = 0; i < 5; i++) {
+        // Drifting clouds, unless the painted sky has its own.
+        for (let i = 0; i < (this.painted.sky ? 0 : 5); i++) {
           const c = add(
             this.scene.add.ellipse(
               rng.next() * W,
