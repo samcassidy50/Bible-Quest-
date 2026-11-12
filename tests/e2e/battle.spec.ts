@@ -133,3 +133,16 @@ test('answer choices are shuffled, not always first', async ({ page }) => {
   }
   expect(positions.size).toBeGreaterThan(1);
 });
+
+test('sprite foes play their attack, hurt and death frames', async ({ page }) => {
+  await page.goto('/?scene=battle&encounter=gen-003&seed=1&specials=&freeze=1');
+  await heroTurn(page);
+  expect((await battle(page)).foeSprite).toBe('slime-lava');
+  await snap(page, test.info().outputPath('slime-lava.png'));
+
+  await page.goto('/?scene=battle&encounter=gen-001&seed=1&autoAnswer=correct&fast=1');
+  await waitFor(page, "s.battle && s.battle.foeSprite === 'slime-blue'");
+  await waitFor(page, "s.battle.foeAnims.includes('hurt') && s.battle.foeAnims.includes('attack')");
+  await waitFor(page, "s.battle.result === 'VICTORY' && !!s.targets.primary", 60_000);
+  expect((await battle(page)).foeAnims).toContain('death');
+});

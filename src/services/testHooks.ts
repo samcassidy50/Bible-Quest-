@@ -10,6 +10,10 @@ export interface BattleTestState {
   heroHp: number;
   heroMaxHp: number;
   foeId: string;
+  /** Sprite art the current foe uses (null = placeholder shape). */
+  foeSprite: string | null;
+  /** Sprite-foe states played by the current foe, oldest first. */
+  foeAnims: string[];
   foeHp: number;
   faith: number;
   blocks: number;

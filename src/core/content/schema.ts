@@ -30,6 +30,10 @@ export const questionSchema = z.discriminatedUnion('type', [
   }),
 ]);
 
+/** Foes that have sprite art; the rest are drawn as coloured placeholder shapes. */
+export const FOE_SPRITES = ['slime-blue', 'slime-lava'] as const;
+export type FoeSpriteId = (typeof FOE_SPRITES)[number];
+
 export const foeSchema = z.object({
   id,
   name: z.string().min(1),
@@ -37,6 +41,7 @@ export const foeSchema = z.object({
   attack: z.number().int().positive(),
   color: hexColor,
   size: z.number().min(0.5).max(2),
+  sprite: z.enum(FOE_SPRITES).optional(),
 });
 
 /** The six environments a passage can be set in (docs/DESIGN.md §2.1). */

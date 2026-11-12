@@ -10,7 +10,8 @@
       "maxHp": 45,
       "attack": 10,
       "color": "#7a6a52",
-      "size": 0.8
+      "size": 0.8,
+      "sprite": "slime-lava"
     },
     {
       "id": "mote-2",
@@ -18,7 +19,8 @@
       "maxHp": 50,
       "attack": 10,
       "color": "#6b5b45",
-      "size": 0.9
+      "size": 0.9,
+      "sprite": "slime-lava"
     },
     {
       "id": "wraith",
@@ -26,7 +28,8 @@
       "maxHp": 75,
       "attack": 12,
       "color": "#4a3f30",
-      "size": 1.2
+      "size": 1.2,
+      "sprite": "slime-lava"
     }
   ],
   "orbs": [

@@ -1,5 +1,5 @@
 import type { FoeSpec, SpecialId } from '../battle/types';
-import type { Setting } from './schema';
+import type { FoeSpriteId, Setting } from './schema';
 import type { Difficulty } from '../quiz/QuestionDeck';
 
 /**
@@ -32,6 +32,8 @@ export interface EncounterFoe extends FoeSpec {
   color: number;
   /** Placeholder-art scale (1 = normal foe, bigger for bosses). */
   size: number;
+  /** Sprite art for this foe; without it the placeholder shape is drawn in `color`. */
+  sprite?: FoeSpriteId;
 }
 
 /** An energy orb in the reading (+1 energy when tapped). */

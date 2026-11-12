@@ -214,7 +214,7 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private makeFoe(spec: EncounterFoe): Fighter {
-    return new Fighter(this, 0, 0, 'foe', spec.color, spec.size);
+    return new Fighter(this, 0, 0, 'foe', spec.color, spec.size, spec.sprite);
   }
 
   private get groundY(): number {
@@ -434,6 +434,7 @@ export class BattleScene extends Phaser.Scene {
       landed = true;
       this.foe.figure.setAlpha(0.4);
       this.time.delayedCall(90, () => this.foe.figure.setAlpha(1));
+      void this.foe.foeAct('hurt');
       if (powered) {
         this.cameras.main.shake(ultimate ? 400 : 180, ultimate ? 0.02 : 0.008);
         void hapticTap(true);
@@ -482,6 +483,7 @@ export class BattleScene extends Phaser.Scene {
     }
     const startX = this.foe.x;
     sfx.play('foeAttack', { vary: true });
+    void this.foe.foeAct('attack', 560); // spans the lunge and the return
     await tweenAsync(this, {
       targets: this.foe,
       x: this.hero.x + 170,
@@ -507,6 +509,12 @@ export class BattleScene extends Phaser.Scene {
   private async foeDefeated(): Promise<void> {
     sfx.play('foeDefeat');
     this.tweens.killTweensOf(this.foe.figure);
+    if (this.foe.foeSprite) {
+      // Sprite foes have their own defeat frames; just fade what is left.
+      await this.foe.foeAct('death');
+      await tweenAsync(this, { targets: this.foe, alpha: 0, duration: 200 });
+      return;
+    }
     await tweenAsync(this, { targets: this.foe, alpha: 0, y: this.foe.y - 40, duration: 450 });
   }
 
@@ -781,6 +789,8 @@ export class BattleScene extends Phaser.Scene {
         heroHp: e.heroHp,
         heroMaxHp: e.heroMaxHp,
         foeId: e.foe.id,
+        foeSprite: (e.foe as EncounterFoe).sprite ?? null,
+        foeAnims: this.foe.foeAnimHistory,
         foeHp: e.foeHp,
         faith: e.faith,
         blocks: e.blocks,

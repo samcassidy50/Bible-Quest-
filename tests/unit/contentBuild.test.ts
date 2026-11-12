@@ -197,3 +197,15 @@ describe('armor rewards', () => {
     );
   });
 });
+
+describe('foe sprites', () => {
+  const foe = { id: 'foe', name: 'Foe', maxHp: 10, attack: 1, color: '#123456', size: 1 };
+  it('a foe may name known sprite art, and nothing else', () => {
+    const built = buildEncounter(file({ waves: [{ ...foe, sprite: 'slime-lava' }] }), bible);
+    expect(built.waves[0]?.sprite).toBe('slime-lava');
+    expect(buildEncounter(file(), bible).waves[0]?.sprite).toBeUndefined();
+    expect(() => buildEncounter(file({ waves: [{ ...foe, sprite: 'dragon' }] }), bible)).toThrow(
+      /sprite/,
+    );
+  });
+});

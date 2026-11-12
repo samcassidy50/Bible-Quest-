@@ -22,3 +22,15 @@ the game only uses the processed sheet.
 
 Tips for prompts: one animation per request, same chat, re-upload a reference sheet, and ask for
 at least 40 px of empty magenta between frames so they never touch.
+
+# Foe art
+
+- `slime-blue` and `slime-lava` (`src/assets/foes/`) are **third-party art**: Slime2 and Slime3 from
+  the CraftPix "Free Slime Mobs Pixel Art Top-Down Sprite Pack" (https://craftpix.net), under the
+  CraftPix file licence (https://craftpix.net/file-licenses/). The pack itself is not kept here;
+  `python3 scripts/art/process_slimes.py <unzipped pack folder>` rebuilds the two sheets from it.
+  A foe uses one by setting `"sprite"` in its encounter JSON; they are shown at twice the hero's
+  pixel size.
+- `demon`, `serpent`, `shade` and `thornbeast` are original, painted by
+  `python3 scripts/art/paint_monsters.py --preview` (previews in `art/foe-previews/`). They are not
+  used in the game yet.

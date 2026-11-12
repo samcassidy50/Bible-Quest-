@@ -10,7 +10,8 @@
       "maxHp": 45,
       "attack": 9,
       "color": "#4b3b78",
-      "size": 0.8
+      "size": 0.8,
+      "sprite": "slime-blue"
     },
     {
       "id": "wisp-2",
@@ -18,7 +19,8 @@
       "maxHp": 45,
       "attack": 10,
       "color": "#3d2f66",
-      "size": 0.9
+      "size": 0.9,
+      "sprite": "slime-blue"
     },
     {
       "id": "shade",
@@ -26,7 +28,8 @@
       "maxHp": 75,
       "attack": 12,
       "color": "#241a45",
-      "size": 1.25
+      "size": 1.25,
+      "sprite": "slime-blue"
     }
   ],
   "orbs": [

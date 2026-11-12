@@ -3,15 +3,18 @@ import type { HeroClipName } from '../../core/anim/heroClips';
 import { HERO_SCALE, HeroSprite } from '../hero/HeroSprite';
 import { HERO_SHEET } from '../../core/anim/heroSheet';
 import { FONT_UI } from '../util';
+import type { FoeSpriteId } from '../../core/content/schema';
+import { FoeSprite, type FoeAnim } from './FoeSprite';
 
 /**
  * A combatant on the field. The hero is the pixel-art sprite (scenes/hero/HeroSprite.ts);
- * foes are still placeholder shapes until their sprites land.
+ * foes with a `sprite` use FoeSprite, the rest are placeholder shapes until their sprites land.
  * Origin is at the fighter's feet so both stand on the same ground line.
  */
 export class Fighter extends Phaser.GameObjects.Container {
   readonly figure: Phaser.GameObjects.Container;
   readonly rig?: HeroSprite;
+  readonly foeSprite?: FoeSprite;
   private shieldBubble?: Phaser.GameObjects.Arc;
   private stunText?: Phaser.GameObjects.Text;
 
@@ -22,6 +25,7 @@ export class Fighter extends Phaser.GameObjects.Container {
     readonly kind: 'hero' | 'foe',
     color = 0x3b6fd8,
     size = 1,
+    sprite?: FoeSpriteId,
   ) {
     super(scene, x, y);
     this.figure = scene.add.container(0, 0);
@@ -29,15 +33,21 @@ export class Fighter extends Phaser.GameObjects.Container {
     if (kind === 'hero') {
       this.rig = new HeroSprite(scene, 0, 0);
       this.figure.add(this.rig);
+      this.figure.setScale(size);
+    } else if (sprite) {
+      // Sprite foes pick their own whole-number pixel scale from `size`.
+      this.foeSprite = new FoeSprite(scene, sprite, size);
+      this.figure.add(this.foeSprite);
     } else {
       this.drawFoe(color);
+      this.figure.setScale(size);
     }
-    this.figure.setScale(size);
     scene.add.existing(this);
   }
 
   /** Height of the drawn figure, for placing HP bars and effects above it. */
   get figureHeight(): number {
+    if (this.foeSprite) return this.foeSprite.bodyHeight;
     const h = this.rig ? HERO_SHEET.standingHeight * HERO_SCALE : 190;
     return h * this.figure.scaleY;
   }
@@ -65,6 +75,10 @@ export class Fighter extends Phaser.GameObjects.Container {
       this.rig.loop('idle');
       return;
     }
+    if (this.foeSprite) {
+      this.foeSprite.idle();
+      return;
+    }
     this.scene.tweens.add({
       targets: this.figure,
       scaleY: this.figure.scaleY * 1.04,
@@ -90,6 +104,15 @@ export class Fighter extends Phaser.GameObjects.Container {
       return Promise.resolve();
     }
     return this.rig.act(name, onEvent);
+  }
+
+  /** Plays a sprite foe's attack, hurt or death frames (no-op for placeholder foes). */
+  foeAct(anim: Exclude<FoeAnim, 'idle'>, ms?: number): Promise<void> {
+    return this.foeSprite ? this.foeSprite.play(anim, ms) : Promise.resolve();
+  }
+
+  get foeAnimHistory(): string[] {
+    return this.foeSprite ? [...this.foeSprite.history] : [];
   }
 
   face(dir: 1 | -1): void {

@@ -4,6 +4,7 @@ import { loadBackdropImages, useNearestFilterForBackdrops } from './backdrop/Bac
 import { loadHeroSheet, useNearestFilter } from './hero/HeroSprite';
 import { loadAngelSheet, useNearestFilterForAngel } from './angel/Angel';
 import { loadItemsSheet, useNearestFilterForItems } from './items';
+import { loadFoeSheets, useNearestFilterForFoes } from './battle/FoeSprite';
 
 /** Loads assets (the hero sprite sheet, painted backdrop layers) and routes to the first scene, honouring `?scene=`. */
 export class BootScene extends Phaser.Scene {
@@ -16,6 +17,7 @@ export class BootScene extends Phaser.Scene {
     loadBackdropImages(this.load);
     loadAngelSheet(this.load);
     loadItemsSheet(this.load);
+    loadFoeSheets(this.load);
   }
 
   create(): void {
@@ -23,6 +25,7 @@ export class BootScene extends Phaser.Scene {
     useNearestFilterForBackdrops(this.textures);
     useNearestFilterForAngel(this.textures);
     useNearestFilterForItems(this.textures);
+    useNearestFilterForFoes(this.textures);
     const debug = this.registry.get('debug') as DebugParams;
     const target = debug.scene && debug.scene !== 'boot' ? debug.scene : 'title';
     // Scenes not built yet (battle, scripture) fall back to the title placeholder.
