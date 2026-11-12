@@ -10,6 +10,7 @@ describe('parseDebugParams', () => {
       narrationOff: false,
       autoCollect: false,
       unlockAll: false,
+      oneShot: false,
     });
   });
 
@@ -29,6 +30,7 @@ describe('parseDebugParams', () => {
       narrationOff: true,
       autoCollect: true,
       unlockAll: false,
+      oneShot: false,
     });
   });
 
@@ -44,6 +46,7 @@ describe('parseDebugParams', () => {
       narrationOff: false,
       autoCollect: false,
       unlockAll: false,
+      oneShot: false,
     });
   });
 });
@@ -78,5 +81,10 @@ describe('parseDebugParams: energy', () => {
   it('parses a small energy number only', () => {
     expect(parseDebugParams('?energy=10').energy).toBe(10);
     expect(parseDebugParams('?energy=lots').energy).toBeUndefined();
+  });
+
+  it('parses oneShot', () => {
+    expect(parseDebugParams('?oneShot=1').oneShot).toBe(true);
+    expect(parseDebugParams('?oneShot=yes').oneShot).toBe(false);
   });
 });

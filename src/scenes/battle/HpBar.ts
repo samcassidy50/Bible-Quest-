@@ -7,6 +7,7 @@ export class HpBar extends Phaser.GameObjects.Container {
   private readonly valueText: Phaser.GameObjects.Text;
   readonly nameText: Phaser.GameObjects.Text;
   private shown: number;
+  private target: number;
 
   constructor(
     scene: Phaser.Scene,
@@ -19,6 +20,7 @@ export class HpBar extends Phaser.GameObjects.Container {
   ) {
     super(scene, x, y);
     this.shown = max;
+    this.target = max;
     this.nameText = scene.add
       .text(-widthPx / 2, -14, name, {
         fontFamily: FONT_UI,
@@ -41,11 +43,18 @@ export class HpBar extends Phaser.GameObjects.Container {
   reset(name: string, max: number): void {
     this.max = max;
     this.shown = max;
+    this.target = max;
     this.nameText.setText(name);
     this.draw();
   }
 
+  /** The value the bar is showing, or animating toward. */
+  get value(): number {
+    return this.target;
+  }
+
   setValue(value: number, animate = true): void {
+    this.target = value;
     if (!animate) {
       this.shown = value;
       this.draw();

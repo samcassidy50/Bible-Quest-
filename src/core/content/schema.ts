@@ -31,7 +31,14 @@ export const questionSchema = z.discriminatedUnion('type', [
 ]);
 
 /** Foes that have sprite art; the rest are drawn as coloured placeholder shapes. */
-export const FOE_SPRITES = ['slime-blue', 'slime-lava'] as const;
+export const FOE_SPRITES = [
+  'slime-blue',
+  'slime-lava',
+  'thorn-plant',
+  'fire-spirit',
+  'shadow-wolf',
+  'minotaur',
+] as const;
 export type FoeSpriteId = (typeof FOE_SPRITES)[number];
 
 export const foeSchema = z.object({

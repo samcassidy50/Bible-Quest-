@@ -106,6 +106,11 @@ export class Fighter extends Phaser.GameObjects.Container {
     return this.rig.act(name, onEvent);
   }
 
+  /** How close the hero should stand to strike this foe without running into it. */
+  get strikeDistance(): number {
+    return Math.max(150, (this.foeSprite?.frontReach ?? 0) + 90);
+  }
+
   /** Plays a sprite foe's attack, hurt or death frames (no-op for placeholder foes). */
   foeAct(anim: Exclude<FoeAnim, 'idle'>, ms?: number): Promise<void> {
     return this.foeSprite ? this.foeSprite.play(anim, ms) : Promise.resolve();

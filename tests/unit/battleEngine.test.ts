@@ -339,3 +339,20 @@ describe('Waves, victory and defeat', () => {
     expect(e.isOver).toBe(true);
   });
 });
+
+describe('BattleEngine oneShot (debug)', () => {
+  it('defeats each foe with a single plain attack, even on a wrong answer', () => {
+    const e = started(threeWaves({ oneShot: true }));
+    const first = act(e, 'attack', false);
+    expect(first.damage).toBe(40);
+    expect(first.nextWave).toBe(1);
+    expect(act(e, 'attack').nextWave).toBe(2);
+    expect(act(e, 'attack').victory).toBe(true);
+  });
+
+  it('does not defeat the foe with an action that deals no damage', () => {
+    const e = started(oneWave({ oneShot: true, unlockedSpecials: ['breastplate'] }));
+    expect(act(e, 'breastplate').foeDefeated).toBe(false);
+    expect(e.foeHp).toBe(60);
+  });
+});

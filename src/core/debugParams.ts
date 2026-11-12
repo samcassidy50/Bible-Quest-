@@ -40,6 +40,8 @@ export interface DebugParams {
   unlockAll: boolean;
   /** `?autoCollect=1`: orbs collect themselves (accessibility setting, until Phase 5 settings). */
   autoCollect: boolean;
+  /** `?oneShot=1`: every damaging hit defeats the foe, to get through fights quickly. */
+  oneShot: boolean;
   fast: boolean;
   freeze: boolean;
   fps: boolean;
@@ -58,6 +60,7 @@ export function parseDebugParams(search: string): DebugParams {
     narrationOff: p.get('narration') === 'off',
     autoCollect: flag('autoCollect'),
     unlockAll: flag('unlockAll'),
+    oneShot: flag('oneShot'),
   };
 
   const scene = p.get('scene');

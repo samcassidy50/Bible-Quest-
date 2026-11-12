@@ -31,6 +31,7 @@ async function start(): Promise<void> {
         narrationOff: false,
         autoCollect: false,
         unlockAll: false,
+        oneShot: false,
       };
   const seed = debug.seed ?? randomSeed();
 

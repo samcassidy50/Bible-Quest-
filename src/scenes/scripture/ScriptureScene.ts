@@ -15,6 +15,7 @@ import { COLOR } from '../battle/actionInfo';
 import { Fighter } from '../battle/Fighter';
 import { Button } from '../ui/Button';
 import { FONT_TITLE, FONT_UI, tweenAsync, wait } from '../util';
+import { EnergyCount } from '../icons';
 import { ENERGY_COLOR, Orb } from './Orb';
 import { Backdrop } from '../backdrop/Backdrop';
 
@@ -48,7 +49,7 @@ export class ScriptureScene extends Phaser.Scene {
   private wordGlows = new Map<string, Phaser.GameObjects.Text>();
   private wordOffsets = new Map<string, number>();
   private loadout!: Phaser.GameObjects.Container;
-  private energyText!: Phaser.GameObjects.Text;
+  private energyText!: EnergyCount;
   private skipBtn!: Button;
   private replayBtn!: Button;
   private fullTextBtn!: Button;
@@ -171,15 +172,7 @@ export class ScriptureScene extends Phaser.Scene {
       .setOrigin(1, 0)
       .setShadow(2, 2, '#000', 3);
     const badge = this.add.circle(-40, 62, 34, 0x000000, 0.45).setStrokeStyle(3, ENERGY_COLOR, 0.9);
-    this.energyText = this.add
-      .text(-40, 62, '⚡0', {
-        fontFamily: FONT_UI,
-        fontSize: '26px',
-        fontStyle: 'bold',
-        color: '#ffd34d',
-      })
-      .setOrigin(0.5)
-      .setShadow(2, 2, '#000', 3);
+    this.energyText = new EnergyCount(this, -40, 62, 26, FONT_UI);
     this.loadout.add([label, badge, this.energyText]);
 
     // Controls, top left.
@@ -354,7 +347,7 @@ export class ScriptureScene extends Phaser.Scene {
     this.sync();
     const m = this.energyText.getWorldTransformMatrix();
     await orb.collectTo(m.tx, m.ty);
-    this.energyText.setText(`⚡${this.tracker.collected.length}`);
+    this.energyText.setValue(this.tracker.collected.length);
     this.tweens.add({ targets: this.energyText, scale: 1.4, duration: 140, yoyo: true });
   }
 

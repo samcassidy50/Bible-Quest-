@@ -28,6 +28,7 @@ import { ResultPanel } from './ResultPanel';
 import { Backdrop } from '../backdrop/Backdrop';
 import { Angel, ANGEL_LINES } from '../angel/Angel';
 import { itemSprite } from '../items';
+import { EnergyCount } from '../icons';
 import { Button } from '../ui/Button';
 import { TUNING } from '../../core/battle/tuning';
 import { hapticTap } from '../../services/haptics';
@@ -70,7 +71,7 @@ export class BattleScene extends Phaser.Scene {
   private heroPanel!: Phaser.GameObjects.Container;
   private heroBar!: HpBar;
   private faithPips!: Phaser.GameObjects.Graphics;
-  private energyText!: Phaser.GameObjects.Text;
+  private energyText!: EnergyCount;
   private gift: string | null = null;
   private giftContinue?: Button;
   private foeBar!: HpBar;
@@ -124,6 +125,7 @@ export class BattleScene extends Phaser.Scene {
         startingEnergy:
           this.debug.energy ?? (this.registry.get('collectedEnergy') as number | undefined) ?? 0,
         startingFaith: this.debug.faith,
+        oneShot: this.debug.oneShot,
       },
       rng,
     );
@@ -185,15 +187,7 @@ export class BattleScene extends Phaser.Scene {
       })
       .setShadow(2, 2, '#000', 2);
     this.faithPips = this.add.graphics();
-    this.energyText = this.add
-      .text(328, 88, '', {
-        fontFamily: FONT_UI,
-        fontSize: '22px',
-        fontStyle: 'bold',
-        color: '#ffd34d',
-      })
-      .setOrigin(0.5)
-      .setShadow(2, 2, '#000', 2);
+    this.energyText = new EnergyCount(this, 322, 88, 22, FONT_UI);
     this.heroPanel.add([panelBg, this.heroBar, faithLabel, this.faithPips, this.energyText]);
 
     this.wavePips = this.add.graphics();
@@ -217,6 +211,21 @@ export class BattleScene extends Phaser.Scene {
     return new Fighter(this, 0, 0, 'foe', spec.color, spec.size, spec.sprite);
   }
 
+  /** Lowest y that stays clear of the wave pips and passage title along the top. */
+  private static readonly HUD_CLEAR_Y = 120;
+
+  /** The foe's health bar sits above its head, or under its feet when the foe is too tall for that. */
+  private placeFoeBar(): void {
+    const above = this.groundY - this.foe.figureHeight - 40;
+    const y = above >= BattleScene.HUD_CLEAR_Y ? above : this.groundY + 62;
+    this.foeBar.setPosition(this.foe.x, y);
+  }
+
+  /** Where numbers float up from over the foe, kept below the top HUD for tall foes. */
+  private get foeTextY(): number {
+    return Math.max(BattleScene.HUD_CLEAR_Y + 30, this.foe.y - this.foe.figureHeight - 70);
+  }
+
   private get groundY(): number {
     return this.scale.gameSize.height * 0.7;
   }
@@ -229,7 +238,7 @@ export class BattleScene extends Phaser.Scene {
     this.backdrop.layout(W, H, this.groundY);
     this.hero.setPosition(ins.left + W * 0.22, this.groundY);
     this.foe.setPosition(W * 0.58, this.groundY);
-    this.foeBar.setPosition(this.foe.x, this.groundY - this.foe.figureHeight - 40);
+    this.placeFoeBar();
     this.heroPanel.setPosition(ins.left + 24, H - ins.bottom - 136);
     this.refText.setPosition(ins.left + 24, ins.top + 20);
     this.actionBar.setPosition(W - ins.right - 116, H - ins.bottom - 104);
@@ -241,7 +250,7 @@ export class BattleScene extends Phaser.Scene {
 
   /** Faith pips and the energy count in the hero panel. */
   private drawFaith(): void {
-    this.energyText.setText(`⚡${this.engine.energy}`);
+    this.energyText.setValue(this.engine.energy);
     const g = this.faithPips.clear();
     for (let i = 0; i < 5; i++) {
       const x = 100 + i * 44;
@@ -423,7 +432,7 @@ export class BattleScene extends Phaser.Scene {
     this.hero.run();
     await tweenAsync(this, {
       targets: this.hero,
-      x: this.foe.x - 150,
+      x: this.foe.x - this.foe.strikeDistance,
       duration: 260,
       ease: 'Quad.in',
     });
@@ -441,12 +450,14 @@ export class BattleScene extends Phaser.Scene {
       }
       this.floatText(
         this.foe.x,
-        this.foe.y - this.foe.figureHeight - 70,
+        this.foeTextY,
         `${res.damage}`,
         powered ? COLOR.powered : COLOR.damage,
         ultimate ? 84 : powered ? 60 : 44,
       );
-      this.foeBar.setValue(this.engine.foeHp);
+      // After a finishing blow the engine already holds the next foe, so its HP is not this one's.
+      this.foeBar.setValue(res.foeDefeated ? 0 : this.engine.foeHp);
+      this.sync();
       void tweenAsync(this, { targets: this.foe, x: this.foe.x + 24, duration: 70, yoyo: true });
     };
     const clip = strikeClip(res.action, powered);
@@ -469,13 +480,7 @@ export class BattleScene extends Phaser.Scene {
   private async playEnemy(res: EnemyTurnResult): Promise<void> {
     if (res.skippedStunned) {
       sfx.play('calm');
-      this.floatText(
-        this.foe.x,
-        this.foe.y - this.foe.figureHeight - 70,
-        'Calmed… skips its turn',
-        '#d7c8ff',
-        28,
-      );
+      this.floatText(this.foe.x, this.foeTextY, 'Calmed… skips its turn', '#d7c8ff', 28);
       this.foe.setStunned(false);
       this.sync();
       await wait(this, 700);
@@ -525,7 +530,7 @@ export class BattleScene extends Phaser.Scene {
     this.foe.setPosition(this.scale.gameSize.width * 0.58, this.groundY).setAlpha(0);
     this.children.moveBelow(this.foe, this.foeBar);
     this.foeBar.reset(spec.name, spec.maxHp);
-    this.foeBar.setPosition(this.foe.x, this.groundY - this.foe.figureHeight - 40);
+    this.placeFoeBar();
     if (!this.debug.freeze) this.foe.idle();
     this.drawWaves();
     sfx.play('wave');
@@ -792,6 +797,7 @@ export class BattleScene extends Phaser.Scene {
         foeSprite: (e.foe as EncounterFoe).sprite ?? null,
         foeAnims: this.foe.foeAnimHistory,
         foeHp: e.foeHp,
+        foeBarHp: this.foeBar.value,
         faith: e.faith,
         blocks: e.blocks,
         foeStunned: e.foeStunned,

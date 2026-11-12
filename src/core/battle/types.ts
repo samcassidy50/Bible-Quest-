@@ -27,6 +27,8 @@ export interface BattleConfig {
   ultimateUnlocked?: boolean;
   /** Faith meter at the start of the fight (debug `?faith=`); defaults to 0. */
   startingFaith?: number;
+  /** Debug `?oneShot=1`: any hit that deals damage defeats the foe outright. */
+  oneShot?: boolean;
   /** Upgrade: multiplier on special damage and healing (default 1). */
   specialPower?: number;
   /** Upgrade: extra ultimate damage multiplier (default 0). */

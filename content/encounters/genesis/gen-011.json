@@ -10,7 +10,8 @@
       "maxHp": 50,
       "attack": 10,
       "color": "#9a6a3f",
-      "size": 0.85
+      "size": 0.85,
+      "sprite": "fire-spirit"
     },
     {
       "id": "brick-2",
@@ -18,7 +19,8 @@
       "maxHp": 55,
       "attack": 11,
       "color": "#855a33",
-      "size": 0.95
+      "size": 0.95,
+      "sprite": "fire-spirit"
     },
     {
       "id": "tower",
@@ -26,7 +28,8 @@
       "maxHp": 85,
       "attack": 12,
       "color": "#5c3d22",
-      "size": 1.45
+      "size": 1.45,
+      "sprite": "minotaur"
     }
   ],
   "orbs": [

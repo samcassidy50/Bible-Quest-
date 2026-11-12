@@ -8,6 +8,8 @@ export interface ButtonOptions {
   /** Corner radius; use height / 2 for a pill or width / 2 for a circle. */
   radius?: number;
   label: string;
+  /** A sprite shown in place of the label (texture key, frame and whole-number scale). */
+  icon?: { texture: string; frame: number; scale: number };
   fontSize?: number;
   fill: number;
   textColor?: string;
@@ -45,6 +47,10 @@ export class Button extends Phaser.GameObjects.Container {
         wordWrap: { width: opts.width - 24, useAdvancedWrap: true },
       })
       .setOrigin(0.5);
+    const icon = opts.icon
+      ? scene.add.sprite(0, 0, opts.icon.texture, opts.icon.frame).setScale(opts.icon.scale)
+      : null;
+    this.label.setVisible(!icon);
     this.hit = scene.add
       .rectangle(0, 0, opts.width + 8, opts.height + 8, 0x000000, 0)
       .setInteractive();
@@ -56,7 +62,7 @@ export class Button extends Phaser.GameObjects.Container {
     });
     this.hit.on('pointerup', () => this.setScale(1));
     this.hit.on('pointerout', () => this.setScale(1));
-    this.add([this.bg, this.label, this.hit]);
+    this.add(icon ? [this.bg, this.label, icon, this.hit] : [this.bg, this.label, this.hit]);
     this.setSize(opts.width, opts.height);
     this.draw();
     scene.add.existing(this);

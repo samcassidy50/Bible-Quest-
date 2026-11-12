@@ -2,41 +2,111 @@ import Phaser from 'phaser';
 import type { FoeSpriteId } from '../../core/content/schema';
 import slimeBlueUrl from '../../assets/foes/slime-blue.png';
 import slimeLavaUrl from '../../assets/foes/slime-lava.png';
+import thornPlantUrl from '../../assets/foes/thorn-plant.png';
+import fireSpiritUrl from '../../assets/foes/fire-spirit.png';
+import shadowWolfUrl from '../../assets/foes/shadow-wolf.png';
+import minotaurUrl from '../../assets/foes/minotaur.png';
 
 export type FoeAnim = 'idle' | 'attack' | 'hurt' | 'death';
 const ROWS: FoeAnim[] = ['idle', 'attack', 'hurt', 'death'];
 
 /**
- * Foe sheets built by scripts/art/process_slimes.py from a third-party pack (see art/README.md).
- * One row per state, facing left; keep the frame counts in sync with that script's output.
+ * Foe sheets built by scripts/art/process_foes.py from third-party packs (see art/README.md).
+ * One row per state, facing left; keep cells, columns and frame counts in sync with that
+ * script's output.
  */
-const CELL = 64;
-/** Where the slime's feet are inside a cell. */
-const FEET = { x: 33.5, y: 40 };
-/** Height of the resting slime in native pixels, for placing the HP bar. */
-const BODY_HEIGHT = 28;
-/** Twice the hero's pixel size, so these small sprites read as foes. */
-const BASE_SCALE = 6;
+interface Sheet {
+  url: string;
+  /** Square cell size in native pixels. */
+  cell: number;
+  cols: number;
+  frames: Record<FoeAnim, number>;
+  /** Where the foe touches the ground inside a cell. */
+  feet: { x: number; y: number };
+  /** Height of the resting foe in native pixels, for placing the HP bar. */
+  bodyHeight: number;
+  /** Screen pixels per native pixel (the hero is 3). Bosses are a step bigger. */
+  scale: number;
+  /** Width of the ground shadow in native pixels. */
+  shadow: number;
+  /** How far the foe (weapon included) sticks out toward the hero, in native pixels from its feet. */
+  front?: number;
+}
 
-const SHEETS: Record<FoeSpriteId, { url: string; cols: number; frames: Record<FoeAnim, number> }> =
-  {
-    'slime-blue': {
-      url: slimeBlueUrl,
-      cols: 11,
-      frames: { idle: 6, attack: 11, hurt: 5, death: 10 },
-    },
-    'slime-lava': {
-      url: slimeLavaUrl,
-      cols: 10,
-      frames: { idle: 6, attack: 9, hurt: 5, death: 10 },
-    },
-  };
+/** The slimes are tiny, so they are shown at twice the hero's pixel size. */
+const SLIME = { cell: 64, feet: { x: 33.5, y: 40 }, bodyHeight: 28, scale: 6, shadow: 26 };
+
+/**
+ * The 128px packs draw their feet flush with the bottom edge of the cell. Standing them one pixel
+ * past that edge puts their soles on the same line as the hero's, instead of sunk into the
+ * ground strip.
+ */
+const GROUNDED = 129;
+
+const SHEETS: Record<FoeSpriteId, Sheet> = {
+  'slime-blue': {
+    ...SLIME,
+    url: slimeBlueUrl,
+    cols: 11,
+    frames: { idle: 6, attack: 11, hurt: 5, death: 10 },
+  },
+  'slime-lava': {
+    ...SLIME,
+    url: slimeLavaUrl,
+    cols: 10,
+    frames: { idle: 6, attack: 9, hurt: 5, death: 10 },
+  },
+  'thorn-plant': {
+    url: thornPlantUrl,
+    cell: 128,
+    cols: 6,
+    frames: { idle: 5, attack: 6, hurt: 3, death: 2 },
+    feet: { x: 64, y: GROUNDED },
+    bodyHeight: 58,
+    scale: 3,
+    shadow: 46,
+  },
+  'fire-spirit': {
+    url: fireSpiritUrl,
+    cell: 128,
+    cols: 14,
+    frames: { idle: 6, attack: 14, hurt: 3, death: 5 },
+    feet: { x: 64, y: 101 }, // it hovers just above the ground
+    bodyHeight: 52,
+    scale: 4,
+    shadow: 22,
+  },
+  'shadow-wolf': {
+    url: shadowWolfUrl,
+    cell: 128,
+    cols: 8,
+    frames: { idle: 8, attack: 6, hurt: 2, death: 2 },
+    feet: { x: 54, y: GROUNDED },
+    bodyHeight: 60,
+    scale: 3,
+    shadow: 64,
+  },
+  minotaur: {
+    url: minotaurUrl,
+    cell: 128,
+    cols: 10,
+    frames: { idle: 10, attack: 5, hurt: 3, death: 5 },
+    feet: { x: 70, y: GROUNDED },
+    bodyHeight: 93,
+    scale: 3,
+    shadow: 54,
+    front: 30,
+  },
+};
 
 const textureKey = (id: FoeSpriteId) => `foe-${id}`;
 
 export function loadFoeSheets(load: Phaser.Loader.LoaderPlugin): void {
   for (const id of Object.keys(SHEETS) as FoeSpriteId[])
-    load.spritesheet(textureKey(id), SHEETS[id].url, { frameWidth: CELL, frameHeight: CELL });
+    load.spritesheet(textureKey(id), SHEETS[id].url, {
+      frameWidth: SHEETS[id].cell,
+      frameHeight: SHEETS[id].cell,
+    });
 }
 
 export function useNearestFilterForFoes(textures: Phaser.Textures.TextureManager): void {
@@ -53,7 +123,7 @@ export class FoeSprite extends Phaser.GameObjects.Container {
   /** States played so far, oldest first (for tests). */
   readonly history: FoeAnim[] = [];
   private readonly sprite: Phaser.GameObjects.Sprite;
-  private readonly sheet: (typeof SHEETS)[FoeSpriteId];
+  private readonly sheet: Sheet;
   private readonly pixelScale: number;
   private stepper?: Phaser.Tweens.Tween;
   private looping = false;
@@ -63,24 +133,29 @@ export class FoeSprite extends Phaser.GameObjects.Container {
     super(scene, 0, 0);
     this.sheet = SHEETS[id];
     // Whole-number scale keeps the pixels even; bosses (size > 1) are a step bigger.
-    this.pixelScale = Math.round(BASE_SCALE * Math.max(1, size));
+    this.pixelScale = Math.round(this.sheet.scale * Math.max(1, size));
     const shadow = scene.add.ellipse(
       0,
       0,
-      26 * this.pixelScale,
-      5 * this.pixelScale,
+      this.sheet.shadow * this.pixelScale,
+      this.sheet.shadow * 0.2 * this.pixelScale,
       0x000000,
       0.3,
     );
     this.sprite = scene.add
       .sprite(0, 0, textureKey(id), 0)
-      .setOrigin(FEET.x / CELL, FEET.y / CELL)
+      .setOrigin(this.sheet.feet.x / this.sheet.cell, this.sheet.feet.y / this.sheet.cell)
       .setScale(this.pixelScale);
     this.add([shadow, this.sprite]);
   }
 
+  /** Screen distance from the feet to the foe's leading edge. */
+  get frontReach(): number {
+    return (this.sheet.front ?? 0) * this.pixelScale;
+  }
+
   get bodyHeight(): number {
-    return BODY_HEIGHT * this.pixelScale;
+    return this.sheet.bodyHeight * this.pixelScale;
   }
 
   /** Starts the idle loop (and returns to it after other states). */
@@ -95,13 +170,18 @@ export class FoeSprite extends Phaser.GameObjects.Container {
     if (anim === 'death') this.dead = true;
     this.history.push(anim);
     return new Promise((resolve) => {
-      this.run(anim, (ms ?? this.sheet.frames[anim] * 70) / this.sheet.frames[anim], false, () => {
-        if (!this.dead) {
-          if (this.looping) this.idle();
-          else this.show('idle', 0);
-        }
-        resolve();
-      });
+      this.run(
+        anim,
+        (ms ?? Math.max(400, this.sheet.frames[anim] * 70)) / this.sheet.frames[anim],
+        false,
+        () => {
+          if (!this.dead) {
+            if (this.looping) this.idle();
+            else this.show('idle', 0);
+          }
+          resolve();
+        },
+      );
     });
   }
 

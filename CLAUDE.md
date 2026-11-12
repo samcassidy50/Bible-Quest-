@@ -40,7 +40,7 @@ Before saying a task is done, run: `npm run lint && npm run typecheck && npm run
 
 - New `core/` logic ⇒ new Vitest tests in `tests/unit/`.
 - New scene/UI behaviour ⇒ a Playwright test in `tests/e2e/` using the debug params and `window.__TEST__` (`services/testHooks.ts`). Add fields to `TestState` instead of scraping pixels.
-- Debug URL params (dev and e2e builds only): `?scene= &encounter= &seed= &autoAnswer=correct|wrong &fast=1 &freeze=1 &fps=1 &specials= &faith= &narration=off &autoCollect=1`. Parsed in `core/debugParams.ts`.
+- Debug URL params (dev and e2e builds only): `?scene= &encounter= &seed= &autoAnswer=correct|wrong &fast=1 &freeze=1 &fps=1 &specials= &faith= &narration=off &autoCollect=1 &unlockAll=1 &oneShot=1` (`oneShot`: every damaging hit defeats the foe). Parsed in `core/debugParams.ts`.
 - Hero animation viewer: `?scene=rig` (tap a clip to play it) or `?scene=rig&clip=slash` (contact sheet of frames). Check new or changed hero clips here before using them in scenes.
 
 ## Hero art
@@ -52,6 +52,7 @@ Before saying a task is done, run: `npm run lint && npm run typecheck && npm run
 ## Armor, energy and the angel
 
 - Armor is earned along the map: an encounter's `unlocks` field awards a special (or `ultimate`) on its first win; `ownedArmor()` in `core/progress` derives what the hero owns. The angel (`src/scenes/angel/Angel.ts`, original character) presents it before the win screen.
+- Action-button icons and the energy bolt are pixel art painted by `python3 scripts/art/paint_icons.py [--preview]` into `src/assets/items/icons.png` (`src/scenes/icons.ts`); never edit the PNG by hand.
 - Reading orbs are energy (+1 each); specials cost energy (`TUNING.energy` in `core/battle/tuning.ts`). Debug: `?specials=` grants armor and the ultimate, `?energy=N` sets starting energy.
 
 ## Backgrounds

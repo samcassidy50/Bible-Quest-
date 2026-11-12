@@ -15,6 +15,8 @@ export interface BattleTestState {
   /** Sprite-foe states played by the current foe, oldest first. */
   foeAnims: string[];
   foeHp: number;
+  /** HP the foe's bar is showing (lags `foeHp` until the hit lands). */
+  foeBarHp: number;
   faith: number;
   blocks: number;
   foeStunned: boolean;

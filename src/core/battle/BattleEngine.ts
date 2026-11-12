@@ -270,7 +270,7 @@ export class BattleEngine {
 
   private damageFoe(multiplier: number): number {
     const dmg = this.roll(this.config.hero.attack * multiplier);
-    const dealt = Math.min(dmg, this._foeHp);
+    const dealt = this.config.oneShot ? this._foeHp : Math.min(dmg, this._foeHp);
     this._foeHp -= dealt;
     return dealt;
   }

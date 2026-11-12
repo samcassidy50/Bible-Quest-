@@ -3,6 +3,7 @@ import type { BattleEngine } from '../../core/battle/BattleEngine';
 import { SPECIAL_IDS, type ActionId } from '../../core/battle/types';
 import { Button } from '../ui/Button';
 import { FONT_UI } from '../util';
+import { EnergyCount, ICONS_TEXTURE, iconFrame } from '../icons';
 import { ACTION_INFO, COLOR } from './actionInfo';
 
 const LOCKED_FILL = 0x4a4560;
@@ -15,6 +16,9 @@ const LOCKED_FILL = 0x4a4560;
 export class ActionBar extends Phaser.GameObjects.Container {
   readonly buttons = new Map<ActionId, Button>();
   private readonly captions = new Map<ActionId, Phaser.GameObjects.Text>();
+  /** Energy cost badge on each special's upper right edge. */
+  private readonly costs = new Map<ActionId, EnergyCount>();
+  private readonly costGroups = new Map<ActionId, Phaser.GameObjects.Container>();
   private readonly ultGlow: Phaser.GameObjects.Arc;
   private glowTween?: Phaser.Tweens.Tween;
 
@@ -33,14 +37,14 @@ export class ActionBar extends Phaser.GameObjects.Container {
     this.ultGlow = scene.add.circle(ULT.x, ULT.y, 66, COLOR.gold, 0.35).setVisible(false);
     this.add(this.ultGlow);
 
-    const make = (id: ActionId, x: number, y: number, diameter: number, iconSize: number) => {
+    const make = (id: ActionId, x: number, y: number, diameter: number, iconScale: number) => {
       const info = ACTION_INFO[id];
       const b = new Button(scene, x, y, {
         width: diameter,
         height: diameter,
         radius: diameter / 2,
-        label: info.icon,
-        fontSize: iconSize,
+        label: '',
+        icon: { texture: ICONS_TEXTURE, frame: iconFrame(id), scale: iconScale },
         fill: info.color,
         onTap: () => onAction(id),
       });
@@ -58,9 +62,20 @@ export class ActionBar extends Phaser.GameObjects.Container {
       this.captions.set(id, caption);
     };
 
-    make('attack', 0, 0, 132, 52);
-    SPECIAL_IDS.forEach((id) => make(id, specialPos[id].x, specialPos[id].y, 84, 34));
-    make('ultimate', ULT.x, ULT.y, 104, 44);
+    make('attack', 0, 0, 132, 4);
+    SPECIAL_IDS.forEach((id) => {
+      const { x, y } = specialPos[id];
+      make(id, x, y, 84, 3);
+      const badge = scene.add
+        .circle(x + 30, y - 30, 19, 0x1d1838, 0.92)
+        .setStrokeStyle(2, 0xffd34d);
+      const cost = new EnergyCount(scene, x + 30, y - 30, 18, FONT_UI);
+      const group = scene.add.container(0, 0, [badge, cost]);
+      this.add(group);
+      this.costGroups.set(id, group);
+      this.costs.set(id, cost);
+    });
+    make('ultimate', ULT.x, ULT.y, 104, 3);
 
     scene.add.existing(this);
   }
@@ -72,23 +87,26 @@ export class ActionBar extends Phaser.GameObjects.Container {
     for (const id of SPECIAL_IDS) {
       const b = this.buttons.get(id)!;
       const caption = this.captions.get(id)!;
-      const cost = `${ACTION_INFO[id].short} ⚡${engine.costOf(id)}`;
+      const cost = this.costGroups.get(id)!;
+      this.costs.get(id)!.setValue(engine.costOf(id));
       if (!engine.isUnlocked(id)) {
         // Not earned yet on the map: hidden entirely.
         b.setEnabled(false).setVisible(false);
         caption.setVisible(false);
+        cost.setVisible(false);
         continue;
       }
       b.setVisible(true);
       caption.setVisible(true);
+      cost.setVisible(true);
       if (!engine.canAfford(id)) {
-        b.setFill(ACTION_INFO[id].color).setText(ACTION_INFO[id].icon).setEnabled(false);
-        caption.setText(cost).setAlpha(0.6);
+        b.setFill(ACTION_INFO[id].color).setEnabled(false);
+        caption.setAlpha(0.6);
+        cost.setAlpha(0.6);
       } else {
-        b.setFill(ACTION_INFO[id].color)
-          .setText(ACTION_INFO[id].icon)
-          .setEnabled(inputEnabled && available.has(id));
-        caption.setText(cost).setAlpha(1);
+        b.setFill(ACTION_INFO[id].color).setEnabled(inputEnabled && available.has(id));
+        caption.setAlpha(1);
+        cost.setAlpha(1);
       }
     }
 
@@ -98,7 +116,6 @@ export class ActionBar extends Phaser.GameObjects.Container {
     const ready = engine.ultimateReady;
     ult
       .setFill(ready ? ACTION_INFO.ultimate.color : LOCKED_FILL)
-      .setText(ACTION_INFO.ultimate.icon)
       .setEnabled(inputEnabled && available.has('ultimate'))
       .setVisible(engine.ultimateUnlocked);
     this.captions

@@ -10,7 +10,8 @@
       "maxHp": 50,
       "attack": 10,
       "color": "#3f6b3a",
-      "size": 0.8
+      "size": 0.8,
+      "sprite": "thorn-plant"
     },
     {
       "id": "thornling-2",
@@ -18,7 +19,8 @@
       "maxHp": 50,
       "attack": 10,
       "color": "#355c31",
-      "size": 0.9
+      "size": 0.9,
+      "sprite": "thorn-plant"
     },
     {
       "id": "sentinel",
@@ -26,7 +28,8 @@
       "maxHp": 75,
       "attack": 12,
       "color": "#24401f",
-      "size": 1.2
+      "size": 1.2,
+      "sprite": "thorn-plant"
     }
   ],
   "orbs": [

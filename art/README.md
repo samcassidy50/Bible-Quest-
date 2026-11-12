@@ -25,12 +25,20 @@ at least 40 px of empty magenta between frames so they never touch.
 
 # Foe art
 
-- `slime-blue` and `slime-lava` (`src/assets/foes/`) are **third-party art**: Slime2 and Slime3 from
-  the CraftPix "Free Slime Mobs Pixel Art Top-Down Sprite Pack" (https://craftpix.net), under the
-  CraftPix file licence (https://craftpix.net/file-licenses/). The pack itself is not kept here;
-  `python3 scripts/art/process_slimes.py <unzipped pack folder>` rebuilds the two sheets from it.
-  A foe uses one by setting `"sprite"` in its encounter JSON; they are shown at twice the hero's
-  pixel size.
+- These sheets in `src/assets/foes/` are **third-party art** from CraftPix free packs
+  (https://craftpix.net), under the CraftPix file licence (https://craftpix.net/file-licenses/):
+
+  | Sheet                        | Pack                                           | Character          |
+  | ---------------------------- | ---------------------------------------------- | ------------------ |
+  | `slime-blue`, `slime-lava`   | Free Slime Mobs Pixel Art Top-Down Sprite Pack | Slime2, Slime3     |
+  | `thorn-plant`, `fire-spirit` | Free Fantasy Enemies Pixel Art Sprite Pack     | Plent, Fire_Spirit |
+  | `shadow-wolf`                | Free Werewolf Sprite Sheets Pixel Art          | Black_Werewolf     |
+  | `minotaur`                   | Free Minotaur Sprite Sheet Pixel Art Pack      | Minotaur_1         |
+
+  The packs themselves are not kept here; `python3 scripts/art/process_foes.py --help` shows how
+  to rebuild the sheets from the unzipped packs. A foe uses one by setting `"sprite"` in its
+  encounter JSON. Sizes and frame counts live in `src/scenes/battle/FoeSprite.ts`.
+
 - `demon`, `serpent`, `shade` and `thornbeast` are original, painted by
   `python3 scripts/art/paint_monsters.py --preview` (previews in `art/foe-previews/`). They are not
   used in the game yet.

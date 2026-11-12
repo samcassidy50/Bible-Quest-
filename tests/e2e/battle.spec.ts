@@ -135,14 +135,41 @@ test('answer choices are shuffled, not always first', async ({ page }) => {
 });
 
 test('sprite foes play their attack, hurt and death frames', async ({ page }) => {
-  await page.goto('/?scene=battle&encounter=gen-003&seed=1&specials=&freeze=1');
-  await heroTurn(page);
-  expect((await battle(page)).foeSprite).toBe('slime-lava');
-  await snap(page, test.info().outputPath('slime-lava.png'));
+  const foes = [
+    ['gen-003', 'slime-lava'],
+    ['gen-004', 'thorn-plant'],
+    ['gen-007', 'shadow-wolf'],
+    ['gen-011', 'fire-spirit'],
+  ] as const;
+  for (const [encounter, sprite] of foes) {
+    await page.goto(`/?scene=battle&encounter=${encounter}&seed=1&specials=&freeze=1`);
+    await heroTurn(page);
+    expect((await battle(page)).foeSprite).toBe(sprite);
+    await snap(page, test.info().outputPath(`${sprite}.png`));
+  }
+
+  // The Babel boss is the third wave.
+  await page.goto('/?scene=battle&encounter=gen-011&seed=1&autoAnswer=correct&fast=1');
+  await waitFor(
+    page,
+    "s.battle && s.battle.wave === 2 && s.battle.foeSprite === 'minotaur' && !s.busy",
+    60_000,
+  );
+  await snap(page, test.info().outputPath('minotaur.png'));
 
   await page.goto('/?scene=battle&encounter=gen-001&seed=1&autoAnswer=correct&fast=1');
   await waitFor(page, "s.battle && s.battle.foeSprite === 'slime-blue'");
   await waitFor(page, "s.battle.foeAnims.includes('hurt') && s.battle.foeAnims.includes('attack')");
   await waitFor(page, "s.battle.result === 'VICTORY' && !!s.targets.primary", 60_000);
   expect((await battle(page)).foeAnims).toContain('death');
+});
+
+test('?oneShot=1 wins each wave in one hit, and the health bar empties before the next foe', async ({
+  page,
+}) => {
+  await page.goto('/?scene=battle&encounter=gen-004&seed=1&oneShot=1&autoAnswer=wrong');
+  // The engine is already on wave 2 while the first foe dies: its bar must read 0, not 50/50.
+  await waitFor(page, 's.battle && s.battle.wave === 1 && s.battle.foeBarHp === 0');
+  await waitFor(page, "s.battle.result === 'VICTORY'", 60_000);
+  expect((await battle(page)).asked).toBe(3);
 });

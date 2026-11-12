@@ -10,7 +10,8 @@
       "maxHp": 50,
       "attack": 10,
       "color": "#3a2f4f",
-      "size": 0.8
+      "size": 0.8,
+      "sprite": "shadow-wolf"
     },
     {
       "id": "shadow-2",
@@ -18,7 +19,8 @@
       "maxHp": 55,
       "attack": 11,
       "color": "#30263f",
-      "size": 0.9
+      "size": 0.9,
+      "sprite": "shadow-wolf"
     },
     {
       "id": "crouching",
@@ -26,7 +28,8 @@
       "maxHp": 80,
       "attack": 13,
       "color": "#1a1426",
-      "size": 1.25
+      "size": 1.25,
+      "sprite": "shadow-wolf"
     }
   ],
   "orbs": [

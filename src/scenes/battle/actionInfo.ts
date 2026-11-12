@@ -1,6 +1,6 @@
 import type { ActionId } from '../../core/battle/types';
 
-/** Display info for each hero action (placeholder icons until Phase 4 art). */
+/** Display info for each hero action (`icon` is the emoji used inside text; buttons use the pixel icons in scenes/icons.ts). */
 export const ACTION_INFO: Record<
   ActionId,
   { name: string; short: string; icon: string; color: number }
