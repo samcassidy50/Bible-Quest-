@@ -37,7 +37,7 @@
       "word": "image"
     },
     {
-      "word": "dominion"
+      "word": "rule"
     },
     {
       "word": "female"
@@ -51,19 +51,19 @@
       "difficulty": "easy",
       "prompt": "In whose image did God create man?",
       "choices": [
-        "In God’s image",
+        "In the image of God",
         "In an angel’s image",
         "In an animal’s image",
         "In a star’s image"
       ],
       "answerIndex": 0,
-      "highlight": "In God’s image he created him"
+      "highlight": "in the image of God He created him"
     },
     {
       "id": "gen-003-q2",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What did God give people dominion over?",
+      "prompt": "What did God make man to rule over?",
       "choices": [
         "The fish, the birds, and the livestock",
         "Only the stars",
@@ -71,25 +71,25 @@
         "Nothing at all"
       ],
       "answerIndex": 0,
-      "highlight": "dominion over the fish of the sea"
+      "highlight": "to rule over the fish of the sea and the birds of the air"
     },
     {
       "id": "gen-003-q3",
       "type": "fill_blank",
       "difficulty": "medium",
-      "prompt": "Male and ____ he created them.",
+      "prompt": "Male and ____ He created them.",
       "choices": ["female", "child", "angel", "animal"],
       "answerIndex": 0,
-      "highlight": "male and female he created them"
+      "highlight": "male and female He created them"
     },
     {
       "id": "gen-003-q4",
       "type": "true_false",
       "difficulty": "easy",
-      "prompt": "True or false: God said, “Let’s make man in our image, after our likeness.”",
+      "prompt": "True or false: God said man would be made after His likeness.",
       "choices": ["True", "False"],
       "answerIndex": 0,
-      "highlight": "after our likeness"
+      "highlight": "after Our likeness"
     },
     {
       "id": "gen-003-q5",
@@ -104,10 +104,10 @@
       "id": "gen-003-q6",
       "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "Which creatures do these verses say are of the sky?",
+      "prompt": "Which creatures do these verses say are of the air?",
       "choices": ["The birds", "The fish", "The livestock", "The creeping things"],
       "answerIndex": 0,
-      "highlight": "the birds of the sky"
+      "highlight": "the birds of the air"
     }
   ]
 }

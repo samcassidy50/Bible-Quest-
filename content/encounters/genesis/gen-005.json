@@ -31,7 +31,7 @@
   ],
   "orbs": [
     {
-      "word": "subtle"
+      "word": "crafty"
     },
     {
       "word": "touch"
@@ -40,10 +40,10 @@
       "word": "eyes"
     },
     {
-      "word": "delight"
+      "word": "pleasing"
     },
     {
-      "word": "wise"
+      "word": "wisdom"
     }
   ],
   "unlocks": "shield",
@@ -54,13 +54,13 @@
       "difficulty": "medium",
       "prompt": "How is the serpent described?",
       "choices": [
-        "More subtle than any animal of the field",
-        "The biggest animal",
-        "The kindest animal",
-        "The fastest animal"
+        "More crafty than any beast of the field",
+        "The biggest beast",
+        "The kindest beast",
+        "The fastest beast"
       ],
       "answerIndex": 0,
-      "highlight": "more subtle than any animal of the field"
+      "highlight": "more crafty than any beast of the field"
     },
     {
       "id": "gen-005-q2",
@@ -74,16 +74,16 @@
         "The tree by the river"
       ],
       "answerIndex": 0,
-      "highlight": "the tree which is in the middle of the garden"
+      "highlight": "the tree in the middle of the garden"
     },
     {
       "id": "gen-005-q3",
       "type": "fill_blank",
       "difficulty": "medium",
-      "prompt": "The serpent said to the woman, “You won’t really ____.”",
+      "prompt": "“You will not surely ____,” the serpent told the woman.",
       "choices": ["die", "eat", "sleep", "leave"],
       "answerIndex": 0,
-      "highlight": "You won’t really die"
+      "highlight": "You will not surely die"
     },
     {
       "id": "gen-005-q4",
@@ -105,7 +105,7 @@
       "difficulty": "medium",
       "prompt": "What did the woman see about the tree?",
       "choices": [
-        "It was good for food and a delight to the eyes",
+        "It was good for food and pleasing to the eyes",
         "It was dry and dead",
         "It was too high to reach",
         "It had no fruit"
@@ -120,7 +120,7 @@
       "prompt": "Who did the woman give some of the fruit to?",
       "choices": ["Her husband", "The serpent", "An angel", "No one"],
       "answerIndex": 0,
-      "highlight": "she gave some to her husband with her"
+      "highlight": "She also gave some to her husband"
     }
   ]
 }

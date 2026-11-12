@@ -34,7 +34,7 @@ export class TitleScene extends Phaser.Scene {
       .text(
         0,
         0,
-        '"In the beginning, God created the heavens and the earth."  — Genesis 1:1 (WEB)',
+        '"In the beginning God created the heavens and the earth."  — Genesis 1:1 (BSB)',
         {
           fontFamily: 'Georgia, serif',
           fontSize: '26px',

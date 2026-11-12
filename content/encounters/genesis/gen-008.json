@@ -1,6 +1,6 @@
 {
   "id": "gen-008",
-  "title": "Build the Ship",
+  "title": "Build the Ark",
   "passage": "GEN 6:13-14",
   "setting": "flood",
   "weather": "storm",
@@ -38,7 +38,7 @@
       "word": "violence"
     },
     {
-      "word": "ship"
+      "word": "ark"
     },
     {
       "word": "rooms"
@@ -61,46 +61,46 @@
       "id": "gen-008-q2",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What was the earth filled with?",
+      "prompt": "What was the earth full of?",
       "choices": ["Violence", "Water", "Gold", "Music"],
       "answerIndex": 0,
-      "highlight": "the earth is filled with violence"
+      "highlight": "the earth is full of violence"
     },
     {
       "id": "gen-008-q3",
       "type": "fill_blank",
       "difficulty": "medium",
-      "prompt": "Make a ship of ____ wood.",
+      "prompt": "Make for yourself an ark of ____ wood.",
       "choices": ["gopher", "oak", "cedar", "pine"],
       "answerIndex": 0,
-      "highlight": "Make a ship of gopher wood"
+      "highlight": "Make for yourself an ark of gopher wood"
     },
     {
       "id": "gen-008-q4",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What did God tell Noah to make in the ship?",
+      "prompt": "What did God tell Noah to make in the ark?",
       "choices": ["Rooms", "Gardens", "Towers", "Wells"],
       "answerIndex": 0,
-      "highlight": "You shall make rooms in the ship"
+      "highlight": "make rooms in the ark"
     },
     {
       "id": "gen-008-q5",
       "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "What was the ship to be sealed with?",
+      "prompt": "What was the ark to be coated with?",
       "choices": ["Pitch", "Paint", "Glue", "Mud"],
       "answerIndex": 0,
-      "highlight": "seal it inside and outside with pitch"
+      "highlight": "coat it with pitch inside and out"
     },
     {
       "id": "gen-008-q6",
       "type": "true_false",
       "difficulty": "easy",
-      "prompt": "True or false: the ship was to be sealed only on the outside.",
+      "prompt": "True or false: the ark was to be coated only on the outside.",
       "choices": ["True", "False"],
       "answerIndex": 1,
-      "highlight": "inside and outside"
+      "highlight": "inside and out"
     }
   ]
 }

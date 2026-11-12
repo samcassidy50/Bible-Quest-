@@ -37,16 +37,16 @@
       "word": "angry"
     },
     {
-      "word": "face"
+      "word": "countenance"
     },
     {
-      "word": "well"
+      "word": "right"
     },
     {
       "word": "door"
     },
     {
-      "word": "rule"
+      "word": "master"
     }
   ],
   "unlocks": "breastplate",
@@ -55,16 +55,16 @@
       "id": "gen-007-q1",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "Who did Yahweh speak to?",
+      "prompt": "Who did the LORD speak to?",
       "choices": ["Cain", "Noah", "Adam", "Abel"],
       "answerIndex": 0,
-      "highlight": "Yahweh said to Cain"
+      "highlight": "said the LORD to Cain"
     },
     {
       "id": "gen-007-q2",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What did Yahweh ask Cain?",
+      "prompt": "What did the LORD ask Cain?",
       "choices": [
         "Why are you angry?",
         "Are you hungry?",
@@ -72,48 +72,48 @@
         "Who made the sky?"
       ],
       "answerIndex": 0,
-      "highlight": "Why are you angry?"
+      "highlight": "Why are you angry"
     },
     {
       "id": "gen-007-q3",
       "type": "fill_blank",
       "difficulty": "medium",
-      "prompt": "If you don’t do well, sin crouches at the ____.",
+      "prompt": "Sin is crouching at your ____.",
       "choices": ["door", "window", "river", "gate"],
       "answerIndex": 0,
-      "highlight": "sin crouches at the door"
+      "highlight": "sin is crouching at your door"
     },
     {
       "id": "gen-007-q4",
       "type": "true_false",
       "difficulty": "medium",
-      "prompt": "True or false: Yahweh told Cain that he is to rule over sin.",
+      "prompt": "True or false: the LORD told Cain that he must master sin.",
       "choices": ["True", "False"],
       "answerIndex": 0,
-      "highlight": "you are to rule over it"
+      "highlight": "you must master it"
     },
     {
       "id": "gen-007-q5",
       "type": "multiple_choice",
       "difficulty": "hard",
-      "prompt": "What did Yahweh say would happen if Cain did well?",
+      "prompt": "What did the LORD say would happen if Cain did what is right?",
       "choices": [
-        "It would be lifted up",
-        "It would fall down",
-        "It would be forgotten",
-        "It would turn to dust"
+        "He would be accepted",
+        "He would be forgotten",
+        "He would be sent away",
+        "He would become king"
       ],
       "answerIndex": 0,
-      "highlight": "If you do well, won’t it be lifted up?"
+      "highlight": "If you do what is right, will you not be accepted?"
     },
     {
       "id": "gen-007-q6",
       "type": "multiple_choice",
       "difficulty": "hard",
-      "prompt": "Whose desire is for Cain?",
-      "choices": ["Sin’s", "An angel’s", "His father’s", "A lion’s"],
+      "prompt": "What desires Cain?",
+      "choices": ["Sin", "An angel", "His father", "A lion"],
       "answerIndex": 0,
-      "highlight": "Its desire is for you"
+      "highlight": "it desires you"
     }
   ]
 }

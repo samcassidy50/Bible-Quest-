@@ -54,10 +54,10 @@
       "id": "gen-004-q1",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "Where did Yahweh God put the man?",
-      "choices": ["The garden of Eden", "A city", "A ship", "A mountain"],
+      "prompt": "Where did the LORD God place the man?",
+      "choices": ["The Garden of Eden", "A city", "An ark", "A mountain"],
       "answerIndex": 0,
-      "highlight": "put him into the garden of Eden"
+      "highlight": "placed him in the Garden of Eden"
     },
     {
       "id": "gen-004-q2",
@@ -77,16 +77,16 @@
       "id": "gen-004-q3",
       "type": "true_false",
       "difficulty": "medium",
-      "prompt": "True or false: God said the man could freely eat of every tree of the garden.",
+      "prompt": "True or false: God said the man could eat freely from every tree of the garden.",
       "choices": ["True", "False"],
       "answerIndex": 0,
-      "highlight": "You may freely eat of every tree of the garden"
+      "highlight": "You may eat freely from every tree of the garden"
     },
     {
       "id": "gen-004-q4",
       "type": "fill_blank",
       "difficulty": "medium",
-      "prompt": "You shall not eat of the tree of the knowledge of good and ____.",
+      "prompt": "You must not eat from the tree of the knowledge of good and ____.",
       "choices": ["evil", "light", "life", "joy"],
       "answerIndex": 0,
       "highlight": "the tree of the knowledge of good and evil"
@@ -110,9 +110,9 @@
       "type": "multiple_choice",
       "difficulty": "easy",
       "prompt": "Who commanded the man?",
-      "choices": ["Yahweh God", "The serpent", "An angel", "The woman"],
+      "choices": ["The LORD God", "The serpent", "An angel", "The woman"],
       "answerIndex": 0,
-      "highlight": "Yahweh God commanded the man"
+      "highlight": "the LORD God commanded him"
     }
   ]
 }

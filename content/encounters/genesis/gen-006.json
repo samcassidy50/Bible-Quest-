@@ -37,7 +37,7 @@
       "word": "cursed"
     },
     {
-      "word": "labor"
+      "word": "toil"
     },
     {
       "word": "thorns"
@@ -57,16 +57,16 @@
       "prompt": "What would the ground yield?",
       "choices": ["Thorns and thistles", "Gold and silver", "Only flowers", "Nothing at all"],
       "answerIndex": 0,
-      "highlight": "It will yield thorns and thistles"
+      "highlight": "Both thorns and thistles it will yield"
     },
     {
       "id": "gen-006-q2",
       "type": "fill_blank",
       "difficulty": "medium",
-      "prompt": "You will eat bread by the sweat of your ____.",
-      "choices": ["face", "back", "feet", "arms"],
+      "prompt": "By the sweat of your ____ you will eat your bread.",
+      "choices": ["brow", "back", "feet", "arms"],
       "answerIndex": 0,
-      "highlight": "by the sweat of your face"
+      "highlight": "By the sweat of your brow"
     },
     {
       "id": "gen-006-q3",
@@ -80,25 +80,25 @@
         "The animals trampled it"
       ],
       "answerIndex": 0,
-      "highlight": "have eaten from the tree, about which I commanded you"
+      "highlight": "have eaten from the tree of which I commanded you not to eat"
     },
     {
       "id": "gen-006-q4",
       "type": "true_false",
       "difficulty": "easy",
-      "prompt": "True or false: these verses say, “you are dust, and you shall return to dust.”",
+      "prompt": "True or false: these verses say that Adam is dust and will return to dust.",
       "choices": ["True", "False"],
       "answerIndex": 0,
-      "highlight": "For you are dust, and you shall return to dust"
+      "highlight": "For dust you are, and to dust you shall return"
     },
     {
       "id": "gen-006-q5",
       "type": "multiple_choice",
       "difficulty": "easy",
       "prompt": "How would Adam eat from the ground?",
-      "choices": ["With much labor", "With no effort", "Only on holidays", "With help from angels"],
+      "choices": ["Through toil", "With no effort", "Only on holidays", "With help from angels"],
       "answerIndex": 0,
-      "highlight": "with much labor"
+      "highlight": "through toil you will eat of it"
     },
     {
       "id": "gen-006-q6",
@@ -106,13 +106,13 @@
       "difficulty": "medium",
       "prompt": "What would Adam eat, according to verse 18?",
       "choices": [
-        "The herb of the field",
+        "The plants of the field",
         "Fish from the sea",
         "Bread from the sky",
         "Honey from rocks"
       ],
       "answerIndex": 0,
-      "highlight": "you will eat the herb of the field"
+      "highlight": "you will eat the plants of the field"
     }
   ]
 }

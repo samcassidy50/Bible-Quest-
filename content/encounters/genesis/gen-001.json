@@ -60,13 +60,13 @@
       "prompt": "True or false: at the start, the earth was full of light.",
       "choices": ["True", "False"],
       "answerIndex": 1,
-      "highlight": "Darkness was on the surface of the deep"
+      "highlight": "darkness was over the surface of the deep"
     },
     {
       "id": "gen-001-q3",
       "type": "fill_blank",
       "difficulty": "medium",
-      "prompt": "God’s Spirit was hovering over the surface of the ____.",
+      "prompt": "The Spirit of God was hovering over the surface of the ____.",
       "choices": ["waters", "mountains", "garden", "sky"],
       "answerIndex": 0,
       "highlight": "hovering over the surface of the waters"
@@ -76,18 +76,18 @@
       "type": "multiple_choice",
       "difficulty": "medium",
       "prompt": "How does the verse describe the earth at first?",
-      "choices": ["Full of animals", "Formless and empty", "Covered in trees", "Bright and sunny"],
+      "choices": ["Full of animals", "Formless and void", "Covered in trees", "Bright and sunny"],
       "answerIndex": 1,
-      "highlight": "formless and empty"
+      "highlight": "formless and void"
     },
     {
       "id": "gen-001-q5",
       "type": "multiple_choice",
       "difficulty": "easy",
       "prompt": "Who was hovering over the waters?",
-      "choices": ["An angel", "A dove", "God’s Spirit", "Adam"],
+      "choices": ["An angel", "A dove", "The Spirit of God", "Adam"],
       "answerIndex": 2,
-      "highlight": "God’s Spirit was hovering"
+      "highlight": "the Spirit of God was hovering"
     },
     {
       "id": "gen-001-q6",

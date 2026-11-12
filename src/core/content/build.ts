@@ -25,7 +25,7 @@ export function buildEncounter(raw: unknown, bible: Bible, source = 'encounter')
     reference: formatReference(ref),
     setting: f.setting,
     ...(f.weather ? { weather: f.weather } : {}),
-    translation: 'WEB',
+    translation: 'BSB',
     verses: resolvePassage(bible, f.passage),
     waves: f.waves.map((w) => ({ ...w, color: parseInt(w.color.slice(1), 16) })),
     orbs: f.orbs,

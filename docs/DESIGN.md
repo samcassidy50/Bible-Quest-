@@ -159,7 +159,7 @@ Validation: `special` must be one of `sword | shield | breastplate | sandals`, w
 | Build/dev       | **Vite**                                                                                                                                                                    | Instant dev server, hot module reload, and simple static builds.                                                                                                                                                              |
 | UI overlays     | Phaser-native UI (scenes and containers)                                                                                                                                    | Keeps one rendering model. A DOM overlay can be added later for the accessible text panel.                                                                                                                                    |
 | Narration       | Prototype: native device TTS via `@capacitor-community/text-to-speech`. Release: **pre-generated AI neural-voice audio files** bundled in the app                           | Browser `speechSynthesis` is unreliable inside Android WebViews, so it isn't used on mobile. Pre-generated audio sounds the same on every device, works offline, and can include word timings for karaoke-style highlighting. |
-| Bible text      | **World English Bible (WEB)**, public domain                                                                                                                                | A modern, readable English translation with no licensing cost. KJV is also public domain and could be an optional toggle. Avoid NIV/ESV unless they are licensed.                                                             |
+| Bible text      | **Berean Standard Bible (BSB)**, public domain (switched from the World English Bible on 2026-11-12 because it reads more naturally aloud)                                  | A modern, readable English translation with no licensing cost. KJV is also public domain and could be an optional toggle. Avoid NIV/ESV unless they are licensed.                                                             |
 | Content         | JSON files in `content/`, validated by **Zod** schemas                                                                                                                      | Easy to author and diff, and broken content is caught at build time.                                                                                                                                                          |
 | Save data       | **`@capacitor/preferences`** (native key-value storage) behind a `SaveService` interface; `localStorage` only in the web dev build                                          | iOS can clear WebView `localStorage` when the device is low on space, so native storage is used for real saves. The interface allows cloud sync later.                                                                        |
 | Native features | `@capacitor/haptics` (powered hits), `@capacitor/screen-orientation` (lock landscape), `@capacitor/status-bar`, `@capacitor/splash-screen`, `@capacitor/app` (pause/resume) | Makes the game feel native, and it pauses correctly when interrupted by a phone call.                                                                                                                                         |
@@ -226,7 +226,7 @@ INTRO → HERO_CHOOSE ─(attack | special)─▶ HERO_QUESTION → HERO_ACTION(
 
 ### 3.2 Content schema
 
-> **Implemented in Phase 3 with one change:** encounter files store a `passage` reference (e.g. `"GEN 1:1-2"`) instead of verse text. The game resolves the text from the vendored WEB source at load time, so Scripture can't be mistyped in content files. The draft below is kept for history; see `content/encounters/genesis/` and `src/core/content/schema.ts` for the real format.
+> **Implemented in Phase 3 with one change:** encounter files store a `passage` reference (e.g. `"GEN 1:1-2"`) instead of verse text. The game resolves the text from the vendored BSB source at load time, so Scripture can't be mistyped in content files. The draft below is kept for history; see `content/encounters/genesis/` and `src/core/content/schema.ts` for the real format.
 
 ```jsonc
 // content/genesis/001-creation.json
@@ -289,19 +289,19 @@ INTRO → HERO_CHOOSE ─(attack | special)─▶ HERO_QUESTION → HERO_ACTION(
 
 Content is authored as **passage → encounter** pairs. The first arc ("Beginnings") covers Genesis 1–11:
 
-| #   | Passage     | Theme                            | Foe                        |
-| --- | ----------- | -------------------------------- | -------------------------- |
-| 1   | Gen 1:1–2   | In the beginning                 | Shade of the Deep          |
-| 2   | Gen 1:3–5   | Let there be light               | Shade of the Deep (wave 2) |
-| 3   | Gen 1:26–27 | Made in God's image              | Dust Wraith                |
-| 4   | Gen 2:15–17 | The garden and the command       | Thornling                  |
-| 5   | Gen 3:1–6   | The temptation                   | The Serpent                |
-| 6   | Gen 3:17–19 | Thorns and thistles              | Thornbeast                 |
-| 7   | Gen 4:6–7   | Sin crouching at the door        | Crouching Shadow           |
-| 8   | Gen 6:13–14 | Build the ship (WEB says “ship”) | Storm Cloud                |
-| 9   | Gen 7:11–12 | The flood                        | Flood Surge                |
-| 10  | Gen 9:12–13 | The rainbow covenant             | Boss: Tempest              |
-| 11  | Gen 11:4–7  | Babel                            | Boss: Tower Golem          |
+| #   | Passage     | Theme                      | Foe                        |
+| --- | ----------- | -------------------------- | -------------------------- |
+| 1   | Gen 1:1–2   | In the beginning           | Shade of the Deep          |
+| 2   | Gen 1:3–5   | Let there be light         | Shade of the Deep (wave 2) |
+| 3   | Gen 1:26–27 | Made in God's image        | Dust Wraith                |
+| 4   | Gen 2:15–17 | The garden and the command | Thornling                  |
+| 5   | Gen 3:1–6   | The temptation             | The Serpent                |
+| 6   | Gen 3:17–19 | Thorns and thistles        | Thornbeast                 |
+| 7   | Gen 4:6–7   | Sin crouching at the door  | Crouching Shadow           |
+| 8   | Gen 6:13–14 | Build the ark              | Storm Cloud                |
+| 9   | Gen 7:11–12 | The flood                  | Flood Surge                |
+| 10  | Gen 9:12–13 | The rainbow covenant       | Boss: Tempest              |
+| 11  | Gen 11:4–7  | Babel                      | Boss: Tower Golem          |
 
 Later arcs: Abraham (12–25), Isaac and Jacob (25–36), Joseph (37–50), and then Exodus.
 
@@ -324,7 +324,7 @@ Later arcs: Abraham (12–25), Isaac and Jacob (25–36), Joseph (37–50), and 
 
 ## 6. Content Authoring and Review
 
-1. Pick the passage. A script imports the verse text **from a vendored public-domain WEB source file** (`content/source/web/`). **AI never types or paraphrases Scripture.** CI checks every verse in the content files word for word against the source file.
+1. Pick the passage. A script imports the verse text **from a vendored public-domain BSB source file** (`content/source/bsb/`). **AI never types or paraphrases Scripture.** CI checks every verse in the content files word for word against the source file.
 2. An AI agent drafts at least 6 questions per encounter using a fixed prompt template, and the same script also records the `highlight` phrases. **A human reviews every question** for accuracy and grounding before it is merged.
 3. Run `npm run validate:content`.
 4. Theological/content review: a checklist in the PR template.
@@ -391,8 +391,8 @@ Each phase ends in something playable, deployed to a preview URL.
 ### Phase 5: Progression and retention (≈2 weeks)
 
 - Save/load, stars, upgrades (including special attack and ultimate upgrades), Verse Journal.
-- **Status (2026-11-11):** done. Saves (native Preferences / localStorage, validated and self-repairing), stars 1–3 by accuracy, passages unlock in order, upgrades (Health, Strength, Armor Mastery, Faith; 3 levels at 2/3/4 stars), Verse Journal, Settings (sound, narration, reading speed, auto-collect orbs, 20 s question timer, reset). Not done: KJV toggle (only WEB is vendored), fast-answer timer bonus.
-- Settings: timer, text speed, difficulty, translation (WEB/KJV).
+- **Status (2026-11-11):** done. Saves (native Preferences / localStorage, validated and self-repairing), stars 1–3 by accuracy, passages unlock in order, upgrades (Health, Strength, Armor Mastery, Faith; 3 levels at 2/3/4 stars), Verse Journal, Settings (sound, narration, reading speed, auto-collect orbs, 20 s question timer, reset). Not done: KJV toggle (only BSB is vendored), fast-answer timer bonus.
+- Settings: timer, text speed, difficulty, translation (BSB/KJV).
 - **Exit:** a player can play for several sessions with persistent progress.
 
 ### Phase 6: Store release (≈2 weeks)
@@ -463,14 +463,14 @@ A Vitest script runs 10,000 simulated battles per encounter at answer accuracies
 | App store rejection (kids, privacy)                      | Decide the audience early (§10). Follow the Phase 6 policy checklist from the start.                                        |
 | Questions that aren't actually answerable from the verse | Automatic `highlight` check plus human review. Track accuracy per question after launch.                                    |
 | TTS quality varies by device                             | Recorded narration in Phase 4/5; captions always on.                                                                        |
-| Translation licensing                                    | Use public-domain WEB/KJV only, unless a license is obtained.                                                               |
+| Translation licensing                                    | Use public-domain BSB/KJV only, unless a license is obtained.                                                               |
 | Doctrinal sensitivity                                    | Foes are abstract or temptation-themed; a content reviewer signs off on each arc.                                           |
 | Players skip reading                                     | Questions require the verse, the replay button is always there, and stars reward accuracy.                                  |
 
 ## 10. Open Questions
 
 1. Target audience: children (8–12), families, or all ages? This affects reading level, the timer default, and COPPA.
-2. Translation: WEB by default with KJV as an option?
+2. Translation: BSB by default with KJV as an option?
 3. Is the foe theming in §2.4 the right tone?
 4. Will recorded narration be voiced by a person or by high-quality TTS?
 5. ~~Platform priority~~: **decided, mobile-first (iOS + Android).** Which ships first, or both at once? (An Apple Developer account costs $99/yr; Google Play is a one-time $25.)

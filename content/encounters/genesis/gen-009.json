@@ -41,7 +41,7 @@
       "word": "fountains"
     },
     {
-      "word": "windows"
+      "word": "floodgates"
     },
     {
       "word": "forty"
@@ -67,21 +67,21 @@
       "id": "gen-009-q2",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What burst open?",
+      "prompt": "What burst forth?",
       "choices": [
         "All the fountains of the great deep",
-        "The doors of the ship",
+        "The doors of the ark",
         "The tower",
         "The garden gate"
       ],
       "answerIndex": 0,
-      "highlight": "all the fountains of the great deep burst open"
+      "highlight": "all the fountains of the great deep burst forth"
     },
     {
       "id": "gen-009-q3",
       "type": "fill_blank",
       "difficulty": "easy",
-      "prompt": "It rained on the earth forty days and forty ____.",
+      "prompt": "The rain fell upon the earth for forty days and forty ____.",
       "choices": ["nights", "weeks", "years", "hours"],
       "answerIndex": 0,
       "highlight": "forty days and forty nights"
@@ -90,10 +90,10 @@
       "id": "gen-009-q4",
       "type": "true_false",
       "difficulty": "easy",
-      "prompt": "True or false: the sky’s windows opened.",
+      "prompt": "True or false: the floodgates of the heavens were opened.",
       "choices": ["True", "False"],
       "answerIndex": 0,
-      "highlight": "the sky’s windows opened"
+      "highlight": "the floodgates of the heavens were opened"
     },
     {
       "id": "gen-009-q5",
@@ -102,7 +102,7 @@
       "prompt": "In which month did it begin?",
       "choices": ["The second month", "The first month", "The seventh month", "The last month"],
       "answerIndex": 0,
-      "highlight": "in the second month"
+      "highlight": "the second month"
     },
     {
       "id": "gen-009-q6",
@@ -111,7 +111,7 @@
       "prompt": "On which day of the month?",
       "choices": ["The seventeenth day", "The first day", "The fortieth day", "The tenth day"],
       "answerIndex": 0,
-      "highlight": "on the seventeenth day of the month"
+      "highlight": "on the seventeenth day of the second month"
     }
   ]
 }

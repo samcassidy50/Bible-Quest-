@@ -37,7 +37,7 @@
       "word": "light"
     },
     {
-      "word": "divided"
+      "word": "separated"
     },
     {
       "word": "evening"
@@ -65,16 +65,16 @@
       "prompt": "True or false: God saw that the light was good.",
       "choices": ["True", "False"],
       "answerIndex": 0,
-      "highlight": "saw that it was good"
+      "highlight": "God saw that the light was good"
     },
     {
       "id": "gen-002-q3",
       "type": "fill_blank",
       "difficulty": "medium",
-      "prompt": "God divided the light from the ____.",
+      "prompt": "He separated the light from the ____.",
       "choices": ["darkness", "water", "land", "sky"],
       "answerIndex": 0,
-      "highlight": "God divided the light from the darkness"
+      "highlight": "He separated the light from the darkness"
     },
     {
       "id": "gen-002-q4",
@@ -83,7 +83,7 @@
       "prompt": "What did God call the light?",
       "choices": ["Night", "Day", "Morning", "Sun"],
       "answerIndex": 1,
-      "highlight": "God called the light “day”"
+      "highlight": "God called the light “day,”"
     },
     {
       "id": "gen-002-q5",
@@ -92,7 +92,7 @@
       "prompt": "What did God call the darkness?",
       "choices": ["Evening", "Shadow", "Night", "Sky"],
       "answerIndex": 2,
-      "highlight": "the darkness he called “night”"
+      "highlight": "the darkness He called “night.”"
     },
     {
       "id": "gen-002-q6",

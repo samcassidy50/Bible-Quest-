@@ -29,7 +29,7 @@ Before saying a task is done, run: `npm run lint && npm run typecheck && npm run
 
 ## Scripture and content rules (non-negotiable)
 
-- **Never type, paraphrase, or "fix" Bible text from memory.** Verse text comes only from the vendored public-domain WEB source in `content/source/web/` (see its README for provenance and how to add a book).
+- **Never type, paraphrase, or "fix" Bible text from memory.** Verse text comes only from the vendored public-domain Berean Standard Bible (BSB) source in `content/source/bsb/` (see its README for provenance and how to add a book).
 - Encounter files (`content/encounters/<book>/<id>.json`) store a passage reference like `"GEN 1:1-2"`, never verse text. The Zod schema rejects a `verses` field. `src/content/index.ts` resolves the text and validates every rule at startup.
 - Run `npm run validate:content` after editing content. It checks the schema, that every `highlight` and orb `word` appears in the verse text, unique ids, and canonical order.
 - Every question must be answerable from the verse(s) read in that encounter; its `highlight` must appear word for word in the verse text.

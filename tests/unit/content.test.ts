@@ -15,12 +15,12 @@ describe('content: Genesis 1–11', () => {
   });
 
   it.each(ENCOUNTERS.map((e) => [e.id, e] as [string, typeof e]))(
-    '%s: verses come word for word from the WEB source',
+    '%s: verses come word for word from the BSB source',
     (_id, e) => {
       const gen = BIBLE.get('GEN')!;
       expect(e.verses.length).toBeGreaterThan(0);
       for (const v of e.verses) expect(v.text).toBe(gen.get(v.ref));
-      expect(e.translation).toBe('WEB');
+      expect(e.translation).toBe('BSB');
     },
   );
 
@@ -73,7 +73,7 @@ describe('content: Genesis 1–11', () => {
   });
 });
 
-describe('vendored WEB source', () => {
+describe('vendored BSB source', () => {
   it('has all 1,533 verses of Genesis', () => {
     expect(BIBLE.get('GEN')!.size).toBe(1533);
   });
