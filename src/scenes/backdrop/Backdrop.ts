@@ -62,7 +62,7 @@ const LANDMARK_AT: Record<string, { x: number; dy: number }> = {
 /** The light painted into a sky (native sky pixels, 560x200): effects gather around it. */
 const SKY_LIGHT: Record<string, [number, number]> = {
   deep: [306, 99], // the light hovering over the waters
-  light: [330, 150], // the rising sun
+  light: [330, 100], // the rising sun, clear of the far hills
 };
 
 /** Queues every painted backdrop layer on a loader (call from a scene's preload). */

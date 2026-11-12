@@ -1137,7 +1137,7 @@ def paint_light() -> Layers:
         '#05071a', '#0b102e', '#171b46', '#2b2458', '#47306a', '#6c3e72', '#9a4e6e', '#c86860',
         '#e88a56', '#f8b25c', '#ffd884', '#fff2c0',
     )
-    sx, sy = 330, 150
+    sx, sy = 330, 100
     for py in range(L.sky.h):
         v = native(py)
         for px in range(L.sky.w):
