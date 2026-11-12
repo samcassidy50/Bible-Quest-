@@ -84,12 +84,15 @@ test('one tap on a special opens exactly one question and nothing else happens',
   expect(b.faith).toBe(before.faith);
 });
 
-test('locked specials do nothing when tapped', async ({ page }) => {
+test('specials not yet earned are hidden from the action bar', async ({ page }) => {
   await page.goto('/?scene=battle&seed=2&specials=sword&energy=10&freeze=1');
   await heroTurn(page);
   expect((await battle(page)).available).toEqual(['attack', 'sword']);
-  await tap(page, 'action:shield');
-  await page.waitForTimeout(400);
+  const targets = Object.keys((await state(page)).targets);
+  expect(targets).toContain('action:sword');
+  for (const hidden of ['shield', 'breastplate', 'sandals']) {
+    expect(targets).not.toContain(`action:${hidden}`);
+  }
   const b = await battle(page);
   expect(b.question).toBeNull();
   expect(b.phase).toBe('HERO_CHOOSE');

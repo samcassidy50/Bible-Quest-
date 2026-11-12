@@ -27,6 +27,7 @@ import { QuestionCard } from './QuestionCard';
 import { ResultPanel } from './ResultPanel';
 import { Backdrop } from '../backdrop/Backdrop';
 import { Angel, ANGEL_LINES } from '../angel/Angel';
+import { itemSprite } from '../items';
 import { Button } from '../ui/Button';
 import { TUNING } from '../../core/battle/tuning';
 import { hapticTap } from '../../services/haptics';
@@ -545,15 +546,20 @@ export class BattleScene extends Phaser.Scene {
       .fillTriangle(W * 0.5 - 70, 0, W * 0.5 + 70, 0, W * 0.5 + 230, H)
       .fillTriangle(W * 0.5 - 70, 0, W * 0.5 + 230, H, W * 0.5 - 230, H);
     const angel = new Angel(this, W * 0.5, -260, !this.debug.freeze).setDepth(152);
-    const item = this.add.container(0, -34);
-    item.add([
-      this.add.circle(0, 0, 44, 0xfff1b0, 0.55),
-      this.add.circle(0, 0, 32, info.color, 1).setStrokeStyle(4, 0xffffff),
-      this.add.text(0, 0, info.icon, { fontSize: '38px' }).setOrigin(0.5),
-    ]);
+    // The angel holds the real item (pixel art) with a soft glow behind it.
+    const glow = this.add.circle(0, 10, 46, 0xfff1b0, 0.45);
+    const item = this.add.container(0, 6, [glow, itemSprite(this, unlock)]);
     angel.hands.add(item);
-    if (!this.debug.freeze)
-      this.tweens.add({ targets: item, scale: 1.12, duration: 600, yoyo: true, repeat: -1 });
+    if (!this.debug.freeze) {
+      this.tweens.add({
+        targets: glow,
+        scale: 1.25,
+        alpha: 0.15,
+        duration: 700,
+        yoyo: true,
+        repeat: -1,
+      });
+    }
 
     await Promise.all([
       tweenAsync(this, { targets: dim, fillAlpha: 0.55, duration: 400 }),
@@ -750,7 +756,9 @@ export class BattleScene extends Phaser.Scene {
       const b = o.getBounds();
       return { x: Math.round(b.centerX), y: Math.round(b.centerY) };
     };
-    for (const [id, b] of this.actionBar.buttons) targets[`action:${id}`] = center(b);
+    for (const [id, b] of this.actionBar.buttons) {
+      if (b.visible) targets[`action:${id}`] = center(b);
+    }
     this.card?.answerButtons.forEach((b, i) => (targets[`answer:${i}`] = center(b)));
     if (this.card?.continueButton) targets['continue'] = center(this.card.continueButton);
     if (this.giftContinue) targets['gift-continue'] = center(this.giftContinue);
