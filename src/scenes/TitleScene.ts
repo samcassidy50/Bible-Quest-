@@ -17,7 +17,6 @@ export class TitleScene extends Phaser.Scene {
   private backdrop?: Backdrop;
   private hero?: HeroSprite;
   private shade?: Phaser.GameObjects.Graphics;
-  private rays?: Phaser.GameObjects.Graphics;
   private title?: Phaser.GameObjects.Text;
   private tagline?: Phaser.GameObjects.Text;
   private verse?: Phaser.GameObjects.Text;
@@ -35,7 +34,6 @@ export class TitleScene extends Phaser.Scene {
 
     this.backdrop = new Backdrop(this, 'light', undefined, this.frozen);
     this.shade = this.add.graphics().setDepth(-20);
-    this.rays = this.add.graphics().setDepth(1).setBlendMode(Phaser.BlendModes.ADD);
     this.hero = new HeroSprite(this, 0, 0).setScale(HERO_SCALE).setDepth(2);
     this.hero.loop(this.frozen ? 'idle' : 'run');
 
@@ -104,13 +102,11 @@ export class TitleScene extends Phaser.Scene {
         repeat: -1,
         ease: 'Sine.inOut',
       });
-      this.tweens.add({ targets: this.rays, alpha: 0.55, duration: 3000, yoyo: true, repeat: -1 });
     }
 
     this.input.once('pointerdown', () => {
       sfx.play('start');
-      this.cameras.main.fadeOut(250, 27, 21, 48);
-      this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start('map'));
+      this.runOff(debug.fast);
     });
 
     this.layout();
@@ -129,6 +125,29 @@ export class TitleScene extends Phaser.Scene {
     if (!this.frozen) this.backdrop?.scroll(delta * 0.6);
   }
 
+  /** The hero dashes off the right edge of the screen, then the map fades in. */
+  private runOff(fast: boolean): void {
+    const hero = this.hero;
+    const go = (): void => {
+      this.cameras.main.fadeOut(250, 27, 21, 48);
+      this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start('map'));
+    };
+    if (!hero || fast) {
+      go();
+      return;
+    }
+    this.scale.off('resize', this.layout, this);
+    hero.loop('run');
+    this.tweens.add({
+      targets: hero,
+      x: this.scale.gameSize.width + 160,
+      duration: 900,
+      ease: 'Quad.in',
+    });
+    // Start fading while the hero is still leaving, so the screen never sits empty.
+    this.time.delayedCall(700, go);
+  }
+
   /** Re-positions everything for the current (expanded) game size and safe-area insets. */
   private layout(): void {
     const { width, height } = this.scale.gameSize;
@@ -139,26 +158,12 @@ export class TitleScene extends Phaser.Scene {
     this.backdrop?.layout(width, height, groundY);
     this.hero?.setPosition(cx - Math.min(430, width * 0.3), groundY);
 
-    // Darker at the top so the name reads against the sky, and soft rays fanning out behind it.
+    // Darker at the top so the name reads against the sky (the backdrop's sun brings the rays).
     this.shade?.clear();
     this.shade
       ?.fillGradientStyle(0x0b0816, 0x0b0816, 0x0b0816, 0x0b0816, 0.55, 0.55, 0, 0)
       .fillRect(0, 0, width, height * 0.5);
     const titleY = insets.top + height * 0.24;
-    this.rays?.clear();
-    for (let i = 0; i < 14; i++) {
-      const a = (i / 14) * Math.PI * 2;
-      this.rays
-        ?.fillStyle(0xffe08a, i % 2 ? 0.05 : 0.09)
-        .fillTriangle(
-          cx,
-          titleY,
-          cx + Math.cos(a - 0.09) * 620,
-          titleY + Math.sin(a - 0.09) * 620,
-          cx + Math.cos(a + 0.09) * 620,
-          titleY + Math.sin(a + 0.09) * 620,
-        );
-    }
 
     this.tweens.killTweensOf(this.title ?? []);
     this.title?.setPosition(cx, titleY);
