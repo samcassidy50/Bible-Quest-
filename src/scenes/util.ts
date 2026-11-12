@@ -16,3 +16,6 @@ export function wait(scene: Phaser.Scene, ms: number): Promise<void> {
 
 export const FONT_UI = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
 export const FONT_TITLE = 'Georgia, "Times New Roman", serif';
+/** The verse as it scrolls past: a warm book face (Palatino on iOS and macOS, Noto Serif on Android). */
+export const FONT_VERSE =
+  '"Palatino Linotype", Palatino, "Iowan Old Style", "Book Antiqua", "Noto Serif", Georgia, serif';

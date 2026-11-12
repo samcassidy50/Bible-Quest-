@@ -39,6 +39,28 @@ at least 40 px of empty magenta between frames so they never touch.
   to rebuild the sheets from the unzipped packs. A foe uses one by setting `"sprite"` in its
   encounter JSON. Sizes and frame counts live in `src/scenes/battle/FoeSprite.ts`.
 
-- `demon`, `serpent`, `shade` and `thornbeast` are original, painted by
-  `python3 scripts/art/paint_monsters.py --preview` (previews in `art/foe-previews/`). They are not
-  used in the game yet.
+- These sheets are **original**, painted pixel by pixel by
+  `python3 scripts/art/paint_foes.py [name…] --preview` (engine in `scripts/art/foe_engine.py`,
+  previews in `art/foe-previews/`):
+
+  | Sheet                 | Passage               | Foe                             |
+  | --------------------- | --------------------- | ------------------------------- |
+  | `hissling`, `serpent` | Gen 3:1–6 (gen-005)   | Hissling, The Serpent (boss)    |
+  | `gust`, `storm-cloud` | Gen 6:13–14 (gen-008) | Gust, Storm Cloud (boss)        |
+  | `wave`, `flood-surge` | Gen 7:11–12 (gen-009) | Rising Wave, Flood Surge (boss) |
+  | `squall`, `tempest`   | Gen 9:12–13 (gen-010) | Squall, Tempest (boss)          |
+
+  Each is a grid of 128px cells, 8 wide, with rows idle, attack, hurt and death (8, 8, 4 and 8
+  frames), facing left, the ground line 8px above the bottom of the cell. Shapes are lit round
+  primitives quantised to short colour ramps, so change the painter and re-run it rather than
+  editing a PNG. `?scene=foes` shows every passage's foes in the game; `art/foe-gallery.jpg` is a
+  picture of all of them.
+
+- `demon`, `shade` and `thornbeast` are original too, painted by
+  `python3 scripts/art/paint_monsters.py --preview`. They are not used in the game yet.
+
+# Backdrop art
+
+Every passage has its own environment, painted by `python3 scripts/art/paint_backdrops.py`
+(previews in `art/backdrop-previews/`): deep, light, shore, garden, grove, wilderness, fields,
+shipyard, flood-storm, flood-clearing and babel. See the Backgrounds section of `CLAUDE.md`.

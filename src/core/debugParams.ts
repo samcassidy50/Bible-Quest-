@@ -16,6 +16,7 @@ export const SCENE_KEYS = [
   'rig',
   'sounds',
   'backdrops',
+  'foes',
 ] as const;
 export type SceneKey = (typeof SCENE_KEYS)[number];
 

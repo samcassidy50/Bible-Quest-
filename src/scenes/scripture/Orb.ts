@@ -1,8 +1,7 @@
 import Phaser from 'phaser';
 import { ORB_LIFETIME_MS } from '../../core/scripture/orbs';
-import { iconSprite } from '../icons';
 
-/** A glowing energy orb that floats up while the verse is read; tap it for +1 energy (docs/DESIGN.md §2.6). */
+/** A plain orb of light that floats up while the verse is read; tap it for +1 energy (docs/DESIGN.md §2.6). */
 export const ENERGY_COLOR = 0xf4b400;
 export class Orb extends Phaser.GameObjects.Container {
   private readonly glow: Phaser.GameObjects.Arc;
@@ -20,14 +19,15 @@ export class Orb extends Phaser.GameObjects.Container {
   ) {
     super(scene, x, y);
     const color = ENERGY_COLOR;
-    this.glow = scene.add.circle(0, 0, 58, color, 0.3);
-    const ring = scene.add.circle(0, 0, 40, 0xffffff, 0.9).setStrokeStyle(6, color);
-    const core = scene.add.circle(0, 0, 32, color, 1);
-    const icon = iconSprite(scene, 'energy', 2);
+    // Light only, no icon: a soft halo, a warm body and a white-hot heart.
+    this.glow = scene.add.circle(0, 0, 60, color, 0.28);
+    const halo = scene.add.circle(0, 0, 44, 0xffd34d, 0.55);
+    const body = scene.add.circle(0, 0, 32, 0xffe98a, 0.95);
+    const heart = scene.add.circle(-4, -5, 18, 0xffffff, 0.95);
     // Generous invisible hit area (≥ 64 px on a phone).
     const hit = scene.add.circle(0, 0, 70, 0x000000, 0).setInteractive();
     hit.on('pointerdown', () => onTap(this));
-    this.add([this.glow, ring, core, icon, hit]);
+    this.add([this.glow, halo, body, heart, hit]);
     this.setDepth(40).setScale(0);
     scene.add.existing(this);
   }

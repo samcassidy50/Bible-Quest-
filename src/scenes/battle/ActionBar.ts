@@ -7,6 +7,9 @@ import { EnergyCount, ICONS_TEXTURE, iconFrame } from '../icons';
 import { ACTION_INFO, COLOR } from './actionInfo';
 
 const LOCKED_FILL = 0x4a4560;
+/** Every special sits on the same plain backing, so the armor icons carry the colour. */
+const SPECIAL_FILL = 0x241d44;
+const SPECIAL_RING = 0xf4c95d;
 
 /**
  * Bottom-right action bar (docs/DESIGN.md §5): Attack in the thumb's resting spot, the four
@@ -39,13 +42,15 @@ export class ActionBar extends Phaser.GameObjects.Container {
 
     const make = (id: ActionId, x: number, y: number, diameter: number, iconScale: number) => {
       const info = ACTION_INFO[id];
+      const special = (SPECIAL_IDS as readonly string[]).includes(id);
       const b = new Button(scene, x, y, {
         width: diameter,
         height: diameter,
         radius: diameter / 2,
         label: '',
         icon: { texture: ICONS_TEXTURE, frame: iconFrame(id), scale: iconScale },
-        fill: info.color,
+        fill: special ? SPECIAL_FILL : info.color,
+        ...(special ? { stroke: SPECIAL_RING, strokeAlpha: 0.9 } : {}),
         onTap: () => onAction(id),
       });
       const caption = scene.add
@@ -100,11 +105,11 @@ export class ActionBar extends Phaser.GameObjects.Container {
       caption.setVisible(true);
       cost.setVisible(true);
       if (!engine.canAfford(id)) {
-        b.setFill(ACTION_INFO[id].color).setEnabled(false);
+        b.setEnabled(false);
         caption.setAlpha(0.6);
         cost.setAlpha(0.6);
       } else {
-        b.setFill(ACTION_INFO[id].color).setEnabled(inputEnabled && available.has(id));
+        b.setEnabled(inputEnabled && available.has(id));
         caption.setAlpha(1);
         cost.setAlpha(1);
       }

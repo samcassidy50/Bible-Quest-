@@ -2,8 +2,7 @@
   "id": "gen-008",
   "title": "Build the Ark",
   "passage": "GEN 6:13-14",
-  "setting": "flood",
-  "weather": "storm",
+  "setting": "shipyard",
   "waves": [
     {
       "id": "gust-1",
@@ -11,7 +10,8 @@
       "maxHp": 50,
       "attack": 10,
       "color": "#5b6b8a",
-      "size": 0.8
+      "size": 0.8,
+      "sprite": "gust"
     },
     {
       "id": "gust-2",
@@ -19,7 +19,8 @@
       "maxHp": 55,
       "attack": 11,
       "color": "#4d5c78",
-      "size": 0.9
+      "size": 0.9,
+      "sprite": "gust"
     },
     {
       "id": "storm",
@@ -27,7 +28,8 @@
       "maxHp": 80,
       "attack": 12,
       "color": "#2c3650",
-      "size": 1.3
+      "size": 1.3,
+      "sprite": "storm-cloud"
     }
   ],
   "orbs": [

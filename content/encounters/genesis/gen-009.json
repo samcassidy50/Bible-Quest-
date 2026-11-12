@@ -11,7 +11,8 @@
       "maxHp": 50,
       "attack": 10,
       "color": "#2f6f9a",
-      "size": 0.85
+      "size": 0.85,
+      "sprite": "wave"
     },
     {
       "id": "wave-2",
@@ -19,7 +20,8 @@
       "maxHp": 55,
       "attack": 11,
       "color": "#285f85",
-      "size": 0.9
+      "size": 0.9,
+      "sprite": "wave"
     },
     {
       "id": "surge",
@@ -27,7 +29,8 @@
       "maxHp": 80,
       "attack": 13,
       "color": "#173e5c",
-      "size": 1.3
+      "size": 1.3,
+      "sprite": "flood-surge"
     }
   ],
   "orbs": [

@@ -17,6 +17,7 @@ import { SettingsScene } from './scenes/menus/SettingsScene';
 import { AnimViewerScene } from './scenes/hero/AnimViewerScene';
 import { SoundBoardScene } from './scenes/debug/SoundBoardScene';
 import { BackdropViewerScene } from './scenes/debug/BackdropViewerScene';
+import { FoeGalleryScene } from './scenes/debug/FoeGalleryScene';
 
 async function start(): Promise<void> {
   await initPlatform();
@@ -60,6 +61,7 @@ async function start(): Promise<void> {
       AnimViewerScene,
       SoundBoardScene,
       BackdropViewerScene,
+      FoeGalleryScene,
     ],
     callbacks: {
       preBoot: (g) => {

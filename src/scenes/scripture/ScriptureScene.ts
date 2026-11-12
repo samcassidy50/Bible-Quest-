@@ -14,14 +14,14 @@ import { updateTestState } from '../../services/testHooks';
 import { COLOR } from '../battle/actionInfo';
 import { Fighter } from '../battle/Fighter';
 import { Button } from '../ui/Button';
-import { FONT_TITLE, FONT_UI, tweenAsync, wait } from '../util';
+import { FONT_TITLE, FONT_UI, FONT_VERSE, tweenAsync, wait } from '../util';
 import { EnergyCount } from '../icons';
 import { ENERGY_COLOR, Orb } from './Orb';
 import { Backdrop } from '../backdrop/Backdrop';
 
 const BANNER_H = 118;
 const REF_BOX_W = 250;
-const TICKER_STYLE = { fontFamily: FONT_TITLE, fontSize: '42px', color: '#fdf6e3' };
+const TICKER_STYLE = { fontFamily: FONT_VERSE, fontSize: '44px', color: '#fdf6e3' };
 /** Word-anchored orbs appear when their word reaches this fraction of the screen width. */
 const ANCHOR_AT = 0.72;
 /** How far an orb drifts upward over its lifetime (gentle, so small hands can catch it). */
@@ -137,7 +137,11 @@ export class ScriptureScene extends Phaser.Scene {
       })
       .setOrigin(0, 0.5)
       .setDepth(22);
-    this.ticker = this.add.text(0, 0, this.text, TICKER_STYLE).setOrigin(0, 0.5).setDepth(21);
+    this.ticker = this.add
+      .text(0, 0, this.text, TICKER_STYLE)
+      .setOrigin(0, 0.5)
+      .setDepth(21)
+      .setShadow(0, 3, '#0b0816', 4, false, true);
     this.tickerMask = this.make.graphics({}, false);
     this.ticker.setMask(this.tickerMask.createGeometryMask());
 
@@ -343,7 +347,7 @@ export class ScriptureScene extends Phaser.Scene {
     this.wordGlows.get(orb.id)?.setVisible(false);
     void hapticTap();
     sfx.play('orbCollect');
-    this.floatText(orb.x, orb.y - 80, '+1 ⚡ Energy');
+    this.floatText(orb.x, orb.y - 80, '+1 Energy');
     this.sync();
     const m = this.energyText.getWorldTransformMatrix();
     await orb.collectTo(m.tx, m.ty);
@@ -431,7 +435,7 @@ export class ScriptureScene extends Phaser.Scene {
     // The first foe appears ahead and the hero runs up to it, then cut to battle.
     const { width: W } = this.scale.gameSize;
     const spec = this.encounter.waves[0] as EncounterFoe;
-    const foe = new Fighter(this, W + 150, this.groundY, 'foe', spec.color, spec.size);
+    const foe = new Fighter(this, W + 150, this.groundY, 'foe', spec.color, spec.size, spec.sprite);
     await Promise.all([
       tweenAsync(this, { targets: foe, x: W * 0.68, duration: 700, ease: 'Quad.out' }),
       tweenAsync(this, { targets: this.hero, x: W * 0.45, duration: 700, ease: 'Quad.inOut' }),

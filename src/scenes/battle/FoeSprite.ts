@@ -6,13 +6,21 @@ import thornPlantUrl from '../../assets/foes/thorn-plant.png';
 import fireSpiritUrl from '../../assets/foes/fire-spirit.png';
 import shadowWolfUrl from '../../assets/foes/shadow-wolf.png';
 import minotaurUrl from '../../assets/foes/minotaur.png';
+import hisslingUrl from '../../assets/foes/hissling.png';
+import serpentUrl from '../../assets/foes/serpent.png';
+import gustUrl from '../../assets/foes/gust.png';
+import stormCloudUrl from '../../assets/foes/storm-cloud.png';
+import waveUrl from '../../assets/foes/wave.png';
+import floodSurgeUrl from '../../assets/foes/flood-surge.png';
+import squallUrl from '../../assets/foes/squall.png';
+import tempestUrl from '../../assets/foes/tempest.png';
 
 export type FoeAnim = 'idle' | 'attack' | 'hurt' | 'death';
 const ROWS: FoeAnim[] = ['idle', 'attack', 'hurt', 'death'];
 
 /**
- * Foe sheets built by scripts/art/process_foes.py from third-party packs (see art/README.md).
- * One row per state, facing left; keep cells, columns and frame counts in sync with that
+ * Foe sheets: third-party packs cut by scripts/art/process_foes.py, and original foes painted by
+ * scripts/art/paint_foes.py (see art/README.md). One row per state, facing left; keep cells, columns and frame counts in sync with that
  * script's output.
  */
 interface Sheet {
@@ -42,6 +50,18 @@ const SLIME = { cell: 64, feet: { x: 33.5, y: 40 }, bodyHeight: 28, scale: 6, sh
  * ground strip.
  */
 const GROUNDED = 129;
+
+/**
+ * Original foes painted by scripts/art/paint_foes.py: every sheet has the same layout, with the
+ * ground line eight pixels above the bottom of the cell.
+ */
+const PAINTED = {
+  cell: 128,
+  cols: 8,
+  frames: { idle: 8, attack: 8, hurt: 4, death: 8 },
+  feet: { x: 64, y: 120 },
+  scale: 3,
+};
 
 const SHEETS: Record<FoeSpriteId, Sheet> = {
   'slime-blue': {
@@ -97,6 +117,14 @@ const SHEETS: Record<FoeSpriteId, Sheet> = {
     shadow: 54,
     front: 30,
   },
+  hissling: { ...PAINTED, url: hisslingUrl, bodyHeight: 54, shadow: 52, front: 26 },
+  serpent: { ...PAINTED, url: serpentUrl, bodyHeight: 90, shadow: 84, front: 46 },
+  gust: { ...PAINTED, url: gustUrl, bodyHeight: 60, shadow: 30 },
+  'storm-cloud': { ...PAINTED, url: stormCloudUrl, bodyHeight: 92, shadow: 64, front: 36 },
+  wave: { ...PAINTED, url: waveUrl, bodyHeight: 54, shadow: 60, front: 26 },
+  'flood-surge': { ...PAINTED, url: floodSurgeUrl, bodyHeight: 78, shadow: 96, front: 46 },
+  squall: { ...PAINTED, url: squallUrl, bodyHeight: 54, shadow: 40, front: 24 },
+  tempest: { ...PAINTED, url: tempestUrl, bodyHeight: 96, shadow: 40, front: 34 },
 };
 
 const textureKey = (id: FoeSpriteId) => `foe-${id}`;

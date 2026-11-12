@@ -38,6 +38,14 @@ export const FOE_SPRITES = [
   'fire-spirit',
   'shadow-wolf',
   'minotaur',
+  'hissling',
+  'serpent',
+  'gust',
+  'storm-cloud',
+  'wave',
+  'flood-surge',
+  'squall',
+  'tempest',
 ] as const;
 export type FoeSpriteId = (typeof FOE_SPRITES)[number];
 
@@ -51,8 +59,19 @@ export const foeSchema = z.object({
   sprite: z.enum(FOE_SPRITES).optional(),
 });
 
-/** The six environments a passage can be set in (docs/DESIGN.md §2.1). */
-export const SETTINGS = ['deep', 'light', 'garden', 'wilderness', 'flood', 'babel'] as const;
+/** The environments a passage can be set in (docs/DESIGN.md §2.1), in story order. */
+export const SETTINGS = [
+  'deep',
+  'light',
+  'shore',
+  'garden',
+  'grove',
+  'wilderness',
+  'fields',
+  'shipyard',
+  'flood',
+  'babel',
+] as const;
 export type Setting = (typeof SETTINGS)[number];
 
 export const encounterFileSchema = z

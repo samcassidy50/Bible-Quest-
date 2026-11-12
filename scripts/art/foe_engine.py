@@ -246,15 +246,15 @@ class Canvas:
         bands: tuple[float, ...] = BANDS5,
         gain: float = 1.0,
         lift: float = 0.0,
-        seam: bool = True,
+        seam: bool | Color = True,
         light: tuple[float, float, float] = LIGHT,
         pick: Optional[Callable[[int, int, int, float, float], Optional[Color]]] = None,
     ) -> set[Px]:
         """
         Lights a part and paints it over what is there. `tones` runs dark to light and `bands`
         are the brightness steps between them. `pick(x, y, tone, s, u)` may return another colour
-        for a pixel (patterns, bellies). With `seam`, the part keeps a dark line where its edge
-        overlaps something painted earlier.
+        for a pixel (patterns, bellies). With `seam`, the part keeps a dark line (the outline
+        colour, or the colour given) where its edge overlaps something painted earlier.
         """
         n = len(tones)
         for (x, y), (_, nx, ny, nz, s, u) in surf.items():
@@ -266,7 +266,7 @@ class Canvas:
             if seam and any(
                 q not in surf and q in self.px for q in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1))
             ):
-                c = edge if edge is not None else tones[0]
+                c = seam if isinstance(seam, tuple) else edge if edge is not None else tones[0]
             self.px[(x, y)] = c
             if edge is not None:
                 self.edge[(x, y)] = edge
@@ -295,6 +295,23 @@ class Canvas:
             if all(a is not None and a != c and a in tset for a in around):
                 # Take the most common neighbour.
                 self.px[(x, y)] = max(set(around), key=around.count)  # type: ignore[arg-type]
+
+    def smooth(self, tones: list[Color], region: Iterable[Px], passes: int = 2) -> None:
+        """Tidies the shading inside a part: a pixel that disagrees with most of its neighbours joins them."""
+        index = {t: i for i, t in enumerate(tones)}
+        region = [p for p in region if self.px.get(p) in index]
+        for _ in range(passes):
+            change: dict[Px, Color] = {}
+            for (x, y) in region:
+                me = index[self.px[(x, y)]]
+                around = [
+                    index[self.px[q]]
+                    for q in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1), (x + 1, y + 1), (x - 1, y - 1), (x + 1, y - 1), (x - 1, y + 1))
+                    if self.px.get(q) in index
+                ]
+                if len(around) >= 5 and around.count(me) <= 2:
+                    change[(x, y)] = tones[sorted(around)[len(around) // 2]]
+            self.px.update(change)
 
     def shifted(self, dx: int, dy: int) -> 'Canvas':
         c = Canvas()

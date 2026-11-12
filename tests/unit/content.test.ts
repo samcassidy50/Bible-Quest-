@@ -47,21 +47,35 @@ describe('content: Genesis 1–11', () => {
     ]);
   });
 
-  it('uses all six environments, matched to each passage', () => {
+  it('gives every passage its own environment', () => {
     expect(ENCOUNTERS.map((e) => e.setting)).toEqual([
       'deep',
       'light',
+      'shore',
       'garden',
-      'garden',
-      'garden',
+      'grove',
       'wilderness',
-      'wilderness',
-      'flood',
+      'fields',
+      'shipyard',
       'flood',
       'flood',
       'babel',
     ]);
+    expect(getEncounter('gen-009').weather).toBe('storm');
     expect(getEncounter('gen-010').weather).toBe('clearing');
+    const backdrops = ENCOUNTERS.map((e) => `${e.setting}-${e.weather ?? ''}`);
+    expect(new Set(backdrops).size).toBe(ENCOUNTERS.length);
+  });
+
+  it('has sprite art for every foe', () => {
+    for (const e of ENCOUNTERS)
+      for (const foe of e.waves) expect(foe.sprite, `${e.id} ${foe.id}`).toBeTruthy();
+    expect(getEncounter('gen-005').waves.map((w) => w.sprite)).toEqual([
+      'hissling',
+      'hissling',
+      'serpent',
+    ]);
+    expect(getEncounter('gen-010').waves.at(-1)?.sprite).toBe('tempest');
   });
 
   it('getEncounter / nextEncounter walk the list', () => {

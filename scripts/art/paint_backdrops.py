@@ -1534,6 +1534,599 @@ def paint_babel() -> Layers:
     return L
 
 
+# ── Environments that belong to a single passage ──────────────────────────────
+
+
+def bird(cv: Canvas, x: float, y: float, s: int, c: Color) -> None:
+    """A distant bird on the wing: a shallow V."""
+    dot(cv, x + 0.5, y + 0.5, 0.5, c)
+    for k in range(1, s + 1):
+        lift = 1 if k < s else 0  # wings arch up and droop at the tips
+        dot(cv, x + 0.5 - k, y + 0.5 - lift, 0.5, c)
+        dot(cv, x + 0.5 + k, y + 0.5 - lift, 0.5, c)
+
+
+def conifer(cv: Canvas, x: float, base: float, h: float, leaf_r: list[Color], bark_r: list[Color], seed: int) -> None:
+    """A tall narrow cypress."""
+    stroke(cv, [(x, base), (x, base - h * 0.3)], 1.6, 1.2, bark_r)
+    n = max(4, int(h / 3.5))
+    circles = [
+        (x, base - h * 0.2 - h * 0.8 * i / (n - 1), max(1.0, h * 0.15 * (1 - i / (n - 1)) ** 0.8 + 0.9)) for i in range(n)
+    ]
+    blob(cv, circles, leaf_r, outline=leaf_r[0], seed=seed, tex=0.2, tex_cell=2)
+
+
+def log_pile(cv: Canvas, x: float, base: float, rows: int, ln: float, wood_r: list[Color], cut_r: list[Color]) -> None:
+    """Felled trunks stacked on their sides, cut ends showing."""
+    for row in range(rows):
+        y = base - 1.7 - row * 3.0
+        x0, x1 = x + row * 1.7, x + ln - row * 1.7
+        stroke(cv, [(x0, y), (x1, y)], 3.3, 3.3, wood_r, outline=wood_r[0])
+        for ex in (x0, x1):
+            dot(cv, ex, y, 1.35, cut_r[1])
+            dot(cv, ex, y, 0.5, cut_r[0])
+
+
+def stump(cv: Canvas, x: float, base: float, w: float, h: float, wood_r: list[Color], cut_r: list[Color]) -> None:
+    for px, py in poly_pixels([(x - w / 2 - 0.9, base), (x - w / 2, base - h), (x + w / 2, base - h), (x + w / 2 + 0.9, base)]):
+        rel = (native(px) - (x - w / 2)) / w
+        cv.put(px, py, shade(wood_r, 0.25 + (rel if LIGHT[0] > 0 else 1 - rel) * 0.55, px, py))
+    ball(cv, x, base - h, w / 2, 1.0, cut_r)
+
+
+def sheaf(cv: Canvas, x: float, base: float, h: float, straw_r: list[Color]) -> None:
+    """A stook of cut grain, bound at the waist."""
+    for px, py in poly_pixels([(x - h * 0.42, base), (x - h * 0.14, base - h * 0.55), (x - h * 0.4, base - h), (x + h * 0.4, base - h),
+                               (x + h * 0.14, base - h * 0.55), (x + h * 0.42, base)]):
+        u, v = native(px), native(py)
+        t = 0.55 + (vnoise(u, v, 0.8, 5, 311, T) - 0.5) * 0.7 + (-(u - x) / h if LIGHT[0] < 0 else (u - x) / h) * 0.5
+        cv.put(px, py, shade(straw_r, t, px, py))
+    stroke(cv, [(x - h * 0.16, base - h * 0.55), (x + h * 0.16, base - h * 0.55)], 1.0, 1.0, straw_r[:2])
+
+
+def ark_frame(hull_r: list[Color], rib_r: list[Color], pole_r: list[Color], outline: Color) -> Canvas:
+    """The ship half built: planked below, bare ribs above, propped up and wrapped in scaffolding."""
+    cv = Canvas(152, 86)
+    ox, oy, base = 14, 28, 86
+    for x in range(ox + 16, ox + 112, 16):  # props under the hull
+        stroke(cv, [(x - 6, base), (x, oy + 44)], 1.7, 1.3, pole_r)
+        stroke(cv, [(x + 6, base), (x, oy + 44)], 1.7, 1.3, pole_r)
+    hull = [(ox, oy + 18), (ox + 9, oy + 20), (ox + 115, oy + 20), (ox + 124, oy + 17), (ox + 118, oy + 33),
+            (ox + 108, oy + 46), (ox + 16, oy + 46), (ox + 6, oy + 33)]
+
+    def planked_from(u: float) -> float:
+        """Top of the planking: it has climbed highest at the stern."""
+        return oy + 20 + 4 * math.floor(max(0.0, u - ox - 14) / 24)
+
+    for px, py in poly_pixels(hull):
+        u, v = native(px), native(py)
+        if v < planked_from(u):
+            continue
+        depth = (v - (oy + 22)) / 24
+        mortar, tone = brick(u, v, 9, bw=14, bh=3)
+        t = 0.76 - depth * 0.5 + (tone - 0.5) * 0.14 - (0.18 if mortar else 0)
+        if v - planked_from(u) < 1.2:
+            t = 0.95
+        cv.put(px, py, shade(hull_r, t, px, py))
+    # Ribs standing above the planking, tied together by a deck beam and a top rail.
+    for x in range(ox + 6, ox + 122, 7):
+        lean = (1 if x < ox + 62 else -1) * 0.9
+        stroke(cv, [(x, planked_from(x) + 2), (x + lean, oy + 4)], 2.0, 1.5, rib_r)
+    stroke(cv, [(ox + 3, oy + 4), (ox + 62, oy + 3), (ox + 96, oy + 4)], 2.2, 1.8, rib_r)
+    stroke(cv, [(ox + 4, oy + 12), (ox + 62, oy + 11.5), (ox + 121, oy + 12)], 1.6, 1.6, rib_r)
+    stroke(cv, [(ox + 3, oy + 21), (ox - 3, oy + 1)], 2.4, 1.6, hull_r[1:])  # stern post
+    stroke(cv, [(ox + 121, oy + 19), (ox + 128, oy + 2)], 2.4, 1.6, hull_r[1:])  # bow post
+    # Scaffolding: poles, two walkways and a ladder.
+    for x, h in ((ox - 9, 66), (ox + 34, 78), (ox + 86, 74), (ox + 133, 62)):
+        stroke(cv, [(x, base), (x, base - h)], 1.6, 1.2, pole_r)
+    stroke(cv, [(ox - 11, oy - 6), (ox + 88, oy - 6)], 1.3, 1.3, pole_r)
+    stroke(cv, [(ox + 32, oy - 16), (ox + 88, oy - 16)], 1.2, 1.2, pole_r)
+    stroke(cv, [(ox + 84, oy + 26), (ox + 135, oy + 26)], 1.3, 1.3, pole_r)
+    for dx in (0, 5):
+        stroke(cv, [(ox + 96 + dx, base), (ox + 105 + dx, oy + 2)], 1.0, 1.0, pole_r)
+    for k in range(9):
+        f = (k + 0.5) / 9
+        lx, ly = ox + 96 + 9 * f, base - (base - oy - 2) * f
+        stroke(cv, [(lx, ly), (lx + 5, ly)], 0.8, 0.8, pole_r)
+    outline_pass(cv, outline)
+    return cv
+
+
+def great_tree(bark_r: list[Color], leaf_r: list[Color], fruit_r: list[Color], outline: Color) -> Canvas:
+    """The tree in the middle of the garden: a mighty trunk, a broad crown, fruit that catches the eye."""
+    cv = Canvas(176, 150)
+    cx, base = 88, 150
+    for side, ln in ((-1, 22), (1, 24), (-1, 12), (1, 13)):  # roots
+        stroke(cv, [(cx + side * 3, base - 12), (cx + side * ln * 0.6, base - 4), (cx + side * ln, base)], 5.5, 1.6, bark_r, outline)
+    stroke(cv, [(cx, base), (cx - 2, base - 26), (cx + 1, base - 54)], 15, 11, bark_r, outline)
+    for pts, w0, w1 in (
+        ([(cx + 1, base - 50), (cx - 18, base - 70), (cx - 42, base - 86)], 8.5, 3.5),
+        ([(cx + 1, base - 50), (cx + 17, base - 72), (cx + 40, base - 90)], 8.5, 3.5),
+        ([(cx, base - 52), (cx + 2, base - 78), (cx - 4, base - 100)], 7.5, 3.5),
+        ([(cx - 12, base - 63), (cx - 30, base - 66), (cx - 52, base - 70)], 4.5, 2.0),
+        ([(cx + 11, base - 64), (cx + 32, base - 68), (cx + 54, base - 72)], 4.5, 2.0),
+    ):
+        stroke(cv, pts, w0, w1, bark_r, outline)
+    for k in range(5):  # bark ridges
+        x = cx - 5 + k * 2.6
+        stroke(cv, [(x, base - 6 - k % 2 * 3), (x - 0.6, base - 24), (x + 0.4, base - 44 + k % 2 * 4)], 0.7, 0.6, bark_r[:2])
+    circles = [(cx + x, base + y, r) for (x, y, r) in (
+        (-54, -92, 17), (-36, -108, 19), (-13, -119, 21), (12, -121, 21), (36, -111, 20), (56, -95, 17), (-64, -76, 13),
+        (66, -79, 13), (-23, -92, 17), (21, -94, 18), (0, -102, 20), (-45, -76, 12), (45, -78, 13), (-28, -78, 9), (28, -80, 9),
+    )]
+    canopy = blob(cv, circles, leaf_r, outline=outline, seed=78, tex=0.26, tex_cell=2.5)
+    pick = random.Random(79)
+    pts = sorted(canopy)
+    placed: list[tuple[float, float]] = []
+    for _ in range(400):
+        if len(placed) >= 26:
+            break
+        px, py = pick.choice(pts)
+        u, v = native(px), native(py)
+        if not pixel_set_ok(canopy, px, py, (-3, -1.5, 0, 1.5, 3), cv.w) or any(math.hypot(u - a, v - b) < 13 for a, b in placed):
+            continue
+        placed.append((u, v))
+        dot(cv, u, v + 0.6, 2.7, leaf_r[0])  # a pocket of shade so the fruit stands out
+        ball(cv, u, v, 2.0, 2.0, fruit_r)
+        dot(cv, u + (0.6 if LIGHT[0] > 0 else -0.6), v - 0.7, 0.5, fruit_r[-1])
+    return cv
+
+
+def homestead(stone_r: list[Color], thatch_r: list[Color], wood_r: list[Color], dark: Color, outline: Color, smoke: Color) -> Canvas:
+    """A low stone house with a dark open doorway, and an altar of piled stones still smoking."""
+    cv = Canvas(136, 80)
+    base = 80
+    x0, w, h = 8, 56, 30
+    for px, py in poly_pixels([(x0, base - h), (x0 + w, base - h), (x0 + w, base), (x0, base)]):
+        u, v = native(px), native(py)
+        f1, f2, ox, oy = worley(u, v, 5.5, 301)
+        t = 0.52 + (ox * LIGHT[0] + oy * LIGHT[1]) / 5.5 * 0.55 + (_hash(round(u - ox), round(v - oy), 5) - 0.5) * 0.3
+        if f2 - f1 < 0.7:
+            t = 0.08
+        if v < base - h + 3.5:
+            t -= 0.3  # under the eaves
+        cv.put(px, py, shade(stone_r, t, px, py))
+    for px, py in poly_pixels([(x0 + 22, base - 21), (x0 + 34, base - 21), (x0 + 34, base), (x0 + 22, base)]):
+        cv.put(px, py, dark)
+    stroke(cv, [(x0 + 20, base - 22), (x0 + 36, base - 22)], 2.2, 2.2, wood_r)
+    stroke(cv, [(x0 + 21.5, base - 21), (x0 + 21.5, base)], 1.6, 1.6, wood_r)
+    stroke(cv, [(x0 + 34.5, base - 21), (x0 + 34.5, base)], 1.6, 1.6, wood_r)
+    for px, py in poly_pixels([(x0 + 43, base - 19), (x0 + 49, base - 19), (x0 + 49, base - 13), (x0 + 43, base - 13)]):
+        cv.put(px, py, dark)
+    roof = [(x0 - 6, base - h + 2), (x0 + w + 6, base - h + 2), (x0 + w - 9, base - h - 19), (x0 + 9, base - h - 19)]
+    for px, py in poly_pixels(roof):
+        u, v = native(px), native(py)
+        t = 0.74 - (v - (base - h - 19)) * 0.02 + (vnoise(u, v, 1.0, 7, 302, None) - 0.5) * 0.55
+        if base - h + 2 - v < 1.6:
+            t -= 0.35
+        cv.put(px, py, shade(thatch_r, t, px, py))
+    ax = 104
+    for dx, dy, rx, ry in ((-9.5, -3.2, 5.2, 3.4), (0, -3.2, 5.6, 3.6), (9.5, -3.2, 5.2, 3.4), (-5, -9.4, 5.2, 3.2), (5, -9.4, 5.2, 3.2),
+                           (0, -15, 6.4, 2.9)):
+        ball(cv, ax + dx, base + dy, rx, ry, stone_r)
+    dot(cv, ax - 1.5, base - 18.2, 1.1, hexc('#e8622a'))
+    dot(cv, ax + 1.5, base - 18.6, 0.8, hexc('#ffc24a'))
+    outline_pass(cv, outline)
+    for k in range(30):  # a thread of smoke, thinning as it climbs
+        y = base - 21 - k * 1.8
+        x = ax + math.sin(k * 0.5) * (1.2 + k * 0.14) + k * 0.3
+        rad = 1.1 + k * 0.05
+        for py in span(y - rad, y + rad):
+            for px in span(x - rad, x + rad):
+                if math.hypot(native(px) - x, native(py) - y) <= rad:
+                    mix_put(cv, px, py, smoke, 0.75 - k * 0.022)
+    return cv
+
+
+def paint_shore() -> Layers:
+    """Gen 1:26-27: the young earth on a bright morning, sea and sky and land all full of life."""
+    global LIGHT
+    LIGHT = (-0.55, -0.83)
+    L = Layers()
+    rng = random.Random(61)
+    sky_r = ramp('#2f78c8', '#3f8ad4', '#54a0de', '#6fb4e6', '#8fc8ec', '#b2dcf0', '#d2ecf2', '#f0f8ec')
+    sky_gradient(L.sky, sky_r, gamma=1.1)
+    glow(L.sky, 150, 62, 13, 44, ramp('#bfe2f2', '#dff0ea', '#f6f6d6', '#fffbd8'))
+    disc(L.sky, 150, 62, 11, hexc('#fffef2'), hexc('#fff2c0'))
+    cloud_r = ramp('#9cc0e0', '#bcd8ee', '#dcecf8', '#f4fafe', '#ffffff')
+    for i, (cx, base, w, h) in enumerate([(310, 72, 64, 24), (455, 108, 90, 32), (40, 124, 70, 26), (540, 52, 40, 16)]):
+        cumulus(L.sky, rng, cx, base, w, h, cloud_r, seed=160 + i)
+    for cx, y, w in [(220, 152, 110), (380, 166, 90), (90, 172, 80)]:
+        streak_cloud(L.sky, rng, cx, y, w, hexc('#f2fafa'), hexc('#d8eef4'))
+    for bx, by, s in [(246, 98, 3), (259, 91, 3), (271, 101, 2), (398, 58, 3), (411, 65, 3), (334, 132, 2), (108, 104, 3), (120, 110, 2)]:
+        bird(L.sky, bx, by, s, hexc('#34588a'))
+
+    far = L.far
+    ridge_fill(
+        far, lambda x: 66 - max(0.0, wave(x, [(1, 22, 0.4), (2, 9, 2.0), (5, 3, 1.0)])) - fbm(x, 0, 161, cells=(16, 8)) * 3,
+        ramp('#7aa6cc', '#88b2d4', '#98bedc', '#aacce4', '#c0daec'), seed=162, bottom=FAR_H - PAD, base_t=0.55,
+        slope_gain=0.4, fade=0.004, tex=0.1,
+    )
+    sea_r = ramp('#1c68a2', '#2478b0', '#2e8abc', '#3c9cc8', '#52aed2', '#72c2dc', '#a4dcea', '#ecfaf8')
+
+    def glint(u: float, v: float, d: float) -> float:
+        return 0.55 if fbm(u, v, 163, cells=(8, 4, 2), sy=0.2) > 0.77 else 0.0
+
+    ridge_fill(
+        far, lambda x: swells(x, 68, [(12, 0.4, 0.3), (19, 0.3, 1.0)]), sea_r, seed=164, bottom=FAR_H - PAD,
+        base_t=0.72, sy=0.12, fade=0.013, tex=0.16, slope_gain=0.3, rim_t=0.3, extra=glint,
+    )
+    isle_r = ramp('#2c6a4c', '#3a7c52', '#4a8e58', '#5ea060', '#78b26a', '#96c478')
+    for i, (x, w) in enumerate(((96.0, 30.0), (352.0, 20.0), (440.0, 12.0))):
+        y = 72 + i * 2
+        for px, py in poly_pixels([(x - w, y + 1), (x - w * 0.5, y - 5), (x + w * 0.4, y - 6), (x + w, y + 1)]):
+            far.put(px, py, shade(isle_r, 0.62 - (native(py) - y + 6) * 0.04, px, py))
+        for k in range(int(w / 6)):
+            tx = x - w * 0.45 + k * 7
+            blob(far, [(tx, y - 8, 3.2), (tx + 2, y - 7, 2.8)], isle_r, outline=isle_r[0], seed=165 + k, tex=0.2, tex_cell=2)
+
+    mid = L.mid
+    sand_r = ramp('#a88a56', '#bc9e66', '#ceb278', '#dec48c', '#ecd6a4', '#f8e8c2')
+    ridge_fill(
+        mid, lambda x: 70 - wave(x, [(2, 2, 0.2), (5, 1.2, 1.0)]), sand_r, seed=171, bottom=MID_H - PAD, base_t=0.72,
+        fade=0.004, tex=0.12, slope_gain=0.3,
+    )
+    meadow_r = ramp('#2c7646', '#38884a', '#48994e', '#5cab54', '#76be5e', '#96d06c')
+    mtops = ridge_fill(
+        mid, lambda x: 78 - wave(x, [(3, 3.5, 0.9), (4, 2, 2.2), (9, 1, 0.4)]) - fbm(x, 2, 172, cells=(16, 8)) * 2,
+        meadow_r, seed=173, bottom=MID_H - PAD, fade=0.012, tex=0.18, base_t=0.62,
+    )
+    bark_r = ramp('#4a3220', '#66482c', '#82603a', '#9e7a4c', '#b8945e')
+    frond_r = ramp('#1f5a3c', '#2c7044', '#3c864a', '#52a052', '#74b85c')
+    leaf_r = ramp('#24583e', '#2f6c42', '#3d8046', '#4f964c', '#68ab54', '#88c062', '#a9d47a')
+    for i, x in enumerate(scatter_points(rng, 5, 0, T, 70)):
+        palm(mid, x, mtops[int(x) % T] + 8, rng.uniform(36, 48), bark_r, frond_r, seed=174 + i)
+    pick = random.Random(62)
+    for i, x in enumerate(scatter_points(rng, 14, 0, T, 16)):
+        base = round(mtops[int(x) % T]) + 8
+        rad = rng.uniform(4, 7)
+        bush = blob(
+            mid, [(x - rad * 0.6, base - rad * 0.8, rad * 0.8), (x + rad * 0.5, base - rad, rad)],
+            leaf_r, outline=leaf_r[0], seed=180 + i, tex=0.2, tex_cell=2, cut_below=base,
+        )
+        pc = [hexc('#ff8fb1'), hexc('#ffffff'), hexc('#ffd84a'), hexc('#ff7a4a')][i % 4]
+        for _ in range(5):
+            px, py = pick.choice(sorted(bush))
+            if pixel_set_ok(bush, px, py, (-1, 0, 1), mid.w):
+                dot(mid, native(px), native(py), 0.5, pc)
+
+    g = L.ground
+    grass_r = ramp('#2a6c40', '#347c44', '#408e48', '#4ea04c', '#62b252', '#7cc45a', '#9cd468')
+    surface = 5
+
+    def meadow(u: float, v: float, d: float, px: int, py: int) -> Color:
+        n = fbm(u, v, 181, cells=(32, 16, 8))
+        patch = fbm(u, v, 182, cells=(64, 32, 16), sy=0.35)
+        if patch > 0.645 and d > 3:
+            t = 0.5 + (patch - 0.645) * 2.2 + (n - 0.5) * 0.35 - (0.3 if patch < 0.665 else 0)
+            return shade(sand_r, t, px, py)
+        streak = vnoise(u, v, 2, 6, 183, T)
+        if K > 1:
+            streak = streak * 0.5 + vnoise(u, v, 2 / 3, 3, 184, T) * 0.5
+        t = 0.7 - d * 0.0045 + (n - 0.5) * 0.5 + (streak - 0.5) * 0.25 - (0.22 if patch > 0.62 else 0)
+        if d < 1:
+            t = 0.95
+        elif d < 2:
+            t += 0.2
+        return shade(grass_r, t, px, py)
+
+    ground_fill(g, surface, meadow)
+    tufts(g, rng, surface, grass_r, 150)
+    shell_r = ramp('#b89a86', '#e6d2c0', '#fff6ea')
+    for _ in range(18):
+        x, y = rng.uniform(0, T), rng.uniform(surface + 8, GROUND_H - 4)
+        ball(g, x, y, rng.uniform(1.0, 1.8), 0.9, shell_r)
+    petals = [hexc('#ffffff'), hexc('#ffd84a'), hexc('#ff8fb1'), hexc('#8fd0ff'), hexc('#ff9a5a')]
+    centers = [hexc('#ffd84a'), hexc('#e08a20'), hexc('#ffe9a0'), hexc('#ffffff'), hexc('#ffe9a0')]
+    for _ in range(34):
+        cx = rng.randrange(T)
+        cy = surface + 4 + (GROUND_H - surface - 10) * rng.random() ** 0.9
+        k = rng.randrange(len(petals))
+        for _ in range(rng.randint(3, 6)):
+            x, y = cx + rng.randint(-7, 7), int(cy + rng.randint(-3, 3))
+            flower(g, x, y, petals[k], centers[k], grass_r[0], y > surface + 18 and rng.random() < 0.8)
+    return L
+
+
+def paint_grove() -> Layers:
+    """Gen 3:1-6: deep in the garden as the day turns, and the tree whose fruit delights the eyes."""
+    global LIGHT
+    LIGHT = (0.55, -0.83)
+    L = Layers()
+    rng = random.Random(71)
+    sky_r = ramp('#27356e', '#33488a', '#4560a2', '#5f7ab6', '#8494c4', '#b0a8c8', '#d8b8c0', '#f2ccae', '#fbe0a8')
+    sky_gradient(L.sky, sky_r, gamma=1.05)
+    glow(L.sky, 180, 168, 14, 74, ramp('#e2b8b4', '#f2ceac', '#fbe2ac', '#fff4cc'), power=1.5)
+    disc(L.sky, 180, 168, 12, hexc('#fffbe6'), hexc('#ffe9b0'))
+    cloud_field(L.sky, ramp('#46498a', '#6660a0', '#907eb0', '#c4a0b8', '#f2cab4'), 201, 14, 118, 0.4, sy=0.3, soft=3)
+    for cx, y, w in ((110, 150, 170), (330, 166, 210), (500, 146, 150)):
+        streak_cloud(L.sky, rng, cx, y, w, hexc('#f8d8b4'), hexc('#dcb0b4'))
+
+    far = L.far
+
+    def crowns(x: float, a: float, b: float) -> float:
+        return abs(wave(x, [(29, a, 0.3)])) + abs(wave(x, [(43, b, 1.1)]))
+
+    ridge_fill(
+        far, lambda x: 38 - wave(x, [(1, 10, 0.9), (2, 6, 2.2), (5, 3, 0.4)]) - crowns(x, 1.2, 0.8),
+        ramp('#5f6ea8', '#6c7cae', '#7a8ab4', '#8a9aba', '#9caac2'), seed=202, bottom=FAR_H - PAD, fade=0.006, tex=0.1,
+        base_t=0.6, slope_gain=0.3,
+    )
+    ridge_fill(
+        far, lambda x: 54 - wave(x, [(2, 7, 0.2), (3, 4, 1.6), (7, 2, 2.9)]) - crowns(x, 1.8, 1.2),
+        ramp('#365a70', '#3f6878', '#4a7680', '#588488', '#689290'), seed=203, bottom=FAR_H - PAD, fade=0.008, tex=0.14,
+        base_t=0.6, slope_gain=0.3,
+    )
+    mist(far, 62, 5, hexc('#b8b4c8'), 0.45, seed=204)
+    ridge_fill(
+        far, lambda x: 70 - wave(x, [(3, 5, 2.0), (5, 3, 0.5), (8, 1.5, 1.2)]) - crowns(x, 2.6, 1.8),
+        ramp('#173f3c', '#1d4c42', '#255a48', '#2f6a4e', '#3c7a54', '#4c8a5a'), seed=205, bottom=FAR_H - PAD, fade=0.012,
+        tex=0.2, base_t=0.6, slope_gain=0.25,
+    )
+
+    mid = L.mid
+    meadow_r = ramp('#163e34', '#1c4c38', '#245c3c', '#2e6e42', '#3c8048', '#50944e')
+    mtops = ridge_fill(
+        mid, lambda x: 75 - wave(x, [(2, 3, 0.5), (4, 2, 1.7), (11, 0.8, 0.4)]),
+        meadow_r, seed=211, bottom=MID_H - PAD, fade=0.012, tex=0.18, base_t=0.6,
+    )
+    bark_r = ramp('#24161a', '#3a2420', '#523428', '#6a4630', '#825a3a')
+    leaf_r = ramp('#123a34', '#184838', '#20583c', '#2a6a40', '#388044', '#4c984c', '#6cb25a')
+    pick = random.Random(72)
+    for i, x in enumerate(scatter_points(rng, 4, 0, T, 90)):
+        s = rng.uniform(0.75, 1.0)
+        base = round(mtops[int(x) % T]) + 12
+        top = base - round(26 * s)
+        trunk(mid, x, base, top, 4.6 * s, bark_r, seed=212 + i)
+        circles = [(x + math.cos(-math.pi / 2 + (k - 3) * 0.55) * 11 * s * (0.4 if k == 3 else 1.0) * 1.25,
+                    top - 6 * s + math.sin(-math.pi / 2 + (k - 3) * 0.55) * 11 * s * (0.4 if k == 3 else 1.0), rng.uniform(9, 12) * s)
+                   for k in range(7)] + [(x, top - 4 * s, 13 * s)]
+        blob(mid, circles, leaf_r, outline=leaf_r[0], seed=220 + i, tex=0.22, tex_cell=2)
+    berry = [hexc('#c46cff'), hexc('#ffffff'), hexc('#ff6a8a'), hexc('#8fe0ff')]
+    for i, x in enumerate(scatter_points(rng, 18, 0, T, 12)):
+        base = round(mtops[int(x) % T]) + 9
+        rad = rng.uniform(5, 9)
+        bush = blob(
+            mid, [(x - rad * 0.7, base - rad * 0.7, rad * 0.8), (x + rad * 0.5, base - rad, rad), (x + rad * 1.3, base - rad * 0.6, rad * 0.7)],
+            leaf_r, outline=leaf_r[0], seed=230 + i, tex=0.22, tex_cell=2, cut_below=base,
+        )
+        for _ in range(5):
+            px, py = pick.choice(sorted(bush))
+            if pixel_set_ok(bush, px, py, (-1, 0, 1), mid.w):
+                dot(mid, native(px), native(py), 0.5, berry[i % 4])
+    for x in scatter_points(rng, 22, 0, T, 8):  # ferns
+        base = mtops[int(x) % T] + 10
+        for a in (-1.1, -0.55, 0.0, 0.55, 1.1):
+            ln = rng.uniform(5, 8)
+            stroke(mid, [(x, base), (x + math.sin(a) * ln * 0.6, base - math.cos(a) * ln * 0.8), (x + math.sin(a) * ln, base - math.cos(a) * ln * 0.7)],
+                   1.1, 0.5, leaf_r[2:])
+
+    g = L.ground
+    grass_r = ramp('#143a30', '#1a4834', '#22583a', '#2c6a40', '#3a7c46', '#4e904e', '#6aa65a')
+    surface = 5
+
+    def shaded_grass(u: float, v: float, d: float, px: int, py: int) -> Color:
+        n = fbm(u, v, 241, cells=(32, 16, 8))
+        streak = vnoise(u, v, 2, 6, 242, T)
+        if K > 1:
+            streak = streak * 0.5 + vnoise(u, v, 2 / 3, 3, 243, T) * 0.5
+        sun = fbm(u, v, 244, cells=(40, 20, 10), sy=0.4)  # light falling through the leaves
+        t = 0.52 - d * 0.003 + (n - 0.5) * 0.45 + (streak - 0.5) * 0.25 + max(0.0, sun - 0.56) * 2.2
+        if d < 1:
+            t = 0.9
+        elif d < 2:
+            t += 0.18
+        return shade(grass_r, t, px, py)
+
+    ground_fill(g, surface, shaded_grass)
+    tufts(g, rng, surface, grass_r, 150)
+    cap_r = ramp('#8a1c2a', '#d43a3a', '#ff8a6a')
+    for _ in range(12):  # toadstools
+        x, y = rng.uniform(0, T), rng.uniform(surface + 10, GROUND_H - 5)
+        stroke(g, [(x, y + 2.2), (x, y)], 1.0, 1.0, ramp('#b8a890', '#f0e6d2'))
+        ball(g, x, y, 2.0, 1.2, cap_r)
+        dot(g, x - 0.6, y - 0.3, 0.4, hexc('#fff4e0'))
+    petals = [hexc('#c49bff'), hexc('#ffffff'), hexc('#ff8fb1'), hexc('#9ae0ff')]
+    centers = [hexc('#ffe9a0'), hexc('#ffd84a'), hexc('#ffe9a0'), hexc('#ffffff')]
+    for _ in range(30):
+        cx = rng.randrange(T)
+        cy = surface + 4 + (GROUND_H - surface - 10) * rng.random() ** 0.9
+        k = rng.randrange(len(petals))
+        for _ in range(rng.randint(3, 6)):
+            x, y = cx + rng.randint(-7, 7), int(cy + rng.randint(-3, 3))
+            flower(g, x, y, petals[k], centers[k], grass_r[0], y > surface + 18 and rng.random() < 0.8)
+    leaf_c = [hexc('#d8a03a'), hexc('#c8642a'), hexc('#e6c85a')]
+    for _ in range(40):  # fallen leaves
+        x, y = rng.uniform(0, T), rng.uniform(surface + 4, GROUND_H - 3)
+        c = rng.choice(leaf_c)
+        dot(g, x, y, 0.5, c)
+        dot(g, x + 1, y + (0 if rng.random() < 0.5 else 1), 0.5, c)
+    L.landmark = great_tree(
+        ramp('#1c1216', '#30201c', '#483024', '#62422e', '#7e583a', '#9a704a'),
+        ramp('#0f3230', '#154036', '#1c503a', '#266240', '#347846', '#48904e', '#66aa5c', '#8cc470'),
+        ramp('#7a1420', '#c8242c', '#ff5a3c', '#ffc27a'), hexc('#0c1a20'),
+    )
+    return L
+
+
+def paint_fields() -> Layers:
+    """Gen 4:6-7: tilled ground east of Eden under a heavy evening sky, and a doorway standing dark."""
+    global LIGHT
+    LIGHT = (0.7, -0.7)
+    L = Layers()
+    rng = random.Random(81)
+    sky_r = ramp('#1c1830', '#28203e', '#382a4e', '#4e365a', '#6a4660', '#8c5a60', '#b0745a', '#d0965a', '#eaba6a', '#f8d888')
+    sky_gradient(L.sky, sky_r, gamma=0.9)
+    cloud_field(L.sky, ramp('#1e1830', '#2e2240', '#463050', '#684258', '#945c5c', '#c8845e', '#f0b46e'), 251, -10, 120, 0.62, sy=0.3, soft=4, rim=3)
+    glow(L.sky, 410, 186, 16, 84, ramp('#d48a56', '#e8a85e', '#f6c874', '#ffe49c'), power=1.6)
+    disc(L.sky, 410, 186, 15, hexc('#fff0c0'), hexc('#ffd68a'))
+    for cx, y, w in ((140, 156, 220), (360, 164, 260), (500, 146, 150), (250, 180, 280)):
+        streak_cloud(L.sky, rng, cx, y, w, hexc('#8a4a58'), hexc('#6a3a52'))
+
+    far = L.far
+    ridge_fill(
+        far, lambda x: 50 - wave(x, [(1, 12, 1.4), (2, 7, 0.2), (5, 3, 2.2)]) - fbm(x, 0, 252, cells=(32, 16, 8)) * 6,
+        ramp('#3c2c50', '#4a3458', '#5a3e60', '#6e4a66', '#845a6a', '#9c6e6c'), seed=253, bottom=FAR_H - PAD, fade=0.004,
+        tex=0.1, base_t=0.55, slope_gain=0.5,
+    )
+
+    def strips(u: float, v: float, d: float) -> float:
+        """Patchwork of ploughed and standing plots."""
+        plot = math.floor((u + v * 0.9) / 26) + math.floor(v / 9) * 7
+        tone = (_hash(plot % 20, 0, 254) - 0.5) * 0.36
+        hedge = -0.3 if ((u + v * 0.9) % 26) < 1.2 or (v % 9) < 1.0 else 0.0
+        return tone + hedge
+
+    ridge_fill(
+        far, lambda x: 70 - wave(x, [(2, 6, 0.6), (3, 3.5, 2.0), (7, 1.5, 1.1)]) - fbm(x, 4, 255, cells=(16, 8)) * 3,
+        ramp('#3a3026', '#4c3e2c', '#605032', '#76643a', '#8e7a44', '#a89250', '#c4ac60'), seed=256, bottom=FAR_H - PAD,
+        fade=0.006, tex=0.12, base_t=0.55, slope_gain=0.4, extra=strips,
+    )
+    mist(far, 94, 6, hexc('#a8705a'), 0.4, seed=257)
+
+    mid = L.mid
+    soil_r = ramp('#1e1412', '#2c1c18', '#3e281e', '#523626', '#68462e', '#805838', '#9a6e46')
+    mtops = ridge_fill(
+        mid, lambda x: 76 - wave(x, [(2, 2.5, 0.3), (5, 1.5, 1.4), (11, 0.7, 2.0)]), soil_r, seed=261, bottom=MID_H - PAD,
+        base_t=0.5, slope_gain=0.4, fade=0.01, tex=0.2,
+    )
+    straw_r = ramp('#5a4220', '#7e6028', '#a48434', '#c8a848', '#e6cc68', '#f8e894')
+    wall_r = ramp('#2a2428', '#403a3c', '#5a5450', '#787066', '#989082')
+    for x in scatter_points(rng, 3, 0, T, 120):  # runs of dry-stone wall
+        for k in range(rng.randint(8, 13)):
+            wx = x + k * 4.4
+            ball(mid, wx, mtops[int(wx) % T] + 1.5, 2.6, 1.9, wall_r)
+            if k % 2:
+                ball(mid, wx + 2, mtops[int(wx) % T] - 1.3, 2.2, 1.6, wall_r)
+    for x in scatter_points(rng, 11, 0, T, 26):
+        sheaf(mid, x, mtops[int(x) % T] + 5, rng.uniform(8, 11), straw_r)
+    wood_r = ramp('#160e10', '#24181a', '#34241e', '#463024', '#5a3e2c')
+    for x in scatter_points(rng, 2, 0, T, 200):
+        dead_tree(mid, rng, x, mtops[int(x) % T] + 3, rng.uniform(30, 38), wood_r, wood_r[0])
+
+    g = L.ground
+    surface = 5
+
+    def furrows(u: float, v: float, d: float, px: int, py: int) -> Color:
+        n = fbm(u, v, 271, cells=(32, 16, 8, 4))
+        wob = fbm(u, 0, 272, cells=(64, 32, 16)) * 0.9
+        phase = (math.sqrt(d + 8) * 2.0 + wob + n * 0.25) % 1.0  # furrows widen as they come nearer
+        t = 0.5 + (0.2 if phase < 0.42 else -0.16 if phase > 0.78 else 0.0) + (n - 0.5) * 0.36 - d * 0.002
+        if d < 1:
+            t += 0.25
+        return shade(soil_r, t, px, py)
+
+    ground_fill(g, surface, furrows)
+    rough_top(g, surface, soil_r, 273, 4)
+    tufts(g, rng, surface, straw_r, 110, max_h=4)
+    for _ in range(70):  # stubble left after the harvest
+        x, y = rng.uniform(0, T), rng.uniform(surface + 3, GROUND_H - 4)
+        h = rng.uniform(1.5, 3.2) * (0.7 + y / GROUND_H * 0.6)
+        for dx in (-1, 0, 1):
+            stroke(g, [(x + dx, y), (x + dx * 1.7, y - h)], 0.7, 0.5, straw_r[1:5])
+    stone_r = ramp('#2a2428', '#4a4444', '#727068', '#a09a8c')
+    for _ in range(18):
+        x, y = rng.uniform(0, T), rng.uniform(surface + 3, GROUND_H - 6)
+        w = rng.uniform(1.5, 3.0) * (0.7 + y / GROUND_H)
+        ball(g, x, y, w, w * 0.65, stone_r)
+    L.landmark = homestead(
+        ramp('#1c181e', '#302a2e', '#484242', '#645c56', '#847a6c', '#a69a86'),
+        ramp('#4a3418', '#6e5022', '#94722e', '#b8943e', '#d8b656'),
+        ramp('#1a1210', '#2e2018', '#463224', '#5e4630'), hexc('#07050a'), hexc('#120c12'), hexc('#8a7a86'),
+    )
+    return L
+
+
+def paint_shipyard() -> Layers:
+    """Gen 6:13-14: the ark taking shape on dry ground while the sky darkens overhead."""
+    global LIGHT
+    LIGHT = (-0.5, -0.86)
+    L = Layers()
+    rng = random.Random(91)
+    sky_r = ramp('#1a202e', '#252d3e', '#333d50', '#455064', '#5a6676', '#748086', '#959a90', '#bcb694', '#e0d09a', '#f6e6ae')
+    sky_gradient(L.sky, sky_r, gamma=0.85)
+    glow(L.sky, 130, 196, 10, 110, ramp('#b8b08e', '#d4c494', '#eedca0', '#fff2bc'), power=1.4)
+    cloud_field(L.sky, ramp('#10141e', '#1a202c', '#262e3c', '#36404e', '#4c5866', '#6c7884', '#98a0a2'), 281, -10, 128, 0.74, soft=4, rim=3)
+    cloud_field(L.sky, ramp('#1c222e', '#2a3240', '#3c4654', '#56606c', '#7c8488'), 282, 84, 168, 0.42, sy=0.35, soft=3)
+    for cx, y, w in ((300, 176, 240), (480, 184, 180)):
+        streak_cloud(L.sky, rng, cx, y, w, hexc('#8a8a82'), hexc('#6e7074'))
+
+    far = L.far
+    ridge_fill(
+        far, lambda x: 46 - wave(x, [(1, 12, 2.2), (2, 6, 0.8), (5, 3, 0.2)]) - fbm(x, 0, 283, cells=(32, 16, 8)) * 6,
+        ramp('#3c4654', '#48525e', '#566068', '#687072', '#7c827c', '#94968a'), seed=284, bottom=FAR_H - PAD, fade=0.004,
+        tex=0.1, base_t=0.55, slope_gain=0.5,
+    )
+    hill_r = ramp('#2e3428', '#3c422e', '#4c5234', '#5e643c', '#727846', '#8a8e52', '#a4a660')
+    tops = ridge_fill(
+        far, lambda x: 68 - wave(x, [(2, 6, 1.9), (3, 4, 0.4), (7, 1.5, 2.6)]) - fbm(x, 3, 285, cells=(16, 8)) * 3,
+        hill_r, seed=286, bottom=FAR_H - PAD, fade=0.008, tex=0.16, base_t=0.55, slope_gain=0.4,
+    )
+    pine_r = ramp('#141e1c', '#1c2a24', '#26382c', '#324836', '#425a40')
+    pine_bark = ramp('#1a1412', '#2c2018', '#3e2e20')
+    for i, x in enumerate(scatter_points(rng, 30, 0, T, 9)):  # the forest the timber comes from
+        if 150 < x < 300:
+            continue  # a cleared slope
+        conifer(far, x, tops[int(x) % T] + rng.uniform(3, 12), rng.uniform(9, 15), pine_r, pine_bark, seed=287 + i)
+    for i, x in enumerate(scatter_points(rng, 9, 160, 290, 10)):
+        y = tops[int(x) % T] + rng.uniform(4, 12)
+        dot(far, x, y, 1.0, hexc('#8a7a52'))
+        dot(far, x, y - 0.6, 0.6, hexc('#b8a670'))
+    mist(far, 96, 6, hexc('#6a6a5e'), 0.35, seed=288)
+
+    mid = L.mid
+    earth_r = ramp('#201812', '#2e2218', '#3e2e20', '#503c28', '#644c32', '#7a5e3e', '#92744c')
+    mtops = ridge_fill(
+        mid, lambda x: 77 - wave(x, [(2, 2.5, 1.2), (5, 1.5, 0.3), (9, 0.8, 2.2)]), earth_r, seed=291, bottom=MID_H - PAD,
+        base_t=0.5, slope_gain=0.4, fade=0.01, tex=0.2,
+    )
+    wood_r = ramp('#24160e', '#382414', '#4e341c', '#664626', '#805a32', '#9a7040')
+    cut_r = ramp('#8a6a3c', '#c8a468', '#ecd09a')
+    green_r = ramp('#12201c', '#1a2e24', '#243e2c', '#305036', '#406442', '#547a4e')
+    for i, x in enumerate(scatter_points(rng, 2, 0, T, 200)):
+        conifer(mid, x, mtops[int(x) % T] + 8, rng.uniform(36, 48), green_r, wood_r, seed=292 + i)
+    for x in scatter_points(rng, 7, 0, T, 44):
+        log_pile(mid, x, mtops[int(x) % T] + 6, rng.randint(2, 3), rng.uniform(15, 21), wood_r, cut_r)
+    for x in scatter_points(rng, 9, 0, T, 30):
+        stump(mid, x, mtops[int(x) % T] + 5, rng.uniform(3.5, 5), rng.uniform(2.5, 4), wood_r, cut_r)
+
+    g = L.ground
+    surface = 5
+
+    def trodden(u: float, v: float, d: float, px: int, py: int) -> Color:
+        n = fbm(u, v, 301, cells=(32, 16, 8, 4))
+        rut = fbm(u, v, 302, cells=(64, 32), sy=0.18)
+        t = 0.52 + (n - 0.5) * 0.5 - d * 0.003 - (0.18 if 0.5 < rut < 0.54 else 0.0)
+        if d < 1:
+            t += 0.3
+        return shade(earth_r, t, px, py)
+
+    ground_fill(g, surface, trodden)
+    rough_top(g, surface, earth_r, 303, 4)
+    tufts(g, rng, surface, ramp('#3a3a22', '#56522a', '#767034', '#9a9444'), 60, max_h=4)
+    for _ in range(26):  # offcuts and planks
+        x, y = rng.uniform(0, T), rng.uniform(surface + 4, GROUND_H - 5)
+        a = rng.uniform(-0.4, 0.4)
+        ln = rng.uniform(5, 12) * (0.7 + y / GROUND_H * 0.6)
+        stroke(g, [(x, y), (x + math.cos(a) * ln, y + math.sin(a) * ln * 0.35)], 1.5, 1.5, wood_r[2:], outline=wood_r[0])
+    for _ in range(150):  # wood chips and shavings
+        x, y = rng.uniform(0, T), rng.uniform(surface + 2, GROUND_H - 3)
+        dot(g, x, y, 0.5, cut_r[rng.randrange(1, 3)])
+        if rng.random() < 0.4:
+            dot(g, x + 1, y, 0.5, cut_r[1])
+    stone_r = ramp('#2a2624', '#4c4640', '#746c60', '#a09684')
+    for _ in range(12):
+        x, y = rng.uniform(0, T), rng.uniform(surface + 3, GROUND_H - 6)
+        w = rng.uniform(1.5, 3.0) * (0.7 + y / GROUND_H)
+        ball(g, x, y, w, w * 0.65, stone_r)
+    L.landmark = ark_frame(
+        ramp('#2a1a10', '#3e2816', '#54381e', '#6c4a28', '#866034', '#a27a44'),
+        ramp('#5a3e22', '#7a5830', '#9c7642', '#bc9458', '#d8b272'),
+        ramp('#3a2616', '#5a4026', '#7a5a36', '#9a7848'), hexc('#120b08'),
+    )
+    return L
+
+
 # name → (painter, landmark position as in Backdrop.ts LANDMARK_AT: x fraction, dy design px)
 ENVIRONMENTS: dict[str, tuple[Callable[[], Layers], tuple[float, int]]] = {
     'deep': (paint_deep, (0.75, 0)),
@@ -1543,6 +2136,10 @@ ENVIRONMENTS: dict[str, tuple[Callable[[], Layers], tuple[float, int]]] = {
     'flood-storm': (paint_flood_storm, (0.78, -48)),
     'flood-clearing': (paint_flood_clearing, (0.78, -48)),
     'babel': (paint_babel, (0.72, -6)),
+    'shore': (paint_shore, (0.75, 0)),
+    'grove': (paint_grove, (0.76, -27)),
+    'fields': (paint_fields, (0.8, -30)),
+    'shipyard': (paint_shipyard, (0.78, -30)),
 }
 
 

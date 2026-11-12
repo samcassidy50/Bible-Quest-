@@ -14,6 +14,8 @@ export interface ButtonOptions {
   fill: number;
   textColor?: string;
   stroke?: number;
+  /** Opacity of the outline (default: a faint 0.35). */
+  strokeAlpha?: number;
   onTap: () => void;
 }
 
@@ -92,7 +94,7 @@ export class Button extends Phaser.GameObjects.Container {
     this.bg.fillStyle(0x000000, 0.35).fillRoundedRect(-w / 2 + 3, -h / 2 + 5, w, h, r);
     this.bg.fillStyle(this.fill, 1).fillRoundedRect(-w / 2, -h / 2, w, h, r);
     this.bg
-      .lineStyle(3, this.opts.stroke ?? 0xffffff, 0.35)
+      .lineStyle(3, this.opts.stroke ?? 0xffffff, this.opts.strokeAlpha ?? 0.35)
       .strokeRoundedRect(-w / 2, -h / 2, w, h, r);
   }
 }

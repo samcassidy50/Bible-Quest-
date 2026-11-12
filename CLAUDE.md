@@ -42,12 +42,19 @@ Before saying a task is done, run: `npm run lint && npm run typecheck && npm run
 - New scene/UI behaviour ⇒ a Playwright test in `tests/e2e/` using the debug params and `window.__TEST__` (`services/testHooks.ts`). Add fields to `TestState` instead of scraping pixels.
 - Debug URL params (dev and e2e builds only): `?scene= &encounter= &seed= &autoAnswer=correct|wrong &fast=1 &freeze=1 &fps=1 &specials= &faith= &narration=off &autoCollect=1 &unlockAll=1 &oneShot=1` (`oneShot`: every damaging hit defeats the foe). Parsed in `core/debugParams.ts`.
 - Hero animation viewer: `?scene=rig` (tap a clip to play it) or `?scene=rig&clip=slash` (contact sheet of frames). Check new or changed hero clips here before using them in scenes.
+- Foe gallery: `?scene=foes` (one passage per screen with its three foes in its backdrop; tap or → for the next, `&encounter=gen-005` to start on one, `&freeze=1` for still screenshots).
 
 ## Hero art
 
 - The hero is original pixel art (`src/scenes/hero/HeroSprite.ts`), drafted as strips in ChatGPT and kept in `art/hero-raw/` (see `art/README.md`). `python3 scripts/art/process_hero.py --preview` rebuilds `src/assets/hero/hero.png` and the generated `src/core/anim/heroSheet.ts`; never edit those by hand.
 - Clips are frame sequences in `src/core/anim/heroClips.ts` (frame name + ms). Some clips are placeholders that borrow other frames until their own art arrives (listed at the top of that file).
 - Attack clips must have `swing` and `impact` events; the battle plays the whoosh on `swing` and lands damage and the hit sound on `impact`.
+
+## Foe art
+
+- A foe shows sprite art by naming a sheet in `"sprite"` in its encounter JSON (ids in `FOE_SPRITES`, `src/core/content/schema.ts`; layouts in `src/scenes/battle/FoeSprite.ts`). Every sheet has one row per state: idle, attack, hurt, death, facing left.
+- Original foes (hissling, serpent, gust, storm-cloud, wave, flood-surge, squall, tempest) are pixel art painted by `python3 scripts/art/paint_foes.py [name…] [--preview]` (engine in `scripts/art/foe_engine.py`, needs Pillow) into `src/assets/foes/<name>.png`; never edit those PNGs by hand. They share one layout (`PAINTED` in `FoeSprite.ts`: 128px cells, 8 columns).
+- The other sheets are third-party packs cut by `scripts/art/process_foes.py` (credits in `art/README.md`).
 
 ## Armor, energy and the angel
 
@@ -57,7 +64,7 @@ Before saying a task is done, run: `npm run lint && npm run typecheck && npm run
 
 ## Backgrounds
 
-- Six original environments (`src/scenes/backdrop/Backdrop.ts`): deep, light, garden, wilderness, flood (weather `storm` or `clearing`), babel. Each passage picks one with `setting` (and `weather` for flood) in its encounter JSON.
+- Ten original environments (`src/scenes/backdrop/Backdrop.ts`), one per passage: deep, light, shore, garden, grove, wilderness, fields, shipyard, flood (weather `storm` or `clearing`), babel. Each passage picks one with `setting` (and `weather` for flood) in its encounter JSON; a unit test checks no two passages share a backdrop.
 - Their layers are pixel art painted by `python3 scripts/art/paint_backdrops.py [env…] [--preview]` (needs Pillow) into `src/assets/backdrops/<env>-<layer>.png` (sky, far, mid, ground, optional landmark). Never edit those PNGs by hand; change the painter and re-run it. It checks that strips tile seamlessly. Default `--res 2` (2 screen px per painted pixel) is the chosen look. Any layer without a PNG is drawn in code instead, and the code effects (mist, rays, rain…) always play on top.
 - Text-free viewer: `?scene=backdrops` (tap or → for the next, `&env=garden` to start on one, `&freeze=1` for still screenshots).
 

@@ -519,7 +519,8 @@ def thornbeast_cell(state: str, k: int) -> Image.Image:
     return shift(paint_thornbeast(0, (5, -5), shut=True), (5, 2)[k])
 
 
-MONSTERS = {'demon': demon_cell, 'serpent': serpent_cell, 'shade': shade_cell, 'thornbeast': thornbeast_cell}
+# (The serpent sheet is now painted by paint_foes.py.)
+MONSTERS = {'demon': demon_cell, 'shade': shade_cell, 'thornbeast': thornbeast_cell}
 
 
 def sheet_for(name: str) -> Image.Image:

@@ -9,8 +9,12 @@ import { updateTestState } from '../../services/testHooks';
 export const BACKDROP_VARIANTS: { id: string; setting: Setting; weather?: Weather }[] = [
   { id: 'deep', setting: 'deep' },
   { id: 'light', setting: 'light' },
+  { id: 'shore', setting: 'shore' },
   { id: 'garden', setting: 'garden' },
+  { id: 'grove', setting: 'grove' },
   { id: 'wilderness', setting: 'wilderness' },
+  { id: 'fields', setting: 'fields' },
+  { id: 'shipyard', setting: 'shipyard' },
   { id: 'flood-storm', setting: 'flood', weather: 'storm' },
   { id: 'flood-clearing', setting: 'flood', weather: 'clearing' },
   { id: 'babel', setting: 'babel' },

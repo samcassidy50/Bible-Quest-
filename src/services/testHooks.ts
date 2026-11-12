@@ -81,6 +81,8 @@ export interface TestState {
   backdropPainted: string[];
   /** Verse Journal: the passage currently shown. */
   journalOpen: string | null;
+  /** Foe gallery: the passage on screen and the sprite each of its foes uses (null = placeholder). */
+  foeGallery: { encounter: string; foes: (string | null)[] } | null;
 }
 
 declare global {
@@ -109,6 +111,7 @@ let state: TestState = {
   backdrop: null,
   backdropPainted: [],
   journalOpen: null,
+  foeGallery: null,
 };
 
 export function updateTestState(patch: Partial<TestState>): void {

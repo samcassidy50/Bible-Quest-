@@ -164,6 +164,58 @@ test('sprite foes play their attack, hurt and death frames', async ({ page }) =>
   expect((await battle(page)).foeAnims).toContain('death');
 });
 
+test('painted foes open the serpent, storm and flood passages', async ({ page }) => {
+  const foes = [
+    ['gen-005', 'hissling'],
+    ['gen-008', 'gust'],
+    ['gen-009', 'wave'],
+    ['gen-010', 'squall'],
+  ] as const;
+  for (const [encounter, sprite] of foes) {
+    await page.goto(`/?scene=battle&encounter=${encounter}&seed=1&specials=&freeze=1`);
+    await heroTurn(page);
+    expect((await battle(page)).foeSprite).toBe(sprite);
+    await snap(page, test.info().outputPath(`${sprite}.png`));
+  }
+});
+
+test('painted bosses arrive on the last wave and play their defeat frames', async ({ page }) => {
+  test.setTimeout(120_000);
+  const bosses = [
+    ['gen-005', 'serpent'],
+    ['gen-008', 'storm-cloud'],
+    ['gen-009', 'flood-surge'],
+    ['gen-010', 'tempest'],
+  ] as const;
+  for (const [encounter, boss] of bosses) {
+    await page.goto(
+      `/?scene=battle&encounter=${encounter}&seed=1&autoAnswer=correct&fast=1&oneShot=1`,
+    );
+    await waitFor(page, `s.battle && s.battle.wave === 2 && s.battle.foeSprite === '${boss}'`);
+    if (encounter === 'gen-005') await snap(page, test.info().outputPath(`${boss}.png`));
+    await waitFor(page, "s.battle.result === 'VICTORY' && !!s.targets.primary", 60_000);
+    expect((await battle(page)).foeAnims).toContain('death');
+  }
+});
+
+test('foe gallery shows every passage with sprite art for all of its foes', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('/?scene=foes&freeze=1');
+  for (let n = 1; n <= 11; n++) {
+    const id = `gen-${String(n).padStart(3, '0')}`;
+    await waitFor(page, `s.scene === 'foes' && s.foeGallery && s.foeGallery.encounter === '${id}'`);
+    const foes = (await state(page)).foeGallery!.foes;
+    expect(foes, `${id} foes`).toHaveLength(3);
+    expect(foes.every((sprite) => !!sprite), `${id} sprites`).toBe(true);
+    await snap(page, test.info().outputPath(`foes-${id}.png`));
+    const box = (await page.locator('#game canvas').boundingBox())!;
+    await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
+  }
+  await waitFor(page, "s.foeGallery.encounter === 'gen-001'"); // wraps around
+  expect(errors).toEqual([]);
+});
+
 test('?oneShot=1 wins each wave in one hit, and the health bar empties before the next foe', async ({
   page,
 }) => {

@@ -54,6 +54,9 @@ const LANDMARK_AT: Record<string, { x: number; dy: number }> = {
   'flood-storm': { x: 0.78, dy: -48 }, // riding high enough that the waves only hide its keel
   'flood-clearing': { x: 0.78, dy: -48 },
   babel: { x: 0.72, dy: -6 },
+  grove: { x: 0.76, dy: -27 }, // the tree, rooted behind the undergrowth
+  fields: { x: 0.8, dy: -30 },
+  shipyard: { x: 0.78, dy: -30 },
 };
 
 /** The light painted into a sky (native sky pixels, 560x200): effects gather around it. */
@@ -85,6 +88,11 @@ const LOOKS: Record<string, Look> = {
   'flood-storm': { sky: [0x151a24, 0x2a3240, 0x4c5868] },
   'flood-clearing': { sky: [0x5f86b4, 0x9db8d4, 0xf6dcae] },
   babel: { sky: [0x3f74b8, 0x8fb4d8, 0xf8dca2] },
+  // These four are always painted; the colours only show if an image fails to load.
+  shore: { sky: [0x2f78c8, 0x8fc8ec, 0xf0f8ec] },
+  grove: { sky: [0x27356e, 0x8494c4, 0xfbe0a8] },
+  fields: { sky: [0x1c1830, 0x6a4660, 0xf8d888] },
+  shipyard: { sky: [0x1a202e, 0x5a6676, 0xf6e6ae] },
 };
 
 /** Draws `fn` at x and again one tile left/right when near an edge, so tiles repeat seamlessly. */
@@ -117,7 +125,7 @@ function ridge(
 /**
  * Environment behind the reading and the battle (docs/DESIGN.md §2.1): a sky with its own light
  * and landmarks, three parallax layers that tile seamlessly, and small living effects.
- * All art is original and drawn in code.
+ * All art is original: painted layers where they exist, drawn in code otherwise.
  */
 export class Backdrop {
   private readonly key: string;
@@ -1160,6 +1168,130 @@ export class Backdrop {
           });
         }
         break;
+      case 'shore': {
+        // Sunlight glittering on the sea, and gulls crossing the sky.
+        for (let i = 0; i < 16; i++) {
+          const s = add(
+            this.scene.add.star(rng.next() * W, gy - 66 - rng.next() * 44, 4, 1, 4, 0xffffff, 0.85),
+          );
+          loop(s, {
+            alpha: 0,
+            duration: 700 + rng.next() * 900,
+            yoyo: true,
+            delay: rng.next() * 1000,
+          });
+        }
+        for (let i = 0; i < 4; i++) {
+          const b = add(this.scene.add.container(rng.next() * W, 70 + rng.next() * gy * 0.3));
+          const left = this.scene.add.rectangle(-5, 0, 10, 2.5, 0x34588a, 0.85).setAngle(22);
+          const right = this.scene.add.rectangle(5, 0, 10, 2.5, 0x34588a, 0.85).setAngle(-22);
+          b.add([left, right]);
+          loop(left, { angle: -18, duration: 320 + i * 30, yoyo: true, ease: 'Sine.inOut' });
+          loop(right, { angle: 18, duration: 320 + i * 30, yoyo: true, ease: 'Sine.inOut' });
+          loop(b, {
+            x: b.x + (i % 2 ? -1 : 1) * W * 0.35,
+            y: b.y - 30 + rng.next() * 60,
+            duration: 14000 + rng.next() * 8000,
+            yoyo: true,
+            ease: 'Sine.inOut',
+          });
+        }
+        break;
+      }
+      case 'grove':
+        // Fireflies in the shade, and leaves drifting down from the tree.
+        for (let i = 0; i < 16; i++) {
+          const fly = add(
+            this.scene.add.circle(
+              rng.next() * W,
+              gy - 20 - rng.next() * 190,
+              2 + rng.next() * 1.5,
+              0xfff2a0,
+              0.9,
+            ),
+          );
+          loop(fly, {
+            x: fly.x + 40 - rng.next() * 80,
+            y: fly.y - 20 + rng.next() * 40,
+            alpha: 0.05,
+            duration: 1600 + rng.next() * 2200,
+            yoyo: true,
+            ease: 'Sine.inOut',
+            delay: rng.next() * 2000,
+          });
+        }
+        for (let i = 0; i < 7; i++) {
+          const leaf = add(
+            this.scene.add.ellipse(
+              W * (0.58 + rng.next() * 0.36),
+              gy - 300 + rng.next() * 60,
+              9,
+              5,
+              i % 2 ? 0xd8a03a : 0x6cb25a,
+              0.95,
+            ),
+          );
+          loop(leaf, {
+            x: leaf.x - 60 - rng.next() * 60,
+            y: gy - 8,
+            angle: 300,
+            alpha: 0.2,
+            duration: 5200 + rng.next() * 3000,
+            delay: rng.next() * 5000,
+          });
+        }
+        break;
+      case 'fields':
+        // Chaff and dust lifting off the furrows in the evening wind.
+        for (let i = 0; i < 16; i++) {
+          const d = add(
+            this.scene.add.circle(
+              rng.next() * W,
+              gy - rng.next() * 140,
+              1.5 + rng.next() * 2,
+              i % 3 ? 0xe6cc68 : 0xb0745a,
+              0.5,
+            ),
+          );
+          loop(d, {
+            x: d.x + 260,
+            y: d.y - 24,
+            alpha: 0,
+            duration: 4500 + rng.next() * 3000,
+            delay: rng.next() * 3000,
+          });
+        }
+        break;
+      case 'shipyard': {
+        // A rising wind carries sawdust across the yard; far-off lightning warns of what is coming.
+        for (let i = 0; i < 20; i++) {
+          const d = add(
+            this.scene.add.circle(
+              rng.next() * W,
+              gy - rng.next() * 170,
+              1.5 + rng.next() * 2,
+              i % 3 ? 0xecd09a : 0x8a7a52,
+              0.55,
+            ),
+          );
+          loop(d, {
+            x: d.x - 340,
+            y: d.y + 26,
+            alpha: 0,
+            duration: 3000 + rng.next() * 2600,
+            delay: rng.next() * 3000,
+          });
+        }
+        if (!this.freeze) {
+          const flicker = () => {
+            this.flash.setFillStyle(0xdfe8ff, 0.16);
+            this.scene.tweens.add({ targets: this.flash, fillAlpha: 0, duration: 500 });
+            this.fxTimers.push(this.scene.time.delayedCall(6000 + rng.next() * 6000, flicker));
+          };
+          this.fxTimers.push(this.scene.time.delayedCall(4000, flicker));
+        }
+        break;
+      }
     }
   }
 }

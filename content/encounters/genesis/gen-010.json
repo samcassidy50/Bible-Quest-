@@ -11,7 +11,8 @@
       "maxHp": 50,
       "attack": 10,
       "color": "#5a6f7f",
-      "size": 0.85
+      "size": 0.85,
+      "sprite": "squall"
     },
     {
       "id": "squall-2",
@@ -19,7 +20,8 @@
       "maxHp": 55,
       "attack": 11,
       "color": "#4c5f6e",
-      "size": 0.9
+      "size": 0.9,
+      "sprite": "squall"
     },
     {
       "id": "tempest",
@@ -27,7 +29,8 @@
       "maxHp": 80,
       "attack": 12,
       "color": "#26323d",
-      "size": 1.4
+      "size": 1.4,
+      "sprite": "tempest"
     }
   ],
   "orbs": [

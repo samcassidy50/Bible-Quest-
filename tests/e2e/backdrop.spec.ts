@@ -3,12 +3,16 @@ import { snap, state, waitFor } from './helpers';
 
 test.describe.configure({ timeout: 90_000 });
 
-/** One passage per environment (flood twice: storm and clearing). */
+/** Every environment and the passage set in it (flood twice: storm and clearing), in story order. */
 const ENVIRONMENTS: [string, string][] = [
   ['deep', 'gen-001'],
   ['light', 'gen-002'],
+  ['shore', 'gen-003'],
   ['garden', 'gen-004'],
+  ['grove', 'gen-005'],
   ['wilderness', 'gen-006'],
+  ['fields', 'gen-007'],
+  ['shipyard', 'gen-008'],
   ['flood-storm', 'gen-009'],
   ['flood-clearing', 'gen-010'],
   ['babel', 'gen-011'],
@@ -30,6 +34,9 @@ for (const [name, id] of ENVIRONMENTS) {
 
 /** Painted pixel-art layers (scripts/art/paint_backdrops.py); the rest falls back to code. */
 const PAINTED: Record<string, string[]> = {
+  grove: ['sky', 'far', 'mid', 'ground', 'landmark'],
+  fields: ['sky', 'far', 'mid', 'ground', 'landmark'],
+  shipyard: ['sky', 'far', 'mid', 'ground', 'landmark'],
   'flood-storm': ['sky', 'far', 'mid', 'ground', 'landmark'],
   'flood-clearing': ['sky', 'far', 'mid', 'ground', 'landmark'],
   babel: ['sky', 'far', 'mid', 'ground', 'landmark'],
