@@ -19,6 +19,9 @@ export const TUNING = {
   ultimate: { damage: 5, heal: 0.2 },
 
   faith: { max: 5, perCorrect: 1, streakLength: 3, streakBonus: 1 },
+
+  /** Energy from reading orbs; each special costs some (docs/DESIGN.md §2.6). */
+  energy: { max: 10, cost: { sword: 3, shield: 2, breastplate: 3, sandals: 2 } },
 } as const;
 
 export type Tuning = typeof TUNING;

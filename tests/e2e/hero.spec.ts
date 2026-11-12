@@ -63,7 +63,7 @@ test('powered Sword special slams, the hero celebrates a win and falls on a loss
   page,
 }) => {
   await page.goto(
-    '/?scene=battle&encounter=gen-001&seed=1&autoAnswer=correct&fast=1&specials=sword',
+    '/?scene=battle&encounter=gen-001&seed=1&autoAnswer=correct&fast=1&specials=sword&energy=10',
   );
   await waitFor(page, "s.battle && s.battle.result === 'VICTORY' && !!s.targets.primary", 60_000);
   let anims = (await battle(page)).heroAnims;

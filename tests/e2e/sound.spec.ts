@@ -45,7 +45,7 @@ test('a right answer chimes, swings and clangs; a wrong answer is soft and punch
 
 test('win and loss play their own cues', async ({ page }) => {
   await page.goto(
-    '/?scene=battle&encounter=gen-001&seed=1&autoAnswer=correct&fast=1&specials=sword',
+    '/?scene=battle&encounter=gen-001&seed=1&autoAnswer=correct&fast=1&specials=sword&energy=10',
   );
   await waitFor(page, "s.battle && s.battle.result === 'VICTORY' && !!s.targets.primary", 60_000);
   let sounds = (await state(page)).sounds;

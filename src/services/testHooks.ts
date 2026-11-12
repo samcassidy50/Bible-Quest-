@@ -15,7 +15,12 @@ export interface BattleTestState {
   blocks: number;
   foeStunned: boolean;
   available: string[];
+  /** Owned specials the hero can afford right now. */
   unlocked: string[];
+  energy: number;
+  ultimateUnlocked: boolean;
+  /** Armor the angel is presenting right now. */
+  gift: string | null;
   question: { id: string; answerIndex: number; choices: number } | null;
   feedback: 'correct' | 'wrong' | null;
   result: 'VICTORY' | 'DEFEAT' | null;
@@ -30,7 +35,9 @@ export interface ScriptureTestState {
   durationMs: number;
   elapsedMs: number;
   narrationDone: boolean;
-  orbs: { special: string; status: string; atMs: number }[];
+  orbs: { id: string; status: string; atMs: number }[];
+  /** Energy orbs collected in this reading. */
+  energy: number;
   collected: string[];
   canSkip: boolean;
   fullTextOpen: boolean;

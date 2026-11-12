@@ -49,6 +49,11 @@ Before saying a task is done, run: `npm run lint && npm run typecheck && npm run
 - Clips are frame sequences in `src/core/anim/heroClips.ts` (frame name + ms). Some clips are placeholders that borrow other frames until their own art arrives (listed at the top of that file).
 - Attack clips must have `swing` and `impact` events; the battle plays the whoosh on `swing` and lands damage and the hit sound on `impact`.
 
+## Armor, energy and the angel
+
+- Armor is earned along the map: an encounter's `unlocks` field awards a special (or `ultimate`) on its first win; `ownedArmor()` in `core/progress` derives what the hero owns. The angel (`src/scenes/angel/Angel.ts`, original character) presents it before the win screen.
+- Reading orbs are energy (+1 each); specials cost energy (`TUNING.energy` in `core/battle/tuning.ts`). Debug: `?specials=` grants armor and the ultimate, `?energy=N` sets starting energy.
+
 ## Backgrounds
 
 - Six original environments (`src/scenes/backdrop/Backdrop.ts`): deep, light, garden, wilderness, flood (weather `storm` or `clearing`), babel. Each passage picks one with `setting` (and `weather` for flood) in its encounter JSON.

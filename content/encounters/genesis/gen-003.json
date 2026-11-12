@@ -31,18 +31,16 @@
   ],
   "orbs": [
     {
-      "special": "sword",
       "word": "image"
     },
     {
-      "special": "shield",
       "word": "dominion"
     },
     {
-      "special": "breastplate",
       "word": "female"
     }
   ],
+  "unlocks": "sword",
   "questions": [
     {
       "id": "gen-003-q1",

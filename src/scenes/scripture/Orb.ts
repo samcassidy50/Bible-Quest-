@@ -1,9 +1,8 @@
 import Phaser from 'phaser';
-import type { SpecialId } from '../../core/battle/types';
 import { ORB_LIFETIME_MS } from '../../core/scripture/orbs';
-import { ACTION_INFO } from '../battle/actionInfo';
 
-/** A glowing Armor orb that floats up while the verse is read (docs/DESIGN.md §2.6). */
+/** A glowing energy orb that floats up while the verse is read; tap it for +1 energy (docs/DESIGN.md §2.6). */
+export const ENERGY_COLOR = 0xf4b400;
 export class Orb extends Phaser.GameObjects.Container {
   private readonly glow: Phaser.GameObjects.Arc;
   private floatTween?: Phaser.Tweens.Tween;
@@ -14,18 +13,16 @@ export class Orb extends Phaser.GameObjects.Container {
     scene: Phaser.Scene,
     x: number,
     y: number,
-    readonly special: SpecialId,
+    readonly id: string,
     onTap: (orb: Orb) => void,
     private readonly onExpire: (orb: Orb) => void,
   ) {
     super(scene, x, y);
-    const color = ACTION_INFO[special].color;
+    const color = ENERGY_COLOR;
     this.glow = scene.add.circle(0, 0, 58, color, 0.3);
     const ring = scene.add.circle(0, 0, 40, 0xffffff, 0.9).setStrokeStyle(6, color);
     const core = scene.add.circle(0, 0, 32, color, 1);
-    const icon = scene.add
-      .text(0, 0, ACTION_INFO[special].icon, { fontSize: '34px' })
-      .setOrigin(0.5);
+    const icon = scene.add.text(0, 0, '⚡', { fontSize: '34px' }).setOrigin(0.5);
     // Generous invisible hit area (≥ 64 px on a phone).
     const hit = scene.add.circle(0, 0, 70, 0x000000, 0).setInteractive();
     hit.on('pointerdown', () => onTap(this));

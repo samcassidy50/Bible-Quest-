@@ -32,19 +32,18 @@
   ],
   "orbs": [
     {
-      "special": "sword",
+      "word": "Noah"
+    },
+    {
       "word": "violence"
     },
     {
-      "special": "shield",
       "word": "ship"
     },
     {
-      "special": "breastplate",
       "word": "rooms"
     },
     {
-      "special": "sandals",
       "word": "pitch"
     }
   ],

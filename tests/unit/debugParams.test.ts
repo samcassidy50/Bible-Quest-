@@ -73,3 +73,10 @@ describe('parseDebugParams: hero viewer', () => {
     expect(parseDebugParams('?clip=<b>').clip).toBeUndefined();
   });
 });
+
+describe('parseDebugParams: energy', () => {
+  it('parses a small energy number only', () => {
+    expect(parseDebugParams('?energy=10').energy).toBe(10);
+    expect(parseDebugParams('?energy=lots').energy).toBeUndefined();
+  });
+});

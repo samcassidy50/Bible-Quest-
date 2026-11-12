@@ -6,6 +6,7 @@ export const oneWave = (overrides: Partial<BattleConfig> = {}): BattleConfig => 
   hero: { maxHp: 100, attack: 10 },
   waves: [SHADE],
   unlockedSpecials: [],
+  startingEnergy: 10,
   ...overrides,
 });
 
@@ -18,5 +19,6 @@ export const threeWaves = (overrides: Partial<BattleConfig> = {}): BattleConfig 
     { id: 'shade-boss', name: 'Shade of the Deep', maxHp: 70, attack: 12 },
   ],
   unlockedSpecials: [],
+  startingEnergy: 10,
   ...overrides,
 });

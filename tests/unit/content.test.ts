@@ -29,13 +29,22 @@ describe('content: Genesis 1–11', () => {
     (_id, e) => {
       const text = encounterText(e);
       for (const q of e.questions) expect(text, q.id).toContain(q.highlight);
-      for (const o of e.orbs) if (o.word) expect(text, o.special).toContain(o.word);
+      for (const o of e.orbs) if (o.word) expect(text, 'orb word').toContain(o.word);
     },
   );
 
-  it('introduces orbs gradually (1, 2, 3, then all 4)', () => {
-    expect(ENCOUNTERS.slice(0, 4).map((e) => e.orbs.length)).toEqual([1, 2, 3, 4]);
-    for (const e of ENCOUNTERS.slice(4)) expect(e.orbs.length).toBe(4);
+  it('has energy orbs in every reading: 3 early on, then 5', () => {
+    expect(ENCOUNTERS.map((e) => e.orbs.length)).toEqual([3, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5]);
+  });
+
+  it('awards the armor along the map: Sword after 3, Shield 5, Breastplate 7, Sandals 9, Ultimate 10', () => {
+    expect(ENCOUNTERS.filter((e) => e.unlocks).map((e) => [e.id, e.unlocks])).toEqual([
+      ['gen-003', 'sword'],
+      ['gen-005', 'shield'],
+      ['gen-007', 'breastplate'],
+      ['gen-009', 'sandals'],
+      ['gen-010', 'ultimate'],
+    ]);
   });
 
   it('uses all six environments, matched to each passage', () => {

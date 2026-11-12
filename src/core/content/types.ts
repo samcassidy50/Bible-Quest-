@@ -34,9 +34,9 @@ export interface EncounterFoe extends FoeSpec {
   size: number;
 }
 
+/** An energy orb in the reading (+1 energy when tapped). */
 export interface Orb {
-  special: SpecialId;
-  /** Optional key word in the verse the orb is anchored to (Phase 2 stretch). */
+  /** Optional key word in the verse the orb is anchored to: it rises as that word scrolls past. */
   word?: string;
 }
 
@@ -55,6 +55,8 @@ export interface Encounter {
   verses: readonly Verse[];
   waves: readonly EncounterFoe[];
   orbs: readonly Orb[];
+  /** Armor awarded the first time this passage is won (unlocks a special, or the ultimate). */
+  unlocks?: SpecialId | 'ultimate';
   questions: readonly Question[];
 }
 

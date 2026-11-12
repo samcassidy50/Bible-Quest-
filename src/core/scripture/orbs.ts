@@ -1,19 +1,17 @@
-import type { SpecialId } from '../battle/types';
-
-/** Orb timing and collection rules (docs/DESIGN.md §2.6). */
+/** Energy orb timing and collection rules (docs/DESIGN.md §2.6). Each collected orb is +1 energy. */
 
 export const ORB_LIFETIME_MS = 4000;
 /** Orbs don't appear in the first or last part of the reading. */
 export const ORB_WINDOW = { start: 0.12, end: 0.9 } as const;
 
 export interface OrbPlan {
-  special: SpecialId;
+  id: string;
   /** If set, the orb appears when this fraction of the reading is reached (word-anchored). */
   anchorFraction?: number;
 }
 
 export interface ScheduledOrb {
-  special: SpecialId;
+  id: string;
   /** When the orb appears, ms from the start of the reading. */
   atMs: number;
 }
@@ -34,7 +32,7 @@ export function scheduleOrbs(
   const step = (end - start) / orbs.length;
 
   const raw = orbs.map((o, i) => ({
-    special: o.special,
+    id: o.id,
     atMs:
       o.anchorFraction !== undefined
         ? clamp(o.anchorFraction * durationMs, start, end)
@@ -52,7 +50,7 @@ export function scheduleOrbs(
   const overflow = raw[raw.length - 1]!.atMs - end;
   if (overflow > 0) for (const o of raw) o.atMs = Math.max(start, o.atMs - overflow);
 
-  return raw.map((o) => ({ special: o.special, atMs: Math.round(o.atMs) }));
+  return raw.map((o) => ({ id: o.id, atMs: Math.round(o.atMs) }));
 }
 
 export type OrbStatus = 'pending' | 'active' | 'collected' | 'missed';
@@ -62,42 +60,42 @@ export type OrbStatus = 'pending' | 'active' | 'collected' | 'missed';
  * missed (and pending) orbs back but keeps collected ones.
  */
 export class OrbTracker {
-  private readonly status = new Map<SpecialId, OrbStatus>();
+  private readonly status = new Map<string, OrbStatus>();
 
-  constructor(specials: readonly SpecialId[]) {
-    for (const s of specials) {
+  constructor(ids: readonly string[]) {
+    for (const s of ids) {
       if (this.status.has(s)) throw new Error(`Duplicate orb "${s}"`);
       this.status.set(s, 'pending');
     }
   }
 
-  get(special: SpecialId): OrbStatus | undefined {
-    return this.status.get(special);
+  get(id: string): OrbStatus | undefined {
+    return this.status.get(id);
   }
 
-  get all(): { special: SpecialId; status: OrbStatus }[] {
-    return [...this.status].map(([special, status]) => ({ special, status }));
+  get all(): { id: string; status: OrbStatus }[] {
+    return [...this.status].map(([id, status]) => ({ id, status }));
   }
 
-  get collected(): SpecialId[] {
-    return this.all.filter((o) => o.status === 'collected').map((o) => o.special);
+  get collected(): string[] {
+    return this.all.filter((o) => o.status === 'collected').map((o) => o.id);
   }
 
   /** Orbs that still need to appear in this reading. */
-  get pending(): SpecialId[] {
-    return this.all.filter((o) => o.status === 'pending').map((o) => o.special);
+  get pending(): string[] {
+    return this.all.filter((o) => o.status === 'pending').map((o) => o.id);
   }
 
-  spawn(special: SpecialId): boolean {
-    return this.move(special, 'pending', 'active');
+  spawn(id: string): boolean {
+    return this.move(id, 'pending', 'active');
   }
 
-  collect(special: SpecialId): boolean {
-    return this.move(special, 'active', 'collected');
+  collect(id: string): boolean {
+    return this.move(id, 'active', 'collected');
   }
 
-  expire(special: SpecialId): boolean {
-    return this.move(special, 'active', 'missed');
+  expire(id: string): boolean {
+    return this.move(id, 'active', 'missed');
   }
 
   /** Skip: everything not collected is missed. */
@@ -110,9 +108,9 @@ export class OrbTracker {
     for (const [s, st] of this.status) if (st !== 'collected') this.status.set(s, 'pending');
   }
 
-  private move(special: SpecialId, from: OrbStatus, to: OrbStatus): boolean {
-    if (this.status.get(special) !== from) return false;
-    this.status.set(special, to);
+  private move(id: string, from: OrbStatus, to: OrbStatus): boolean {
+    if (this.status.get(id) !== from) return false;
+    this.status.set(id, to);
     return true;
   }
 }

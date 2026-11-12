@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { HeroStats } from '../battle/types';
+import { SPECIAL_IDS, type HeroStats, type SpecialId } from '../battle/types';
 import { HERO_BASE } from '../battle/hero';
 
 /**
@@ -208,4 +208,18 @@ export function resetProgress(save: SaveData): SaveData {
 export function markSeenOnMap(save: SaveData, ids: readonly string[]): SaveData {
   const add = ids.filter((id) => !save.seenOnMap.includes(id));
   return add.length === 0 ? save : { ...save, seenOnMap: [...save.seenOnMap, ...add] };
+}
+
+/**
+ * Armor earned along the map: each passage can award a special (or the ultimate) the first time
+ * it is won. The hero starts with only the basic attack.
+ */
+export function ownedArmor(
+  save: SaveData,
+  encounters: readonly { id: string; unlocks?: SpecialId | 'ultimate' }[],
+): { specials: SpecialId[]; ultimate: boolean } {
+  const earned = new Set(
+    encounters.filter((e) => e.unlocks && e.id in save.completed).map((e) => e.unlocks),
+  );
+  return { specials: SPECIAL_IDS.filter((id) => earned.has(id)), ultimate: earned.has('ultimate') };
 }

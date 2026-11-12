@@ -28,7 +28,7 @@ const file = (extra: Record<string, unknown> = {}) => ({
   passage: 'GEN 1:1-2',
   setting: 'deep',
   waves: [{ id: 'foe', name: 'Foe', maxHp: 10, attack: 1, color: '#123456', size: 1 }],
-  orbs: [{ special: 'sword', word: 'epsilon' }],
+  orbs: [{ word: 'epsilon' }],
   questions: [1, 2, 3, 4, 5, 6].map((n) => q(n)),
   ...extra,
 });
@@ -85,7 +85,7 @@ describe('buildEncounter', () => {
 
   it('reports every content rule that is broken', () => {
     const bad = file({
-      orbs: [{ special: 'sword', word: 'omega' }, { special: 'sword' }],
+      orbs: [{ word: 'omega' }, { word: 'omega' }, {}],
       waves: [
         { id: 'foe', name: 'Foe', maxHp: 10, attack: 1, color: '#123456', size: 1 },
         { id: 'foe', name: 'Foe', maxHp: 10, attack: 1, color: '#123456', size: 1 },
@@ -112,7 +112,7 @@ describe('buildEncounter', () => {
       'should start with "test-1-"',
       'duplicate question id "test-1-q1"',
       'word "omega"',
-      'duplicate orb "sword"',
+      'duplicate orb word "omega"',
       'duplicate foe id "foe"',
     ]) {
       expect(message).toContain(part);
@@ -173,5 +173,27 @@ describe('settings', () => {
       weather: 'clearing',
     });
     expect(buildEncounter(file(), bible).weather).toBeUndefined();
+  });
+});
+
+describe('armor rewards', () => {
+  it('a passage may award one piece of armor, and each piece only once', () => {
+    const a = buildEncounter(file({ unlocks: 'sword' }), bible);
+    expect(a.unlocks).toBe('sword');
+    const b = buildEncounter(
+      file({
+        id: 'test-2',
+        unlocks: 'sword',
+        questions: [1, 2, 3, 4, 5, 6].map((n) => q(n, { id: `test-2-q${n}` })),
+      }),
+      bible,
+    );
+    expect(validateCollection([a, b]).join()).toMatch(
+      /"sword" is awarded by both test-1 and test-2/,
+    );
+    expect(() => buildEncounter(file({ unlocks: 'laser' }), bible)).toThrow(/unlocks/);
+    expect(() => buildEncounter(file({ orbs: [{ special: 'sword' }] }), bible)).toThrow(
+      /invalid file/,
+    );
   });
 });

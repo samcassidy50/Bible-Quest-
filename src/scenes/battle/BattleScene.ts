@@ -14,7 +14,8 @@ import type { DebugParams } from '../../core/debugParams';
 import { QuestionDeck } from '../../core/quiz/QuestionDeck';
 import { createRng, type Rng } from '../../core/rng';
 import { shuffleChoices } from '../../core/quiz/shuffleChoices';
-import { getEncounter, nextEncounter } from '../../content';
+import { ENCOUNTERS, getEncounter, nextEncounter } from '../../content';
+import { ownedArmor } from '../../core/progress/progress';
 import { readSafeAreaInsets, toGameInsets, type Insets } from '../../services/safeArea';
 import { updateTestState } from '../../services/testHooks';
 import { FONT_TITLE, FONT_UI, tweenAsync, wait } from '../util';
@@ -25,6 +26,9 @@ import { HpBar } from './HpBar';
 import { QuestionCard } from './QuestionCard';
 import { ResultPanel } from './ResultPanel';
 import { Backdrop } from '../backdrop/Backdrop';
+import { Angel, ANGEL_LINES } from '../angel/Angel';
+import { Button } from '../ui/Button';
+import { TUNING } from '../../core/battle/tuning';
 import { hapticTap } from '../../services/haptics';
 import { sfx } from '../../services/sfx';
 import type { SfxName } from '../../core/audio/sfxRecipes';
@@ -65,6 +69,9 @@ export class BattleScene extends Phaser.Scene {
   private heroPanel!: Phaser.GameObjects.Container;
   private heroBar!: HpBar;
   private faithPips!: Phaser.GameObjects.Graphics;
+  private energyText!: Phaser.GameObjects.Text;
+  private gift: string | null = null;
+  private giftContinue?: Button;
   private foeBar!: HpBar;
   private wavePips!: Phaser.GameObjects.Graphics;
   private refText!: Phaser.GameObjects.Text;
@@ -84,6 +91,8 @@ export class BattleScene extends Phaser.Scene {
 
   create(): void {
     // Scene instances are reused on restart, so reset all per-fight state here.
+    this.gift = null;
+    this.giftContinue = undefined;
     this.card = undefined;
     this.result = undefined;
     this.busy = true;
@@ -109,7 +118,10 @@ export class BattleScene extends Phaser.Scene {
       {
         ...heroBuild(progress.save.upgrades),
         waves: this.encounter.waves,
-        unlockedSpecials: this.unlockedSpecials(),
+        unlockedSpecials: this.armor().specials,
+        ultimateUnlocked: this.armor().ultimate,
+        startingEnergy:
+          this.debug.energy ?? (this.registry.get('collectedEnergy') as number | undefined) ?? 0,
         startingFaith: this.debug.faith,
       },
       rng,
@@ -128,13 +140,12 @@ export class BattleScene extends Phaser.Scene {
   }
 
   /**
-   * Specials for this fight. Phase 2 passes the orbs collected during the verse via the registry;
-   * until then the encounter's orbs count as collected. `?specials=` overrides both.
+   * Armor the hero owns: earned by winning passages along the map (each passage's `unlocks`).
+   * `?specials=` overrides it for testing and also unlocks the ultimate.
    */
-  private unlockedSpecials(): SpecialId[] {
-    if (this.debug.specials) return this.debug.specials;
-    const collected = this.registry.get('collectedOrbs') as SpecialId[] | undefined;
-    return collected ?? this.encounter.orbs.map((o) => o.special);
+  private armor(): { specials: SpecialId[]; ultimate: boolean } {
+    if (this.debug.specials) return { specials: this.debug.specials, ultimate: true };
+    return ownedArmor(progress.save, ENCOUNTERS);
   }
 
   // ── Build & layout ─────────────────────────────────────────────────────────
@@ -173,7 +184,16 @@ export class BattleScene extends Phaser.Scene {
       })
       .setShadow(2, 2, '#000', 2);
     this.faithPips = this.add.graphics();
-    this.heroPanel.add([panelBg, this.heroBar, faithLabel, this.faithPips]);
+    this.energyText = this.add
+      .text(328, 88, '', {
+        fontFamily: FONT_UI,
+        fontSize: '22px',
+        fontStyle: 'bold',
+        color: '#ffd34d',
+      })
+      .setOrigin(0.5)
+      .setShadow(2, 2, '#000', 2);
+    this.heroPanel.add([panelBg, this.heroBar, faithLabel, this.faithPips, this.energyText]);
 
     this.wavePips = this.add.graphics();
     this.refText = this.add
@@ -218,7 +238,9 @@ export class BattleScene extends Phaser.Scene {
     this.sync();
   }
 
+  /** Faith pips and the energy count in the hero panel. */
   private drawFaith(): void {
+    this.energyText.setText(`⚡${this.engine.energy}`);
     const g = this.faithPips.clear();
     for (let i = 0; i < 5; i++) {
       const x = 100 + i * 44;
@@ -385,7 +407,7 @@ export class BattleScene extends Phaser.Scene {
       sfx.play('calm');
       this.foe.setStunned(true);
     }
-    if (res.faithGained > 0 || res.action === 'ultimate') this.drawFaith();
+    this.drawFaith();
     this.sync();
     await wait(this, 350);
   }
@@ -502,6 +524,135 @@ export class BattleScene extends Phaser.Scene {
     await tweenAsync(this, { targets: this.foe, alpha: 1, duration: 300 });
   }
 
+  /**
+   * The angel descends, presents newly earned armor with a short word, and the item flies to the
+   * hero. Tap Continue (auto-continues under ?autoAnswer).
+   */
+  private async presentArmor(unlock: SpecialId | 'ultimate'): Promise<void> {
+    const { width: W, height: H } = this.scale.gameSize;
+    const info = ACTION_INFO[unlock];
+    this.gift = unlock;
+    sfx.play('ultimate');
+
+    const dim = this.add
+      .rectangle(0, 0, W, H, 0x05030d, 0)
+      .setOrigin(0)
+      .setDepth(150)
+      .setInteractive();
+    const beam = this.add.graphics().setDepth(151).setAlpha(0);
+    beam.fillGradientStyle(0xfff6d0, 0xfff6d0, 0xfff6d0, 0xfff6d0, 0.55, 0.55, 0, 0);
+    beam
+      .fillTriangle(W * 0.5 - 70, 0, W * 0.5 + 70, 0, W * 0.5 + 230, H)
+      .fillTriangle(W * 0.5 - 70, 0, W * 0.5 + 230, H, W * 0.5 - 230, H);
+    const angel = new Angel(this, W * 0.5, -260, !this.debug.freeze).setDepth(152);
+    const item = this.add.container(0, -34);
+    item.add([
+      this.add.circle(0, 0, 44, 0xfff1b0, 0.55),
+      this.add.circle(0, 0, 32, info.color, 1).setStrokeStyle(4, 0xffffff),
+      this.add.text(0, 0, info.icon, { fontSize: '38px' }).setOrigin(0.5),
+    ]);
+    angel.hands.add(item);
+    if (!this.debug.freeze)
+      this.tweens.add({ targets: item, scale: 1.12, duration: 600, yoyo: true, repeat: -1 });
+
+    await Promise.all([
+      tweenAsync(this, { targets: dim, fillAlpha: 0.55, duration: 400 }),
+      tweenAsync(this, { targets: beam, alpha: 1, duration: 500 }),
+      tweenAsync(this, { targets: angel, y: H * 0.66, duration: 900, ease: 'Sine.out' }),
+    ]);
+    sfx.play('shield');
+
+    // Speech bubble with the angel's word and what the armor does.
+    const bw = Math.min(W - 80, 620);
+    const hint =
+      unlock === 'ultimate'
+        ? 'Fill your Faith meter by answering well, then unleash it.'
+        : `Use it in battle for ⚡${TUNING.energy.cost[unlock]} energy. Collect ⚡ orbs while the verse is read.`;
+    const title = this.add
+      .text(0, 0, `New armor: ${info.icon} ${info.name}`, {
+        fontFamily: FONT_TITLE,
+        fontSize: '28px',
+        fontStyle: 'bold',
+        color: '#8a5a00',
+        wordWrap: { width: bw - 48 },
+      })
+      .setOrigin(0.5, 0);
+    const line = this.add
+      .text(0, title.height + 12, `“${ANGEL_LINES[unlock]}”`, {
+        fontFamily: FONT_TITLE,
+        fontSize: '24px',
+        fontStyle: 'italic',
+        color: COLOR.ink,
+        align: 'center',
+        wordWrap: { width: bw - 48, useAdvancedWrap: true },
+      })
+      .setOrigin(0.5, 0);
+    const hintText = this.add
+      .text(0, line.y + line.height + 10, hint, {
+        fontFamily: FONT_UI,
+        fontSize: '18px',
+        color: '#6b5d84',
+        align: 'center',
+        wordWrap: { width: bw - 48, useAdvancedWrap: true },
+      })
+      .setOrigin(0.5, 0);
+    const bh = hintText.y + hintText.height + 28;
+    const bubbleBg = this.add.graphics();
+    bubbleBg.fillStyle(COLOR.card, 0.97).fillRoundedRect(-bw / 2, -18, bw, bh, 22);
+    bubbleBg.lineStyle(4, COLOR.gold).strokeRoundedRect(-bw / 2, -18, bw, bh, 22);
+    const bubble = this.add
+      .container(W / 2, 24, [bubbleBg, title, line, hintText])
+      .setDepth(153)
+      .setAlpha(0);
+    await tweenAsync(this, { targets: bubble, alpha: 1, duration: 300 });
+
+    await new Promise<void>((resolve) => {
+      this.giftContinue = new Button(
+        this,
+        W - this.insets.right - 140,
+        H - this.insets.bottom - 70,
+        {
+          width: 220,
+          height: 80,
+          radius: 40,
+          label: 'Receive',
+          fontSize: 28,
+          fill: COLOR.correct,
+          onTap: () => resolve(),
+        },
+      ).setDepth(154);
+      this.sync();
+      if (this.debug.autoAnswer) this.time.delayedCall(900, resolve);
+    });
+    this.giftContinue?.destroy();
+    this.giftContinue = undefined;
+
+    // The gift flies to the hero; the angel rises away.
+    const m = item.getWorldTransformMatrix();
+    angel.hands.remove(item);
+    item.setPosition(m.tx, m.ty).setDepth(155);
+    this.add.existing(item);
+    sfx.play('poweredUp');
+    void this.hero.act('cast');
+    await tweenAsync(this, {
+      targets: item,
+      x: this.hero.x,
+      y: this.hero.y - 120,
+      scale: 0.4,
+      duration: 600,
+      ease: 'Cubic.in',
+    });
+    item.destroy();
+    await Promise.all([
+      tweenAsync(this, { targets: angel, y: -300, duration: 800, ease: 'Sine.in' }),
+      tweenAsync(this, { targets: [bubble, beam], alpha: 0, duration: 500 }),
+      tweenAsync(this, { targets: dim, fillAlpha: 0, duration: 700 }),
+    ]);
+    for (const o of [angel, bubble, beam, dim]) o.destroy();
+    this.gift = null;
+    this.sync();
+  }
+
   private async showResult(victory: boolean): Promise<void> {
     this.actionBar.refresh(this.engine, false);
     const retry = () => {
@@ -513,6 +664,7 @@ export class BattleScene extends Phaser.Scene {
     const next = nextEncounter(this.encounter.id);
     let stars: number | undefined;
     let newBest = false;
+    const firstWin = victory && !(this.encounter.id in progress.save.completed);
     if (victory) {
       let result!: ReturnType<typeof recordVictory>;
       progress.update(
@@ -524,9 +676,11 @@ export class BattleScene extends Phaser.Scene {
     const goNext = () => {
       if (!next) return readAgain();
       this.registry.set('encounterId', next.id);
-      this.registry.remove('collectedOrbs');
+      this.registry.remove('collectedEnergy');
       this.scene.start('scripture');
     };
+    // First win of a passage that awards armor: the angel presents it.
+    if (firstWin && this.encounter.unlocks) await this.presentArmor(this.encounter.unlocks);
     sfx.play(victory ? 'victory' : 'defeat');
     this.result = new ResultPanel(
       this,
@@ -599,6 +753,7 @@ export class BattleScene extends Phaser.Scene {
     for (const [id, b] of this.actionBar.buttons) targets[`action:${id}`] = center(b);
     this.card?.answerButtons.forEach((b, i) => (targets[`answer:${i}`] = center(b)));
     if (this.card?.continueButton) targets['continue'] = center(this.card.continueButton);
+    if (this.giftContinue) targets['gift-continue'] = center(this.giftContinue);
     if (this.result) {
       targets['primary'] = center(this.result.primaryButton);
       targets['secondary'] = center(this.result.secondaryButton);
@@ -624,6 +779,9 @@ export class BattleScene extends Phaser.Scene {
         foeStunned: e.foeStunned,
         available: this.busy ? [] : e.availableActions(),
         unlocked: e.specialsAvailable.concat(),
+        energy: e.energy,
+        gift: this.gift,
+        ultimateUnlocked: e.ultimateUnlocked,
         question: this.question
           ? {
               id: this.question.id,

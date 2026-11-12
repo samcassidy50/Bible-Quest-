@@ -31,12 +31,13 @@
   ],
   "orbs": [
     {
-      "special": "sword",
       "word": "light"
     },
     {
-      "special": "shield",
-      "word": "good"
+      "word": "divided"
+    },
+    {
+      "word": "evening"
     }
   ],
   "questions": [

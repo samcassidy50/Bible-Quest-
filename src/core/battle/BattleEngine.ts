@@ -31,7 +31,7 @@ export class BattleEngine {
   private _foeStun = 0;
   private _pending: Exclude<ActionId, 'ultimate'> | null = null;
   private readonly _unlocked: ReadonlySet<SpecialId>;
-  private readonly _used = new Set<SpecialId>();
+  private _energy: number;
 
   constructor(
     private readonly config: BattleConfig,
@@ -46,6 +46,7 @@ export class BattleEngine {
     this._heroHp = config.hero.maxHp;
     this._foeHp = this.foe.maxHp;
     this._faith = clamp(config.startingFaith ?? 0, 0, TUNING.faith.max);
+    this._energy = clamp(config.startingEnergy ?? 0, 0, TUNING.energy.max);
   }
 
   // ── State ────────────────────────────────────────────────────────────────
@@ -94,24 +95,34 @@ export class BattleEngine {
   get foeStunned(): boolean {
     return this._foeStun > 0;
   }
+  /** The ultimate has been earned and the Faith meter is full. */
   get ultimateReady(): boolean {
-    return this._faith >= TUNING.faith.max;
+    return this.ultimateUnlocked && this._faith >= TUNING.faith.max;
+  }
+  get ultimateUnlocked(): boolean {
+    return this.config.ultimateUnlocked ?? true;
+  }
+  get energy(): number {
+    return this._energy;
+  }
+  costOf(id: SpecialId): number {
+    return TUNING.energy.cost[id];
+  }
+  canAfford(id: SpecialId): boolean {
+    return this._energy >= this.costOf(id);
   }
   /** The action waiting on a question answer, if any. */
   get pendingAction(): ActionId | null {
     return this._pending;
   }
 
-  /** Specials unlocked for this fight and not yet used. */
+  /** Owned specials the hero has enough energy for right now. */
   get specialsAvailable(): SpecialId[] {
-    return SPECIAL_IDS.filter((id) => this._unlocked.has(id) && !this._used.has(id));
+    return SPECIAL_IDS.filter((id) => this._unlocked.has(id) && this.canAfford(id));
   }
 
   isUnlocked(id: SpecialId): boolean {
     return this._unlocked.has(id);
-  }
-  isUsed(id: SpecialId): boolean {
-    return this._used.has(id);
   }
 
   /** Actions the hero may choose right now (empty outside HERO_CHOOSE). */
@@ -178,7 +189,7 @@ export class BattleEngine {
         if (correct) hit(TUNING.sandals.poweredHit);
         break;
     }
-    if (action !== 'attack') this._used.add(action);
+    if (action !== 'attack') this._energy -= this.costOf(action);
 
     return this.finishHeroAction(result);
   }

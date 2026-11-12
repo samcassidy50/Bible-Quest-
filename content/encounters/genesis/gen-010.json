@@ -32,22 +32,22 @@
   ],
   "orbs": [
     {
-      "special": "sword",
       "word": "token"
     },
     {
-      "special": "shield",
+      "word": "covenant"
+    },
+    {
       "word": "creature"
     },
     {
-      "special": "breastplate",
       "word": "rainbow"
     },
     {
-      "special": "sandals",
       "word": "sign"
     }
   ],
+  "unlocks": "ultimate",
   "questions": [
     {
       "id": "gen-010-q1",

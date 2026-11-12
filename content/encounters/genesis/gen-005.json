@@ -31,22 +31,22 @@
   ],
   "orbs": [
     {
-      "special": "sword",
       "word": "subtle"
     },
     {
-      "special": "shield",
       "word": "touch"
     },
     {
-      "special": "breastplate",
       "word": "eyes"
     },
     {
-      "special": "sandals",
+      "word": "delight"
+    },
+    {
       "word": "wise"
     }
   ],
+  "unlocks": "shield",
   "questions": [
     {
       "id": "gen-005-q1",

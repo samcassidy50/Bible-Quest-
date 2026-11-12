@@ -10,6 +10,7 @@ import {
   isUnlocked,
   loadSave,
   markHeard,
+  ownedArmor,
   MAX_UPGRADE_LEVEL,
   newSave,
   nextUpgradeCost,
@@ -187,5 +188,28 @@ describe('save data', () => {
     expect(r.completed).toEqual({});
     expect(r.heard).toEqual([]);
     expect(r.settings.sound).toBe(false);
+  });
+});
+
+const won = (...ids: string[]) => ids.reduce((s, id) => recordVictory(s, id, 1, 1).save, newSave());
+
+describe('armor earned along the map', () => {
+  const encounters = [
+    { id: 'a' },
+    { id: 'b', unlocks: 'sword' as const },
+    { id: 'c', unlocks: 'shield' as const },
+    { id: 'd', unlocks: 'ultimate' as const },
+  ];
+
+  it('starts with only the basic attack', () => {
+    expect(ownedArmor(newSave(), encounters)).toEqual({ specials: [], ultimate: false });
+  });
+
+  it('awards each piece when its passage is won', () => {
+    expect(ownedArmor(won('a', 'b'), encounters)).toEqual({ specials: ['sword'], ultimate: false });
+    expect(ownedArmor(won('b', 'c', 'd'), encounters)).toEqual({
+      specials: ['sword', 'shield'],
+      ultimate: true,
+    });
   });
 });

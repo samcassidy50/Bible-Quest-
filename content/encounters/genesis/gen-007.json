@@ -31,22 +31,22 @@
   ],
   "orbs": [
     {
-      "special": "sword",
       "word": "angry"
     },
     {
-      "special": "shield",
+      "word": "face"
+    },
+    {
       "word": "well"
     },
     {
-      "special": "breastplate",
       "word": "door"
     },
     {
-      "special": "sandals",
       "word": "rule"
     }
   ],
+  "unlocks": "breastplate",
   "questions": [
     {
       "id": "gen-007-q1",

@@ -31,19 +31,18 @@
   ],
   "orbs": [
     {
-      "special": "sword",
       "word": "garden"
     },
     {
-      "special": "shield",
-      "word": "commanded"
+      "word": "cultivate"
     },
     {
-      "special": "breastplate",
+      "word": "freely"
+    },
+    {
       "word": "knowledge"
     },
     {
-      "special": "sandals",
       "word": "die"
     }
   ],

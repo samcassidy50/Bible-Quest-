@@ -28,6 +28,8 @@ export interface DebugParams {
   specials?: SpecialId[];
   /** Starting Faith meter, e.g. `?faith=5` to test the ultimate. */
   faith?: number;
+  /** Starting energy for specials, e.g. `?energy=10` (otherwise what the reading collected). */
+  energy?: number;
   /** `?narration=off`: silent reading that waits the estimated time (tests). */
   narrationOff: boolean;
   /** `?clip=slash` with `?scene=rig`: contact sheet of one hero animation. */
@@ -83,6 +85,9 @@ export function parseDebugParams(search: string): DebugParams {
 
   const env = p.get('env');
   if (env && /^[a-z-]{1,20}$/.test(env)) result.env = env;
+
+  const energy = p.get('energy');
+  if (energy !== null && /^\d{1,2}$/.test(energy)) result.energy = Number(energy);
 
   const faith = p.get('faith');
   if (faith !== null && /^\d{1,2}$/.test(faith)) result.faith = Number(faith);

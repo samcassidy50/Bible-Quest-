@@ -19,8 +19,12 @@ export interface BattleConfig {
   hero: HeroStats;
   /** One foe per wave, fought in order (1–3 waves). */
   waves: readonly FoeSpec[];
-  /** Specials unlocked for this fight (by orbs, or `?specials=` in debug builds). */
+  /** Armor the hero owns (earned along the map, or `?specials=` in debug builds). */
   unlockedSpecials: readonly SpecialId[];
+  /** Energy collected from orbs during the reading; specials spend it. Defaults to 0. */
+  startingEnergy?: number;
+  /** Whether the Full Armor of God ultimate has been earned yet (default true). */
+  ultimateUnlocked?: boolean;
   /** Faith meter at the start of the fight (debug `?faith=`); defaults to 0. */
   startingFaith?: number;
   /** Upgrade: multiplier on special damage and healing (default 1). */

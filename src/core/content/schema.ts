@@ -54,7 +54,10 @@ export const encounterFileSchema = z
     /** Flood only: a storm, or the storm clearing with a rainbow. */
     weather: z.enum(['storm', 'clearing']).optional(),
     waves: z.array(foeSchema).min(1).max(3),
-    orbs: z.array(z.object({ special: z.enum(SPECIAL_IDS), word: z.string().optional() })).max(4),
+    /** Energy orbs in the reading, each +1 energy. */
+    orbs: z.array(z.object({ word: z.string().optional() }).strict()).max(6),
+    /** Armor awarded when this passage is first won. */
+    unlocks: z.enum([...SPECIAL_IDS, 'ultimate']).optional(),
     questions: z.array(questionSchema).min(6),
   })
   .strict();

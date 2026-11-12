@@ -7,54 +7,58 @@ test.describe.configure({ timeout: 90_000 });
 const scripture = async (page: Parameters<typeof state>[0]) =>
   (await state(page)).scripture as ScriptureTestState;
 
-test('tapping the orb during the reading unlocks Sword for the fight', async ({ page }) => {
+test('tapping an energy orb during the reading carries energy into the fight', async ({ page }) => {
   // Real-time reading plus a fight; software rendering in the slower browser profile needs headroom.
   test.setTimeout(150_000);
   await page.goto('/?scene=scripture&seed=1&narration=off');
   await waitFor(page, "s.scene === 'scripture' && !!s.scripture");
   const s0 = await scripture(page);
   expect(s0.canSkip).toBe(false); // first time hearing this verse
-  expect(s0.orbs).toEqual([{ special: 'sword', status: 'pending', atMs: expect.any(Number) }]);
+  expect(s0.orbs.map((o) => o.id)).toEqual(['orb-0', 'orb-1', 'orb-2']);
+  expect(s0.energy).toBe(0);
 
-  // Like a real player: tap the orb as it drifts up; if it fades before the tap lands (a busy
-  // test machine can be slow), press Replay — missed orbs come back — and try again.
+  // Like a real player: tap an orb as it drifts up. If the busy test machine misses every orb,
+  // press Replay (missed orbs come back) and try again.
   for (let reading = 0; reading < 3; reading++) {
     await waitFor(
       page,
-      "s.scripture && (s.scripture.collected.includes('sword') || (s.scripture.orbs[0].status === 'active' && !!s.targets['orb:sword']))",
+      "s.scripture && (s.scripture.energy > 0 || s.scripture.finishing || Object.keys(s.targets).some((k) => k.startsWith('orb:')))",
       45_000,
     );
     if (reading === 0) await snap(page, test.info().outputPath('reading-orb.png'));
     while (true) {
-      const s = (await state(page)).scripture;
-      if (!s || s.collected.includes('sword') || s.orbs[0]!.status !== 'active') break;
-      await tapIfPresent(page, 'orb:sword');
+      const st = await state(page);
+      const s = st.scripture;
+      if (!s || s.energy > 0 || s.finishing) break;
+      const key = Object.keys(st.targets).find((k) => k.startsWith('orb:'));
+      if (!key) break;
+      await tapIfPresent(page, key);
       await page.waitForTimeout(150);
     }
     const s = (await state(page)).scripture;
-    if (s?.collected.includes('sword')) break;
-    if (s && !s.finishing) await tapIfPresent(page, 'replay');
+    if (!s || s.energy > 0 || s.finishing) break;
+    await tapIfPresent(page, 'replay');
   }
-  await waitFor(page, "s.scripture && s.scripture.collected.includes('sword')", 45_000);
+  await waitFor(page, 's.scene === "battle" || (s.scripture && s.scripture.energy > 0)', 45_000);
 
   await waitFor(page, "s.scene === 'battle' && !!s.battle", 60_000);
   await heroTurn(page);
-  expect((await battle(page)).available).toEqual(['attack', 'sword']);
+  expect((await battle(page)).energy).toBeGreaterThan(0);
 });
 
-test('missing the orb means no specials in the fight', async ({ page }) => {
+test('missing every orb means no energy in the fight', async ({ page }) => {
   await page.goto('/?scene=scripture&seed=1&fast=1');
-  await waitFor(page, "s.scripture && s.scripture.orbs[0].status === 'missed'");
+  await waitFor(page, "s.scripture && s.scripture.orbs.every((o) => o.status === 'missed')");
   await waitFor(page, "s.scene === 'battle' && !!s.battle");
   await heroTurn(page);
-  expect((await battle(page)).available).toEqual(['attack']);
+  expect((await battle(page)).energy).toBe(0);
 });
 
-test('auto-collect setting collects orbs without a tap', async ({ page }) => {
+test('auto-collect setting collects every orb without a tap', async ({ page }) => {
   await page.goto('/?scene=scripture&seed=1&fast=1&autoCollect=1');
   await waitFor(page, "s.scene === 'battle' && !!s.battle");
   await heroTurn(page);
-  expect((await battle(page)).available).toContain('sword');
+  expect((await battle(page)).energy).toBe(3); // Genesis 1:1–2 has 3 orbs
 });
 
 test('Replay restarts the reading and brings back a missed orb', async ({ page }) => {
@@ -99,8 +103,7 @@ test('Skip appears after the verse has been heard once, and forfeits orbs', asyn
   );
   await tap(page, 'skip');
   await waitFor(page, "s.scene === 'battle' && !!s.battle");
-  // Auto-play is still on from the first fight, so check the unlocked specials, not this turn's actions.
-  expect((await battle(page)).unlocked).toEqual([]); // skipped orbs are forfeited
+  expect((await battle(page)).energy).toBe(0); // skipped orbs are forfeited
 });
 
 test('defeat offers Read again, which returns to the verse', async ({ page }) => {

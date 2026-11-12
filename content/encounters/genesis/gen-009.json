@@ -32,22 +32,22 @@
   ],
   "orbs": [
     {
-      "special": "sword",
+      "word": "hundredth"
+    },
+    {
       "word": "month"
     },
     {
-      "special": "shield",
       "word": "fountains"
     },
     {
-      "special": "breastplate",
       "word": "windows"
     },
     {
-      "special": "sandals",
       "word": "forty"
     }
   ],
+  "unlocks": "sandals",
   "questions": [
     {
       "id": "gen-009-q1",

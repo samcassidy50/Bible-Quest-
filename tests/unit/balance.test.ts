@@ -74,13 +74,20 @@ describe('auto-play policy', () => {
     const e = new BattleEngine(oneWave({ unlockedSpecials: ALL, startingFaith: 5 }), createRng(1));
     e.start();
     expect(pickAction(e)).toBe('ultimate');
-    const f = new BattleEngine(oneWave({ unlockedSpecials: ['sword', 'sandals'] }), createRng(1));
+    const f = new BattleEngine(
+      oneWave({ unlockedSpecials: ['sword', 'sandals'], startingEnergy: 5 }),
+      createRng(1),
+    );
     f.start();
     expect(pickAction(f)).toBe('sword');
     f.choose('sword');
     f.answer(true);
-    f.enemyTurn();
+    f.enemyTurn(); // 2 energy left: enough for sandals, not sword
     expect(pickAction(f)).toBe('sandals');
+    f.choose('sandals');
+    f.answer(true);
+    f.enemyTurn(); // out of energy
+    expect(pickAction(f)).toBe('attack');
   });
 
   it('simulateBattle is deterministic for a seed', () => {

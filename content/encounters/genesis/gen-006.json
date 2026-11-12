@@ -31,19 +31,18 @@
   ],
   "orbs": [
     {
-      "special": "sword",
       "word": "cursed"
     },
     {
-      "special": "shield",
+      "word": "labor"
+    },
+    {
       "word": "thorns"
     },
     {
-      "special": "breastplate",
       "word": "sweat"
     },
     {
-      "special": "sandals",
       "word": "dust"
     }
   ],

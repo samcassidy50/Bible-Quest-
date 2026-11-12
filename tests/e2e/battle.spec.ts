@@ -27,7 +27,7 @@ test('auto-play with wrong answers loses, and Retry restarts the fight', async (
 });
 
 test('tapping through a fight: question card, specials and the ultimate', async ({ page }) => {
-  await page.goto(`/?scene=battle&seed=3&specials=${ALL}&faith=5&freeze=1&fast=1`);
+  await page.goto(`/?scene=battle&seed=3&specials=${ALL}&faith=5&energy=10&freeze=1&fast=1`);
   await heroTurn(page);
   let b = await battle(page);
   expect(b.available).toEqual(['attack', 'sword', 'shield', 'breastplate', 'sandals', 'ultimate']);
@@ -51,7 +51,7 @@ test('tapping through a fight: question card, specials and the ultimate', async 
   await heroTurn(page);
   b = await battle(page);
   expect(b.faith).toBe(1);
-  expect(b.available).not.toContain('sword');
+  expect(b.energy).toBe(7); // Sword costs 3 energy
 
   // Shield with a wrong answer: shows the verse and Continue, still adds a block.
   await tap(page, 'action:shield');
@@ -63,14 +63,14 @@ test('tapping through a fight: question card, specials and the ultimate', async 
   await tap(page, 'continue');
   await heroTurn(page);
   b = await battle(page);
-  expect(b.available).not.toContain('shield');
+  expect(b.energy).toBe(5); // Shield costs 2, even with a wrong answer
   expect(b.faith).toBe(1); // wrong answers don't drain faith
 });
 
 test('one tap on a special opens exactly one question and nothing else happens', async ({
   page,
 }) => {
-  await page.goto('/?scene=battle&seed=4&specials=sword&freeze=1');
+  await page.goto('/?scene=battle&seed=4&specials=sword&energy=10&freeze=1');
   await heroTurn(page);
   const before = await battle(page);
   await tap(page, 'action:sword');
@@ -85,7 +85,7 @@ test('one tap on a special opens exactly one question and nothing else happens',
 });
 
 test('locked specials do nothing when tapped', async ({ page }) => {
-  await page.goto('/?scene=battle&seed=2&specials=sword&freeze=1');
+  await page.goto('/?scene=battle&seed=2&specials=sword&energy=10&freeze=1');
   await heroTurn(page);
   expect((await battle(page)).available).toEqual(['attack', 'sword']);
   await tap(page, 'action:shield');
@@ -107,7 +107,7 @@ test('title → passage select → chosen passage', async ({ page }) => {
   await tap(page, 'begin');
   await waitFor(page, "s.scene === 'scripture' && !!s.scripture");
   expect((await state(page)).scripture!.encounter).toBe('gen-011');
-  expect((await state(page)).scripture!.orbs).toHaveLength(4);
+  expect((await state(page)).scripture!.orbs).toHaveLength(5);
 });
 
 test('victory → Next passage goes to the next reading', async ({ page }) => {

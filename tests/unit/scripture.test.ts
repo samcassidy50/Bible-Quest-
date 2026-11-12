@@ -58,15 +58,10 @@ describe('scheduleOrbs', () => {
 
   it('spreads unanchored orbs evenly inside the window, one at a time', () => {
     const s = scheduleOrbs(
-      [
-        { special: 'sword' },
-        { special: 'shield' },
-        { special: 'breastplate' },
-        { special: 'sandals' },
-      ],
+      [{ id: 'sword' }, { id: 'shield' }, { id: 'breastplate' }, { id: 'sandals' }],
       D,
     );
-    expect(s.map((o) => o.special)).toEqual(['sword', 'shield', 'breastplate', 'sandals']);
+    expect(s.map((o) => o.id)).toEqual(['sword', 'shield', 'breastplate', 'sandals']);
     expect(s[0]!.atMs).toBe(D * ORB_WINDOW.start);
     // 20 s can't fit four full 4 s lifetimes, so gaps shrink to the even spacing.
     const step = (D * (ORB_WINDOW.end - ORB_WINDOW.start)) / 4;
@@ -79,21 +74,19 @@ describe('scheduleOrbs', () => {
   });
 
   it('keeps anchored orbs at their word, clamped to the window', () => {
-    const s = scheduleOrbs([{ special: 'sword', anchorFraction: 0.5 }], D);
-    expect(s).toEqual([{ special: 'sword', atMs: 10_000 }]);
-    expect(scheduleOrbs([{ special: 'sword', anchorFraction: 0 }], D)[0]!.atMs).toBe(
+    const s = scheduleOrbs([{ id: 'sword', anchorFraction: 0.5 }], D);
+    expect(s).toEqual([{ id: 'sword', atMs: 10_000 }]);
+    expect(scheduleOrbs([{ id: 'sword', anchorFraction: 0 }], D)[0]!.atMs).toBe(
       D * ORB_WINDOW.start,
     );
-    expect(scheduleOrbs([{ special: 'sword', anchorFraction: 1 }], D)[0]!.atMs).toBe(
-      D * ORB_WINDOW.end,
-    );
+    expect(scheduleOrbs([{ id: 'sword', anchorFraction: 1 }], D)[0]!.atMs).toBe(D * ORB_WINDOW.end);
   });
 
   it('pushes clashing anchored orbs apart and keeps them inside the window', () => {
     const s = scheduleOrbs(
       [
-        { special: 'sword', anchorFraction: 0.85 },
-        { special: 'shield', anchorFraction: 0.86 },
+        { id: 'sword', anchorFraction: 0.85 },
+        { id: 'shield', anchorFraction: 0.86 },
       ],
       D,
     );
@@ -103,10 +96,7 @@ describe('scheduleOrbs', () => {
 
   it('squeezes the gap when the reading is too short for full lifetimes', () => {
     const short = 6_000;
-    const s = scheduleOrbs(
-      [{ special: 'sword' }, { special: 'shield' }, { special: 'sandals' }],
-      short,
-    );
+    const s = scheduleOrbs([{ id: 'sword' }, { id: 'shield' }, { id: 'sandals' }], short);
     expect(s[2]!.atMs).toBeLessThanOrEqual(short * ORB_WINDOW.end);
     expect(s[1]!.atMs).toBeGreaterThan(s[0]!.atMs);
   });
@@ -140,9 +130,9 @@ describe('OrbTracker', () => {
     t.spawn('shield');
     t.forfeitRemaining();
     expect(t.all).toEqual([
-      { special: 'sword', status: 'collected' },
-      { special: 'shield', status: 'missed' },
-      { special: 'sandals', status: 'missed' },
+      { id: 'sword', status: 'collected' },
+      { id: 'shield', status: 'missed' },
+      { id: 'sandals', status: 'missed' },
     ]);
   });
 

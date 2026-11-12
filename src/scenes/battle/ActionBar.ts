@@ -65,24 +65,30 @@ export class ActionBar extends Phaser.GameObjects.Container {
     scene.add.existing(this);
   }
 
-  /** Reflects the engine state: locked / used / ready, and whether input is allowed at all. */
+  /** Reflects the engine state: not yet earned / too little energy / ready, and whether input is allowed. */
   refresh(engine: BattleEngine, inputEnabled: boolean): void {
     const available = new Set(engine.availableActions());
 
     for (const id of SPECIAL_IDS) {
       const b = this.buttons.get(id)!;
       const caption = this.captions.get(id)!;
+      const cost = `${ACTION_INFO[id].short} ⚡${engine.costOf(id)}`;
       if (!engine.isUnlocked(id)) {
-        b.setFill(LOCKED_FILL).setText('🔒').setEnabled(false);
-        caption.setText(ACTION_INFO[id].short).setAlpha(0.5);
-      } else if (engine.isUsed(id)) {
-        b.setFill(ACTION_INFO[id].color).setText('✔').setEnabled(false);
-        caption.setText('Used').setAlpha(0.6);
+        // Not earned yet on the map: hidden entirely.
+        b.setEnabled(false).setVisible(false);
+        caption.setVisible(false);
+        continue;
+      }
+      b.setVisible(true);
+      caption.setVisible(true);
+      if (!engine.canAfford(id)) {
+        b.setFill(ACTION_INFO[id].color).setText(ACTION_INFO[id].icon).setEnabled(false);
+        caption.setText(cost).setAlpha(0.6);
       } else {
         b.setFill(ACTION_INFO[id].color)
           .setText(ACTION_INFO[id].icon)
           .setEnabled(inputEnabled && available.has(id));
-        caption.setText(ACTION_INFO[id].short).setAlpha(1);
+        caption.setText(cost).setAlpha(1);
       }
     }
 
@@ -92,8 +98,13 @@ export class ActionBar extends Phaser.GameObjects.Container {
     const ready = engine.ultimateReady;
     ult
       .setFill(ready ? ACTION_INFO.ultimate.color : LOCKED_FILL)
-      .setEnabled(inputEnabled && available.has('ultimate'));
-    this.captions.get('ultimate')!.setText(ready ? 'Ultimate!' : `Faith ${engine.faith}/5`);
+      .setText(ACTION_INFO.ultimate.icon)
+      .setEnabled(inputEnabled && available.has('ultimate'))
+      .setVisible(engine.ultimateUnlocked);
+    this.captions
+      .get('ultimate')!
+      .setText(ready ? 'Ultimate!' : `Faith ${engine.faith}/5`)
+      .setVisible(engine.ultimateUnlocked);
     this.setGlow(ready);
   }
 

@@ -31,19 +31,18 @@
   ],
   "orbs": [
     {
-      "special": "sword",
+      "word": "city"
+    },
+    {
       "word": "tower"
     },
     {
-      "special": "shield",
       "word": "name"
     },
     {
-      "special": "breastplate",
       "word": "language"
     },
     {
-      "special": "sandals",
       "word": "confuse"
     }
   ],

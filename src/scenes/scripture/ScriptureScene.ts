@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import type { SpecialId } from '../../core/battle/types';
 import type { Encounter, EncounterFoe } from '../../core/content/types';
 import type { DebugParams } from '../../core/debugParams';
 import { OrbTracker, scheduleOrbs, type ScheduledOrb } from '../../core/scripture/orbs';
@@ -12,11 +11,11 @@ import { markHeard, READING_SPEEDS } from '../../core/progress/progress';
 import { createNarration, type Narration } from '../../services/narration';
 import { readSafeAreaInsets, toGameInsets, type Insets } from '../../services/safeArea';
 import { updateTestState } from '../../services/testHooks';
-import { ACTION_INFO, COLOR } from '../battle/actionInfo';
+import { COLOR } from '../battle/actionInfo';
 import { Fighter } from '../battle/Fighter';
 import { Button } from '../ui/Button';
 import { FONT_TITLE, FONT_UI, tweenAsync, wait } from '../util';
-import { Orb } from './Orb';
+import { ENERGY_COLOR, Orb } from './Orb';
 import { Backdrop } from '../backdrop/Backdrop';
 
 const BANNER_H = 118;
@@ -29,7 +28,7 @@ const ORB_RISE = 150;
 
 /**
  * Scripture intro (docs/DESIGN.md §2.1): the verse is read aloud and scrolls along the bottom
- * while the hero runs; Armor orbs float up and can be tapped to unlock specials for the fight.
+ * while the hero runs; energy orbs float up and can be tapped to fill the hero's energy for the fight.
  */
 export class ScriptureScene extends Phaser.Scene {
   private debug!: DebugParams;
@@ -46,10 +45,10 @@ export class ScriptureScene extends Phaser.Scene {
   private refLabel!: Phaser.GameObjects.Text;
   private ticker!: Phaser.GameObjects.Text;
   private tickerMask!: Phaser.GameObjects.Graphics;
-  private wordGlows = new Map<SpecialId, Phaser.GameObjects.Text>();
-  private wordOffsets = new Map<SpecialId, number>();
+  private wordGlows = new Map<string, Phaser.GameObjects.Text>();
+  private wordOffsets = new Map<string, number>();
   private loadout!: Phaser.GameObjects.Container;
-  private slots = new Map<SpecialId, Phaser.GameObjects.Container>();
+  private energyText!: Phaser.GameObjects.Text;
   private skipBtn!: Button;
   private replayBtn!: Button;
   private fullTextBtn!: Button;
@@ -57,7 +56,7 @@ export class ScriptureScene extends Phaser.Scene {
 
   private tracker!: OrbTracker;
   private schedule: ScheduledOrb[] = [];
-  private active = new Map<SpecialId, Orb>();
+  private active = new Map<string, Orb>();
   private elapsed = 0;
   private speedup = 1;
   private narrationDone = false;
@@ -91,11 +90,10 @@ export class ScriptureScene extends Phaser.Scene {
     this.active = new Map();
     this.wordGlows = new Map();
     this.wordOffsets = new Map();
-    this.slots = new Map();
     this.fullText = undefined;
     this.finishing = false;
     this.readings = 0;
-    this.tracker = new OrbTracker(this.encounter.orbs.map((o) => o.special));
+    this.tracker = new OrbTracker(this.encounter.orbs.map((_, i) => orbId(i)));
 
     this.buildScene();
     this.layout();
@@ -144,12 +142,12 @@ export class ScriptureScene extends Phaser.Scene {
 
     // Word offsets for anchored orbs, measured with the ticker's own font.
     const measure = this.add.text(0, 0, '', TICKER_STYLE).setVisible(false);
-    for (const orb of this.encounter.orbs) {
+    for (const [i, orb] of this.encounter.orbs.entries()) {
       if (!orb.word) continue;
-      const i = this.text.indexOf(orb.word);
-      if (i < 0) continue;
-      measure.setText(this.text.slice(0, i));
-      this.wordOffsets.set(orb.special, measure.width);
+      const at = this.text.indexOf(orb.word);
+      if (at < 0) continue;
+      measure.setText(this.text.slice(0, at));
+      this.wordOffsets.set(orbId(i), measure.width);
       const glow = this.add
         .text(0, 0, orb.word, { ...TICKER_STYLE, color: '#ffd34d' })
         .setOrigin(0, 0.5)
@@ -157,14 +155,14 @@ export class ScriptureScene extends Phaser.Scene {
         .setShadow(0, 0, '#ffb300', 16, true, true)
         .setVisible(false);
       glow.setMask(this.tickerMask.createGeometryMask());
-      this.wordGlows.set(orb.special, glow);
+      this.wordGlows.set(orbId(i), glow);
     }
     measure.destroy();
 
-    // Loadout: one slot per orb in this encounter, top right.
+    // Energy collected so far, top right.
     this.loadout = this.add.container(0, 0).setDepth(30);
     const label = this.add
-      .text(0, 0, 'Armor for this fight', {
+      .text(0, 0, 'Energy for this fight', {
         fontFamily: FONT_UI,
         fontSize: '18px',
         fontStyle: 'bold',
@@ -172,22 +170,17 @@ export class ScriptureScene extends Phaser.Scene {
       })
       .setOrigin(1, 0)
       .setShadow(2, 2, '#000', 3);
-    this.loadout.add(label);
-    this.encounter.orbs.forEach((orb, i) => {
-      const slot = this.add.container(-34 - i * 76, 64);
-      const ring = this.add
-        .circle(0, 0, 32, 0x000000, 0.45)
-        .setStrokeStyle(3, ACTION_INFO[orb.special].color, 0.9);
-      const icon = this.add
-        .text(0, 0, ACTION_INFO[orb.special].icon, { fontSize: '30px' })
-        .setOrigin(0.5)
-        .setAlpha(0.25);
-      slot.add([ring, icon]);
-      slot.setData('icon', icon).setData('ring', ring);
-      this.slots.set(orb.special, slot);
-      this.loadout.add(slot);
-    });
-    label.setPosition(0, 0);
+    const badge = this.add.circle(-40, 62, 34, 0x000000, 0.45).setStrokeStyle(3, ENERGY_COLOR, 0.9);
+    this.energyText = this.add
+      .text(-40, 62, '⚡0', {
+        fontFamily: FONT_UI,
+        fontSize: '26px',
+        fontStyle: 'bold',
+        color: '#ffd34d',
+      })
+      .setOrigin(0.5)
+      .setShadow(2, 2, '#000', 3);
+    this.loadout.add([label, badge, this.energyText]);
 
     // Controls, top left.
     const pill = (label: string, onTap: () => void, w = 170) =>
@@ -257,11 +250,12 @@ export class ScriptureScene extends Phaser.Scene {
     const { width: W } = this.scale.gameSize;
     const textW = this.ticker.width;
     const plans = this.encounter.orbs
-      .filter((o) => this.tracker.pending.includes(o.special))
-      .map((o) => {
-        const offset = this.wordOffsets.get(o.special);
+      .map((_, i) => orbId(i))
+      .filter((id) => this.tracker.pending.includes(id))
+      .map((id) => {
+        const offset = this.wordOffsets.get(id);
         return {
-          special: o.special,
+          id,
           anchorFraction:
             offset === undefined ? undefined : wordAnchorFraction(offset, W * ANCHOR_AT, W, textW),
         };
@@ -291,7 +285,7 @@ export class ScriptureScene extends Phaser.Scene {
     this.updateHero();
 
     while (this.schedule.length > 0 && this.schedule[0]!.atMs <= this.elapsed) {
-      this.spawnOrb(this.schedule.shift()!.special);
+      this.spawnOrb(this.schedule.shift()!.id);
     }
 
     if (this.elapsed >= this.durationMs && this.narrationDone && this.active.size === 0) {
@@ -309,8 +303,8 @@ export class ScriptureScene extends Phaser.Scene {
   private updateTicker(): void {
     const { width: W } = this.scale.gameSize;
     this.ticker.setX(tickerX(this.elapsed, this.durationMs, W, this.ticker.width));
-    for (const [special, glow] of this.wordGlows)
-      glow.setX(this.ticker.x + (this.wordOffsets.get(special) ?? 0));
+    for (const [id, glow] of this.wordGlows)
+      glow.setX(this.ticker.x + (this.wordOffsets.get(id) ?? 0));
   }
 
   private updateHero(): void {
@@ -322,28 +316,28 @@ export class ScriptureScene extends Phaser.Scene {
 
   // ── Orbs ───────────────────────────────────────────────────────────────────
 
-  private spawnOrb(special: SpecialId): void {
-    if (!this.tracker.spawn(special)) return;
+  private spawnOrb(id: string): void {
+    if (!this.tracker.spawn(id)) return;
     const { width: W } = this.scale.gameSize;
-    const idx = this.encounter.orbs.findIndex((o) => o.special === special);
+    const idx = Number(id.slice(4));
     const x = W * (0.52 + 0.1 * (idx % 3));
     const orb = new Orb(
       this,
       x,
       this.groundY - 60,
-      special,
+      id,
       (o) => void this.collect(o),
       (o) => {
-        this.tracker.expire(o.special);
-        this.active.delete(o.special);
-        this.wordGlows.get(o.special)?.setVisible(false);
+        this.tracker.expire(o.id);
+        this.active.delete(o.id);
+        this.wordGlows.get(o.id)?.setVisible(false);
         this.sync();
       },
     );
-    this.active.set(special, orb);
+    this.active.set(id, orb);
     orb.appear(ORB_RISE);
     sfx.play('orbSpawn');
-    this.wordGlows.get(special)?.setVisible(true);
+    this.wordGlows.get(id)?.setVisible(true);
     this.sync();
     if (this.debug.autoCollect || progress.save.settings.autoCollect) {
       this.time.delayedCall(500, () => void this.collect(orb));
@@ -351,22 +345,17 @@ export class ScriptureScene extends Phaser.Scene {
   }
 
   private async collect(orb: Orb): Promise<void> {
-    if (!this.tracker.collect(orb.special)) return;
-    this.active.delete(orb.special);
-    this.wordGlows.get(orb.special)?.setVisible(false);
+    if (!this.tracker.collect(orb.id)) return;
+    this.active.delete(orb.id);
+    this.wordGlows.get(orb.id)?.setVisible(false);
     void hapticTap();
     sfx.play('orbCollect');
-    this.floatText(orb.x, orb.y - 80, `${ACTION_INFO[orb.special].name} unlocked!`);
+    this.floatText(orb.x, orb.y - 80, '+1 ⚡ Energy');
     this.sync();
-    const slot = this.slots.get(orb.special)!;
-    const m = slot.getWorldTransformMatrix();
+    const m = this.energyText.getWorldTransformMatrix();
     await orb.collectTo(m.tx, m.ty);
-    (slot.getData('icon') as Phaser.GameObjects.Text).setAlpha(1);
-    (slot.getData('ring') as Phaser.GameObjects.Arc).setFillStyle(
-      ACTION_INFO[orb.special].color,
-      0.85,
-    );
-    this.tweens.add({ targets: slot, scale: 1.25, duration: 140, yoyo: true });
+    this.energyText.setText(`⚡${this.tracker.collected.length}`);
+    this.tweens.add({ targets: this.energyText, scale: 1.4, duration: 140, yoyo: true });
   }
 
   private clearActiveOrbs(): void {
@@ -455,7 +444,7 @@ export class ScriptureScene extends Phaser.Scene {
       tweenAsync(this, { targets: this.hero, x: W * 0.45, duration: 700, ease: 'Quad.inOut' }),
     ]);
     this.hero.stopRun();
-    this.registry.set('collectedOrbs', this.tracker.collected);
+    this.registry.set('collectedEnergy', this.tracker.collected.length);
     this.cameras.main.fadeOut(300, 5, 3, 13);
     await new Promise<void>((r) => this.cameras.main.once('camerafadeoutcomplete', () => r()));
     this.scene.start('battle');
@@ -493,15 +482,14 @@ export class ScriptureScene extends Phaser.Scene {
       return { x: Math.round(b.centerX), y: Math.round(b.centerY) };
     };
     // Only fully popped-in orbs are tappable targets (a tiny orb has a tiny hit area).
-    for (const [special, orb] of this.active) {
-      if (orb.scale >= 0.95)
-        targets[`orb:${special}`] = { x: Math.round(orb.x), y: Math.round(orb.y) };
+    for (const [id, orb] of this.active) {
+      if (orb.scale >= 0.95) targets[`orb:${id}`] = { x: Math.round(orb.x), y: Math.round(orb.y) };
     }
     if (this.skipBtn?.visible) targets['skip'] = center(this.skipBtn);
     if (this.replayBtn?.visible) targets['replay'] = center(this.replayBtn);
     if (this.fullTextBtn?.visible) targets['fulltext'] = center(this.fullTextBtn);
 
-    const scheduled = new Map(this.schedule.map((s) => [s.special, s.atMs]));
+    const scheduled = new Map(this.schedule.map((s) => [s.id, s.atMs]));
     const { width, height } = this.scale.gameSize;
     updateTestState({
       gameWidth: width,
@@ -513,7 +501,8 @@ export class ScriptureScene extends Phaser.Scene {
         durationMs: this.durationMs,
         elapsedMs: Math.round(this.elapsed),
         narrationDone: this.narrationDone,
-        orbs: this.tracker.all.map((o) => ({ ...o, atMs: scheduled.get(o.special) ?? -1 })),
+        orbs: this.tracker.all.map((o) => ({ ...o, atMs: scheduled.get(o.id) ?? -1 })),
+        energy: this.tracker.collected.length,
         collected: this.tracker.collected,
         canSkip: this.canSkip,
         fullTextOpen: !!this.fullText,
@@ -522,4 +511,9 @@ export class ScriptureScene extends Phaser.Scene {
       },
     });
   }
+}
+
+/** Orb ids are their index in the passage's orb list. */
+function orbId(i: number): string {
+  return `orb-${i}`;
 }

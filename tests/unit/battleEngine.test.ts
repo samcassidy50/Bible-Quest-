@@ -114,13 +114,36 @@ describe('Special attacks', () => {
     expect(() => e.choose('shield')).toThrow(/not available/);
   });
 
-  it('each special can be used once per fight', () => {
-    const e = withAll();
+  it('specials spend energy and can be used again while energy lasts', () => {
+    const e = withAll(); // 10 energy
+    expect(e.energy).toBe(10);
+    expect(e.costOf('sword')).toBe(3);
     act(e, 'sword');
-    expect(e.isUsed('sword')).toBe(true);
+    expect(e.energy).toBe(7);
     e.enemyTurn();
-    expect(e.availableActions()).not.toContain('sword');
-    expect(e.specialsAvailable).toEqual(['shield', 'breastplate', 'sandals']);
+    act(e, 'sword', false); // a wrong answer still spends the energy
+    expect(e.energy).toBe(4);
+    e.enemyTurn();
+    act(e, 'sword');
+    expect(e.energy).toBe(1);
+    e.enemyTurn();
+    expect(e.canAfford('sword')).toBe(false);
+    expect(e.availableActions()).toEqual(['attack']);
+    expect(() => e.choose('sword')).toThrow(/not available/);
+  });
+
+  it('starts with no energy by default and clamps to the maximum', () => {
+    const none = started(oneWave({ unlockedSpecials: ALL, startingEnergy: undefined }));
+    expect(none.energy).toBe(0);
+    expect(none.availableActions()).toEqual(['attack']);
+    expect(started(oneWave({ startingEnergy: 99 })).energy).toBe(10);
+  });
+
+  it('the ultimate stays locked until earned, even with a full Faith meter', () => {
+    const e = started(oneWave({ startingFaith: 5, ultimateUnlocked: false }));
+    expect(e.ultimateUnlocked).toBe(false);
+    expect(e.ultimateReady).toBe(false);
+    expect(e.availableActions()).not.toContain('ultimate');
   });
 
   it('Sword: 3× powered, 1.5× base', () => {

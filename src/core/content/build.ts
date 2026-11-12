@@ -29,6 +29,7 @@ export function buildEncounter(raw: unknown, bible: Bible, source = 'encounter')
     verses: resolvePassage(bible, f.passage),
     waves: f.waves.map((w) => ({ ...w, color: parseInt(w.color.slice(1), 16) })),
     orbs: f.orbs,
+    ...(f.unlocks ? { unlocks: f.unlocks } : {}),
     questions: f.questions,
   };
 
@@ -54,12 +55,12 @@ export function validateEncounter(e: Encounter): string[] {
       errors.push(`${q.id}: answerIndex ${q.answerIndex} is out of range`);
     if (new Set(q.choices).size !== q.choices.length) errors.push(`${q.id}: duplicate choices`);
   }
-  const specials = new Set<string>();
+  const words = new Set<string>();
   for (const o of e.orbs) {
-    if (specials.has(o.special)) errors.push(`duplicate orb "${o.special}"`);
-    specials.add(o.special);
-    if (o.word && !text.includes(o.word))
-      errors.push(`orb ${o.special}: word "${o.word}" is not in the verse text`);
+    if (!o.word) continue;
+    if (words.has(o.word)) errors.push(`duplicate orb word "${o.word}"`);
+    words.add(o.word);
+    if (!text.includes(o.word)) errors.push(`orb word "${o.word}" is not in the verse text`);
   }
   const foeIds = new Set<string>();
   for (const w of e.waves) {
@@ -81,6 +82,13 @@ export function validateCollection(encounters: readonly Encounter[]): string[] {
       if (qids.has(q.id)) errors.push(`question id "${q.id}" is used in more than one encounter`);
       qids.add(q.id);
     }
+  }
+  const unlocks = new Map<string, string>();
+  for (const e of encounters) {
+    if (!e.unlocks) continue;
+    const prev = unlocks.get(e.unlocks);
+    if (prev) errors.push(`"${e.unlocks}" is awarded by both ${prev} and ${e.id}`);
+    unlocks.set(e.unlocks, e.id);
   }
   return errors;
 }
