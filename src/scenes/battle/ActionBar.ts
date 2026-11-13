@@ -82,6 +82,14 @@ export class ActionBar extends Phaser.GameObjects.Container {
     });
     make('ultimate', ULT.x, ULT.y, 104, 3);
 
+    // Specials and the Ultimate start hidden; refresh() shows the ones the hero has earned, so
+    // unearned armor never flashes up while the battle starts.
+    for (const id of [...SPECIAL_IDS, 'ultimate'] as const) {
+      this.buttons.get(id)!.setVisible(false);
+      this.captions.get(id)!.setVisible(false);
+      this.costGroups.get(id as (typeof SPECIAL_IDS)[number])?.setVisible(false);
+    }
+
     scene.add.existing(this);
   }
 

@@ -93,6 +93,8 @@ export const saveSchema = z.object({
       readingSpeed: z.enum(['slow', 'normal', 'fast']).catch('normal'),
       autoCollect: z.boolean().catch(false),
       timer: z.boolean().catch(false),
+      /** Dev builds only: foes fall in one hit and every reading can be skipped. */
+      quickTest: z.boolean().catch(false),
     })
     .catch({
       sound: true,
@@ -100,6 +102,7 @@ export const saveSchema = z.object({
       readingSpeed: 'normal',
       autoCollect: false,
       timer: false,
+      quickTest: false,
     }),
 });
 

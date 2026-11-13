@@ -18,31 +18,14 @@ export const ACTION_INFO: Record<
   ultimate: { name: 'Full Armor of God', short: 'Ultimate', icon: '✨', color: 0xe6a817 },
 };
 
-/**
- * What each piece of armor does, for the page shown after the angel gives it (original lines;
- * `ref` is only a passage reference, never verse text).
- */
-export const ARMOR_ABOUT: Record<SpecialId | 'ultimate', { text: string; ref: string }> = {
-  sword: {
-    text: 'A mighty strike that hits harder than an Attack. Answer right for an even bigger blow.',
-    ref: 'Ephesians 6:17',
-  },
-  shield: {
-    text: "Blocks the foe's next attack. Answer right to block two attacks and strike back too.",
-    ref: 'Ephesians 6:16',
-  },
-  breastplate: {
-    text: 'Heals your wounds. Answer right and it heals much more.',
-    ref: 'Ephesians 6:14',
-  },
-  sandals: {
-    text: 'Stuns the foe so it misses its next turn. Answer right to land a hit as well.',
-    ref: 'Ephesians 6:15',
-  },
-  ultimate: {
-    text: 'A huge strike that also heals you. Fill your Faith meter by answering well, then unleash it.',
-    ref: 'Ephesians 6:13',
-  },
+/** What each piece of armor does, for the page shown after the angel gives it (original lines). */
+export const ARMOR_ABOUT: Record<SpecialId | 'ultimate', string> = {
+  sword: 'You can now channel your energy into the Sword for a more powerful attack.',
+  shield: "You can now channel your energy into the Shield to block the foe's next attack.",
+  breastplate: 'You can now channel your energy into the Breastplate to heal your wounds.',
+  sandals: 'You can now channel your energy into the Sandals to stun the foe for a turn.',
+  ultimate:
+    'Answer well to fill your Faith meter, then unleash the Full Armor of God for a mighty strike that also heals you.',
 };
 
 export const COLOR = {

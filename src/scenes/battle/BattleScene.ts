@@ -26,6 +26,7 @@ import { HpBar } from './HpBar';
 import { QuestionCard } from './QuestionCard';
 import { ResultPanel } from './ResultPanel';
 import { ArmorPage } from './ArmorPage';
+import { quickTestOn } from '../quickTest';
 import { Backdrop } from '../backdrop/Backdrop';
 import { Angel, ANGEL_LINES } from '../angel/Angel';
 import { itemSprite } from '../items';
@@ -127,7 +128,7 @@ export class BattleScene extends Phaser.Scene {
         startingEnergy:
           this.debug.energy ?? (this.registry.get('collectedEnergy') as number | undefined) ?? 0,
         startingFaith: this.debug.faith,
-        oneShot: this.debug.oneShot,
+        oneShot: this.debug.oneShot || quickTestOn(),
       },
       rng,
     );

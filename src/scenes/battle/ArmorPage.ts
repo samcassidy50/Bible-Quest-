@@ -9,7 +9,7 @@ import { ACTION_INFO, ARMOR_ABOUT, COLOR } from './actionInfo';
 
 /**
  * The page shown once the angel's gift reaches the hero: the new armor piece, large, with its
- * name, what it does in battle, its energy cost and where to read about it.
+ * name, what it does in battle and its energy cost.
  */
 export class ArmorPage extends Phaser.GameObjects.Container {
   readonly continueButton: Button;
@@ -26,7 +26,7 @@ export class ArmorPage extends Phaser.GameObjects.Container {
     const about = ARMOR_ABOUT[unlock];
 
     const cw = Math.min(W - insets.left - insets.right - 48, 860);
-    const ch = Math.min(H - insets.top - insets.bottom - 48, 470);
+    const ch = Math.min(H - insets.top - insets.bottom - 48, 400);
     const bg = scene.add.graphics();
     bg.fillStyle(COLOR.card, 0.98).fillRoundedRect(-cw / 2, -ch / 2, cw, ch, 28);
     bg.lineStyle(5, COLOR.gold).strokeRoundedRect(-cw / 2, -ch / 2, cw, ch, 28);
@@ -39,20 +39,14 @@ export class ArmorPage extends Phaser.GameObjects.Container {
 
     const tx = -cw / 2 + 300;
     const tw = cw / 2 - tx - 36;
-    const kicker = scene.add.text(tx, -ch / 2 + 36, 'NEW ARMOR', {
-      fontFamily: FONT_UI,
-      fontSize: '20px',
-      fontStyle: 'bold',
-      color: '#b07d12',
-    });
-    const title = scene.add.text(tx, kicker.y + 30, `${info.name}`, {
+    const title = scene.add.text(tx, -ch / 2 + 48, info.name, {
       fontFamily: FONT_TITLE,
       fontSize: '38px',
       fontStyle: 'bold',
       color: '#8a5a00',
       wordWrap: { width: tw, useAdvancedWrap: true },
     });
-    const text = scene.add.text(tx, title.y + title.height + 16, about.text, {
+    const text = scene.add.text(tx, title.y + title.height + 16, about, {
       fontFamily: FONT_UI,
       fontSize: '24px',
       color: COLOR.ink,
@@ -69,13 +63,6 @@ export class ArmorPage extends Phaser.GameObjects.Container {
       color: '#6b5d84',
       wordWrap: { width: tw, useAdvancedWrap: true },
     });
-    const ref = scene.add.text(tx, cost.y + cost.height + 14, `📖 Read about it in ${about.ref}`, {
-      fontFamily: FONT_UI,
-      fontSize: '20px',
-      fontStyle: 'italic',
-      color: '#6b5d84',
-    });
-
     // Centred, away from the Receive button, so a quick double tap can't skip the page.
     this.continueButton = new Button(scene, tx + tw / 2, ch / 2 - 64, {
       width: 220,
@@ -87,7 +74,7 @@ export class ArmorPage extends Phaser.GameObjects.Container {
       onTap: onContinue,
     });
 
-    this.add([bg, glow, item, kicker, title, text, cost, ref, this.continueButton]);
+    this.add([bg, glow, item, title, text, cost, this.continueButton]);
     scene.add.existing(this);
   }
 }

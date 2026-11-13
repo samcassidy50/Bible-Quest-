@@ -135,6 +135,7 @@ describe('save data', () => {
       readingSpeed: 'normal',
       autoCollect: false,
       timer: false,
+      quickTest: false,
     });
     expect(s.upgrades).toEqual({ health: 0, strength: 0, armor: 0, faith: 0 });
   });
@@ -165,6 +166,7 @@ describe('save data', () => {
         readingSpeed: 'warp',
         autoCollect: true,
         timer: false,
+        quickTest: 'yes',
       },
     };
     const s = loadSave(JSON.stringify(raw));
@@ -177,6 +179,7 @@ describe('save data', () => {
       readingSpeed: 'normal',
       autoCollect: true,
       timer: false,
+      quickTest: false,
     });
   });
 

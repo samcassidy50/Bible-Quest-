@@ -17,6 +17,7 @@ const base = (): SaveData => ({
     readingSpeed: 'normal',
     autoCollect: false,
     timer: false,
+    quickTest: false,
   },
 });
 
@@ -164,4 +165,27 @@ test('with the timer on, running out of time counts as wrong', async ({ page }) 
   await waitFor(page, 's.battle.question && s.targets["answer:0"]');
   await waitFor(page, "s.battle.feedback === 'wrong'", 10_000); // 20 s ÷ 10 in fast mode
   expect((await state(page)).sounds).toContain('wrong');
+});
+
+test('quick test mode: Skip on a first reading, and one hit defeats a foe', async ({ page }) => {
+  await seed(page, base());
+  await page.goto('/?scene=settings');
+  await waitFor(page, "s.scene === 'settings' && !!s.targets['setting:quickTest']");
+  await snap(page, test.info().outputPath('settings-quick.png'));
+  await tap(page, 'setting:quickTest');
+  await waitFor(page, 's.save.settings.quickTest === true');
+
+  // A passage never heard before can still be skipped.
+  await page.goto('/?scene=scripture&encounter=gen-002&seed=1');
+  await waitFor(page, "s.scene === 'scripture' && s.scripture.canSkip && !!s.targets.skip");
+  await tap(page, 'skip');
+  await waitFor(page, "s.scene === 'battle' && !!s.battle");
+
+  await heroTurn(page);
+  await tap(page, 'action:attack');
+  await waitFor(page, 's.battle.question && !!s.targets["answer:0"]');
+  await tap(page, `answer:${(await battle(page)).question!.answerIndex}`);
+  // One answered Attack defeats the first foe.
+  await waitFor(page, "s.sounds.includes('foeDefeat')", 30_000);
+  expect((await state(page)).sounds.filter((x) => x === 'foeDefeat')).toHaveLength(1);
 });

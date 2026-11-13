@@ -8,6 +8,7 @@ import {
 import { progress } from '../../services/progress';
 import { sfx } from '../../services/sfx';
 import { updateTestState } from '../../services/testHooks';
+import { TEST_HOOKS_ENABLED } from '../../config';
 import { COLOR } from '../battle/actionInfo';
 import { Button } from '../ui/Button';
 import { FONT_UI } from '../util';
@@ -59,6 +60,17 @@ const ROWS: Row[] = [
     value: (s) => (s.timer ? '20 s' : 'Off'),
     next: (s) => ({ timer: !s.timer }),
   },
+  ...(TEST_HOOKS_ENABLED
+    ? [
+        {
+          key: 'quickTest',
+          label: 'Quick test mode',
+          hint: 'Dev builds only: one hit defeats a foe; Skip on every reading',
+          value: (s: Settings) => (s.quickTest ? 'On' : 'Off'),
+          next: (s: Settings) => ({ quickTest: !s.quickTest }),
+        },
+      ]
+    : []),
 ];
 
 /** Settings (docs/DESIGN.md §5): saved with the player's progress. */
@@ -79,7 +91,7 @@ export class SettingsScene extends Phaser.Scene {
     const left = (W - rowW) / 2;
 
     ROWS.forEach((row, i) => {
-      const y = insets.top + 110 + i * 92;
+      const y = insets.top + 110 + i * (ROWS.length > 5 ? 84 : 92);
       this.add.graphics().fillStyle(COLOR.panel, 0.95).fillRoundedRect(left, y, rowW, 80, 16);
       this.add.text(left + 24, y + 12, row.label, {
         fontFamily: FONT_UI,

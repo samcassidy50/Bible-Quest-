@@ -11,6 +11,7 @@ import { markHeard, READING_SPEEDS } from '../../core/progress/progress';
 import { createNarration, type Narration } from '../../services/narration';
 import { readSafeAreaInsets, toGameInsets, type Insets } from '../../services/safeArea';
 import { updateTestState } from '../../services/testHooks';
+import { quickTestOn } from '../quickTest';
 import { COLOR } from '../battle/actionInfo';
 import { Fighter } from '../battle/Fighter';
 import { Button } from '../ui/Button';
@@ -109,7 +110,7 @@ export class ScriptureScene extends Phaser.Scene {
   }
 
   private get canSkip(): boolean {
-    return progress.save.heard.includes(this.encounter.id);
+    return quickTestOn() || progress.save.heard.includes(this.encounter.id);
   }
 
   // ── Build ──────────────────────────────────────────────────────────────────
