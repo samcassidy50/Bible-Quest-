@@ -10,7 +10,12 @@ the game only uses the processed sheet.
 | `run.webp`           | `run_0`–`run_7`                                                                    |
 | `slash.webp`         | `slash_0`–`slash_5` (ready, anticipation, swing, impact, follow-through, recovery) |
 | `slash-powered.webp` | `power_0`–`power_5` (crouch, leap, overhead, strike…)                              |
-| `poses.webp`         | (unused idle), `walk`, `thrust`, `hurt`, `victory`                                 |
+| `poses.webp`         | (unused idle), `walk`, `thrust`, (old hurt and victory poses, unused)              |
+| `victory.webp`       | `win_0`–`win_4` (relief, crouch, jump, land, pose; puff and landing lines erased)  |
+| `block.webp`         | `block_0`–`block_3` (brace, guard, take the hit, recover; impact marks erased)     |
+| `cast.webp`          | `cast_0`–`cast_4` (ready, bow, raise, power hop, point forward)                    |
+| `down.webp`          | `down_0`–`down_4` (stagger, sway, kneel, slump, rest)                              |
+| `hurt.webp`          | `hurt_0`–`hurt_2` (flinch, recoil, shake it off)                                   |
 
 ## Adding or replacing a strip
 

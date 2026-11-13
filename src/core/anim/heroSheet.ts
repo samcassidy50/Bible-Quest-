@@ -3,9 +3,9 @@
 /** Hero sprite sheet layout: equal cells, row-major, feet of every frame at (originX, originY). */
 export const HERO_SHEET = {
   frameWidth: 136,
-  frameHeight: 93,
+  frameHeight: 102,
   originX: 68,
-  originY: 92,
+  originY: 101,
   /** Height of the standing hero in native pixels. */
   standingHeight: 64,
 } as const;
@@ -37,8 +37,28 @@ export const HERO_FRAMES = {
   power_5: 23,
   walk: 24,
   thrust: 25,
-  hurt: 26,
-  victory: 27,
+  win_0: 26,
+  win_1: 27,
+  win_2: 28,
+  win_3: 29,
+  win_4: 30,
+  block_0: 31,
+  block_1: 32,
+  block_2: 33,
+  block_3: 34,
+  cast_0: 35,
+  cast_1: 36,
+  cast_2: 37,
+  cast_3: 38,
+  cast_4: 39,
+  down_0: 40,
+  down_1: 41,
+  down_2: 42,
+  down_3: 43,
+  down_4: 44,
+  hurt_0: 45,
+  hurt_1: 46,
+  hurt_2: 47,
 } as const;
 
 export type HeroFrame = keyof typeof HERO_FRAMES;

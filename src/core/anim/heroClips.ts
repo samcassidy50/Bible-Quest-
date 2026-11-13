@@ -5,8 +5,7 @@ import type { HeroFrame } from './heroSheet';
  * Animation clips for the pixel-art hero. Frames come from the sprite sheet built by
  * scripts/art/process_hero.py (see heroSheet.ts for the frame names).
  *
- * Placeholders until their own art lands: `punch` borrows slash frames, `block` holds an idle
- * frame, `cast` borrows the victory pose and `die` holds the hurt pose.
+ * Placeholder until its own art lands: `punch` borrows slash frames.
  */
 
 const f = (frame: HeroFrame, ms: number): FrameStep<HeroFrame> => ({ frame, ms });
@@ -79,11 +78,35 @@ export const HERO_CLIPS = {
       ],
     },
   ),
-  hurt: frameClip('hurt', [f('hurt', 380)]),
-  die: frameClip('die', [f('hurt', 1000)], { hold: true }),
-  victory: frameClip('victory', [f('idle_0', 150), f('victory', 750)], { hold: true }),
-  block: frameClip('block', [f('idle_2', 520)]),
-  cast: frameClip('cast', [f('idle_0', 150), f('victory', 550)]),
+  // Flinch, recoil, shake it off.
+  hurt: frameClip('hurt', [f('hurt_0', 120), f('hurt_1', 140), f('hurt_2', 160)]),
+  // Stagger, sway, kneel, slump, rest (held). Gentle: worn out, not hurt.
+  die: frameClip(
+    'die',
+    [f('down_0', 180), f('down_1', 200), f('down_2', 240), f('down_3', 260), f('down_4', 500)],
+    { hold: true },
+  ),
+  // Relief, crouch, jump, land, proud pose (held).
+  victory: frameClip(
+    'victory',
+    [f('win_0', 180), f('win_1', 120), f('win_2', 220), f('win_3', 160), f('win_4', 500)],
+    { hold: true },
+  ),
+  // Brace, guard (held), take the hit, recover.
+  block: frameClip('block', [
+    f('block_0', 90),
+    f('block_1', 200),
+    f('block_2', 150),
+    f('block_3', 140),
+  ]),
+  // Ready, bow, raise the sword, power (a small hop), point forward.
+  cast: frameClip('cast', [
+    f('cast_0', 100),
+    f('cast_1', 160),
+    f('cast_2', 140),
+    f('cast_3', 260),
+    f('cast_4', 160),
+  ]),
 } as const;
 
 export type HeroClipName = keyof typeof HERO_CLIPS;

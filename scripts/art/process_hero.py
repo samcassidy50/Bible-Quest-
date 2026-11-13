@@ -66,7 +66,12 @@ STRIPS = [
         ['power_0', 'power_1', 'power_2', 'power_3', 'power_4', 'power_5'],
         0.74,
     ),
-    Strip('poses.webp', [None, 'walk', 'thrust', 'hurt', 'victory'], 0.82),
+    Strip('poses.webp', [None, 'walk', 'thrust', None, None], 0.82),
+    Strip('victory.webp', ['win_0', 'win_1', 'win_2', 'win_3', 'win_4'], 0.68),
+    Strip('block.webp', ['block_0', 'block_1', 'block_2', 'block_3'], 0.70),
+    Strip('cast.webp', ['cast_0', 'cast_1', 'cast_2', 'cast_3', 'cast_4'], 0.68),
+    Strip('down.webp', ['down_0', 'down_1', 'down_2', 'down_3', 'down_4'], 0.68),
+    Strip('hurt.webp', ['hurt_0', 'hurt_1', 'hurt_2'], 0.92),
 ]
 
 
