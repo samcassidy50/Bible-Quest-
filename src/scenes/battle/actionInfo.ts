@@ -1,4 +1,4 @@
-import type { ActionId } from '../../core/battle/types';
+import type { ActionId, SpecialId } from '../../core/battle/types';
 
 /** Display info for each hero action (`icon` is the emoji used inside text; buttons use the pixel icons in scenes/icons.ts). */
 export const ACTION_INFO: Record<
@@ -16,6 +16,33 @@ export const ACTION_INFO: Record<
   },
   sandals: { name: 'Sandals of Peace', short: 'Sandals', icon: '🕊️', color: 0x8e6bd8 },
   ultimate: { name: 'Full Armor of God', short: 'Ultimate', icon: '✨', color: 0xe6a817 },
+};
+
+/**
+ * What each piece of armor does, for the page shown after the angel gives it (original lines;
+ * `ref` is only a passage reference, never verse text).
+ */
+export const ARMOR_ABOUT: Record<SpecialId | 'ultimate', { text: string; ref: string }> = {
+  sword: {
+    text: 'A mighty strike that hits harder than an Attack. Answer right for an even bigger blow.',
+    ref: 'Ephesians 6:17',
+  },
+  shield: {
+    text: "Blocks the foe's next attack. Answer right to block two attacks and strike back too.",
+    ref: 'Ephesians 6:16',
+  },
+  breastplate: {
+    text: 'Heals your wounds. Answer right and it heals much more.',
+    ref: 'Ephesians 6:14',
+  },
+  sandals: {
+    text: 'Stuns the foe so it misses its next turn. Answer right to land a hit as well.',
+    ref: 'Ephesians 6:15',
+  },
+  ultimate: {
+    text: 'A huge strike that also heals you. Fill your Faith meter by answering well, then unleash it.',
+    ref: 'Ephesians 6:13',
+  },
 };
 
 export const COLOR = {

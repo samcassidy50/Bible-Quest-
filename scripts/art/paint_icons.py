@@ -20,7 +20,7 @@ from pathlib import Path
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from paint_angel import Canvas, OUTLINE, ellipse, hexc, polygon, union  # noqa: E402
+from pixel_kit import Canvas, OUTLINE, ellipse, hexc, polygon, union  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'src' / 'assets' / 'items' / 'icons.png'

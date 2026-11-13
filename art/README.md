@@ -28,6 +28,22 @@ the game only uses the processed sheet.
 Tips for prompts: one animation per request, same chat, re-upload a reference sheet, and ask for
 at least 40 px of empty magenta between frames so they never touch.
 
+# Angel art
+
+`angel-raw/` holds the angel strips drafted in ChatGPT, in the same format as the hero strips
+(frames left to right, facing right, flat magenta background). `python3 scripts/art/process_angel.py
+--preview` cuts them into `src/assets/angel/angel.png` and the generated
+`src/scenes/angel/angelSheet.ts` (cell size, robe-hem origin, where the hands are, animation
+ranges); never edit those by hand. Each frame is lined up on its robe hem, and the game adds the
+hover bob. Check `art/angel-preview.png`: the red dot marks the hands, where the gift sits.
+
+| File         | Frames                                     |
+| ------------ | ------------------------------------------ |
+| `hover.webp` | 6-frame wing-flap loop (`hover` animation) |
+
+To add a strip (descend, present, depart…), save it here, add it to `STRIPS` in the script and
+re-run it.
+
 # Foe art
 
 - These sheets in `src/assets/foes/` are **third-party art** from CraftPix free packs

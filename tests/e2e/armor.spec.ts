@@ -52,8 +52,14 @@ test('tapping Receive takes the gift', async ({ page }) => {
   }
   await waitFor(page, "s.battle.gift === 'sword' && !!s.targets['gift-continue']", 30_000);
   await tap(page, 'gift-continue');
-  await waitFor(page, "s.battle.gift === null && s.battle.result === 'VICTORY'", 30_000);
+  // The gift reaches the hero, then a page about the new armor waits for a tap.
+  await waitFor(page, "!!s.targets['armor-continue']", 30_000);
   expect((await state(page)).sounds).toContain('poweredUp');
+  await page.waitForTimeout(600);
+  expect((await battle(page)).gift).toBe('sword');
+  await snap(page, test.info().outputPath('armor-page.png'));
+  await tap(page, 'armor-continue');
+  await waitFor(page, "s.battle.gift === null && s.battle.result === 'VICTORY'", 30_000);
 });
 
 test('the map card shows which armor a passage awards', async ({ page }) => {
