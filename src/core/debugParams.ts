@@ -18,6 +18,7 @@ export const SCENE_KEYS = [
   'backdrops',
   'foes',
   'heroSelect',
+  'character',
 ] as const;
 export type SceneKey = (typeof SCENE_KEYS)[number];
 

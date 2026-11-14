@@ -17,6 +17,7 @@ import { UpgradesScene } from './scenes/menus/UpgradesScene';
 import { JournalScene } from './scenes/menus/JournalScene';
 import { SettingsScene } from './scenes/menus/SettingsScene';
 import { HeroSelectScene } from './scenes/menus/HeroSelectScene';
+import { CharacterScene } from './scenes/menus/CharacterScene';
 import { AnimViewerScene } from './scenes/hero/AnimViewerScene';
 import { SoundBoardScene } from './scenes/debug/SoundBoardScene';
 import { BackdropViewerScene } from './scenes/debug/BackdropViewerScene';
@@ -65,6 +66,7 @@ async function start(): Promise<void> {
       JournalScene,
       SettingsScene,
       HeroSelectScene,
+      CharacterScene,
       ScriptureScene,
       BattleScene,
       AnimViewerScene,

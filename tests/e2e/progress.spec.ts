@@ -215,3 +215,31 @@ test('a new player chooses a hero after the title; the choice is saved and used'
   await tap(page, 'hero:boy');
   await waitFor(page, "s.scene === 'settings' && s.save.settings.hero === 'boy'", 30_000);
 });
+
+test('the Hero button opens a character sheet with the hero, armor and stats', async ({ page }) => {
+  const save = base();
+  save.completed = {
+    'gen-001': { stars: 3, bestAccuracy: 1 },
+    'gen-002': { stars: 2, bestAccuracy: 0.8 },
+  };
+  save.upgrades.health = 1;
+  await seed(page, save);
+  await page.goto('/?scene=map&fast=1');
+  await waitFor(page, "s.scene === 'map' && !s.mapRevealing && !!s.targets.character");
+  await tap(page, 'character');
+  await waitFor(page, "s.scene === 'character' && !!s.character");
+  const sheet = (await state(page)).character!;
+  expect(sheet.hero).toBe('boy');
+  expect(sheet.stats.find((s) => s.id === 'health')!.value).toBe('115 HP');
+  expect(sheet.stats.map((s) => s.id)).toEqual([
+    'health',
+    'attack',
+    'defence',
+    'specials',
+    'ultimate',
+    'energy',
+  ]);
+  await snap(page, test.info().outputPath('character-sheet.png'));
+  await tap(page, 'back');
+  await waitFor(page, "s.scene === 'map'");
+});

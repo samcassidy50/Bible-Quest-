@@ -403,6 +403,7 @@ export class MapScene extends Phaser.Scene {
 
     const spend = availableStars(progress.save);
     const items: [string, string, number][] = [
+      ['character', '🧑 Hero', 0xc0392b],
       ['upgrades', spend > 0 ? `💪 Upgrades ★${spend}` : '💪 Upgrades', 0x8e44ad],
       ['journal', '📖 Journal', 0x2e86de],
       ['settings', '⚙️ Settings', 0x6b4a22],

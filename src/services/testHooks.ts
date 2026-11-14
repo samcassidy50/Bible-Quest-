@@ -83,6 +83,8 @@ export interface TestState {
   journalOpen: string | null;
   /** Foe gallery: the passage on screen and the sprite each of its foes uses (null = placeholder). */
   foeGallery: { encounter: string; foes: (string | null)[] } | null;
+  /** Character sheet: the hero shown, each stat's value, and the armor shown. */
+  character: { hero: string; stats: { id: string; value: string }[]; armor: string[] } | null;
   /** Which hero sheet the last hero sprite drew ('boy' or 'girl'). */
   heroSkin: string | null;
 }
@@ -115,6 +117,7 @@ let state: TestState = {
   journalOpen: null,
   foeGallery: null,
   heroSkin: null,
+  character: null,
 };
 
 export function updateTestState(patch: Partial<TestState>): void {
