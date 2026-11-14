@@ -41,6 +41,9 @@ interface Sheet {
   front?: number;
 }
 
+/** The slimes are tiny, so they are shown at twice the hero's pixel size. */
+const SLIME = { cell: 64, feet: { x: 33.5, y: 40 }, bodyHeight: 28, scale: 6, shadow: 26 };
+
 /**
  * The 128px packs draw their feet flush with the bottom edge of the cell. Standing them one pixel
  * past that edge puts their soles on the same line as the hero's, instead of sunk into the
@@ -61,8 +64,18 @@ const PAINTED = {
 };
 
 const SHEETS: Record<FoeSpriteId, Sheet> = {
-  'slime-blue': { ...PAINTED, url: slimeBlueUrl, bodyHeight: 46, shadow: 56 },
-  'slime-lava': { ...PAINTED, url: slimeLavaUrl, bodyHeight: 46, shadow: 56 },
+  'slime-blue': {
+    ...SLIME,
+    url: slimeBlueUrl,
+    cols: 11,
+    frames: { idle: 6, attack: 11, hurt: 5, death: 10 },
+  },
+  'slime-lava': {
+    ...SLIME,
+    url: slimeLavaUrl,
+    cols: 10,
+    frames: { idle: 6, attack: 9, hurt: 5, death: 10 },
+  },
   'thorn-plant': {
     url: thornPlantUrl,
     cell: 128,

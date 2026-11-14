@@ -13,8 +13,6 @@ Paints the original foes that appear in the game, pixel by pixel. Deterministic,
   flood-surge  a wall of floodwater with two crests
   squall       a racing raincloud that blows a gale
   tempest      a waterspout under a thunderhead
-  slime-blue   a blue jelly slime
-  slime-lava   a slime with a cracked, glowing crust
 
 Every sheet is a grid of 128x128 cells, COLS wide, one row per state: idle, attack, hurt, death
 (frame counts in FRAMES; src/scenes/battle/FoeSprite.ts mirrors them). Foes face LEFT and meet
@@ -1069,151 +1067,6 @@ def wave_frames(pal: dict, k: float, cx: float, second: bool, reach_k: float):
     return frame
 
 
-
-# ── Slimes ─────────────────────────────────────────────────────────────────────────────────────
-
-SLIMES = {
-    'slime-blue': dict(
-        tones=ramp('1b2668', '2a4aa0', '3b78cc', '64a8ea', 'aee0ff'),
-        edge=hexc('10173f'),
-        eye=DARK_EYE,
-        lava=False,
-    ),
-    'slime-lava': dict(
-        tones=ramp('1a100d', '2f1d18', '4a2e24', '674234', '86604a'),
-        edge=hexc('0d0806'),
-        eye=GLOW_EYE,
-        lava=True,
-    ),
-}
-EMBER = ramp('c4400e', 'ff8a1c', 'ffd34a', 'fff3b0')
-SHINE = ramp('d9f2ff', 'ffffff')
-
-
-def lava_cracks(cx: float, cy: float, rx: float, ry: float, salt: int = 0) -> set[Px]:
-    """A web of jagged cracks over the crust, scaled to the body."""
-    pts: set[Px] = set()
-    paths = [
-        [(-0.9, -0.1), (-0.45, 0.05), (-0.15, -0.25), (0.25, -0.15), (0.6, -0.4), (0.95, -0.3)],
-        [(-0.15, -0.25), (-0.05, -0.65), (0.15, -0.95)],
-        [(0.25, -0.15), (0.35, 0.3), (0.15, 0.65), (0.3, 0.95)],
-        [(-0.45, 0.05), (-0.55, 0.5), (-0.35, 0.9)],
-        [(0.6, -0.4), (0.75, 0.15), (0.95, 0.35)],
-    ]
-    for path in paths:
-        pts.update(polyline([(cx + u * rx, cy + v * ry) for u, v in path]))
-    return pts
-
-
-def paint_slime(c: Canvas, spec: dict, f: float, n: int, dx: float = 0.0, sx: float = 1.0, sy: float = 1.0,
-                lift: float = 0.0, eyes: str = 'open', melt: float = 0.0, embers: float = 1.0) -> None:
-    """
-    A jelly dome sitting on the ground: squash and stretch with sx/sy, hop with `lift`, flatten
-    into a puddle with `melt` (0..1). Faces LEFT toward the hero.
-    """
-    tones, edge = spec['tones'], spec['edge']
-    sy = sy * (1 - 0.82 * melt)
-    sx = sx * (1 + 0.55 * melt)
-    rx, ry = 26 * sx, 22 * sy
-    base = GY - lift
-    cx = GX + 2 + dx
-    cy = base - ry * 0.92
-    dome = {p: v for p, v in ball(cx, cy, rx, ry).items() if p[1] < base}
-    foot = {p: v for p, v in ball(cx, base - 3, rx * 1.1, 5).items() if p[1] < base}
-    body = union(foot, dome)
-
-    pick = None
-    if spec['lava']:
-        cracks = lava_cracks(cx, cy, rx, ry)
-        # Keep the face clear of cracks so the eyes read.
-        fy = cy - ry * 0.12
-        cracks = {
-            (x, y) for (x, y) in cracks
-            if not (cx - rx * 0.8 <= x <= cx - rx * 0.02 and fy - 4 <= y <= fy + 12)
-        }
-
-        def pick(x: int, y: int, tone: int, s_: float, u_: float):  # noqa: E306
-            if (x, y) in cracks:
-                return EMBER[min(3, 1 + tone // 2)]
-            return None
-
-    c.solid(body, tones, edge, pick=pick)
-    if spec['lava']:
-        # A soft glow along the cracks: the crust next to them warms up.
-        for (x, y) in list(cracks):
-            for q in ((x + 1, y), (x, y + 1)):
-                if q in body and q not in cracks and c.px.get(q) in tones[:3]:
-                    c.px[q] = EMBER[0]
-    else:
-        # Translucent jelly: a few bubbles inside and a bright shine on the upper left.
-        for bx, by, br in ((0.35, 0.2, 2.6), (0.15, 0.5, 1.8), (0.55, -0.05, 1.5)):
-            if ry > 8:
-                c.put(disc(cx + bx * rx, cy + by * ry, br), tones[3])
-                c.put([(int(cx + bx * rx - br * 0.4), int(cy + by * ry - br * 0.4))], tones[4])
-        if ry > 6:
-            c.put(disc(cx - rx * 0.42, cy - ry * 0.5, max(1.5, rx * 0.16), max(1.0, ry * 0.12)), SHINE[1])
-            c.put(disc(cx - rx * 0.2, cy - ry * 0.7, 1.4, 1.0), SHINE[0])
-
-    # Face, toward the hero (left). Hidden once it has melted flat.
-    if melt < 0.55:
-        ey = cy - ry * 0.12
-        ew, eh = 5, max(3, int(7 * min(1.0, sy)))
-        shut = eyes == 'shut'
-        glare(c, cx - rx * 0.62, ey, ew, eh, 2, spec['eye'], edge, shut=shut)
-        glare(c, cx - rx * 0.2, ey, ew, eh, -2, spec['eye'], edge, shut=shut)
-        mouth_y = int(ey + eh + 3)
-        mx = cx - rx * 0.36
-        if eyes == 'shut':
-            c.put(polyline([(mx - 3, mouth_y + 1), (mx, mouth_y - 1), (mx + 3, mouth_y + 1)]), edge)
-        else:
-            c.put(polyline([(mx - 3, mouth_y), (mx, mouth_y - 1), (mx + 3, mouth_y)]), edge)
-
-    if spec['lava'] and embers > 0:
-        # Embers drifting up off the crust (they loop over the frames).
-        for i in range(4):
-            t = ((f / n) + i / 4) % 1.0
-            ex = cx + (i - 1.5) * rx * 0.35 + 2 * math.sin(t * math.tau + i)
-            ey = cy - ry - 2 - t * 22 * embers
-            col = EMBER[3] if t < 0.3 else EMBER[2] if t < 0.65 else EMBER[1]
-            if t < 0.9:
-                c.put([(int(ex), int(ey))], col)
-                if t < 0.4:
-                    c.put([(int(ex), int(ey) + 1)], EMBER[1])
-
-
-def slime_frames(name: str):
-    spec = SLIMES[name]
-
-    def frame(state: str, f: int) -> Image.Image:
-        c = Canvas()
-        n = FRAMES[state]
-        if state == 'idle':
-            w = wave01(f, n)
-            paint_slime(c, spec, f, n, sx=1 - 0.05 * w, sy=1 + 0.07 * w)
-        elif state == 'attack':
-            # Squash back, hop at the hero, splat, settle.
-            dx = (0, 3, 5, -6, -16, -20, -10, -2)[f]
-            sxs = (1.0, 1.1, 1.2, 0.85, 0.9, 1.25, 1.1, 1.0)[f]
-            sys = (1.0, 0.86, 0.74, 1.22, 1.1, 0.72, 0.9, 1.0)[f]
-            lift = (0, 0, 0, 8, 12, 0, 0, 0)[f]
-            paint_slime(c, spec, f, n, dx=dx, sx=sxs, sy=sys, lift=lift)
-        elif state == 'hurt':
-            paint_slime(c, spec, f, n, dx=(5, 7, 4, 1)[f], sx=(1.2, 1.25, 1.1, 1.0)[f], sy=(0.75, 0.7, 0.88, 1.0)[f], eyes='shut')
-        else:
-            k = f / (n - 1)
-            paint_slime(c, spec, f, n, dx=3, melt=min(1.0, k * 1.5), eyes='shut', embers=max(0.0, 1 - k * 2))
-            if k > 0.45:
-                poof(c, GX + 5, GY - 6, (k - 0.45) / 0.55, size=1.1, salt=3)
-            if k > 0.9:
-                c = Canvas()
-                poof(c, GX + 5, GY - 6, 1.0, size=1.1, salt=3)
-        c.outline()
-        im = c.image()
-        return flash(im, 0.5) if state == 'hurt' and f == 0 else im
-
-    return frame
-
-
 # ══════════════════════════════════════════════════════════════════════════════════════════════
 
 FOES = {
@@ -1225,8 +1078,6 @@ FOES = {
     'tempest': tempest_frame,
     'wave': wave_frames(SEA, 1.0, GX + 5, False, 1.0),
     'flood-surge': wave_frames(SURGE, 1.5, GX - 2, True, 0.75),
-    'slime-blue': slime_frames('slime-blue'),
-    'slime-lava': slime_frames('slime-lava'),
 }
 
 
