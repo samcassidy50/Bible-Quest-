@@ -13,6 +13,12 @@ export interface FoeSpec {
   name: string;
   maxHp: number;
   attack: number;
+  /**
+   * A second foe fought in the same wave, standing behind this one. Hits land on the front foe
+   * (the Sword and the ultimate sweep both); the two take turns attacking; when the front foe
+   * falls, the other steps up.
+   */
+  partner?: FoeSpec;
 }
 
 export interface BattleConfig {
@@ -49,6 +55,12 @@ export interface HeroActionResult {
   stunned: boolean;
   faithGained: number;
   foeDefeated: boolean;
+  /** Damage the sweep dealt to the back foe of a pair (Sword, ultimate). */
+  backDamage: number;
+  /** The back foe of a pair fell (to a sweep) while the front one stands. */
+  backDefeated: boolean;
+  /** The front foe of a pair fell and the back one stepped up; the wave goes on. */
+  steppedUp: boolean;
   /** Set when the defeated foe was followed by a new wave. */
   nextWave: number | null;
   victory: boolean;
@@ -56,6 +68,8 @@ export interface HeroActionResult {
 
 export interface EnemyTurnResult {
   foeId: string;
+  /** Which foe of a pair attacked (always 'front' for a single foe). */
+  attacker: 'front' | 'back';
   /** Damage dealt to the hero after blocks. */
   damage: number;
   blocked: boolean;

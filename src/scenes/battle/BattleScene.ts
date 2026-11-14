@@ -78,6 +78,9 @@ export class BattleScene extends Phaser.Scene {
   private giftContinue?: Button;
   private armorPage?: ArmorPage;
   private foeBar!: HpBar;
+  /** The second foe of a pair (wave with a partner) and its bar, while it stands. */
+  private back?: Fighter;
+  private backBar?: HpBar;
   private wavePips!: Phaser.GameObjects.Graphics;
   private refText!: Phaser.GameObjects.Text;
   private actionBar!: ActionBar;
@@ -176,6 +179,7 @@ export class BattleScene extends Phaser.Scene {
       this.engine.foe.name,
       this.engine.foe.maxHp,
     );
+    this.buildBack();
 
     this.heroPanel = this.add.container(0, 0);
     const panelBg = pixelBox(this, UI.button, 180, 58, 366, 117).setTint(0x3a3166);
@@ -213,6 +217,28 @@ export class BattleScene extends Phaser.Scene {
     return new Fighter(this, 0, 0, 'foe', spec.color, spec.size, spec.sprite);
   }
 
+  /** The back foe of a pair, if this wave has one (its bar is narrower so both fit). */
+  private buildBack(): void {
+    const spec = this.engine.backFoe as EncounterFoe | null;
+    this.back?.destroy();
+    this.backBar?.destroy();
+    this.back = undefined;
+    this.backBar = undefined;
+    if (!spec) return;
+    this.back = this.makeFoe(spec);
+    this.backBar = new HpBar(this, 0, 0, 180, COLOR.foeHp, spec.name, spec.maxHp);
+    if (!this.debug.freeze) this.back.idle();
+  }
+
+  /** Where the front foe stands: a little nearer the hero when a pair shares the field. */
+  private get frontX(): number {
+    return this.scale.gameSize.width * (this.back ? 0.54 : 0.58);
+  }
+
+  private get backX(): number {
+    return this.scale.gameSize.width * 0.72;
+  }
+
   /** Lowest y that stays clear of the wave pips and passage title along the top. */
   private static readonly HUD_CLEAR_Y = 120;
 
@@ -221,6 +247,13 @@ export class BattleScene extends Phaser.Scene {
     const above = this.groundY - this.foe.figureHeight - 40;
     const y = above >= BattleScene.HUD_CLEAR_Y ? above : this.groundY + 62;
     this.foeBar.setPosition(this.foe.x, y);
+    if (this.back && this.backBar) {
+      const above2 = this.groundY - this.back.figureHeight - 40;
+      this.backBar.setPosition(
+        this.back.x,
+        above2 >= BattleScene.HUD_CLEAR_Y ? above2 : this.groundY + 62,
+      );
+    }
   }
 
   /** Where numbers float up from over the foe, kept below the top HUD for tall foes. */
@@ -239,7 +272,8 @@ export class BattleScene extends Phaser.Scene {
 
     this.backdrop.layout(W, H, this.groundY);
     this.hero.setPosition(ins.left + W * 0.22, this.groundY);
-    this.foe.setPosition(W * 0.58, this.groundY);
+    this.foe.setPosition(this.frontX, this.groundY);
+    this.back?.setPosition(this.backX, this.groundY);
     this.placeFoeBar();
     this.heroPanel.setPosition(ins.left + 24, H - ins.bottom - 136);
     this.refText.setPosition(ins.left + 24, ins.top + 20);
@@ -356,15 +390,17 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private async afterHero(res: HeroActionResult): Promise<void> {
+    if (res.backDefeated) await this.backDefeated();
+    if (res.steppedUp) await this.stepUp();
     if (res.victory) {
-      await this.foeDefeated();
+      await Promise.all([this.foeDefeated(), this.backDefeated()]);
       this.drawWaves();
       await this.hero.act('victory');
       await this.showResult(true);
       return;
     }
     if (res.foeDefeated && res.nextWave !== null) {
-      await this.foeDefeated();
+      await Promise.all([this.foeDefeated(), this.backDefeated()]);
       await this.spawnNextFoe();
       this.setBusy(false);
       return;
@@ -418,6 +454,7 @@ export class BattleScene extends Phaser.Scene {
     if (res.stunned) {
       sfx.play('calm');
       this.foe.setStunned(true);
+      this.back?.setStunned(true);
     }
     this.drawFaith();
     this.sync();
@@ -459,6 +496,22 @@ export class BattleScene extends Phaser.Scene {
       );
       // After a finishing blow the engine already holds the next foe, so its HP is not this one's.
       this.foeBar.setValue(res.foeDefeated ? 0 : this.engine.foeHp);
+      if (res.backDamage > 0 && this.back && this.backBar) {
+        const back = this.back;
+        back.figure.setAlpha(0.4);
+        this.time.delayedCall(90, () => back.figure.setAlpha(1));
+        void back.foeAct('hurt');
+        this.floatText(
+          back.x,
+          this.foeTextY,
+          `${res.backDamage}`,
+          powered ? COLOR.powered : COLOR.damage,
+          powered ? 52 : 40,
+        );
+        // A stepped-up back foe is now the engine's front foe.
+        const left = res.steppedUp ? this.engine.foeHp : this.engine.backFoeHp;
+        this.backBar.setValue(res.backDefeated || (res.foeDefeated && !res.steppedUp) ? 0 : left);
+      }
       this.sync();
       void tweenAsync(this, { targets: this.foe, x: this.foe.x + 24, duration: 70, yoyo: true });
     };
@@ -484,15 +537,17 @@ export class BattleScene extends Phaser.Scene {
       sfx.play('calm');
       this.floatText(this.foe.x, this.foeTextY, 'Calmed… skips its turn', '#d7c8ff', 28);
       this.foe.setStunned(false);
+      this.back?.setStunned(false);
       this.sync();
       await wait(this, 700);
       return;
     }
-    const startX = this.foe.x;
+    const attacker = res.attacker === 'back' && this.back ? this.back : this.foe;
+    const startX = attacker.x;
     sfx.play('foeAttack', { vary: true });
-    void this.foe.foeAct('attack', 560); // spans the lunge and the return
+    void attacker.foeAct('attack', 560); // spans the lunge and the return
     await tweenAsync(this, {
-      targets: this.foe,
+      targets: attacker,
       x: this.hero.x + 170,
       duration: 260,
       ease: 'Quad.in',
@@ -509,35 +564,81 @@ export class BattleScene extends Phaser.Scene {
       this.floatText(this.hero.x, this.hero.y - 220, `-${res.damage}`, '#ff6b6b', 48);
       this.heroBar.setValue(this.engine.heroHp);
     }
-    await tweenAsync(this, { targets: this.foe, x: startX, duration: 300, ease: 'Quad.out' });
+    await tweenAsync(this, { targets: attacker, x: startX, duration: 300, ease: 'Quad.out' });
     this.sync();
   }
 
-  private async foeDefeated(): Promise<void> {
+  private async foeDefeated(foe: Fighter = this.foe): Promise<void> {
     sfx.play('foeDefeat');
-    this.tweens.killTweensOf(this.foe.figure);
-    if (this.foe.foeSprite) {
+    this.tweens.killTweensOf(foe.figure);
+    if (foe.foeSprite) {
       // Sprite foes have their own defeat frames; just fade what is left.
-      await this.foe.foeAct('death');
-      await tweenAsync(this, { targets: this.foe, alpha: 0, duration: 200 });
+      await foe.foeAct('death');
+      await tweenAsync(this, { targets: foe, alpha: 0, duration: 200 });
       return;
     }
-    await tweenAsync(this, { targets: this.foe, alpha: 0, y: this.foe.y - 40, duration: 450 });
+    await tweenAsync(this, { targets: foe, alpha: 0, y: foe.y - 40, duration: 450 });
+  }
+
+  /** The back foe of a pair falls (a sweep got it); its bar goes with it. */
+  private async backDefeated(): Promise<void> {
+    const back = this.back;
+    if (!back) return;
+    this.back = undefined;
+    await this.foeDefeated(back);
+    back.destroy();
+    this.backBar?.destroy();
+    this.backBar = undefined;
+  }
+
+  /** The front foe of a pair falls and the other one steps up to take its place. */
+  private async stepUp(): Promise<void> {
+    const next = this.back;
+    const nextBar = this.backBar;
+    if (!next || !nextBar) return;
+    await this.foeDefeated();
+    this.foe.destroy();
+    this.foeBar.destroy();
+    this.foe = next;
+    this.foeBar = nextBar;
+    this.back = undefined;
+    this.backBar = undefined;
+    this.foe.setStunned(false);
+    await tweenAsync(this, {
+      targets: [this.foe, this.foeBar],
+      x: this.frontX,
+      duration: 380,
+      ease: 'Sine.inOut',
+    });
+    this.placeFoeBar();
+    this.sync();
   }
 
   private async spawnNextFoe(): Promise<void> {
     const spec = this.engine.foe as EncounterFoe;
     this.foe.destroy();
     this.foe = this.makeFoe(spec);
-    this.foe.setPosition(this.scale.gameSize.width * 0.58, this.groundY).setAlpha(0);
+    this.buildBack();
+    this.foe.setPosition(this.frontX, this.groundY).setAlpha(0);
+    this.back?.setPosition(this.backX, this.groundY).setAlpha(0);
     this.children.moveBelow(this.foe, this.foeBar);
     this.foeBar.reset(spec.name, spec.maxHp);
     this.placeFoeBar();
     if (!this.debug.freeze) this.foe.idle();
     this.drawWaves();
     sfx.play('wave');
-    await this.banner(`Wave ${this.engine.waveIndex + 1} · ${spec.name}`);
-    await tweenAsync(this, { targets: this.foe, alpha: 1, duration: 300 });
+    const back = this.engine.backFoe;
+    const who = !back
+      ? spec.name
+      : back.name === spec.name
+        ? `${spec.name} ×2`
+        : `${spec.name} & ${back.name}`;
+    await this.banner(`Wave ${this.engine.waveIndex + 1} · ${who}`);
+    await tweenAsync(this, {
+      targets: [this.foe, this.back].filter(Boolean),
+      alpha: 1,
+      duration: 300,
+    });
   }
 
   /**
@@ -796,6 +897,8 @@ export class BattleScene extends Phaser.Scene {
         foeAnims: this.foe.foeAnimHistory,
         foeHp: e.foeHp,
         foeBarHp: this.foeBar.value,
+        backFoeId: e.backFoe?.id ?? null,
+        backFoeHp: e.backFoeHp,
         faith: e.faith,
         blocks: e.blocks,
         foeStunned: e.foeStunned,

@@ -17,6 +17,9 @@ export interface BattleTestState {
   foeHp: number;
   /** HP the foe's bar is showing (lags `foeHp` until the hit lands). */
   foeBarHp: number;
+  /** The second foe of a pair while it stands (null for a single foe), and its HP. */
+  backFoeId: string | null;
+  backFoeHp: number;
   faith: number;
   blocks: number;
   foeStunned: boolean;

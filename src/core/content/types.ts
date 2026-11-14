@@ -34,6 +34,8 @@ export interface EncounterFoe extends FoeSpec {
   size: number;
   /** Sprite art for this foe; without it the placeholder shape is drawn in `color`. */
   sprite?: FoeSpriteId;
+  /** The second foe of a pair (see FoeSpec.partner). */
+  partner?: EncounterFoe;
 }
 
 /** An energy orb in the reading (+1 energy when tapped). */

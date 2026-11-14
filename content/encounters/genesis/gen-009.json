@@ -15,13 +15,22 @@
       "sprite": "wave"
     },
     {
-      "id": "wave-2",
+      "id": "wave-2a",
       "name": "Rising Wave",
-      "maxHp": 55,
-      "attack": 11,
+      "maxHp": 35,
+      "attack": 8,
       "color": "#285f85",
-      "size": 0.9,
-      "sprite": "wave"
+      "size": 0.8,
+      "sprite": "wave",
+      "partner": {
+        "id": "wave-2b",
+        "name": "Rising Wave",
+        "maxHp": 35,
+        "attack": 8,
+        "color": "#2f6f9a",
+        "size": 0.8,
+        "sprite": "wave"
+      }
     },
     {
       "id": "surge",

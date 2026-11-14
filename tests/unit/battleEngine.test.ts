@@ -356,3 +356,90 @@ describe('BattleEngine oneShot (debug)', () => {
     expect(e.foeHp).toBe(60);
   });
 });
+
+describe('BattleEngine foe pairs', () => {
+  const pair = (overrides: Partial<BattleConfig> = {}) =>
+    oneWave({
+      waves: [
+        {
+          id: 'front',
+          name: 'Front',
+          maxHp: 20,
+          attack: 5,
+          partner: { id: 'back', name: 'Back', maxHp: 30, attack: 8 },
+        },
+      ],
+      unlockedSpecials: ['sword', 'sandals'],
+      ...overrides,
+    });
+
+  it('starts with both foes; an Attack hits only the front one', () => {
+    const e = started(pair());
+    expect(e.foe.id).toBe('front');
+    expect(e.backFoe?.id).toBe('back');
+    expect(e.backFoeHp).toBe(30);
+    const r = act(e, 'attack', false);
+    expect(r.damage).toBe(10);
+    expect(r.backDamage).toBe(0);
+    expect(e.foeHp).toBe(10);
+    expect(e.backFoeHp).toBe(30);
+  });
+
+  it('the two take turns attacking', () => {
+    const e = started(pair());
+    act(e, 'attack', false);
+    const first = e.enemyTurn();
+    act(e, 'attack', false); // the front foe falls on the second hit…
+    expect(e.foe.id).toBe('back'); // …and the back foe steps up
+    expect(e.foeHp).toBe(30);
+    const second = e.enemyTurn();
+    expect(first).toMatchObject({ attacker: 'front', foeId: 'front', damage: 5 });
+    expect(second).toMatchObject({ attacker: 'front', foeId: 'back', damage: 8 });
+  });
+
+  it('alternates attackers while both stand', () => {
+    const e = started(pair({ waves: [{ ...pair().waves[0]!, maxHp: 100 }] }));
+    const attackers: string[] = [];
+    for (let i = 0; i < 3; i++) {
+      act(e, 'attack', false);
+      attackers.push(e.enemyTurn().attacker);
+    }
+    expect(attackers).toEqual(['front', 'back', 'front']);
+  });
+
+  it('when the front foe falls the back one steps up and the wave goes on', () => {
+    const e = started(pair());
+    const r = act(e, 'attack', true); // 20 damage: front falls
+    expect(r).toMatchObject({ foeDefeated: true, steppedUp: true, nextWave: null, victory: false });
+    expect(e.foe.id).toBe('back');
+    expect(e.foeHp).toBe(30);
+    expect(e.backFoe).toBeNull();
+    expect(e.phase).toBe('ENEMY_TURN');
+  });
+
+  it('the Sword sweeps both foes and can fell the back one first', () => {
+    const e = started(pair({ waves: [{ ...pair().waves[0]!, maxHp: 100 }] }));
+    const r = act(e, 'sword', true);
+    const sweep = 10 * TUNING.sword.powered;
+    expect(r.damage).toBe(sweep);
+    expect(r.backDamage).toBe(30); // capped at the back foe's HP
+    expect(r.backDefeated).toBe(true);
+    expect(e.backFoe).toBeNull();
+    expect(e.foeHp).toBe(100 - sweep);
+  });
+
+  it('a sweep that fells both clears the wave', () => {
+    const e = started(pair({ startingFaith: TUNING.faith.max }));
+    const r = act(e, 'ultimate');
+    expect(r.victory).toBe(true);
+    expect(e.phase).toBe('VICTORY');
+  });
+
+  it('a stun skips the whole pair once', () => {
+    const e = started(pair({ waves: [{ ...pair().waves[0]!, maxHp: 100 }] }));
+    act(e, 'sandals', false);
+    expect(e.enemyTurn().skippedStunned).toBe(true);
+    act(e, 'attack', false);
+    expect(e.enemyTurn().skippedStunned).toBe(false);
+  });
+});

@@ -27,7 +27,11 @@ export function buildEncounter(raw: unknown, bible: Bible, source = 'encounter')
     ...(f.weather ? { weather: f.weather } : {}),
     translation: 'BSB',
     verses: resolvePassage(bible, f.passage),
-    waves: f.waves.map((w) => ({ ...w, color: parseInt(w.color.slice(1), 16) })),
+    waves: f.waves.map(({ partner, ...w }) => ({
+      ...w,
+      color: parseInt(w.color.slice(1), 16),
+      ...(partner ? { partner: { ...partner, color: parseInt(partner.color.slice(1), 16) } } : {}),
+    })),
     orbs: f.orbs,
     ...(f.unlocks ? { unlocks: f.unlocks } : {}),
     questions: f.questions,
@@ -64,8 +68,10 @@ export function validateEncounter(e: Encounter): string[] {
   }
   const foeIds = new Set<string>();
   for (const w of e.waves) {
-    if (foeIds.has(w.id)) errors.push(`duplicate foe id "${w.id}"`);
-    foeIds.add(w.id);
+    for (const f of w.partner ? [w, w.partner] : [w]) {
+      if (foeIds.has(f.id)) errors.push(`duplicate foe id "${f.id}"`);
+      foeIds.add(f.id);
+    }
   }
   return errors;
 }

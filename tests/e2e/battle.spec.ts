@@ -231,3 +231,26 @@ test('?oneShot=1 wins each wave in one hit, and the health bar empties before th
   await waitFor(page, "s.battle.result === 'VICTORY'", 60_000);
   expect((await battle(page)).asked).toBe(3);
 });
+
+test('a pair wave: two foes on the field, and the back one steps up when the front falls', async ({
+  page,
+}) => {
+  await page.goto('/?scene=battle&encounter=gen-009&seed=1&oneShot=1&fast=1');
+  const hit = async () => {
+    await heroTurn(page);
+    await tap(page, 'action:attack');
+    await waitFor(page, '!!s.targets["answer:0"]');
+    await tap(page, `answer:${(await battle(page)).question!.answerIndex}`);
+  };
+  await hit(); // wave 1 falls in one hit
+  await waitFor(page, "s.battle.wave === 1 && s.battle.backFoeId === 'wave-2b'", 30_000);
+  await heroTurn(page);
+  await snap(page, test.info().outputPath('pair.png'));
+  expect((await battle(page)).foeId).toBe('wave-2a');
+
+  await hit(); // the front wave falls; the back one steps up and the wave goes on
+  await waitFor(page, "s.battle.foeId === 'wave-2b' && s.battle.backFoeId === null", 30_000);
+  expect((await battle(page)).wave).toBe(1);
+  await hit();
+  await waitFor(page, "s.battle.wave === 2 && s.battle.foeId === 'surge'", 30_000);
+});

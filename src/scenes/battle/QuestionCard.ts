@@ -3,7 +3,7 @@ import { pixelBox, UI } from '../ui/pixelUi';
 import type { ActionId } from '../../core/battle/types';
 import type { Question } from '../../core/content/types';
 import { Button } from '../ui/Button';
-import { FONT_READ, FONT_TITLE, FONT_UI, tweenAsync, wait } from '../util';
+import { FONT_READ, FONT_TITLE, FONT_UI, FONT_VERSE, tweenAsync, wait } from '../util';
 import { ACTION_INFO, COLOR } from './actionInfo';
 
 const ANSWER_FILL = 0x3c3366;
@@ -176,22 +176,28 @@ export class QuestionCard extends Phaser.GameObjects.Container {
 
     const answer = q.choices[q.answerIndex];
     const lead = chosen < 0 ? '⏰ Time’s up!' : 'Not quite.';
-    const fb = this.scene.add.text(left, fbY, `${lead} The answer is “${answer}”.`, {
-      fontFamily: FONT_UI,
+    const fb = this.scene.add.text(left, fbY - 20, `${lead} The answer is “${answer}”.`, {
+      fontFamily: FONT_READ,
       fontSize: '24px',
       fontStyle: 'bold',
       color: '#a93226',
       wordWrap: { width: cw - 300, useAdvancedWrap: true },
     });
-    const quote = this.scene.add.text(left, fbY + 40, `The verse says: “…${q.highlight}…”`, {
-      fontFamily: FONT_TITLE,
-      fontSize: '24px',
-      fontStyle: 'italic',
-      color: COLOR.ink,
-      backgroundColor: '#fbe8a6',
-      padding: { x: 6, y: 4 },
-      wordWrap: { width: cw - 300, useAdvancedWrap: true },
-    });
+    // The quote goes under the message, however many lines that took.
+    const quote = this.scene.add.text(
+      left,
+      fb.y + fb.height + 10,
+      `The verse says: “…${q.highlight}…”`,
+      {
+        fontFamily: FONT_VERSE,
+        fontSize: '24px',
+        fontStyle: 'italic',
+        color: COLOR.ink,
+        backgroundColor: '#fbe8a6',
+        padding: { x: 6, y: 4 },
+        wordWrap: { width: cw - 300, useAdvancedWrap: true },
+      },
+    );
     this.add([fb, quote]);
 
     if (autoContinue) {

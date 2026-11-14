@@ -24,7 +24,13 @@ export class BattleEngine {
   private _turn = 0;
   private _waveIndex = 0;
   private _heroHp: number;
+  /** The front foe of the wave and its HP; a pair also has a back foe. */
+  private _front: FoeSpec;
   private _foeHp: number;
+  private _back: FoeSpec | null;
+  private _backHp: number;
+  /** Enemy turns taken this wave, so a pair alternates attackers. */
+  private _attacks = 0;
   private _faith: number;
   private _streak = 0;
   private _blocks = 0;
@@ -44,7 +50,11 @@ export class BattleEngine {
     }
     this._unlocked = new Set(config.unlockedSpecials);
     this._heroHp = config.hero.maxHp;
-    this._foeHp = this.foe.maxHp;
+    const first = config.waves[0] as FoeSpec;
+    this._front = first;
+    this._foeHp = first.maxHp;
+    this._back = first.partner ?? null;
+    this._backHp = this._back?.maxHp ?? 0;
     this._faith = clamp(config.startingFaith ?? 0, 0, TUNING.faith.max);
     this._energy = clamp(config.startingEnergy ?? 0, 0, TUNING.energy.max);
   }
@@ -71,8 +81,16 @@ export class BattleEngine {
   get waveCount(): number {
     return this.config.waves.length;
   }
+  /** The foe in front (the one hits land on). */
   get foe(): FoeSpec {
-    return this.config.waves[this._waveIndex] as FoeSpec;
+    return this._front;
+  }
+  /** The second foe of a pair, while it stands. */
+  get backFoe(): FoeSpec | null {
+    return this._back;
+  }
+  get backFoeHp(): number {
+    return this._backHp;
   }
   get heroHp(): number {
     return this._heroHp;
@@ -169,9 +187,12 @@ export class BattleEngine {
       case 'attack':
         hit(correct ? TUNING.attack.powered : TUNING.attack.base);
         break;
-      case 'sword':
-        hit((correct ? TUNING.sword.powered : TUNING.sword.base) * this.specialPower);
+      case 'sword': {
+        const mult = (correct ? TUNING.sword.powered : TUNING.sword.base) * this.specialPower;
+        hit(mult);
+        result.backDamage = this.damageBack(mult);
         break;
+      }
       case 'shield':
         result.blocksAdded = correct ? TUNING.shield.poweredBlocks : TUNING.shield.baseBlocks;
         this._blocks += result.blocksAdded;
@@ -197,8 +218,12 @@ export class BattleEngine {
   /** Runs the foe's turn: skipped if stunned, absorbed by a shield block, otherwise damages the hero. */
   enemyTurn(): EnemyTurnResult {
     this.expectPhase('ENEMY_TURN');
+    const attacker = this._back && this._attacks % 2 === 1 ? 'back' : 'front';
+    const foe = attacker === 'back' ? (this._back as FoeSpec) : this._front;
+    this._attacks++;
     const result: EnemyTurnResult = {
-      foeId: this.foe.id,
+      foeId: foe.id,
+      attacker,
       damage: 0,
       blocked: false,
       skippedStunned: false,
@@ -212,7 +237,7 @@ export class BattleEngine {
       this._blocks--;
       result.blocked = true;
     } else {
-      result.damage = this.roll(this.foe.attack);
+      result.damage = this.roll(foe.attack);
       this._heroHp = Math.max(0, this._heroHp - result.damage);
     }
 
@@ -230,21 +255,42 @@ export class BattleEngine {
   private resolveUltimate(): HeroActionResult {
     this._faith = 0;
     const result = this.emptyResult('ultimate', null, 0);
-    result.damage = this.damageFoe(TUNING.ultimate.damage + (this.config.ultimateBonus ?? 0));
+    const mult = TUNING.ultimate.damage + (this.config.ultimateBonus ?? 0);
+    result.damage = this.damageFoe(mult);
+    result.backDamage = this.damageBack(mult);
     result.healed = this.healHero(TUNING.ultimate.heal);
     return this.finishHeroAction(result);
   }
 
   private finishHeroAction(result: HeroActionResult): HeroActionResult {
     this._turn++;
+    if (this._back && this._backHp === 0) {
+      this._back = null;
+      if (this._foeHp > 0) result.backDefeated = true;
+    }
     if (this._foeHp > 0) {
       this._phase = 'ENEMY_TURN';
       return result;
     }
     result.foeDefeated = true;
+    if (this._back) {
+      // The other foe of the pair steps up; the wave goes on.
+      this._front = this._back;
+      this._foeHp = this._backHp;
+      this._back = null;
+      this._backHp = 0;
+      result.steppedUp = true;
+      this._phase = 'ENEMY_TURN';
+      return result;
+    }
     if (this._waveIndex < this.config.waves.length - 1) {
       this._waveIndex++;
-      this._foeHp = this.foe.maxHp;
+      const next = this.config.waves[this._waveIndex] as FoeSpec;
+      this._front = next;
+      this._foeHp = next.maxHp;
+      this._back = next.partner ?? null;
+      this._backHp = this._back?.maxHp ?? 0;
+      this._attacks = 0;
       this._foeStun = 0; // a stun doesn't carry over to the next foe; shield blocks do
       result.nextWave = this._waveIndex;
       this._phase = 'HERO_CHOOSE';
@@ -272,6 +318,15 @@ export class BattleEngine {
     const dmg = this.roll(this.config.hero.attack * multiplier);
     const dealt = this.config.oneShot ? this._foeHp : Math.min(dmg, this._foeHp);
     this._foeHp -= dealt;
+    return dealt;
+  }
+
+  /** The sweep's share for the back foe of a pair (0 when there is none). */
+  private damageBack(multiplier: number): number {
+    if (!this._back || this._backHp === 0) return 0;
+    const dmg = this.roll(this.config.hero.attack * multiplier);
+    const dealt = this.config.oneShot ? this._backHp : Math.min(dmg, this._backHp);
+    this._backHp -= dealt;
     return dealt;
   }
 
@@ -303,6 +358,9 @@ export class BattleEngine {
       stunned: false,
       faithGained,
       foeDefeated: false,
+      backDamage: 0,
+      backDefeated: false,
+      steppedUp: false,
       nextWave: null,
       victory: false,
     };
