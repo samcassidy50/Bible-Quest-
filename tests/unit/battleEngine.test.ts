@@ -443,3 +443,58 @@ describe('BattleEngine foe pairs', () => {
     expect(e.enemyTurn().skippedStunned).toBe(false);
   });
 });
+
+describe('BattleEngine targeting a pair', () => {
+  const pair = () =>
+    oneWave({
+      waves: [
+        {
+          id: 'front',
+          name: 'Front',
+          maxHp: 50,
+          attack: 5,
+          partner: { id: 'back', name: 'Back', maxHp: 15, attack: 8 },
+        },
+      ],
+      unlockedSpecials: ['sword'],
+    });
+
+  it('targets the front foe by default; a single foe cannot be retargeted', () => {
+    expect(started(pair()).target).toBe('front');
+    const single = started();
+    expect(() => single.setTarget('back')).toThrow(/no back foe/);
+  });
+
+  it('only changes target on the hero’s turn', () => {
+    const e = started(pair());
+    e.choose('attack');
+    expect(() => e.setTarget('back')).toThrow(/Expected phase HERO_CHOOSE/);
+  });
+
+  it('an Attack lands on the targeted back foe', () => {
+    const e = started(pair());
+    e.setTarget('back');
+    const r = act(e, 'attack', false);
+    expect(r.damage).toBe(0);
+    expect(r.backDamage).toBe(10);
+    expect(e.foeHp).toBe(50);
+    expect(e.backFoeHp).toBe(5);
+  });
+
+  it('felling the targeted back foe sends the target back to the front', () => {
+    const e = started(pair());
+    e.setTarget('back');
+    const r = act(e, 'attack', true); // 20 ≥ 15
+    expect(r).toMatchObject({ backDefeated: true, foeDefeated: false });
+    expect(e.backFoe).toBeNull();
+    expect(e.target).toBe('front');
+  });
+
+  it('the Sword sweeps both whatever the target', () => {
+    const e = started(pair());
+    e.setTarget('back');
+    const r = act(e, 'sword', false);
+    expect(r.damage).toBe(10 * TUNING.sword.base);
+    expect(r.backDamage).toBe(Math.min(15, 10 * TUNING.sword.base));
+  });
+});

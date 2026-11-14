@@ -20,6 +20,8 @@ export interface BattleTestState {
   /** The second foe of a pair while it stands (null for a single foe), and its HP. */
   backFoeId: string | null;
   backFoeHp: number;
+  /** Which foe of a pair single-target hits land on. */
+  target: 'front' | 'back';
   faith: number;
   blocks: number;
   foeStunned: boolean;

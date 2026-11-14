@@ -254,3 +254,26 @@ test('a pair wave: two foes on the field, and the back one steps up when the fro
   await hit();
   await waitFor(page, "s.battle.wave === 2 && s.battle.foeId === 'surge'", 30_000);
 });
+
+test('tapping the back foe of a pair targets it, and the hit lands there', async ({ page }) => {
+  await page.goto('/?scene=battle&encounter=gen-009&seed=1&oneShot=1&fast=1');
+  const hit = async () => {
+    await heroTurn(page);
+    await tap(page, 'action:attack');
+    await waitFor(page, '!!s.targets["answer:0"]');
+    await tap(page, `answer:${(await battle(page)).question!.answerIndex}`);
+  };
+  await hit(); // wave 1
+  await waitFor(page, "s.battle.backFoeId === 'wave-2b' && !!s.targets['foe:back']", 30_000);
+  await heroTurn(page);
+  expect((await battle(page)).target).toBe('front');
+  await tap(page, 'foe:back');
+  await waitFor(page, "s.battle.target === 'back'");
+  await snap(page, test.info().outputPath('target-back.png'));
+
+  await hit(); // the back foe falls; the front one is untouched and becomes the target again
+  await waitFor(page, "s.battle.backFoeId === null && s.battle.foeId === 'wave-2a'", 30_000);
+  const b = await battle(page);
+  expect(b.foeHp).toBe(35);
+  expect(b.target).toBe('front');
+});

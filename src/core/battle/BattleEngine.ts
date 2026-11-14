@@ -31,6 +31,8 @@ export class BattleEngine {
   private _backHp: number;
   /** Enemy turns taken this wave, so a pair alternates attackers. */
   private _attacks = 0;
+  /** Which foe of a pair single-target hits land on (the player taps a foe to choose). */
+  private _target: 'front' | 'back' = 'front';
   private _faith: number;
   private _streak = 0;
   private _blocks = 0;
@@ -91,6 +93,17 @@ export class BattleEngine {
   }
   get backFoeHp(): number {
     return this._backHp;
+  }
+  /** The foe single-target hits land on; always 'front' unless a pair stands. */
+  get target(): 'front' | 'back' {
+    return this._target;
+  }
+
+  /** Chooses which foe of a pair the next single-target hits land on (hero's turn only). */
+  setTarget(target: 'front' | 'back'): void {
+    this.expectPhase('HERO_CHOOSE');
+    if (target === 'back' && !this._back) throw new Error('There is no back foe to target');
+    this._target = target;
   }
   get heroHp(): number {
     return this._heroHp;
@@ -181,7 +194,11 @@ export class BattleEngine {
 
     const faithGained = this.updateFaith(correct);
     const result = this.emptyResult(action, correct, faithGained);
-    const hit = (mult: number) => (result.damage += this.damageFoe(mult));
+    // Single-target hits land on the chosen foe; the Sword sweeps both whatever the target.
+    const hit = (mult: number) => {
+      if (this._target === 'back' && this._back) result.backDamage += this.damageBack(mult);
+      else result.damage += this.damageFoe(mult);
+    };
 
     switch (action) {
       case 'attack':
@@ -189,8 +206,8 @@ export class BattleEngine {
         break;
       case 'sword': {
         const mult = (correct ? TUNING.sword.powered : TUNING.sword.base) * this.specialPower;
-        hit(mult);
-        result.backDamage = this.damageBack(mult);
+        result.damage += this.damageFoe(mult);
+        result.backDamage += this.damageBack(mult);
         break;
       }
       case 'shield':
@@ -266,6 +283,7 @@ export class BattleEngine {
     this._turn++;
     if (this._back && this._backHp === 0) {
       this._back = null;
+      this._target = 'front';
       if (this._foeHp > 0) result.backDefeated = true;
     }
     if (this._foeHp > 0) {
@@ -280,6 +298,7 @@ export class BattleEngine {
       this._back = null;
       this._backHp = 0;
       result.steppedUp = true;
+      this._target = 'front';
       this._phase = 'ENEMY_TURN';
       return result;
     }
@@ -291,6 +310,7 @@ export class BattleEngine {
       this._back = next.partner ?? null;
       this._backHp = this._back?.maxHp ?? 0;
       this._attacks = 0;
+      this._target = 'front';
       this._foeStun = 0; // a stun doesn't carry over to the next foe; shield blocks do
       result.nextWave = this._waveIndex;
       this._phase = 'HERO_CHOOSE';

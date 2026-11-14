@@ -81,6 +81,9 @@ export class BattleScene extends Phaser.Scene {
   /** The second foe of a pair (wave with a partner) and its bar, while it stands. */
   private back?: Fighter;
   private backBar?: HpBar;
+  /** Tap areas over a pair's two foes and the marker over the targeted one. */
+  private targetZones: Phaser.GameObjects.Zone[] = [];
+  private targetMarker?: Phaser.GameObjects.Text;
   private wavePips!: Phaser.GameObjects.Graphics;
   private refText!: Phaser.GameObjects.Text;
   private actionBar!: ActionBar;
@@ -239,6 +242,61 @@ export class BattleScene extends Phaser.Scene {
     return this.scale.gameSize.width * 0.72;
   }
 
+  /**
+   * With a pair on the field, each foe can be tapped to target it, and a gold marker bobs over
+   * the targeted one. With a single foe there is nothing to choose, so neither is shown.
+   */
+  private refreshTargeting(): void {
+    for (const z of this.targetZones) z.destroy();
+    this.targetZones = [];
+    this.targetMarker?.destroy();
+    this.targetMarker = undefined;
+    if (!this.back || !this.backBar) return;
+    const sides: ['front' | 'back', Fighter][] = [
+      ['front', this.foe],
+      ['back', this.back],
+    ];
+    for (const [side, f] of sides) {
+      const h = f.figureHeight + 40;
+      const zone = this.add
+        .zone(f.x, f.y - h / 2, 200, h)
+        .setInteractive({ useHandCursor: true })
+        .setDepth(5);
+      zone.on('pointerdown', () => this.chooseTarget(side));
+      this.targetZones.push(zone);
+    }
+    const bar = this.engine.target === 'back' ? this.backBar : this.foeBar;
+    this.targetMarker = this.add
+      .text(bar.x, bar.y - 56, '▼', {
+        fontFamily: FONT_UI,
+        fontSize: '44px',
+        color: '#ffd34d',
+        stroke: '#3a1d08',
+        strokeThickness: 6,
+      })
+      .setOrigin(0.5)
+      .setDepth(6)
+      .setVisible(!this.busy);
+    if (!this.debug.freeze) {
+      this.tweens.add({
+        targets: this.targetMarker,
+        y: bar.y - 46,
+        duration: 450,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.inOut',
+      });
+    }
+  }
+
+  private chooseTarget(side: 'front' | 'back'): void {
+    if (this.busy || this.engine.phase !== 'HERO_CHOOSE' || this.engine.target === side) return;
+    this.engine.setTarget(side);
+    sfx.play('uiTap');
+    this.refreshTargeting();
+    this.sync();
+  }
+
   /** Lowest y that stays clear of the wave pips and passage title along the top. */
   private static readonly HUD_CLEAR_Y = 120;
 
@@ -254,6 +312,7 @@ export class BattleScene extends Phaser.Scene {
         above2 >= BattleScene.HUD_CLEAR_Y ? above2 : this.groundY + 62,
       );
     }
+    this.refreshTargeting();
   }
 
   /** Where numbers float up from over the foe, kept below the top HUD for tall foes. */
@@ -325,6 +384,7 @@ export class BattleScene extends Phaser.Scene {
 
   private setBusy(busy: boolean): void {
     this.busy = busy;
+    this.targetMarker?.setVisible(!busy);
     this.actionBar.refresh(this.engine, !busy && this.engine.phase === 'HERO_CHOOSE');
     this.sync();
     if (!busy && this.debug.autoAnswer && this.engine.phase === 'HERO_CHOOSE') {
@@ -434,7 +494,7 @@ export class BattleScene extends Phaser.Scene {
       sfx.play('heal');
       await this.hero.act('cast');
     }
-    if (res.damage > 0) await this.heroStrike(res, powered);
+    if (res.damage > 0 || res.backDamage > 0) await this.heroStrike(res, powered);
     if (res.blocksAdded > 0) {
       sfx.play('shield');
       void this.hero.act('block');
@@ -471,7 +531,8 @@ export class BattleScene extends Phaser.Scene {
     this.hero.run();
     await tweenAsync(this, {
       targets: this.hero,
-      x: this.foe.x - this.foe.strikeDistance,
+      // A hit aimed only at the back foe of a pair runs to it; anything else to the front foe.
+      x: (res.damage === 0 && this.back ? this.back : this.foe).x - this.foe.strikeDistance,
       duration: 260,
       ease: 'Quad.in',
     });
@@ -480,22 +541,24 @@ export class BattleScene extends Phaser.Scene {
     const land = () => {
       if (landed) return;
       landed = true;
-      this.foe.figure.setAlpha(0.4);
-      this.time.delayedCall(90, () => this.foe.figure.setAlpha(1));
-      void this.foe.foeAct('hurt');
       if (powered) {
         this.cameras.main.shake(ultimate ? 400 : 180, ultimate ? 0.02 : 0.008);
         void hapticTap(true);
       }
-      this.floatText(
-        this.foe.x,
-        this.foeTextY,
-        `${res.damage}`,
-        powered ? COLOR.powered : COLOR.damage,
-        ultimate ? 84 : powered ? 60 : 44,
-      );
-      // After a finishing blow the engine already holds the next foe, so its HP is not this one's.
-      this.foeBar.setValue(res.foeDefeated ? 0 : this.engine.foeHp);
+      if (res.damage > 0) {
+        this.foe.figure.setAlpha(0.4);
+        this.time.delayedCall(90, () => this.foe.figure.setAlpha(1));
+        void this.foe.foeAct('hurt');
+        this.floatText(
+          this.foe.x,
+          this.foeTextY,
+          `${res.damage}`,
+          powered ? COLOR.powered : COLOR.damage,
+          ultimate ? 84 : powered ? 60 : 44,
+        );
+        // After a finishing blow the engine already holds the next foe, so its HP is not this one's.
+        this.foeBar.setValue(res.foeDefeated ? 0 : this.engine.foeHp);
+      }
       if (res.backDamage > 0 && this.back && this.backBar) {
         const back = this.back;
         back.figure.setAlpha(0.4);
@@ -589,6 +652,7 @@ export class BattleScene extends Phaser.Scene {
     back.destroy();
     this.backBar?.destroy();
     this.backBar = undefined;
+    this.refreshTargeting();
   }
 
   /** The front foe of a pair falls and the other one steps up to take its place. */
@@ -872,6 +936,16 @@ export class BattleScene extends Phaser.Scene {
     }
     this.card?.answerButtons.forEach((b, i) => (targets[`answer:${i}`] = center(b)));
     if (this.card?.continueButton) targets['continue'] = center(this.card.continueButton);
+    if (this.targetZones.length === 2) {
+      targets['foe:front'] = {
+        x: Math.round(this.targetZones[0]!.x),
+        y: Math.round(this.targetZones[0]!.y),
+      };
+      targets['foe:back'] = {
+        x: Math.round(this.targetZones[1]!.x),
+        y: Math.round(this.targetZones[1]!.y),
+      };
+    }
     if (this.giftContinue) targets['gift-continue'] = center(this.giftContinue);
     if (this.armorPage) targets['armor-continue'] = center(this.armorPage.continueButton);
     if (this.result) {
@@ -899,6 +973,7 @@ export class BattleScene extends Phaser.Scene {
         foeBarHp: this.foeBar.value,
         backFoeId: e.backFoe?.id ?? null,
         backFoeHp: e.backFoeHp,
+        target: e.target,
         faith: e.faith,
         blocks: e.blocks,
         foeStunned: e.foeStunned,
