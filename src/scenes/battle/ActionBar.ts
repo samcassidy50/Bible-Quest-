@@ -43,14 +43,16 @@ export class ActionBar extends Phaser.GameObjects.Container {
     const make = (id: ActionId, x: number, y: number, diameter: number, iconScale: number) => {
       const info = ACTION_INFO[id];
       const special = (SPECIAL_IDS as readonly string[]).includes(id);
+      // Attack sits on the same plain backing as the specials, so its icon carries the colour.
+      const plain = special || id === 'attack';
       const b = new Button(scene, x, y, {
         width: diameter,
         height: diameter,
         radius: diameter / 2,
         label: '',
         icon: { texture: ICONS_TEXTURE, frame: iconFrame(id), scale: iconScale },
-        fill: special ? SPECIAL_FILL : info.color,
-        ...(special ? { stroke: SPECIAL_RING, strokeAlpha: 0.9 } : {}),
+        fill: plain ? SPECIAL_FILL : info.color,
+        ...(plain ? { stroke: SPECIAL_RING, strokeAlpha: 0.9 } : {}),
         onTap: () => onAction(id),
       });
       const caption = scene.add

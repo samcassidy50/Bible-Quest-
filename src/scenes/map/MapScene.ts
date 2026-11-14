@@ -27,7 +27,6 @@ import { sfx } from '../../services/sfx';
 import { updateTestState } from '../../services/testHooks';
 import { HERO_SCALE, HeroSprite } from '../hero/HeroSprite';
 import { Button } from '../ui/Button';
-import { ACTION_INFO } from '../battle/actionInfo';
 import { FONT_TITLE, FONT_UI, tweenAsync, wait } from '../util';
 
 const INK = 0x3a2410;
@@ -482,18 +481,6 @@ export class MapScene extends Phaser.Scene {
         color: done ? '#b07d00' : '#8a6a3a',
       },
     );
-    const reward = enc.unlocks ? ACTION_INFO[enc.unlocks] : null;
-    const rewardText = this.add.text(
-      -cw / 2 + 24,
-      ch / 2 - 34,
-      reward ? `${done ? '✔ Earned' : '🎁 Earn'}: ${reward.icon} ${reward.name}` : '',
-      {
-        fontFamily: FONT_UI,
-        fontSize: '18px',
-        fontStyle: 'bold',
-        color: done ? '#2e7d32' : '#8e44ad',
-      },
-    );
     this.beginBtn = new Button(this, cw / 2 - 110, 18, {
       width: 180,
       height: 72,
@@ -503,9 +490,7 @@ export class MapScene extends Phaser.Scene {
       fill: 0x27ae60,
       onTap: () => this.begin(id),
     });
-    this.card = this.add
-      .container(W / 2, y, [bg, title, sub, stars, rewardText, this.beginBtn])
-      .setDepth(60);
+    this.card = this.add.container(W / 2, y, [bg, title, sub, stars, this.beginBtn]).setDepth(60);
     pinToScreen(this.card);
     this.cardId = id;
     this.sync();

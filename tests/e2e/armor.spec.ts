@@ -62,10 +62,10 @@ test('tapping Receive takes the gift', async ({ page }) => {
   await waitFor(page, "s.battle.gift === null && s.battle.result === 'VICTORY'", 30_000);
 });
 
-test('the map card shows which armor a passage awards', async ({ page }) => {
+test('the map card opens without naming the armor reward', async ({ page }) => {
   await page.goto('/?scene=map&unlockAll=1&fast=1');
   await waitFor(page, "s.scene === 'map' && !s.mapRevealing && !!s.targets['stage:gen-010']");
   await tap(page, 'stage:gen-010');
   await waitFor(page, "s.mapCard === 'gen-010'");
-  await snap(page, test.info().outputPath('map-card-reward.png'));
+  await snap(page, test.info().outputPath('map-card.png'));
 });
