@@ -47,6 +47,7 @@ Before saying a task is done, run: `npm run lint && npm run typecheck && npm run
 ## Hero art
 
 - The hero is original pixel art (`src/scenes/hero/HeroSprite.ts`), drafted as strips in ChatGPT and kept in `art/hero-raw/` (see `art/README.md`). `python3 scripts/art/process_hero.py --preview` rebuilds `src/assets/hero/hero.png` and the generated `src/core/anim/heroSheet.ts`; never edit those by hand.
+- A girl hero (`art/hero-girl-raw/`, built with `process_hero.py --hero girl`) shares every clip; the player picks on the Choose your hero screen (`?scene=heroSelect`, saved as `settings.hero`), `?hero=girl` forces one in dev.
 - Clips are frame sequences in `src/core/anim/heroClips.ts` (frame name + ms). Some clips are placeholders that borrow other frames until their own art arrives (listed at the top of that file).
 - Attack clips must have `swing` and `impact` events; the battle plays the whoosh on `swing` and lands damage and the hit sound on `impact`.
 

@@ -1,4 +1,8 @@
 import Phaser from 'phaser';
+import { pixelBox, UI } from '../ui/pixelUi';
+
+/** Parchment tint for the pixel name plates. */
+const PLATE = 0xfff0c8;
 import { ENCOUNTERS } from '../../content';
 import type { DebugParams } from '../../core/debugParams';
 import {
@@ -314,10 +318,7 @@ export class MapScene extends Phaser.Scene {
         color: INK_TEXT,
       })
       .setOrigin(0.5);
-    const plate = this.add.graphics();
-    const pw = label.width + 24;
-    plate.fillStyle(0xf3e3bb, 0.95).fillRoundedRect(-pw / 2, 37, pw, 27, 6);
-    plate.lineStyle(2, 0x6b4a22, 0.9).strokeRoundedRect(-pw / 2, 37, pw, 27, 6);
+    const plate = pixelBox(this, UI.button, 0, 51, label.width + 30, 33).setTint(PLATE);
     const stars = progress.save.completed[node.id]?.stars ?? 0;
     const starText = this.add
       .text(0, 76, state === 'done' ? '★'.repeat(stars) + '☆'.repeat(3 - stars) : '', {
@@ -366,9 +367,7 @@ export class MapScene extends Phaser.Scene {
       return o;
     };
 
-    const titlePlate = fixed(this.add.graphics());
-    titlePlate.fillStyle(0xf3e3bb, 0.95).fillRoundedRect(W / 2 - 230, ins.top + 12, 460, 58, 14);
-    titlePlate.lineStyle(3, 0x6b4a22).strokeRoundedRect(W / 2 - 230, ins.top + 12, 460, 58, 14);
+    fixed(pixelBox(this, UI.button, W / 2, ins.top + 41, 480, 63).setTint(PLATE));
     fixed(
       this.add
         .text(W / 2, ins.top + 41, 'Genesis 1–11 · Beginnings', {
@@ -461,9 +460,7 @@ export class MapScene extends Phaser.Scene {
     const cw = 560;
     const ch = 200;
     const y = H - this.insets.bottom - 100 - ch / 2;
-    const bg = this.add.graphics();
-    bg.fillStyle(0xf3e3bb, 0.98).fillRoundedRect(-cw / 2, -ch / 2, cw, ch, 18);
-    bg.lineStyle(4, 0x6b4a22).strokeRoundedRect(-cw / 2, -ch / 2, cw, ch, 18);
+    const bg = pixelBox(this, UI.panel, 0, 0, cw, ch);
     const title = this.add.text(-cw / 2 + 24, -ch / 2 + 18, enc.title, {
       fontFamily: FONT_TITLE,
       fontSize: '30px',

@@ -1,7 +1,11 @@
 import Phaser from 'phaser';
 import { Button } from '../ui/Button';
-import { FONT_TITLE, FONT_UI, tweenAsync } from '../util';
+import { FONT_PIXEL, tweenAsync } from '../util';
 import { COLOR } from './actionInfo';
+import { pixelBox, UI, UI_SCALE } from '../ui/pixelUi';
+
+/** Dark brown ink for text on the parchment panel. */
+const INK = '#4a2c12';
 
 /** Victory / defeat overlay with Retry (no permanent loss; docs/DESIGN.md §2.2). */
 export class ResultPanel extends Phaser.GameObjects.Container {
@@ -17,86 +21,75 @@ export class ResultPanel extends Phaser.GameObjects.Container {
   ) {
     const { width: W, height: H } = scene.scale.gameSize;
     super(scene, W / 2, H / 2);
-    const pw = Math.min(W - 64, 720);
-    const ph = 420;
+    // Pixel parchment panel and buttons (scenes/ui/pixelUi.ts), at the hero's 3x pixel size.
+    const pw = 240 * UI_SCALE;
+    const ph = 140 * UI_SCALE;
 
     const backdrop = scene.add.rectangle(0, 0, W * 2, H * 2, 0x05030d, 0.65).setInteractive();
-    const panel = scene.add.graphics();
-    panel.fillStyle(COLOR.panel).fillRoundedRect(-pw / 2, -ph / 2, pw, ph, 32);
-    panel
-      .lineStyle(6, victory ? COLOR.gold : 0x8e7cc3)
-      .strokeRoundedRect(-pw / 2, -ph / 2, pw, ph, 32);
+    const panel = pixelBox(scene, UI.panel, 0, 0, pw, ph);
 
     const title = scene.add
-      .text(0, -ph / 2 + 80, victory ? 'Victory!' : 'Try again!', {
-        fontFamily: FONT_TITLE,
-        fontSize: '72px',
+      .text(0, -ph / 2 + 72, victory ? 'Victory!' : 'Try again!', {
+        fontFamily: FONT_PIXEL,
+        fontSize: '64px',
         fontStyle: 'bold',
-        color: victory ? '#f4c95d' : '#d7c8ff',
-        stroke: '#000000',
-        strokeThickness: 6,
+        color: victory ? '#f4c95d' : '#c9a36b',
+        stroke: '#4a2c12',
+        strokeThickness: 8,
       })
       .setOrigin(0.5);
     const detail = scene.add
       .text(
         0,
-        -ph / 2 + 175,
+        -ph / 2 + 150,
         victory
           ? `You answered ${stats.correct} of ${stats.asked} questions correctly.`
           : `You answered ${stats.correct} of ${stats.asked} correctly.\nRead the verse again and give it another go!`,
         {
-          fontFamily: FONT_UI,
+          fontFamily: FONT_PIXEL,
           fontSize: '26px',
-          color: '#ffffff',
+          fontStyle: 'bold',
+          color: INK,
           align: 'center',
           lineSpacing: 8,
         },
       )
       .setOrigin(0.5, 0);
 
-    this.primaryButton = new Button(scene, 130, ph / 2 - 80, {
-      width: 220,
-      height: 84,
-      radius: 42,
-      label: primary.label,
-      fontSize: 28,
-      fill: COLOR.correct,
-      onTap: primary.onTap,
-    });
-    this.secondaryButton = new Button(scene, -130, ph / 2 - 80, {
-      width: 220,
-      height: 84,
-      radius: 42,
-      label: secondary.label,
-      fontSize: 28,
-      fill: 0x4a4560,
-      onTap: secondary.onTap,
-    });
+    const button = (x: number, label: string, fill: number, onTap: () => void) =>
+      new Button(scene, x, ph / 2 - 72, {
+        width: 74 * UI_SCALE,
+        height: 28 * UI_SCALE,
+        label,
+        fontSize: 28,
+        fontFamily: FONT_PIXEL,
+        fill,
+        onTap,
+      });
+    this.primaryButton = button(135, primary.label, COLOR.correct, primary.onTap);
+    this.secondaryButton = button(-135, secondary.label, 0x3f8f5f, secondary.onTap);
+    for (const b of [this.primaryButton, this.secondaryButton]) b.label.setStroke('#1f5a36', 6);
 
     this.add([backdrop, panel, title, detail, this.primaryButton, this.secondaryButton]);
 
     if (victory && stats.stars) {
-      for (let i = 0; i < 3; i++) {
+      // The pack's look: a big star in the middle, smaller ones either side.
+      const y = -ph / 2 + 150;
+      [-1, 0, 1].forEach((side, i) => {
         const star = scene.add
-          .text(-70 + i * 70, -ph / 2 + 135, '★', {
-            fontFamily: FONT_UI,
-            fontSize: '54px',
-            color: i < stats.stars ? '#f4c95d' : '#4a4560',
-            stroke: '#000000',
-            strokeThickness: 4,
-          })
-          .setOrigin(0.5);
+          .image(side * 92, y + (side ? 6 : 0), i < stats.stars! ? UI.star : UI.starEmpty)
+          .setScale(side ? 2.4 : UI_SCALE);
         this.add(star);
-      }
-      detail.setY(-ph / 2 + 180);
+      });
+      detail.setY(-ph / 2 + 210);
       if (stats.newBest) {
         this.add(
           scene.add
-            .text(pw / 2 - 30, -ph / 2 + 30, 'New best!', {
-              fontFamily: FONT_UI,
+            .text(pw / 2 - 36, -ph / 2 + 30, 'New best!', {
+              fontFamily: FONT_PIXEL,
               fontSize: '22px',
               fontStyle: 'bold',
-              color: '#5ee08a',
+              color: '#2e8b57',
             })
             .setOrigin(1, 0),
         );

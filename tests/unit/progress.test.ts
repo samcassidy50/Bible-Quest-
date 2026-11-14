@@ -136,8 +136,14 @@ describe('save data', () => {
       autoCollect: false,
       timer: false,
       quickTest: false,
+      hero: null,
     });
     expect(s.upgrades).toEqual({ health: 0, strength: 0, armor: 0, faith: 0 });
+  });
+
+  it('remembers the chosen hero', () => {
+    const s = updateSettings(newSave(), { hero: 'girl' });
+    expect(loadSave(JSON.stringify(s)).settings.hero).toBe('girl');
   });
 
   it('round-trips through JSON', () => {
@@ -167,6 +173,7 @@ describe('save data', () => {
         autoCollect: true,
         timer: false,
         quickTest: 'yes',
+        hero: 'dragon',
       },
     };
     const s = loadSave(JSON.stringify(raw));
@@ -180,6 +187,7 @@ describe('save data', () => {
       autoCollect: true,
       timer: false,
       quickTest: false,
+      hero: null,
     });
   });
 

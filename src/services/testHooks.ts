@@ -83,6 +83,8 @@ export interface TestState {
   journalOpen: string | null;
   /** Foe gallery: the passage on screen and the sprite each of its foes uses (null = placeholder). */
   foeGallery: { encounter: string; foes: (string | null)[] } | null;
+  /** Which hero sheet the last hero sprite drew ('boy' or 'girl'). */
+  heroSkin: string | null;
 }
 
 declare global {
@@ -112,6 +114,7 @@ let state: TestState = {
   backdropPainted: [],
   journalOpen: null,
   foeGallery: null,
+  heroSkin: null,
 };
 
 export function updateTestState(patch: Partial<TestState>): void {

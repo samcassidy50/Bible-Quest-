@@ -11,6 +11,7 @@ import { updateTestState } from '../../services/testHooks';
 import { TEST_HOOKS_ENABLED } from '../../config';
 import { COLOR } from '../battle/actionInfo';
 import { Button } from '../ui/Button';
+import { pixelBox, UI } from '../ui/pixelUi';
 import { FONT_UI } from '../util';
 import { center, menuFrame } from './menuFrame';
 
@@ -92,7 +93,7 @@ export class SettingsScene extends Phaser.Scene {
 
     ROWS.forEach((row, i) => {
       const y = insets.top + 110 + i * (ROWS.length > 5 ? 84 : 92);
-      this.add.graphics().fillStyle(COLOR.panel, 0.95).fillRoundedRect(left, y, rowW, 80, 16);
+      pixelBox(this, UI.button, left + rowW / 2, y + 40, rowW, 81).setTint(0x3a3166);
       this.add.text(left + 24, y + 12, row.label, {
         fontFamily: FONT_UI,
         fontSize: '25px',
@@ -118,6 +119,22 @@ export class SettingsScene extends Phaser.Scene {
       });
       targets[`setting:${row.key}`] = center(b);
     });
+
+    // Choose hero: opens the same screen new players see after the title.
+    const hero = progress.save.settings.hero ?? 'boy';
+    const heroBtn = new Button(this, W - insets.right - 24 - 120, insets.top + 50, {
+      width: 240,
+      height: 60,
+      radius: 30,
+      label: `Hero: ${hero === 'girl' ? 'Girl' : 'Boy'} ›`,
+      fontSize: 22,
+      fill: 0x8e6bd8,
+      onTap: () => {
+        this.registry.set('heroSelectNext', 'settings');
+        this.scene.start('heroSelect');
+      },
+    });
+    targets['hero'] = center(heroBtn);
 
     const reset = new Button(this, W / 2, H - insets.bottom - 50, {
       width: 300,

@@ -11,11 +11,12 @@ import { markHeard, READING_SPEEDS } from '../../core/progress/progress';
 import { createNarration, type Narration } from '../../services/narration';
 import { readSafeAreaInsets, toGameInsets, type Insets } from '../../services/safeArea';
 import { updateTestState } from '../../services/testHooks';
+import { pixelBox, UI } from '../ui/pixelUi';
 import { quickTestOn } from '../quickTest';
 import { COLOR } from '../battle/actionInfo';
 import { Fighter } from '../battle/Fighter';
 import { Button } from '../ui/Button';
-import { FONT_TITLE, FONT_UI, FONT_VERSE, tweenAsync, wait } from '../util';
+import { FONT_UI, FONT_VERSE, tweenAsync, wait } from '../util';
 import { EnergyCount } from '../icons';
 import { ENERGY_COLOR, Orb } from './Orb';
 import { Backdrop } from '../backdrop/Backdrop';
@@ -391,16 +392,16 @@ export class ScriptureScene extends Phaser.Scene {
     const { width: W } = this.scale.gameSize;
     const pw = Math.min(W - 80, 980);
     const body = this.encounter.verses.map((v) => `${v.ref}  ${v.text}`).join('\n\n');
-    const text = this.add.text(-pw / 2 + 28, 60, body, {
-      fontFamily: FONT_TITLE,
+    const text = this.add.text(-pw / 2 + 36, 66, body, {
+      fontFamily: FONT_VERSE,
       fontSize: '28px',
       color: COLOR.ink,
       lineSpacing: 6,
-      wordWrap: { width: pw - 56, useAdvancedWrap: true },
+      wordWrap: { width: pw - 72, useAdvancedWrap: true },
     });
     const title = this.add.text(
-      -pw / 2 + 28,
-      20,
+      -pw / 2 + 36,
+      26,
       `${this.encounter.reference} (${this.encounter.translation})`,
       {
         fontFamily: FONT_UI,
@@ -409,10 +410,8 @@ export class ScriptureScene extends Phaser.Scene {
         color: '#8a5a00',
       },
     );
-    const ph = text.height + 90;
-    const bg = this.add.graphics();
-    bg.fillStyle(COLOR.card, 0.97).fillRoundedRect(-pw / 2, 0, pw, ph, 24);
-    bg.lineStyle(4, COLOR.gold).strokeRoundedRect(-pw / 2, 0, pw, ph, 24);
+    const ph = text.height + 100;
+    const bg = pixelBox(this, UI.panel, 0, ph / 2, pw, ph);
     this.fullText = this.add
       .container(W / 2, this.insets.top + 110, [bg, title, text])
       .setDepth(35);

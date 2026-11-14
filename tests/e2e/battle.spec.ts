@@ -98,11 +98,14 @@ test('specials not yet earned are hidden from the action bar', async ({ page }) 
   expect(b.phase).toBe('HERO_CHOOSE');
 });
 
-test('title → passage select → chosen passage', async ({ page }) => {
+test('title → choose hero → passage select → chosen passage', async ({ page }) => {
   await page.goto('/?seed=1&narration=off&unlockAll=1');
   await waitFor(page, "s.ready && s.scene === 'title'");
   const box = (await page.locator('#game canvas').boundingBox())!;
   await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
+  // A new player picks a hero first.
+  await waitFor(page, "s.scene === 'heroSelect' && !!s.targets['hero:boy']");
+  await tap(page, 'hero:boy');
   await waitFor(page, "s.scene === 'map' && !s.mapRevealing && !!s.targets['stage:gen-011']");
   await snap(page, test.info().outputPath('map.png'));
   await tap(page, 'stage:gen-011'); // ?unlockAll centres the map on the last location
@@ -207,7 +210,10 @@ test('foe gallery shows every passage with sprite art for all of its foes', asyn
     await waitFor(page, `s.scene === 'foes' && s.foeGallery && s.foeGallery.encounter === '${id}'`);
     const foes = (await state(page)).foeGallery!.foes;
     expect(foes, `${id} foes`).toHaveLength(3);
-    expect(foes.every((sprite) => !!sprite), `${id} sprites`).toBe(true);
+    expect(
+      foes.every((sprite) => !!sprite),
+      `${id} sprites`,
+    ).toBe(true);
     await snap(page, test.info().outputPath(`foes-${id}.png`));
     const box = (await page.locator('#game canvas').boundingBox())!;
     await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);

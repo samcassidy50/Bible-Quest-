@@ -1,4 +1,6 @@
 import Phaser from 'phaser';
+import '@fontsource/pixelify-sans/latin-400.css';
+import '@fontsource/pixelify-sans/latin-700.css';
 import { COLORS, DESIGN_HEIGHT, DESIGN_WIDTH, TEST_HOOKS_ENABLED } from './config';
 import { parseDebugParams, type DebugParams } from './core/debugParams';
 import { randomSeed } from './core/rng';
@@ -14,6 +16,7 @@ import { MapScene } from './scenes/map/MapScene';
 import { UpgradesScene } from './scenes/menus/UpgradesScene';
 import { JournalScene } from './scenes/menus/JournalScene';
 import { SettingsScene } from './scenes/menus/SettingsScene';
+import { HeroSelectScene } from './scenes/menus/HeroSelectScene';
 import { AnimViewerScene } from './scenes/hero/AnimViewerScene';
 import { SoundBoardScene } from './scenes/debug/SoundBoardScene';
 import { BackdropViewerScene } from './scenes/debug/BackdropViewerScene';
@@ -22,6 +25,11 @@ import { FoeGalleryScene } from './scenes/debug/FoeGalleryScene';
 async function start(): Promise<void> {
   await initPlatform();
   await progress.load();
+  // Canvas text can't wait for a web font, so load the pixel font before any scene draws.
+  await Promise.all([
+    document.fonts.load('400 32px "Pixelify Sans"'),
+    document.fonts.load('700 32px "Pixelify Sans"'),
+  ]).catch(() => undefined);
 
   const debug: DebugParams = TEST_HOOKS_ENABLED
     ? parseDebugParams(window.location.search)
@@ -56,6 +64,7 @@ async function start(): Promise<void> {
       UpgradesScene,
       JournalScene,
       SettingsScene,
+      HeroSelectScene,
       ScriptureScene,
       BattleScene,
       AnimViewerScene,

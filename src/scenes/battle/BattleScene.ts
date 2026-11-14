@@ -26,6 +26,7 @@ import { HpBar } from './HpBar';
 import { QuestionCard } from './QuestionCard';
 import { ResultPanel } from './ResultPanel';
 import { ArmorPage } from './ArmorPage';
+import { pixelBox, UI } from '../ui/pixelUi';
 import { quickTestOn } from '../quickTest';
 import { Backdrop } from '../backdrop/Backdrop';
 import { Angel, ANGEL_LINES } from '../angel/Angel';
@@ -177,9 +178,7 @@ export class BattleScene extends Phaser.Scene {
     );
 
     this.heroPanel = this.add.container(0, 0);
-    const panelBg = this.add.graphics();
-    panelBg.fillStyle(COLOR.panel, 0.85).fillRoundedRect(0, 0, 360, 116, 20);
-    panelBg.lineStyle(3, COLOR.gold, 0.6).strokeRoundedRect(0, 0, 360, 116, 20);
+    const panelBg = pixelBox(this, UI.button, 180, 58, 366, 117).setTint(0x3a3166);
     this.heroBar = new HpBar(this, 180, 44, 320, COLOR.heroHp, 'Hero', this.engine.heroMaxHp);
     const faithLabel = this.add
       .text(20, 76, 'Faith', {
@@ -592,15 +591,13 @@ export class BattleScene extends Phaser.Scene {
         fontStyle: 'italic',
         color: COLOR.ink,
         align: 'center',
-        wordWrap: { width: bw - 48, useAdvancedWrap: true },
+        wordWrap: { width: bw - 100, useAdvancedWrap: true },
       })
       .setOrigin(0.5, 0);
-    const bh = line.height + 36;
-    const bubbleBg = this.add.graphics();
-    bubbleBg.fillStyle(COLOR.card, 0.97).fillRoundedRect(-bw / 2, -18, bw, bh, 22);
-    bubbleBg.lineStyle(4, COLOR.gold).strokeRoundedRect(-bw / 2, -18, bw, bh, 22);
+    const bh = line.height + 64;
+    const bubbleBg = pixelBox(this, UI.panel, 0, bh / 2 - 32, bw, bh);
     const bubble = this.add
-      .container(W / 2, 24, [bubbleBg, line])
+      .container(W / 2, this.insets.top + 48, [bubbleBg, line])
       .setDepth(153)
       .setAlpha(0);
     await tweenAsync(this, { targets: bubble, alpha: 1, duration: 300 });

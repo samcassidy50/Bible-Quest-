@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { pixelBox, UI } from '../ui/pixelUi';
 import type { SpecialId } from '../../core/battle/types';
 import { TUNING } from '../../core/battle/tuning';
 import type { Insets } from '../../services/safeArea';
@@ -27,9 +28,7 @@ export class ArmorPage extends Phaser.GameObjects.Container {
 
     const cw = Math.min(W - insets.left - insets.right - 48, 860);
     const ch = Math.min(H - insets.top - insets.bottom - 48, 400);
-    const bg = scene.add.graphics();
-    bg.fillStyle(COLOR.card, 0.98).fillRoundedRect(-cw / 2, -ch / 2, cw, ch, 28);
-    bg.lineStyle(5, COLOR.gold).strokeRoundedRect(-cw / 2, -ch / 2, cw, ch, 28);
+    const bg = pixelBox(scene, UI.panel, 0, 0, cw, ch);
 
     // The item on a soft glow on the left; the words on the right.
     const ix = -cw / 2 + 150;

@@ -1,8 +1,9 @@
 import Phaser from 'phaser';
+import { pixelBox, UI } from '../ui/pixelUi';
 import type { ActionId } from '../../core/battle/types';
 import type { Question } from '../../core/content/types';
 import { Button } from '../ui/Button';
-import { FONT_TITLE, FONT_UI, tweenAsync, wait } from '../util';
+import { FONT_READ, FONT_TITLE, FONT_UI, tweenAsync, wait } from '../util';
 import { ACTION_INFO, COLOR } from './actionInfo';
 
 const ANSWER_FILL = 0x3c3366;
@@ -36,10 +37,7 @@ export class QuestionCard extends Phaser.GameObjects.Container {
     const left = -cw / 2 + 36;
 
     const backdrop = scene.add.rectangle(0, 0, W * 2, H * 2, 0x05030d, 0.6).setInteractive();
-    const card = scene.add.graphics();
-    card.fillStyle(0x000000, 0.4).fillRoundedRect(-cw / 2 + 6, -ch / 2 + 10, cw, ch, 28);
-    card.fillStyle(COLOR.card).fillRoundedRect(-cw / 2, -ch / 2, cw, ch, 28);
-    card.lineStyle(6, COLOR.gold).strokeRoundedRect(-cw / 2, -ch / 2, cw, ch, 28);
+    const card = pixelBox(scene, UI.panel, 0, 0, cw, ch);
 
     const info = ACTION_INFO[action];
     const header = scene.add.text(left, -ch / 2 + 28, `${info.icon}  ${info.name}`, {
@@ -56,7 +54,7 @@ export class QuestionCard extends Phaser.GameObjects.Container {
       })
       .setOrigin(1, 0);
     const prompt = scene.add.text(left, -ch / 2 + 78, question.prompt, {
-      fontFamily: FONT_TITLE,
+      fontFamily: FONT_READ,
       fontSize: '34px',
       fontStyle: 'bold',
       color: COLOR.ink,
@@ -83,6 +81,7 @@ export class QuestionCard extends Phaser.GameObjects.Container {
         height: btnH,
         label: choice,
         fontSize: 26,
+        fontFamily: FONT_READ,
         fill: ANSWER_FILL,
         onTap: () => this.choose(i),
       });
@@ -116,7 +115,7 @@ export class QuestionCard extends Phaser.GameObjects.Container {
    */
   startTimer(ms: number): void {
     const cw = this.cardW;
-    const y = -this.cardH / 2 + 12;
+    const y = -this.cardH / 2 + 18;
     this.timerBar = this.scene.add.graphics();
     this.add(this.timerBar);
     const draw = (k: number) => {

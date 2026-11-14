@@ -88,3 +88,12 @@ describe('parseDebugParams: energy', () => {
     expect(parseDebugParams('?oneShot=yes').oneShot).toBe(false);
   });
 });
+
+describe('parseDebugParams: hero', () => {
+  it('accepts only the two heroes', () => {
+    expect(parseDebugParams('?hero=girl').hero).toBe('girl');
+    expect(parseDebugParams('?hero=boy').hero).toBe('boy');
+    expect(parseDebugParams('?hero=dragon').hero).toBeUndefined();
+    expect(parseDebugParams('?scene=heroSelect').scene).toBe('heroSelect');
+  });
+});

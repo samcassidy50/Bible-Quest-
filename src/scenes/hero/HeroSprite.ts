@@ -2,24 +2,52 @@ import Phaser from 'phaser';
 import { eventsBetween, frameAt, localTime, type Clip } from '../../core/anim/clip';
 import { HERO_CLIPS, type HeroClipName } from '../../core/anim/heroClips';
 import { HERO_FRAMES, HERO_SHEET, type HeroFrame } from '../../core/anim/heroSheet';
+import { HERO_GIRL_SHEET } from '../../core/anim/heroGirlSheet';
+import type { DebugParams } from '../../core/debugParams';
+import type { HeroKind } from '../../core/progress/progress';
+import { progress } from '../../services/progress';
+import { updateTestState } from '../../services/testHooks';
 import heroSheetUrl from '../../assets/hero/hero.png';
+import heroGirlSheetUrl from '../../assets/hero/hero-girl.png';
 
 export const HERO_TEXTURE = 'hero';
+export const HERO_GIRL_TEXTURE = 'hero-girl';
+
+/** Each hero's sheet: same frames in the same order (HERO_FRAMES), own cell size and origin. */
+interface SheetLayout {
+  frameWidth: number;
+  frameHeight: number;
+  originX: number;
+  originY: number;
+}
+const SHEETS: Record<HeroKind, { texture: string; url: string; layout: SheetLayout }> = {
+  boy: { texture: HERO_TEXTURE, url: heroSheetUrl, layout: HERO_SHEET },
+  girl: { texture: HERO_GIRL_TEXTURE, url: heroGirlSheetUrl, layout: HERO_GIRL_SHEET },
+};
+
+/** The hero to draw: `?hero=` (dev), else the player's choice, else the boy. */
+export function currentHero(scene: Phaser.Scene): HeroKind {
+  const debug = scene.registry.get('debug') as DebugParams | undefined;
+  return debug?.hero ?? progress.save.settings.hero ?? 'boy';
+}
 /** Native pixels → design pixels. The standing hero is 64 px tall natively, 192 on screen. */
 export const HERO_SCALE = 3;
 const POWER_GLOW = 0xffd36b;
 
 /** Queues the hero sheet on a loader (call from a scene's preload). */
 export function loadHeroSheet(load: Phaser.Loader.LoaderPlugin): void {
-  load.spritesheet(HERO_TEXTURE, heroSheetUrl, {
-    frameWidth: HERO_SHEET.frameWidth,
-    frameHeight: HERO_SHEET.frameHeight,
-  });
+  for (const { texture, url, layout } of Object.values(SHEETS)) {
+    load.spritesheet(texture, url, {
+      frameWidth: layout.frameWidth,
+      frameHeight: layout.frameHeight,
+    });
+  }
 }
 
 /** Keeps the pixel art crisp when scaled up (call once the sheet has loaded). */
 export function useNearestFilter(textures: Phaser.Textures.TextureManager): void {
-  textures.get(HERO_TEXTURE).setFilter(Phaser.Textures.FilterMode.NEAREST);
+  for (const { texture } of Object.values(SHEETS))
+    textures.get(texture).setFilter(Phaser.Textures.FilterMode.NEAREST);
 }
 
 /**
@@ -38,12 +66,15 @@ export class HeroSprite extends Phaser.GameObjects.Sprite {
   /** Every clip started, oldest first (exposed to tests). */
   readonly history: string[] = [];
 
-  constructor(scene: Phaser.Scene, x: number, y: number) {
-    super(scene, x, y, HERO_TEXTURE, HERO_FRAMES.idle_0);
-    this.setOrigin(
-      HERO_SHEET.originX / HERO_SHEET.frameWidth,
-      (HERO_SHEET.originY + 1) / HERO_SHEET.frameHeight,
-    );
+  /** Which hero this sprite draws. */
+  readonly kind: HeroKind;
+
+  constructor(scene: Phaser.Scene, x: number, y: number, kind: HeroKind = currentHero(scene)) {
+    const { texture, layout } = SHEETS[kind];
+    super(scene, x, y, texture, HERO_FRAMES.idle_0);
+    this.kind = kind;
+    this.setOrigin(layout.originX / layout.frameWidth, (layout.originY + 1) / layout.frameHeight);
+    updateTestState({ heroSkin: kind });
     this.setScale(HERO_SCALE);
     scene.events.on(Phaser.Scenes.Events.UPDATE, this.onUpdate, this);
     this.once(Phaser.GameObjects.Events.DESTROY, () => {

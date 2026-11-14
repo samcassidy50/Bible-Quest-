@@ -28,6 +28,15 @@ the game only uses the processed sheet.
 Tips for prompts: one animation per request, same chat, re-upload a reference sheet, and ask for
 at least 40 px of empty magenta between frames so they never touch.
 
+# Girl hero art
+
+`hero-girl-raw/` holds the girl hero's strips (ChatGPT-drafted, same format as the boy's).
+`python3 scripts/art/process_hero.py --hero girl --preview` builds `src/assets/hero/hero-girl.png`
+and `src/core/anim/heroGirlSheet.ts` with exactly the boy's frames in the boy's order, so every
+clip plays on either hero. Strips she has no art for yet (down, hurt, poses) borrow her other
+frames (`GIRL_FALLBACKS` in the script); add the strip to `GIRL_STRIPS` when it arrives.
+Each strip's `rel_scale` there is her size relative to `idle.png` (check `art/hero-girl-preview.png`).
+
 # Angel art
 
 `angel-raw/` holds the angel strips drafted in ChatGPT, in the same format as the hero strips
@@ -79,6 +88,16 @@ re-run it.
 
 - `demon`, `shade` and `thornbeast` are original too, painted by
   `python3 scripts/art/paint_monsters.py --preview`. They are not used in the game yet.
+
+# UI art
+
+- `src/assets/ui/` (parchment panel, blank green buttons, stars) is **third-party art** from the
+  CraftPix free pack "Free Basic Pixel Art UI for RPG" (https://craftpix.net), under the CraftPix
+  file licence (https://craftpix.net/file-licenses/). Only plain pieces are used, never the
+  pack's built-in words. The pack is not kept here; rebuild with
+  `python3 scripts/art/process_ui.py --pack <unzipped pack> --preview` (tiles the frame edges so
+  they stay crisp; preview in `art/ui-preview.png`). Used by the win/lose screen
+  (`ResultPanel.ts`) via `src/scenes/ui/pixelUi.ts`.
 
 # Backdrop art
 

@@ -1,4 +1,6 @@
 import Phaser from 'phaser';
+import { progress } from '../services/progress';
+import { pixelBox, UI } from './ui/pixelUi';
 import { readSafeAreaInsets, toGameInsets } from '../services/safeArea';
 import { hideSplash } from '../services/platform';
 import { updateTestState } from '../services/testHooks';
@@ -78,10 +80,7 @@ export class TitleScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(5);
 
-    const pill = this.add.graphics();
-    pill.fillStyle(0x000000, 0.35).fillRoundedRect(-157, -27, 320, 64, 32);
-    pill.fillStyle(0xc0392b, 1).fillRoundedRect(-160, -32, 320, 64, 32);
-    pill.lineStyle(3, 0xffd76a, 0.9).strokeRoundedRect(-160, -32, 320, 64, 32);
+    const pill = pixelBox(this, UI.button, 0, 0, 330, 72).setTint(0xe0503e);
     const begin = this.add
       .text(0, 0, 'Tap to begin', {
         fontFamily: FONT_UI,
@@ -90,7 +89,7 @@ export class TitleScene extends Phaser.Scene {
         color: '#ffffff',
       })
       .setOrigin(0.5)
-      .setShadow(0, 2, '#5a120a', 2, false, true);
+      .setStroke('#5a120a', 6);
     this.prompt = this.add.container(0, 0, [pill, begin]).setDepth(6);
 
     if (!this.frozen) {
@@ -130,7 +129,13 @@ export class TitleScene extends Phaser.Scene {
     const hero = this.hero;
     const go = (): void => {
       this.cameras.main.fadeOut(250, 27, 21, 48);
-      this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start('map'));
+      this.cameras.main.once('camerafadeoutcomplete', () => {
+        // New players choose their hero first.
+        if (progress.save.settings.hero === null) {
+          this.registry.set('heroSelectNext', 'map');
+          this.scene.start('heroSelect');
+        } else this.scene.start('map');
+      });
     };
     if (!hero || fast) {
       go();

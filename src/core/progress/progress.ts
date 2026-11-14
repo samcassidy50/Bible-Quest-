@@ -95,6 +95,8 @@ export const saveSchema = z.object({
       timer: z.boolean().catch(false),
       /** Dev builds only: foes fall in one hit and every reading can be skipped. */
       quickTest: z.boolean().catch(false),
+      /** The hero the player chose; null until they pick one (then the choose screen shows). */
+      hero: z.enum(['boy', 'girl']).nullable().catch(null),
     })
     .catch({
       sound: true,
@@ -103,11 +105,13 @@ export const saveSchema = z.object({
       autoCollect: false,
       timer: false,
       quickTest: false,
+      hero: null,
     }),
 });
 
 export type SaveData = z.infer<typeof saveSchema>;
 export type Settings = SaveData['settings'];
+export type HeroKind = 'boy' | 'girl';
 
 export function newSave(): SaveData {
   return saveSchema.parse({

@@ -18,6 +18,7 @@ const base = (): SaveData => ({
     autoCollect: false,
     timer: false,
     quickTest: false,
+    hero: 'boy',
   },
 });
 
@@ -188,4 +189,29 @@ test('quick test mode: Skip on a first reading, and one hit defeats a foe', asyn
   // One answered Attack defeats the first foe.
   await waitFor(page, "s.sounds.includes('foeDefeat')", 30_000);
   expect((await state(page)).sounds.filter((x) => x === 'foeDefeat')).toHaveLength(1);
+});
+
+test('a new player chooses a hero after the title; the choice is saved and used', async ({
+  page,
+}) => {
+  await page.goto('/?seed=1&fast=1');
+  await waitFor(page, "s.scene === 'title'");
+  const box = (await page.locator('#game canvas').boundingBox())!;
+  await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
+  await waitFor(page, "s.scene === 'heroSelect' && !!s.targets['hero:girl']", 30_000);
+  expect((await state(page)).targets['back']).toBeUndefined(); // a new player must pick
+  await snap(page, test.info().outputPath('hero-select.png'));
+  await tap(page, 'hero:girl');
+  await waitFor(page, "s.scene === 'map' && s.save.settings.hero === 'girl'", 30_000);
+
+  // Later screens draw her, and Settings can change it back.
+  await page.goto('/?scene=battle&encounter=gen-001&seed=1&fast=1');
+  await heroTurn(page);
+  expect((await state(page)).heroSkin).toBe('girl');
+  await page.goto('/?scene=settings');
+  await waitFor(page, "s.scene === 'settings' && !!s.targets.hero");
+  await tap(page, 'hero');
+  await waitFor(page, "s.scene === 'heroSelect' && !!s.targets['hero:boy'] && !!s.targets.back");
+  await tap(page, 'hero:boy');
+  await waitFor(page, "s.scene === 'settings' && s.save.settings.hero === 'boy'", 30_000);
 });

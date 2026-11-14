@@ -11,6 +11,7 @@ import {
 } from '../../src/core/anim/clip';
 import { HERO_CLIPS, HERO_CLIP_NAMES } from '../../src/core/anim/heroClips';
 import { HERO_FRAMES, HERO_SHEET } from '../../src/core/anim/heroSheet';
+import { HERO_GIRL_SHEET } from '../../src/core/anim/heroGirlSheet';
 
 const clip = (over: Partial<Clip> = {}): Clip => ({
   ...frameClip('test', [
@@ -125,5 +126,12 @@ describe('hero clips', () => {
     expect(Object.values(HERO_FRAMES).sort((a, b) => a - b)).toEqual(frames.map((_, i) => i));
     expect(HERO_SHEET.originX).toBeLessThan(HERO_SHEET.frameWidth);
     expect(HERO_SHEET.originY).toBeLessThan(HERO_SHEET.frameHeight);
+  });
+});
+
+describe('girl hero sheet', () => {
+  it('has exactly the boy\'s frames, so every clip plays on either hero', () => {
+    expect(HERO_GIRL_SHEET.frameCount).toBe(Object.keys(HERO_FRAMES).length);
+    expect(HERO_GIRL_SHEET.standingHeight).toBe(HERO_SHEET.standingHeight);
   });
 });

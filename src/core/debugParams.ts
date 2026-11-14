@@ -17,6 +17,7 @@ export const SCENE_KEYS = [
   'sounds',
   'backdrops',
   'foes',
+  'heroSelect',
 ] as const;
 export type SceneKey = (typeof SCENE_KEYS)[number];
 
@@ -43,6 +44,8 @@ export interface DebugParams {
   autoCollect: boolean;
   /** `?oneShot=1`: every damaging hit defeats the foe, to get through fights quickly. */
   oneShot: boolean;
+  /** `?hero=girl`: draw this hero whatever the save says. */
+  hero?: 'boy' | 'girl';
   fast: boolean;
   freeze: boolean;
   fps: boolean;
@@ -72,6 +75,9 @@ export function parseDebugParams(search: string): DebugParams {
 
   const seed = p.get('seed');
   if (seed !== null && /^\d{1,10}$/.test(seed)) result.seed = Number(seed) >>> 0;
+
+  const hero = p.get('hero');
+  if (hero === 'boy' || hero === 'girl') result.hero = hero;
 
   const auto = p.get('autoAnswer');
   if (auto === 'correct' || auto === 'wrong') result.autoAnswer = auto;
