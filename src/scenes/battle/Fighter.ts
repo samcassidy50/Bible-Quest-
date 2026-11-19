@@ -116,6 +116,62 @@ export class Fighter extends Phaser.GameObjects.Container {
     return this.foeSprite ? this.foeSprite.play(anim, ms) : Promise.resolve();
   }
 
+  /**
+   * Starts a foe walking across the field (-1 toward the hero, 1 back to its spot). Placeholder
+   * foes just bob. Call `foeStop()` when it arrives.
+   */
+  foeMove(dir: 1 | -1): void {
+    if (this.foeSprite) {
+      this.foeSprite.move(dir);
+      return;
+    }
+    this.scene.tweens.killTweensOf(this.figure);
+    this.figure.y = 0;
+    this.scene.tweens.add({ targets: this.figure, y: -14, duration: 150, yoyo: true, repeat: -1 });
+  }
+
+  foeStop(): void {
+    if (this.foeSprite) {
+      this.foeSprite.stop();
+      return;
+    }
+    this.scene.tweens.killTweensOf(this.figure);
+    this.figure.y = 0;
+    this.idle();
+  }
+
+  /**
+   * Plays a foe's attack and calls `onImpact` on the frame where the blow lands (once, and at
+   * the latest when the attack ends). Placeholder foes lunge a little and land halfway.
+   */
+  async foeStrike(onImpact: () => void): Promise<void> {
+    let landed = false;
+    const land = () => {
+      if (landed) return;
+      landed = true;
+      onImpact();
+    };
+    if (this.foeSprite) {
+      const impact = this.foeSprite.impactFrame;
+      await this.foeSprite.play('attack', undefined, (k) => {
+        if (k >= impact) land();
+      });
+    } else {
+      await new Promise<void>((resolve) =>
+        this.scene.tweens.add({
+          targets: this.figure,
+          x: -40,
+          duration: 180,
+          yoyo: true,
+          ease: 'Quad.in',
+          onYoyo: land,
+          onComplete: () => resolve(),
+        }),
+      );
+    }
+    land();
+  }
+
   get foeAnimHistory(): string[] {
     return this.foeSprite ? [...this.foeSprite.history] : [];
   }

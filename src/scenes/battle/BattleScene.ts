@@ -605,29 +605,44 @@ export class BattleScene extends Phaser.Scene {
       await wait(this, 700);
       return;
     }
+    // The foe walks up to the hero, attacks there (the blow lands on the attack's impact frame),
+    // then walks back to its spot.
     const attacker = res.attacker === 'back' && this.back ? this.back : this.foe;
     const startX = attacker.x;
-    sfx.play('foeAttack', { vary: true });
-    void attacker.foeAct('attack', 560); // spans the lunge and the return
+    const reach = Math.max(150, (attacker.foeSprite?.frontReach ?? 0) + 70);
+    const strikeX = Math.min(startX, this.hero.x + reach);
+    attacker.foeMove(-1);
     await tweenAsync(this, {
       targets: attacker,
-      x: this.hero.x + 170,
-      duration: 260,
-      ease: 'Quad.in',
+      x: strikeX,
+      duration: Math.max(240, Math.abs(startX - strikeX) * 0.75),
+      ease: 'Sine.inOut',
     });
-    if (res.blocked) {
-      this.floatText(this.hero.x, this.hero.y - 230, 'Blocked!', '#85c1e9', 40);
-      this.hero.setShield(this.engine.blocks);
-      sfx.play('block');
-      void this.hero.act('block');
-    } else {
-      sfx.play('hurt', { vary: true });
-      void this.hero.act('hurt');
-      this.cameras.main.shake(150, 0.006);
-      this.floatText(this.hero.x, this.hero.y - 220, `-${res.damage}`, '#ff6b6b', 48);
-      this.heroBar.setValue(this.engine.heroHp);
-    }
-    await tweenAsync(this, { targets: attacker, x: startX, duration: 300, ease: 'Quad.out' });
+    attacker.foeStop();
+    sfx.play('foeAttack', { vary: true });
+    await attacker.foeStrike(() => {
+      if (res.blocked) {
+        this.floatText(this.hero.x, this.hero.y - 230, 'Blocked!', '#85c1e9', 40);
+        this.hero.setShield(this.engine.blocks);
+        sfx.play('block');
+        void this.hero.act('block');
+      } else {
+        sfx.play('hurt', { vary: true });
+        void this.hero.act('hurt');
+        this.cameras.main.shake(150, 0.006);
+        this.floatText(this.hero.x, this.hero.y - 220, `-${res.damage}`, '#ff6b6b', 48);
+        this.heroBar.setValue(this.engine.heroHp);
+      }
+      this.sync();
+    });
+    attacker.foeMove(1);
+    await tweenAsync(this, {
+      targets: attacker,
+      x: startX,
+      duration: Math.max(260, Math.abs(startX - strikeX) * 0.85),
+      ease: 'Sine.inOut',
+    });
+    attacker.foeStop();
     this.sync();
   }
 

@@ -138,6 +138,7 @@ test('answer choices are shuffled, not always first', async ({ page }) => {
 });
 
 test('sprite foes play their attack, hurt and death frames', async ({ page }) => {
+  test.setTimeout(120_000); // two auto-played fights, with foes walking up to attack
   const foes = [
     ['gen-003', 'slime-lava'],
     ['gen-004', 'thorn-plant'],
@@ -163,6 +164,8 @@ test('sprite foes play their attack, hurt and death frames', async ({ page }) =>
   await page.goto('/?scene=battle&encounter=gen-001&seed=1&autoAnswer=correct&fast=1');
   await waitFor(page, "s.battle && s.battle.foeSprite === 'slime-blue'");
   await waitFor(page, "s.battle.foeAnims.includes('hurt') && s.battle.foeAnims.includes('attack')");
+  // Foes walk up to the hero, attack there, then walk back to their spot.
+  await waitFor(page, "s.battle.foeAnims.join(' ').includes('move attack move')");
   await waitFor(page, "s.battle.result === 'VICTORY' && !!s.targets.primary", 60_000);
   expect((await battle(page)).foeAnims).toContain('death');
 });

@@ -19,6 +19,13 @@ export type FoeAnim = 'idle' | 'attack' | 'hurt' | 'death';
 const ROWS: FoeAnim[] = ['idle', 'attack', 'hurt', 'death'];
 
 /**
+ * How a foe crosses the field. No sheet has a run row, so moving replays the idle frames
+ * quickly with a bounce (`hop`: slimes, beasts, the plant) or a gentle bob (`glide`: spirits,
+ * winds, waves and serpents that float or slither).
+ */
+export type FoeGait = 'hop' | 'glide';
+
+/**
  * Foe sheets: third-party packs cut by scripts/art/process_foes.py, and original foes painted by
  * scripts/art/paint_foes.py (see art/README.md). One row per state, facing left; keep cells, columns and frame counts in sync with that
  * script's output.
@@ -39,6 +46,10 @@ interface Sheet {
   shadow: number;
   /** How far the foe (weapon included) sticks out toward the hero, in native pixels from its feet. */
   front?: number;
+  /** How it moves when approaching the hero (default: hop). */
+  gait?: FoeGait;
+  /** Attack frame on which the blow lands (default: about 60% through the attack row). */
+  impact?: number;
 }
 
 /** The slimes are tiny, so they are shown at twice the hero's pixel size. */
@@ -62,6 +73,8 @@ const PAINTED = {
   feet: { x: 64, y: 120 },
   scale: 3,
 };
+
+const GLIDE = { gait: 'glide' as const };
 
 const SHEETS: Record<FoeSpriteId, Sheet> = {
   'slime-blue': {
@@ -95,6 +108,7 @@ const SHEETS: Record<FoeSpriteId, Sheet> = {
     bodyHeight: 52,
     scale: 4,
     shadow: 22,
+    gait: 'glide',
   },
   'shadow-wolf': {
     url: shadowWolfUrl,
@@ -118,13 +132,27 @@ const SHEETS: Record<FoeSpriteId, Sheet> = {
     front: 30,
   },
   hissling: { ...PAINTED, url: hisslingUrl, bodyHeight: 54, shadow: 52, front: 26 },
-  serpent: { ...PAINTED, url: serpentUrl, bodyHeight: 90, shadow: 84, front: 46 },
-  gust: { ...PAINTED, url: gustUrl, bodyHeight: 60, shadow: 30 },
-  'storm-cloud': { ...PAINTED, url: stormCloudUrl, bodyHeight: 92, shadow: 64, front: 36 },
-  wave: { ...PAINTED, url: waveUrl, bodyHeight: 54, shadow: 60, front: 26 },
-  'flood-surge': { ...PAINTED, url: floodSurgeUrl, bodyHeight: 78, shadow: 96, front: 46 },
-  squall: { ...PAINTED, url: squallUrl, bodyHeight: 54, shadow: 40, front: 24 },
-  tempest: { ...PAINTED, url: tempestUrl, bodyHeight: 96, shadow: 40, front: 34 },
+  serpent: { ...PAINTED, ...GLIDE, url: serpentUrl, bodyHeight: 90, shadow: 84, front: 46 },
+  gust: { ...PAINTED, ...GLIDE, url: gustUrl, bodyHeight: 60, shadow: 30 },
+  'storm-cloud': {
+    ...PAINTED,
+    ...GLIDE,
+    url: stormCloudUrl,
+    bodyHeight: 92,
+    shadow: 64,
+    front: 36,
+  },
+  wave: { ...PAINTED, ...GLIDE, url: waveUrl, bodyHeight: 54, shadow: 60, front: 26 },
+  'flood-surge': {
+    ...PAINTED,
+    ...GLIDE,
+    url: floodSurgeUrl,
+    bodyHeight: 78,
+    shadow: 96,
+    front: 46,
+  },
+  squall: { ...PAINTED, ...GLIDE, url: squallUrl, bodyHeight: 54, shadow: 40, front: 24 },
+  tempest: { ...PAINTED, ...GLIDE, url: tempestUrl, bodyHeight: 96, shadow: 40, front: 34 },
 };
 
 const textureKey = (id: FoeSpriteId) => `foe-${id}`;
@@ -148,12 +176,13 @@ export function useNearestFilterForFoes(textures: Phaser.Textures.TextureManager
  * animations so they follow the scene's time scale (`?fast=1`) like everything else in battle.
  */
 export class FoeSprite extends Phaser.GameObjects.Container {
-  /** States played so far, oldest first (for tests). */
-  readonly history: FoeAnim[] = [];
+  /** States played so far, oldest first (for tests); `move` marks each walk across the field. */
+  readonly history: (FoeAnim | 'move')[] = [];
   private readonly sprite: Phaser.GameObjects.Sprite;
   private readonly sheet: Sheet;
   private readonly pixelScale: number;
   private stepper?: Phaser.Tweens.Tween;
+  private bounce?: Phaser.Tweens.Tween;
   private looping = false;
   private dead = false;
 
@@ -192,47 +221,111 @@ export class FoeSprite extends Phaser.GameObjects.Container {
     if (!this.dead) this.run('idle', 110, true);
   }
 
+  /**
+   * Moves across the field: idle frames played quickly with a hop or bob, until `stop()`.
+   * `dir` is the way it walks (-1 toward the hero on the left, 1 back); walking back it turns round.
+   */
+  move(dir: 1 | -1): void {
+    if (this.dead) return;
+    this.history.push('move');
+    this.face(dir);
+    this.run('idle', 55, true);
+    this.bounce?.remove();
+    const hop = (this.sheet.gait ?? 'hop') === 'hop';
+    this.bounce = this.scene.tweens.add({
+      targets: this.sprite,
+      y: -(hop ? 7 : 3) * this.pixelScale,
+      duration: hop ? 150 : 260,
+      yoyo: true,
+      repeat: -1,
+      ease: hop ? 'Quad.out' : 'Sine.inOut',
+    });
+  }
+
+  /** Ends a `move`: lands, faces the hero again and returns to idle. */
+  stop(): void {
+    this.bounce?.remove();
+    this.bounce = undefined;
+    this.sprite.y = 0;
+    this.face(-1);
+    if (this.dead) return;
+    if (this.looping) this.idle();
+    else this.show('idle', 0);
+  }
+
+  /** Frame of the attack row on which the blow lands. */
+  get impactFrame(): number {
+    return this.sheet.impact ?? Math.round(this.sheet.frames.attack * 0.6);
+  }
+
+  /** Default length of a state played once. */
+  naturalMs(anim: Exclude<FoeAnim, 'idle'>): number {
+    return Math.max(400, this.sheet.frames[anim] * 70);
+  }
+
   /** Plays a state once over `ms` (default: a natural pace). Resolves when it ends. */
-  play(anim: Exclude<FoeAnim, 'idle'>, ms?: number): Promise<void> {
+  play(anim: Exclude<FoeAnim, 'idle'>, ms?: number, onFrame?: (k: number) => void): Promise<void> {
     if (this.dead) return Promise.resolve();
     if (anim === 'death') this.dead = true;
     this.history.push(anim);
     return new Promise((resolve) => {
-      this.run(
-        anim,
-        (ms ?? Math.max(400, this.sheet.frames[anim] * 70)) / this.sheet.frames[anim],
-        false,
-        () => {
-          if (!this.dead) {
-            if (this.looping) this.idle();
-            else this.show('idle', 0);
-          }
-          resolve();
-        },
-      );
+      this.run(anim, (ms ?? this.naturalMs(anim)) / this.sheet.frames[anim], false, onFrame, () => {
+        if (!this.dead) {
+          if (this.looping) this.idle();
+          else this.show('idle', 0);
+        }
+        resolve();
+      });
     });
+  }
+
+  /** Sheets face left; facing right mirrors the cell about the feet so the foe stays put. */
+  private face(dir: 1 | -1): void {
+    const flip = dir === 1;
+    if (this.sprite.flipX === flip) return;
+    const fx = this.sheet.feet.x / this.sheet.cell;
+    this.sprite.setFlipX(flip).setOrigin(flip ? 1 - fx : fx, this.sprite.originY);
   }
 
   private show(anim: FoeAnim, k: number): void {
     this.sprite.setFrame(ROWS.indexOf(anim) * this.sheet.cols + k);
   }
 
-  private run(anim: FoeAnim, frameMs: number, loop: boolean, done?: () => void): void {
+  private run(
+    anim: FoeAnim,
+    frameMs: number,
+    loop: boolean,
+    onFrame?: (k: number) => void,
+    done?: () => void,
+  ): void {
     this.stepper?.remove();
     const n = this.sheet.frames[anim];
+    let shown = 0;
     this.show(anim, 0);
+    onFrame?.(0);
     this.stepper = this.scene.tweens.addCounter({
       from: 0,
       to: n,
       duration: n * frameMs,
       repeat: loop ? -1 : 0,
-      onUpdate: (tween) => this.show(anim, Math.min(n - 1, Math.floor(tween.getValue() ?? 0))),
+      onUpdate: (tween) => {
+        const k = Math.min(n - 1, Math.floor(tween.getValue() ?? 0));
+        if (k === shown) return;
+        // A big time step can skip frames; report each one so no event is missed.
+        for (let j = shown + 1; j <= k; j++) onFrame?.(j);
+        shown = k;
+        this.show(anim, k);
+      },
+      onRepeat: () => {
+        shown = 0;
+      },
       onComplete: () => done?.(),
     });
   }
 
   destroy(fromScene?: boolean): void {
     this.stepper?.remove();
+    this.bounce?.remove();
     super.destroy(fromScene);
   }
 }
