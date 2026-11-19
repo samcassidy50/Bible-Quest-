@@ -19,8 +19,15 @@ export interface Narration {
 /** Reading pace for young listeners; slightly slower than default. */
 export const NARRATION_RATE = 0.9;
 
-/** Never wait for a voice longer than this multiple of the estimate (engines can hang). */
+/**
+ * Never wait for a voice longer than this (engines can hang): a multiple of the estimate plus a
+ * fixed allowance for the engine warming up, so a slow but working voice is never cut off.
+ */
 const TIMEOUT_FACTOR = 1.6;
+const TIMEOUT_EXTRA_MS = 4000;
+export function narrationTimeoutMs(text: string, rate: number): number {
+  return estimateNarrationMs(text, rate) * TIMEOUT_FACTOR + TIMEOUT_EXTRA_MS;
+}
 
 export class SilentNarration implements Narration {
   private cancel?: () => void;
@@ -59,7 +66,7 @@ export class WebSpeechNarration implements Narration {
       u.lang = 'en-US';
       const voice = window.speechSynthesis.getVoices().find((v) => v.lang.startsWith('en'));
       if (voice) u.voice = voice;
-      const timer = setTimeout(() => done(), estimateNarrationMs(text, this.rate) * TIMEOUT_FACTOR);
+      const timer = setTimeout(() => done(), narrationTimeoutMs(text, this.rate));
       const done = () => {
         clearTimeout(timer);
         this.finish = undefined;
@@ -85,7 +92,7 @@ export class NativeNarration implements Narration {
   async speak(text: string): Promise<void> {
     const { TextToSpeech } = await import('@capacitor-community/text-to-speech');
     await new Promise<void>((resolve) => {
-      const timer = setTimeout(() => done(), estimateNarrationMs(text, this.rate) * TIMEOUT_FACTOR);
+      const timer = setTimeout(() => done(), narrationTimeoutMs(text, this.rate));
       const done = () => {
         clearTimeout(timer);
         this.finish = undefined;

@@ -22,31 +22,86 @@ export function estimateNarrationMs(text: string, rate = 1): number {
   return Math.round(ms);
 }
 
+/** A point on the reading timeline: at `t` ms the voice has read `x` px into the ticker text. */
+export interface ReadingKnot {
+  t: number;
+  x: number;
+}
+
 /**
- * Ticker position (left edge of the text, in px) at time `t`. The text starts just off the right
- * edge and finishes just off the left edge after `durationMs`.
+ * Reading timeline for a passage read verse by verse: one knot at the end of each verse, so the
+ * ticker can be re-synced to the voice whenever a verse finishes. Verse times come from the
+ * per-verse estimate scaled to `durationMs`; `verseEndPx[i]` is how far into the ticker text verse
+ * `i` ends.
  */
-export function tickerX(
-  t: number,
+export function readingTimeline(
+  verseTexts: readonly string[],
+  verseEndPx: readonly number[],
   durationMs: number,
-  viewWidth: number,
-  textWidth: number,
+  rate = 1,
+): ReadingKnot[] {
+  const est = verseTexts.map((v) => estimateNarrationMs(v, rate));
+  const total = est.reduce((a, b) => a + b, 0);
+  const knots: ReadingKnot[] = [{ t: 0, x: 0 }];
+  let acc = 0;
+  for (const [i, e] of est.entries()) {
+    acc += e;
+    const t = total > 0 ? (acc / total) * durationMs : durationMs;
+    knots.push({ t, x: verseEndPx[i] ?? knots[knots.length - 1]!.x });
+  }
+  return knots;
+}
+
+/** How far (px) into the ticker text the voice is at time `t`: linear within each verse. */
+export function readingOffset(t: number, knots: readonly ReadingKnot[]): number {
+  return interpolate(t, knots, 't', 'x');
+}
+
+/** Inverse of `readingOffset`: the time at which the voice reaches `x` px into the text. */
+export function timeAtOffset(x: number, knots: readonly ReadingKnot[]): number {
+  return interpolate(x, knots, 'x', 't');
+}
+
+function interpolate(
+  v: number,
+  knots: readonly ReadingKnot[],
+  from: keyof ReadingKnot,
+  to: keyof ReadingKnot,
 ): number {
-  if (durationMs <= 0) return -textWidth;
-  const p = Math.min(1, Math.max(0, t / durationMs));
-  return viewWidth - p * (viewWidth + textWidth);
+  if (knots.length === 0) return 0;
+  if (v <= knots[0]![from]) return knots[0]![to];
+  for (let i = 1; i < knots.length; i++) {
+    const a = knots[i - 1]!;
+    const b = knots[i]!;
+    if (v <= b[from]) {
+      const span = b[from] - a[from];
+      return span > 0 ? a[to] + ((v - a[from]) / span) * (b[to] - a[to]) : b[to];
+    }
+  }
+  return knots[knots.length - 1]![to];
+}
+
+/**
+ * Ticker position (left edge of the text, in px) that puts the word being read at `readAtPx`
+ * (the middle of the screen), so the text is read as it passes the centre.
+ */
+export function tickerX(t: number, knots: readonly ReadingKnot[], readAtPx: number): number {
+  return readAtPx - readingOffset(t, knots);
 }
 
 /**
  * Fraction of the reading (0..1) at which a word at `wordOffsetPx` into the text reaches
- * `anchorPx` on screen (e.g. 70% across). Used to time word-anchored orbs.
+ * `anchorPx` on screen (e.g. 72% across) while the spoken word sits at `readAtPx`.
+ * Used to time word-anchored orbs.
  */
 export function wordAnchorFraction(
   wordOffsetPx: number,
   anchorPx: number,
-  viewWidth: number,
-  textWidth: number,
+  readAtPx: number,
+  knots: readonly ReadingKnot[],
+  durationMs: number,
 ): number {
-  const f = (viewWidth - anchorPx + wordOffsetPx) / (viewWidth + textWidth);
-  return Math.min(1, Math.max(0, f));
+  if (durationMs <= 0) return 1;
+  const t = timeAtOffset(wordOffsetPx + readAtPx - anchorPx, knots);
+  return Math.min(1, Math.max(0, t / durationMs));
 }

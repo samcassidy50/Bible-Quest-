@@ -3,7 +3,7 @@ import { pixelBox, UI } from '../ui/pixelUi';
 import type { ActionId } from '../../core/battle/types';
 import type { Question } from '../../core/content/types';
 import { Button } from '../ui/Button';
-import { FONT_READ, FONT_TITLE, FONT_UI, FONT_VERSE, tweenAsync, wait } from '../util';
+import { FONT_READ, FONT_UI, FONT_VERSE, tweenAsync, wait } from '../util';
 import { ACTION_INFO, COLOR } from './actionInfo';
 
 const ANSWER_FILL = 0x3c3366;
@@ -159,18 +159,8 @@ export class QuestionCard extends Phaser.GameObjects.Container {
     const fbY = ch / 2 - 150;
 
     if (correct) {
-      const t = this.scene.add
-        .text(0, fbY + 40, '✨ Powered up! ✨', {
-          fontFamily: FONT_TITLE,
-          fontSize: '44px',
-          fontStyle: 'bold',
-          color: '#b07d00',
-        })
-        .setOrigin(0.5)
-        .setScale(0.5);
-      this.add(t);
-      await tweenAsync(this.scene, { targets: t, scale: 1, duration: 260, ease: 'Back.out' });
-      await wait(this.scene, 650);
+      // Just a moment on the green answer; the battle scene shows the POWER UP burst.
+      await wait(this.scene, 300);
       return;
     }
 

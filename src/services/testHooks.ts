@@ -39,6 +39,8 @@ export interface BattleTestState {
   correct: number;
   /** Hero animation clips started this fight, oldest first. */
   heroAnims: string[];
+  /** POWER UP bursts shown after right answers this fight. */
+  powerUps: number;
 }
 
 export interface ScriptureTestState {
@@ -46,6 +48,13 @@ export interface ScriptureTestState {
   durationMs: number;
   elapsedMs: number;
   narrationDone: boolean;
+  /** Every verse reference in the passage, in order. */
+  verseRefs: string[];
+  /** Verses the voice has finished reading in the current reading, in order. */
+  spokenRefs: string[];
+  /** Left edge of the scrolling verse text and its width (game px); the spoken word sits mid-screen. */
+  tickerX: number;
+  tickerWidth: number;
   orbs: { id: string; status: string; atMs: number }[];
   /** Energy orbs collected in this reading. */
   energy: number;

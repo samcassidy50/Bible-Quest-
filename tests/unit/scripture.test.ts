@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 import {
   BASE_WPM,
   estimateNarrationMs,
+  readingOffset,
+  readingTimeline,
   tickerX,
+  timeAtOffset,
   wordAnchorFraction,
   wordCount,
 } from '../../src/core/scripture/timing';
@@ -28,24 +31,63 @@ describe('narration timing', () => {
     expect(() => estimateNarrationMs('x', 0)).toThrow(RangeError);
   });
 
-  it('ticker starts off the right edge and ends off the left edge', () => {
-    expect(tickerX(0, 10_000, 1280, 3000)).toBe(1280);
-    expect(tickerX(10_000, 10_000, 1280, 3000)).toBe(-3000);
-    expect(tickerX(5_000, 10_000, 1280, 3000)).toBe(1280 - 0.5 * 4280);
-    expect(tickerX(99_999, 10_000, 1280, 3000)).toBe(-3000);
-    expect(tickerX(-5, 10_000, 1280, 3000)).toBe(1280);
-    expect(tickerX(1, 0, 1280, 3000)).toBe(-3000);
+  it('builds a verse-by-verse reading timeline ending at the duration', () => {
+    const knots = readingTimeline(['One two.', 'Three four five six.'], [100, 400], 9000);
+    expect(knots[0]).toEqual({ t: 0, x: 0 });
+    expect(knots).toHaveLength(3);
+    expect(knots[2]).toEqual({ t: 9000, x: 400 });
+    // The first verse is shorter, so it ends before the halfway point.
+    expect(knots[1]!.t).toBeGreaterThan(0);
+    expect(knots[1]!.t).toBeLessThan(4500);
+    expect(knots[1]!.x).toBe(100);
+    expect(readingTimeline(['', ''], [0, 0], 1000).map((k) => k.t)).toEqual([0, 1000, 1000]);
+  });
+
+  it('interpolates the reading offset within each verse and inverts it', () => {
+    const knots = [
+      { t: 0, x: 0 },
+      { t: 1000, x: 200 },
+      { t: 3000, x: 1200 },
+    ];
+    expect(readingOffset(-5, knots)).toBe(0);
+    expect(readingOffset(500, knots)).toBe(100);
+    expect(readingOffset(2000, knots)).toBe(700);
+    expect(readingOffset(9999, knots)).toBe(1200);
+    expect(timeAtOffset(700, knots)).toBe(2000);
+    expect(timeAtOffset(-1, knots)).toBe(0);
+    expect(timeAtOffset(5000, knots)).toBe(3000);
+    expect(readingOffset(5, [])).toBe(0);
+    expect(
+      readingOffset(5, [
+        { t: 5, x: 3 },
+        { t: 5, x: 9 },
+      ]),
+    ).toBe(3);
+  });
+
+  it('keeps the spoken word at the reading point', () => {
+    const knots = [
+      { t: 0, x: 0 },
+      { t: 10_000, x: 3000 },
+    ];
+    expect(tickerX(0, knots, 640)).toBe(640); // first word starts in the middle
+    expect(tickerX(5000, knots, 640) + 1500).toBe(640);
+    expect(tickerX(10_000, knots, 640) + 3000).toBe(640); // last word ends in the middle
   });
 
   it('word anchor fraction matches the ticker position', () => {
-    const W = 1280;
-    const textW = 3000;
-    const offset = 900;
-    const anchor = W * 0.7;
-    const f = wordAnchorFraction(offset, anchor, W, textW);
-    expect(tickerX(f * 10_000, 10_000, W, textW) + offset).toBeCloseTo(anchor, 5);
-    expect(wordAnchorFraction(-1e6, anchor, W, textW)).toBe(0);
-    expect(wordAnchorFraction(1e6, anchor, W, textW)).toBe(1);
+    const knots = [
+      { t: 0, x: 0 },
+      { t: 4000, x: 1000 },
+      { t: 10_000, x: 3000 },
+    ];
+    const offset = 1800;
+    const anchor = 1280 * 0.72;
+    const f = wordAnchorFraction(offset, anchor, 640, knots, 10_000);
+    expect(tickerX(f * 10_000, knots, 640) + offset).toBeCloseTo(anchor, 5);
+    expect(wordAnchorFraction(-1e6, anchor, 640, knots, 10_000)).toBe(0);
+    expect(wordAnchorFraction(1e6, anchor, 640, knots, 10_000)).toBe(1);
+    expect(wordAnchorFraction(10, anchor, 640, knots, 0)).toBe(1);
   });
 });
 

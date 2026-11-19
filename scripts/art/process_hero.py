@@ -338,11 +338,10 @@ GIRL_STRIPS = [
     Strip('cast.png', [f'cast_{i}' for i in range(5)], 0.91),
     Strip('block.png', [f'block_{i}' for i in range(4)], 0.92),
     Strip('hurt.png', ['hurt_0', 'hurt_1', 'hurt_2'], 1.22),
+    Strip('poses.png', ['walk', 'thrust'], 1.40),
 ]
 # Frames she has no art for yet → one of her frames to show instead (placeholders).
 GIRL_FALLBACKS = {
-    'walk': 'run_2',
-    'thrust': 'slash_3',
     'down_0': 'block_2',
     'down_1': 'power_0',
     'down_2': 'power_4',

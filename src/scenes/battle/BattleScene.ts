@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { BattleEngine } from '../../core/battle/BattleEngine';
-import { heroBuild, QUESTION_TIME_S, recordVictory } from '../../core/progress/progress';
+import { QUESTION_TIME_S, recordVictory } from '../../core/progress/progress';
+import { autoSetOnFirstWin, heroLoadout } from '../../core/progress/runes';
 import { progress } from '../../services/progress';
 import { pickAction } from '../../core/battle/simulate';
 import type {
@@ -89,12 +90,16 @@ export class BattleScene extends Phaser.Scene {
   private actionBar!: ActionBar;
   private card?: QuestionCard;
   private result?: ResultPanel;
+  /** Top-right button that leaves the fight for the map, and its confirm prompt while open. */
+  private leaveButton!: Button;
+  private leaveConfirm?: { root: Phaser.GameObjects.Container; leave: Button; stay: Button };
 
   private busy = true;
   private question: Question | null = null;
   private feedback: 'correct' | 'wrong' | null = null;
   private asked = 0;
   private correct = 0;
+  private powerUps = 0;
 
   constructor() {
     super('battle');
@@ -107,11 +112,13 @@ export class BattleScene extends Phaser.Scene {
     this.armorPage = undefined;
     this.card = undefined;
     this.result = undefined;
+    this.leaveConfirm = undefined;
     this.busy = true;
     this.question = null;
     this.feedback = null;
     this.asked = 0;
     this.correct = 0;
+    this.powerUps = 0;
 
     this.debug = this.registry.get('debug') as DebugParams;
     this.encounter = getEncounter(
@@ -128,7 +135,7 @@ export class BattleScene extends Phaser.Scene {
 
     this.engine = new BattleEngine(
       {
-        ...heroBuild(progress.save.upgrades),
+        ...heroLoadout(progress.save, ENCOUNTERS),
         waves: this.encounter.waves,
         unlockedSpecials: this.armor().specials,
         ultimateUnlocked: this.armor().ultimate,
@@ -171,6 +178,7 @@ export class BattleScene extends Phaser.Scene {
       this.debug.freeze,
     );
     this.hero = new Fighter(this, 0, 0, 'hero');
+    this.hero.setShield(this.engine.blocks); // a Rune of Guarding starts the fight with blocks
     this.foe = this.makeFoe(this.engine.foe as EncounterFoe);
 
     this.foeBar = new HpBar(
@@ -209,6 +217,16 @@ export class BattleScene extends Phaser.Scene {
       .setShadow(2, 2, '#000', 3);
 
     this.actionBar = new ActionBar(this, (a) => void this.onAction(a));
+
+    this.leaveButton = new Button(this, 0, 0, {
+      width: 130,
+      height: 58,
+      radius: 29,
+      label: '✕ Leave',
+      fontSize: 22,
+      fill: 0x6b4a22,
+      onTap: () => this.openLeaveConfirm(),
+    }).setDepth(120);
 
     this.hero.setFrozen(this.debug.freeze);
     if (!this.debug.freeze) this.foe.idle();
@@ -337,6 +355,8 @@ export class BattleScene extends Phaser.Scene {
     this.heroPanel.setPosition(ins.left + 24, H - ins.bottom - 136);
     this.refText.setPosition(ins.left + 24, ins.top + 20);
     this.actionBar.setPosition(W - ins.right - 116, H - ins.bottom - 104);
+    this.leaveButton.setPosition(W - ins.right - 24 - 65, ins.top + 41);
+    this.leaveConfirm?.root.setPosition(W / 2, H / 2);
     this.card?.setPosition(W / 2, H / 2);
     this.result?.setPosition(W / 2, H / 2);
     this.drawWaves();
@@ -372,6 +392,71 @@ export class BattleScene extends Phaser.Scene {
           .lineBetween(x - 8, y, x - 2, y + 7)
           .lineBetween(x - 2, y + 7, x + 10, y - 8);
     }
+  }
+
+  // ── Leaving the fight ──────────────────────────────────────────────────────
+
+  /** Asks before leaving; the fight is paused (timer, foes, turn flow) while the prompt is up. */
+  private openLeaveConfirm(): void {
+    if (this.leaveConfirm || this.result) return;
+    this.tweens.pauseAll();
+    this.time.paused = true;
+    const { width: W, height: H } = this.scale.gameSize;
+    // Full-screen blocker so nothing under the prompt can be tapped.
+    const dim = this.add.rectangle(0, 0, W * 3, H * 3, 0x000000, 0.55).setInteractive();
+    const panel = pixelBox(this, UI.panel, 0, 0, 520, 260);
+    const title = this.add
+      .text(0, -70, 'Leave this battle?', {
+        fontFamily: FONT_TITLE,
+        fontSize: '38px',
+        color: '#fdf6e3',
+        stroke: '#1d1838',
+        strokeThickness: 6,
+      })
+      .setOrigin(0.5);
+    const note = this.add
+      .text(0, -20, 'You will go back to the map.', {
+        fontFamily: FONT_UI,
+        fontSize: '22px',
+        color: '#fdf6e3',
+        stroke: '#1d1838',
+        strokeThickness: 4,
+      })
+      .setOrigin(0.5);
+    const stay = new Button(this, -120, 60, {
+      width: 200,
+      height: 64,
+      label: 'Keep fighting',
+      fontSize: 22,
+      fill: 0x2e86de,
+      onTap: () => this.closeLeaveConfirm(),
+    });
+    const leave = new Button(this, 120, 60, {
+      width: 200,
+      height: 64,
+      label: 'Leave',
+      fontSize: 24,
+      fill: 0xc0392b,
+      onTap: () => {
+        this.tweens.resumeAll();
+        this.time.paused = false;
+        this.scene.start('map');
+      },
+    });
+    const root = this.add
+      .container(W / 2, H / 2, [dim, panel, title, note, stay, leave])
+      .setDepth(300);
+    this.leaveConfirm = { root, leave, stay };
+    this.sync();
+  }
+
+  private closeLeaveConfirm(): void {
+    if (!this.leaveConfirm) return;
+    this.leaveConfirm.root.destroy();
+    this.leaveConfirm = undefined;
+    this.tweens.resumeAll();
+    this.time.paused = false;
+    this.sync();
   }
 
   // ── Turn flow ──────────────────────────────────────────────────────────────
@@ -438,7 +523,8 @@ export class BattleScene extends Phaser.Scene {
     this.sync();
 
     await card.showFeedback(index, Boolean(this.debug.autoAnswer));
-    await card.slideOut();
+    // A right answer: the card drops away as POWER UP bursts over the field.
+    await Promise.all([card.slideOut(), correct ? this.powerUpBurst() : Promise.resolve()]);
     this.card = undefined;
     this.question = null;
     this.feedback = null;
@@ -447,6 +533,84 @@ export class BattleScene extends Phaser.Scene {
     this.sync();
     await this.playHero(result);
     await this.afterHero(result);
+  }
+
+  /**
+   * Big gold "POWER UP!" that pops in over the battlefield while a beam of light falls on the
+   * hero (like the angel's), then both fade.
+   */
+  private async powerUpBurst(): Promise<void> {
+    this.powerUps++;
+    this.sync();
+    const { width: W, height: H } = this.scale.gameSize;
+
+    // The beam sits behind the hero (fighters are at depth 0, the backdrop below -20).
+    const hx = this.hero.x;
+    const gy = this.groundY;
+    // Stacked strips, widening and brightening toward the ground (no gradient seams).
+    const beam = this.add.graphics().setDepth(-1).setAlpha(0);
+    const step = 8;
+    for (let y = 0; y < gy; y += step) {
+      const k = y / gy;
+      const half = 40 + 90 * k;
+      beam.fillStyle(0xfff6d0, 0.12 + 0.43 * k).fillRect(hx - half, y, half * 2, step);
+    }
+    const pool = this.add.ellipse(hx, gy, 300, 56, 0xfff1b0, 0.35).setDepth(-1).setAlpha(0);
+    void tweenAsync(this, { targets: [beam, pool], alpha: 1, duration: 300 });
+
+    const text = this.add
+      .text(0, 0, 'POWER UP!', {
+        fontFamily: FONT_TITLE,
+        fontSize: '96px',
+        fontStyle: 'bold',
+        color: '#ffd34d',
+        stroke: '#5a2d00',
+        strokeThickness: 12,
+      })
+      .setOrigin(0.5)
+      .setShadow(0, 6, '#000000', 8, true, true);
+    const sparks = Array.from({ length: 10 }, (_, i) => {
+      const a = (i / 10) * Math.PI * 2;
+      return {
+        star: this.add.text(0, 0, '✦', { fontSize: '40px', color: '#fff3c4' }).setOrigin(0.5),
+        x: Math.cos(a) * 300,
+        y: Math.sin(a) * 160,
+      };
+    });
+    const burst = this.add
+      .container(W / 2, H * 0.4, [...sparks.map((s) => s.star), text])
+      .setDepth(110)
+      .setScale(0.2)
+      .setAlpha(0);
+    for (const s of sparks)
+      void tweenAsync(this, {
+        targets: s.star,
+        x: s.x,
+        y: s.y,
+        alpha: 0,
+        duration: 800,
+        ease: 'Quad.out',
+      });
+    await tweenAsync(this, {
+      targets: burst,
+      scale: 1,
+      alpha: 1,
+      duration: 300,
+      ease: 'Back.out',
+    });
+    await tweenAsync(this, {
+      targets: text,
+      scale: 1.08,
+      duration: 180,
+      yoyo: true,
+      ease: 'Sine.inOut',
+    });
+    await wait(this, 250);
+    await Promise.all([
+      tweenAsync(this, { targets: burst, alpha: 0, scale: 1.3, duration: 250, ease: 'Quad.in' }),
+      tweenAsync(this, { targets: [beam, pool], alpha: 0, duration: 400 }),
+    ]);
+    for (const o of [burst, beam, pool]) o.destroy();
   }
 
   private async afterHero(res: HeroActionResult): Promise<void> {
@@ -851,6 +1015,8 @@ export class BattleScene extends Phaser.Scene {
 
   private async showResult(victory: boolean): Promise<void> {
     this.actionBar.refresh(this.engine, false);
+    this.closeLeaveConfirm();
+    this.leaveButton.setVisible(false);
     const retry = () => {
       // Same orbs, new rolls: the collected specials stay in the registry.
       this.registry.set('attempt', ((this.registry.get('attempt') as number | undefined) ?? 0) + 1);
@@ -866,6 +1032,8 @@ export class BattleScene extends Phaser.Scene {
       progress.update(
         (s) => (result = recordVictory(s, this.encounter.id, this.correct, this.asked)).save,
       );
+      // A first win awards the passage's rune; it goes straight into a free slot of its item.
+      if (firstWin) progress.update((s) => autoSetOnFirstWin(s, ENCOUNTERS, this.encounter.id));
       stars = result.stars;
       newBest = result.newBest;
     }
@@ -881,7 +1049,13 @@ export class BattleScene extends Phaser.Scene {
     this.result = new ResultPanel(
       this,
       victory,
-      { correct: this.correct, asked: this.asked, stars, newBest },
+      {
+        correct: this.correct,
+        asked: this.asked,
+        stars,
+        newBest,
+        rune: firstWin ? this.encounter.rune : undefined,
+      },
       victory
         ? { label: next ? 'Next passage' : 'Play again', onTap: goNext }
         : { label: 'Retry', onTap: retry },
@@ -963,6 +1137,11 @@ export class BattleScene extends Phaser.Scene {
     }
     if (this.giftContinue) targets['gift-continue'] = center(this.giftContinue);
     if (this.armorPage) targets['armor-continue'] = center(this.armorPage.continueButton);
+    if (this.leaveButton.visible) targets['leave'] = center(this.leaveButton);
+    if (this.leaveConfirm) {
+      targets['leave-confirm'] = center(this.leaveConfirm.leave);
+      targets['leave-stay'] = center(this.leaveConfirm.stay);
+    }
     if (this.result) {
       targets['primary'] = center(this.result.primaryButton);
       targets['secondary'] = center(this.result.secondaryButton);
@@ -1009,6 +1188,7 @@ export class BattleScene extends Phaser.Scene {
         asked: this.asked,
         correct: this.correct,
         heroAnims: this.hero.animHistory,
+        powerUps: this.powerUps,
       },
     });
   }

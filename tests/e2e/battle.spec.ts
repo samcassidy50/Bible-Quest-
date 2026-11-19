@@ -280,3 +280,36 @@ test('tapping the back foe of a pair targets it, and the hit lands there', async
   expect(b.foeHp).toBe(35);
   expect(b.target).toBe('front');
 });
+
+test('Leave asks first, Keep fighting resumes, Leave goes back to the map', async ({ page }) => {
+  await page.goto('/?scene=battle&seed=1&freeze=1&fast=1');
+  await heroTurn(page);
+  await tap(page, 'leave');
+  await waitFor(page, '!!s.targets["leave-confirm"]');
+  await snap(page, test.info().outputPath('leave-confirm.png'));
+
+  await tap(page, 'leave-stay');
+  await waitFor(page, '!s.targets["leave-confirm"]');
+  await tap(page, 'action:attack');
+  await waitFor(page, 's.battle.question && s.targets["answer:0"]');
+
+  // Leaving mid-question works too.
+  await tap(page, 'leave');
+  await waitFor(page, '!!s.targets["leave-confirm"]');
+  await tap(page, 'leave-confirm');
+  await waitFor(page, "s.scene === 'map'");
+});
+
+test('a right answer drops the card and bursts POWER UP over the field', async ({ page }) => {
+  await page.goto('/?scene=battle&seed=1&freeze=1');
+  await heroTurn(page);
+  await tap(page, 'action:attack');
+  await waitFor(page, 's.battle.question && s.targets["answer:0"]');
+  const q = (await battle(page)).question!;
+  await tap(page, `answer:${q.answerIndex}`);
+  await waitFor(page, 's.battle.powerUps === 1');
+  await page.waitForTimeout(450);
+  await snap(page, test.info().outputPath('power-up.png'));
+  await heroTurn(page);
+  expect((await battle(page)).powerUps).toBe(1);
+});

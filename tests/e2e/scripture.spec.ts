@@ -46,6 +46,26 @@ test('tapping an energy orb during the reading carries energy into the fight', a
   expect((await battle(page)).energy).toBeGreaterThan(0);
 });
 
+test('every verse of the passage is read before the battle starts', async ({ page }) => {
+  // Genesis 3:1–6: the longest passage, six verses.
+  await page.goto('/?scene=scripture&encounter=gen-005&seed=1&fast=1');
+  await waitFor(page, "s.scripture && s.scripture.encounter === 'gen-005'");
+  const s0 = await scripture(page);
+  expect(s0.verseRefs).toHaveLength(6);
+  expect(s0.spokenRefs.length).toBeLessThan(6);
+  // The first word starts in the middle of the screen, where the spoken word stays.
+  expect(Math.abs(s0.tickerX - (await state(page)).gameWidth / 2)).toBeLessThan(60);
+
+  // The moment the hero heads into the fight, the whole passage has been read, in order.
+  await waitFor(page, 's.scripture && s.scripture.finishing', 60_000);
+  const s = await scripture(page);
+  expect(s.narrationDone).toBe(true);
+  expect(s.spokenRefs).toEqual(s.verseRefs);
+  // The last word ends in the middle: no leftover text has to rush across after the voice stops.
+  expect(Math.abs(s.tickerX + s.tickerWidth - (await state(page)).gameWidth / 2)).toBeLessThan(5);
+  await waitFor(page, "s.scene === 'battle' && !!s.battle");
+});
+
 test('missing every orb means no energy in the fight', async ({ page }) => {
   await page.goto('/?scene=scripture&seed=1&fast=1');
   await waitFor(page, "s.scripture && s.scripture.orbs.every((o) => o.status === 'missed')");

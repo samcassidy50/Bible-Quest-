@@ -5,9 +5,9 @@
  * so every hero clip plays on either sheet; feet of every frame at (originX, originY).
  */
 export const HERO_GIRL_SHEET = {
-  frameWidth: 98,
+  frameWidth: 118,
   frameHeight: 115,
-  originX: 49,
+  originX: 59,
   originY: 114,
   /** Height of the standing hero in native pixels. */
   standingHeight: 64,

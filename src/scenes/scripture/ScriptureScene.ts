@@ -2,7 +2,13 @@ import Phaser from 'phaser';
 import type { Encounter, EncounterFoe } from '../../core/content/types';
 import type { DebugParams } from '../../core/debugParams';
 import { OrbTracker, scheduleOrbs, type ScheduledOrb } from '../../core/scripture/orbs';
-import { estimateNarrationMs, tickerX, wordAnchorFraction } from '../../core/scripture/timing';
+import {
+  estimateNarrationMs,
+  readingTimeline,
+  tickerX,
+  wordAnchorFraction,
+  type ReadingKnot,
+} from '../../core/scripture/timing';
 import { getEncounter } from '../../content';
 import { hapticTap } from '../../services/haptics';
 import { sfx } from '../../services/sfx';
@@ -24,6 +30,8 @@ import { Backdrop } from '../backdrop/Backdrop';
 const BANNER_H = 118;
 const REF_BOX_W = 250;
 const TICKER_STYLE = { fontFamily: FONT_VERSE, fontSize: '44px', color: '#fdf6e3' };
+/** The word being read sits at this fraction of the screen width. */
+const READ_AT = 0.5;
 /** Word-anchored orbs appear when their word reaches this fraction of the screen width. */
 const ANCHOR_AT = 0.72;
 /** How far an orb drifts upward over its lifetime (gentle, so small hands can catch it). */
@@ -61,8 +69,9 @@ export class ScriptureScene extends Phaser.Scene {
   private schedule: ScheduledOrb[] = [];
   private active = new Map<string, Orb>();
   private elapsed = 0;
-  private speedup = 1;
+  private knots: ReadingKnot[] = [];
   private narrationDone = false;
+  private spokenRefs: string[] = [];
   private finishing = false;
   private readings = 0;
   private readingId = 0;
@@ -103,6 +112,7 @@ export class ScriptureScene extends Phaser.Scene {
     this.scale.on('resize', this.layout, this);
     this.events.once('shutdown', () => {
       this.scale.off('resize', this.layout, this);
+      this.readingId++; // no further verses after leaving
       this.narration.stop();
     });
 
@@ -164,7 +174,21 @@ export class ScriptureScene extends Phaser.Scene {
       glow.setMask(this.tickerMask.createGeometryMask());
       this.wordGlows.set(orbId(i), glow);
     }
+    // Where each verse ends in the ticker, so the scroll re-syncs to the voice verse by verse.
+    const verseEndPx: number[] = [];
+    let end = 0;
+    for (const [i, v] of this.encounter.verses.entries()) {
+      end += (i > 0 ? 2 : 0) + v.text.length; // verses are joined with two spaces
+      measure.setText(this.text.slice(0, end));
+      verseEndPx.push(measure.width);
+    }
     measure.destroy();
+    this.knots = readingTimeline(
+      this.encounter.verses.map((v) => v.text),
+      verseEndPx,
+      this.durationMs,
+      this.narration.rate,
+    );
 
     // Energy collected so far, top right.
     this.loadout = this.add.container(0, 0).setDepth(30);
@@ -243,11 +267,9 @@ export class ScriptureScene extends Phaser.Scene {
     const id = this.readingId;
     this.readings++;
     this.elapsed = 0;
-    this.speedup = 1;
     this.narrationDone = false;
 
     const { width: W } = this.scale.gameSize;
-    const textW = this.ticker.width;
     const plans = this.encounter.orbs
       .map((_, i) => orbId(i))
       .filter((id) => this.tracker.pending.includes(id))
@@ -256,20 +278,34 @@ export class ScriptureScene extends Phaser.Scene {
         return {
           id,
           anchorFraction:
-            offset === undefined ? undefined : wordAnchorFraction(offset, W * ANCHOR_AT, W, textW),
+            offset === undefined
+              ? undefined
+              : wordAnchorFraction(offset, W * ANCHOR_AT, W * READ_AT, this.knots, this.durationMs),
         };
       });
     this.schedule = scheduleOrbs(plans, this.durationMs);
 
-    void this.narration.speak(this.text).then(() => {
+    this.spokenRefs = [];
+    void this.readAloud(id).then(() => {
       if (id !== this.readingId) return; // a replay started a new reading
       this.narrationDone = true;
-      // Voice finished early: let the ticker catch up quickly instead of lingering.
-      const left = this.durationMs - this.elapsed;
-      if (left > 0) this.speedup = Math.max(1, left / 900);
       this.sync();
     });
     this.sync();
+  }
+
+  /**
+   * Reads the passage one verse at a time. Short utterances keep every engine reading to the end
+   * (Chrome's speech engine silently stops long ones), and the battle waits for the last verse.
+   */
+  private async readAloud(id: number): Promise<void> {
+    const stale = () => id !== this.readingId || this.finishing;
+    for (const verse of this.encounter.verses) {
+      if (stale()) return;
+      await this.narration.speak(verse.text);
+      if (stale()) return;
+      this.spokenRefs.push(verse.ref);
+    }
   }
 
   update(_time: number, delta: number): void {
@@ -278,7 +314,7 @@ export class ScriptureScene extends Phaser.Scene {
       return;
     }
     const dt = delta * this.timeScale;
-    this.elapsed = Math.min(this.durationMs, this.elapsed + dt * this.speedup);
+    this.advanceReading(dt);
     this.scrollParallax(dt);
     this.updateTicker();
     this.updateHero();
@@ -295,13 +331,28 @@ export class ScriptureScene extends Phaser.Scene {
     if (this.active.size > 0 || this.sinceSync > 200) this.sync();
   }
 
+  /**
+   * Moves the ticker along the estimated pace, but never past the verse the voice is still
+   * reading, and catches up quickly when the voice finishes a verse early. This keeps the spoken
+   * word near the middle of the screen even when the estimate is off.
+   */
+  private advanceReading(dt: number): void {
+    const spoken = this.spokenRefs.length;
+    const floor = this.narrationDone ? this.durationMs : (this.knots[spoken]?.t ?? 0);
+    const cap = this.narrationDone
+      ? this.durationMs
+      : (this.knots[spoken + 1]?.t ?? this.durationMs);
+    const catchUp = this.elapsed < floor ? Math.max(1, (floor - this.elapsed) / 400) : 1;
+    this.elapsed = Math.min(cap, this.elapsed + dt * catchUp);
+  }
+
   private scrollParallax(dt: number): void {
     this.backdrop.scroll(dt);
   }
 
   private updateTicker(): void {
     const { width: W } = this.scale.gameSize;
-    this.ticker.setX(tickerX(this.elapsed, this.durationMs, W, this.ticker.width));
+    this.ticker.setX(tickerX(this.elapsed, this.knots, W * READ_AT));
     for (const [id, glow] of this.wordGlows)
       glow.setX(this.ticker.x + (this.wordOffsets.get(id) ?? 0));
   }
@@ -498,6 +549,10 @@ export class ScriptureScene extends Phaser.Scene {
         durationMs: this.durationMs,
         elapsedMs: Math.round(this.elapsed),
         narrationDone: this.narrationDone,
+        verseRefs: this.encounter.verses.map((v) => v.ref),
+        spokenRefs: [...this.spokenRefs],
+        tickerX: Math.round(this.ticker.x),
+        tickerWidth: Math.round(this.ticker.width),
         orbs: this.tracker.all.map((o) => ({ ...o, atMs: scheduled.get(o.id) ?? -1 })),
         energy: this.tracker.collected.length,
         collected: this.tracker.collected,
