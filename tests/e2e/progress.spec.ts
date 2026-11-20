@@ -9,6 +9,7 @@ const base = (): SaveData => ({
   version: 1,
   completed: {},
   heard: [],
+  asked: [],
   seenOnMap: [],
   runes: {
     sword: [null, null],

@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { BattleEngine } from '../../core/battle/BattleEngine';
-import { QUESTION_TIME_S, recordVictory } from '../../core/progress/progress';
+import { QUESTION_TIME_S, recordAsked, recordVictory } from '../../core/progress/progress';
 import { autoSetOnFirstWin, heroLoadout } from '../../core/progress/runes';
 import { progress } from '../../services/progress';
 import { pickAction } from '../../core/battle/simulate';
@@ -146,7 +146,7 @@ export class BattleScene extends Phaser.Scene {
       },
       rng,
     );
-    this.deck = new QuestionDeck(this.encounter.questions, rng);
+    this.deck = new QuestionDeck(this.encounter.questions, rng, undefined, progress.save.asked);
 
     this.buildScene();
     this.layout();
@@ -488,7 +488,10 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
 
-    const q = shuffleChoices(this.deck.draw(), this.rng);
+    const drawn = this.deck.draw();
+    const passageIds = this.encounter.questions.map((x) => x.id);
+    progress.update((s) => recordAsked(s, drawn.id, passageIds));
+    const q = shuffleChoices(drawn, this.rng);
     this.question = q;
     this.feedback = null;
     this.asked++;

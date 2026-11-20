@@ -12,6 +12,16 @@ const qs: DeckItem[] = [
 ];
 
 describe('QuestionDeck', () => {
+  it('asks questions not seen in earlier battles first', () => {
+    for (let seed = 1; seed <= 20; seed++) {
+      const deck = new QuestionDeck(qs, createRng(seed), undefined, ['q1', 'q2', 'q3']);
+      const first = Array.from({ length: 3 }, () => deck.draw().id).sort();
+      expect(first).toEqual(['q4', 'q5', 'q6']);
+      const rest = Array.from({ length: 3 }, () => deck.draw().id).sort();
+      expect(rest).toEqual(['q1', 'q2', 'q3']);
+    }
+  });
+
   it('draws every question once before repeating', () => {
     const deck = new QuestionDeck(qs, createRng(1));
     const ids = Array.from({ length: 6 }, () => deck.draw().id);

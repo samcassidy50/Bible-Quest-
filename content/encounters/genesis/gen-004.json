@@ -7,8 +7,8 @@
     {
       "id": "thornling-1",
       "name": "Thornling",
-      "maxHp": 50,
-      "attack": 10,
+      "maxHp": 25,
+      "attack": 17,
       "color": "#3f6b3a",
       "size": 0.8,
       "sprite": "thorn-plant"
@@ -16,8 +16,8 @@
     {
       "id": "thornling-2",
       "name": "Thornling",
-      "maxHp": 50,
-      "attack": 10,
+      "maxHp": 25,
+      "attack": 17,
       "color": "#355c31",
       "size": 0.9,
       "sprite": "thorn-plant"
@@ -25,8 +25,8 @@
     {
       "id": "sentinel",
       "name": "Thorn Sentinel",
-      "maxHp": 75,
-      "attack": 12,
+      "maxHp": 40,
+      "attack": 20,
       "color": "#24401f",
       "size": 1.2,
       "sprite": "thorn-plant"

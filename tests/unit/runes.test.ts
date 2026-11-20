@@ -10,7 +10,7 @@ import {
   RUNES,
   runeLoadout,
 } from '../../src/core/battle/runes';
-import { simulateBattle, winRate } from '../../src/core/battle/simulate';
+import { simulateBattle } from '../../src/core/battle/simulate';
 import { TUNING } from '../../src/core/battle/tuning';
 import { createRng, type Rng } from '../../src/core/rng';
 import { loadSave, newSave, recordVictory, type SaveData } from '../../src/core/progress/progress';
@@ -177,13 +177,13 @@ describe('runes in battle', () => {
     expect(e.heroMaxHp).toBe(120);
     e.start();
     e.choose('attack');
-    expect(e.answer(true).damage).toBe(28); // 11 × 2 × 1.25 = 27.5
+    expect(e.answer(true).damage).toBe(41); // 11 × 3 × 1.25 = 41.25
     e.enemyTurn();
     e.choose('attack');
     expect(e.answer(false).damage).toBe(11); // wrong answers get no Zeal
     e.enemyTurn();
     e.choose('sword');
-    expect(e.answer(true).damage).toBe(41); // 11 × 3 × 1.25
+    expect(e.answer(true).damage).toBe(55); // 11 × 4 × 1.25
   });
 
   it('Guarding starts the fight with a block; Haste adds energy (capped)', () => {
@@ -268,12 +268,18 @@ describe('runes in the real content', () => {
     const all = ['sword', 'shield', 'breastplate', 'sandals'] as const;
     const base = threeWaves({ unlockedSpecials: [...all] });
     const runed = threeWaves({ ...full, unlockedSpecials: [...all] });
-    expect(winRate(runed, 0.3, 1000)).toBeGreaterThan(winRate(base, 0.3, 1000));
-    // Still a fight: at 60% accuracy the median win takes several hero turns.
+    expect(avgHpLeft(runed, 0.3)).toBeGreaterThan(avgHpLeft(base, 0.3));
+    // Still a fight: at 60% accuracy the median win takes a few hero turns.
     const turns = Array.from(
       { length: 301 },
       (_, i) => simulateBattle(runed, 0.6, i + 1).turns,
     ).sort((a, b) => a - b);
-    expect(turns[150]).toBeGreaterThanOrEqual(5);
+    expect(turns[150]).toBeGreaterThanOrEqual(3);
   });
 });
+
+function avgHpLeft(config: Parameters<typeof simulateBattle>[0], accuracy: number): number {
+  let sum = 0;
+  for (let i = 0; i < 1000; i++) sum += simulateBattle(config, accuracy, i + 1).heroHpLeft;
+  return sum / 1000;
+}

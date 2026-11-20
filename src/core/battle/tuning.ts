@@ -6,9 +6,10 @@ export const TUNING = {
   /** ±fraction of random variance applied to all damage. */
   damageVariance: 0.1,
 
-  attack: { powered: 2, base: 1 },
+  /** Right answers hit hard (was 2×) so a fight ends within a passage's questions; wrong stays 1×. */
+  attack: { powered: 3, base: 1 },
 
-  sword: { powered: 3, base: 1.5 },
+  sword: { powered: 4, base: 1.5 },
   /** Shield also lands a normal (1×) hit when powered. */
   shield: { poweredBlocks: 2, baseBlocks: 1, poweredHit: 1 },
   /** Fractions of max HP. */

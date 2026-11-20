@@ -54,6 +54,8 @@ export const saveSchema = z.object({
     )
     .catch({}),
   heard: z.array(z.string()).catch([]),
+  /** Question ids already asked, so the next battle asks new ones first (see recordAsked). */
+  asked: z.array(z.string()).catch([]),
   /** Map locations whose reveal animation has played. */
   seenOnMap: z.array(z.string()).catch([]),
   /**
@@ -100,6 +102,7 @@ export function newSave(): SaveData {
     version: SAVE_VERSION,
     completed: {},
     heard: [],
+    asked: [],
     seenOnMap: [],
     runes: {},
     settings: {},
@@ -150,6 +153,24 @@ export function recordVictory(
 
 export function markHeard(save: SaveData, encounterId: string): SaveData {
   return save.heard.includes(encounterId) ? save : { ...save, heard: [...save.heard, encounterId] };
+}
+
+/**
+ * Records that a question was asked. Once every question of its passage has been asked, that
+ * passage's list starts over (keeping only this one, so it isn't the first asked next time).
+ */
+export function recordAsked(
+  save: SaveData,
+  questionId: string,
+  passageQuestionIds: readonly string[],
+): SaveData {
+  const asked = save.asked.includes(questionId) ? save.asked : [...save.asked, questionId];
+  const allAsked = passageQuestionIds.every((id) => asked.includes(id));
+  if (!allAsked) return asked === save.asked ? save : { ...save, asked };
+  return {
+    ...save,
+    asked: [...asked.filter((id) => !passageQuestionIds.includes(id)), questionId],
+  };
 }
 
 /** The first passage is always open; each later one opens when the one before it is won. */

@@ -19,28 +19,27 @@ test('a right answer chimes, swings and clangs; a wrong answer is soft and punch
 }) => {
   await page.goto('/?scene=battle&encounter=gen-001&seed=3&specials=&fast=1');
   await heroTurn(page);
+  // Wrong first: a right answer fells the first foe outright, so it never strikes back.
   await tap(page, 'action:attack');
   await waitFor(page, 's.battle.question && s.targets["answer:0"]');
   let q = (await battle(page)).question!;
-  await tap(page, `answer:${q.answerIndex}`);
-  await heroTurn(page);
-  let sounds = (await state(page)).sounds;
-  for (const cue of ['wave', 'uiTap', 'poweredUp', 'swing', 'swordHit', 'foeAttack', 'hurt']) {
-    expect(sounds, cue).toContain(cue);
-  }
-  expect(sounds.indexOf('swing')).toBeLessThan(sounds.indexOf('swordHit'));
-
-  await tap(page, 'action:attack');
-  await waitFor(page, 's.battle.question && s.targets["answer:0"]');
-  q = (await battle(page)).question!;
   await tap(page, `answer:${(q.answerIndex + 1) % q.choices}`);
   await waitFor(page, '!!s.targets["continue"]');
   await tap(page, 'continue');
   await heroTurn(page);
+  let sounds = (await state(page)).sounds;
+  for (const cue of ['wave', 'uiTap', 'wrong', 'swingLight', 'punch', 'foeAttack', 'hurt']) {
+    expect(sounds, cue).toContain(cue);
+  }
+
+  await tap(page, 'action:attack');
+  await waitFor(page, 's.battle.question && s.targets["answer:0"]');
+  q = (await battle(page)).question!;
+  await tap(page, `answer:${q.answerIndex}`);
+  await heroTurn(page);
   sounds = (await state(page)).sounds;
-  expect(sounds).toContain('wrong');
-  expect(sounds).toContain('swingLight');
-  expect(sounds).toContain('punch');
+  for (const cue of ['poweredUp', 'swing', 'swordHit']) expect(sounds, cue).toContain(cue);
+  expect(sounds.indexOf('swing')).toBeLessThan(sounds.indexOf('swordHit'));
 });
 
 test('win and loss play their own cues', async ({ page }) => {

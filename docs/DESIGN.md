@@ -69,7 +69,7 @@ The target _layout and feel_ is the screenshot the project started from: a side-
   1. **Choose an action** from the action bar: **Attack**, one of the **special attacks** unlocked by orbs this fight (§2.6), or the **Faith Ultimate** when the Faith meter is full.
   2. A question card slides in (it pauses combat). The Faith Ultimate skips this step, because it was already earned by answering questions.
   3. The player answers. Formats are multiple choice (4 options), true/false, or "fill in the missing word".
-  4. **Correct:** the action's **powered** version: Attack does 2× damage, a special has its full effect, special VFX play, and the Faith meter gains +1.
+  4. **Correct:** the action's **powered** version: Attack does 3× damage, a special has its full effect, special VFX play, and the Faith meter gains +1.
   5. **Wrong:** the action's **base** version: Attack does 1× damage and a special has its weaker effect. The correct answer is shown with the relevant phrase of the verse highlighted. Learning comes first, so there is no extra punishment.
   6. _Optional, setting-controlled:_ a timer (off by default, 20 s when on). Answering fast gives a small bonus but is never required.
 - **Faith meter:** +1 for each correct answer, plus a +1 bonus for 3 correct in a row. Wrong answers don't drain it. At 5 it is full and the **Faith Ultimate** is ready (§2.6). The meter carries across waves within a fight and resets after each fight.
@@ -79,6 +79,7 @@ The target _layout and feel_ is the screenshot the project started from: a side-
 ### 2.3 Question pool per encounter
 
 - Each encounter needs **at least 6 questions** so a fight with several turns doesn't repeat too quickly. Questions are shuffled without replacement and recycled only if the pool runs out.
+- **Short fights (2026-11-20):** foes have less HP and hit harder, and a right answer hits for 3×, so the first two foes fall to one right answer each and a fight at 60% accuracy takes about 5 questions (the balance test keeps the median at 3–6). The save remembers which questions were asked (`asked`); the next fight on a passage asks the unasked ones first, and the list for a passage starts over once all of its questions have been asked.
 - Questions must be answerable **from the verse(s) just read**. This is a hard content rule that we check in review.
 - Difficulty tags (`easy` / `medium` / `hard`) let a future difficulty setting filter the pool.
 
@@ -131,7 +132,7 @@ The hero has **4 special attacks** and **1 Faith Ultimate**, themed on the armor
 
 | Ability                                | Unlocked by          | Powered effect (correct answer)                                                   | Base effect (wrong answer)               |
 | -------------------------------------- | -------------------- | --------------------------------------------------------------------------------- | ---------------------------------------- |
-| **Sword of the Spirit**                | Sword orb            | Heavy strike: 3× damage                                                           | 1.5× damage                              |
+| **Sword of the Spirit**                | Sword orb            | Heavy strike: 4× damage                                                           | 1.5× damage                              |
 | **Shield of Faith**                    | Shield orb           | Normal hit, and blocks the next 2 enemy attacks                                   | Blocks the next enemy attack             |
 | **Breastplate of Righteousness**       | Breastplate orb      | Heals 35% of max HP                                                               | Heals 15% of max HP                      |
 | **Sandals of Peace**                   | Sandals orb          | Normal hit, and the foe loses its next turn                                       | The foe loses its next turn, with no hit |

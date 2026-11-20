@@ -67,12 +67,12 @@ describe('BattleEngine setup', () => {
 });
 
 describe('Attack', () => {
-  it('correct answer = powered (2×), wrong = base (1×)', () => {
+  it('correct answer = powered (3×), wrong = base (1×)', () => {
     const e = started();
-    expect(act(e, 'attack', true).damage).toBe(20);
+    expect(act(e, 'attack', true).damage).toBe(30);
     e.enemyTurn();
     expect(act(e, 'attack', false).damage).toBe(10);
-    expect(e.foeHp).toBe(30);
+    expect(e.foeHp).toBe(20);
     expect(e.turn).toBe(2);
   });
 
@@ -83,8 +83,8 @@ describe('Attack', () => {
     );
     for (let i = 0; i < 50; i++) {
       const r = act(e, 'attack', true);
-      expect(r.damage).toBeGreaterThanOrEqual(18);
-      expect(r.damage).toBeLessThanOrEqual(22);
+      expect(r.damage).toBeGreaterThanOrEqual(27);
+      expect(r.damage).toBeLessThanOrEqual(33);
       const enemy = e.enemyTurn();
       expect(enemy.damage).toBe(1); // attack 0 still rounds up to the 1-damage floor
     }
@@ -146,8 +146,8 @@ describe('Special attacks', () => {
     expect(e.availableActions()).not.toContain('ultimate');
   });
 
-  it('Sword: 3× powered, 1.5× base', () => {
-    expect(act(withAll(), 'sword', true).damage).toBe(30);
+  it('Sword: 4× powered, 1.5× base', () => {
+    expect(act(withAll(), 'sword', true).damage).toBe(40);
     expect(act(withAll(), 'sword', false).damage).toBe(15);
   });
 
@@ -278,14 +278,14 @@ describe('Faith meter and ultimate', () => {
 describe('Waves, victory and defeat', () => {
   it('defeating a foe advances to the next wave and the hero acts again', () => {
     const e = started(threeWaves());
-    const r = act(e, 'attack'); // 20 dmg
+    const r = act(e, 'attack', false); // 10 dmg
     expect(r.foeDefeated).toBe(false);
     e.enemyTurn();
-    const kill = act(e, 'attack'); // 40 HP foe dead
+    const kill = act(e, 'attack'); // 25 HP foe dead
     expect(kill).toMatchObject({ foeDefeated: true, nextWave: 1, victory: false });
     expect(e.phase).toBe('HERO_CHOOSE');
     expect(e.foe.id).toBe('shade-2');
-    expect(e.foeHp).toBe(50);
+    expect(e.foeHp).toBe(25);
   });
 
   const twoWaves = () =>
@@ -344,7 +344,7 @@ describe('BattleEngine oneShot (debug)', () => {
   it('defeats each foe with a single plain attack, even on a wrong answer', () => {
     const e = started(threeWaves({ oneShot: true }));
     const first = act(e, 'attack', false);
-    expect(first.damage).toBe(40);
+    expect(first.damage).toBe(25);
     expect(first.nextWave).toBe(1);
     expect(act(e, 'attack').nextWave).toBe(2);
     expect(act(e, 'attack').victory).toBe(true);
@@ -409,7 +409,7 @@ describe('BattleEngine foe pairs', () => {
 
   it('when the front foe falls the back one steps up and the wave goes on', () => {
     const e = started(pair());
-    const r = act(e, 'attack', true); // 20 damage: front falls
+    const r = act(e, 'attack', true); // 30 damage: front falls
     expect(r).toMatchObject({ foeDefeated: true, steppedUp: true, nextWave: null, victory: false });
     expect(e.foe.id).toBe('back');
     expect(e.foeHp).toBe(30);
@@ -453,7 +453,7 @@ describe('BattleEngine targeting a pair', () => {
           name: 'Front',
           maxHp: 50,
           attack: 5,
-          partner: { id: 'back', name: 'Back', maxHp: 15, attack: 8 },
+          partner: { id: 'back', name: 'Back', maxHp: 25, attack: 8 },
         },
       ],
       unlockedSpecials: ['sword'],
@@ -478,13 +478,13 @@ describe('BattleEngine targeting a pair', () => {
     expect(r.damage).toBe(0);
     expect(r.backDamage).toBe(10);
     expect(e.foeHp).toBe(50);
-    expect(e.backFoeHp).toBe(5);
+    expect(e.backFoeHp).toBe(15);
   });
 
   it('felling the targeted back foe sends the target back to the front', () => {
     const e = started(pair());
     e.setTarget('back');
-    const r = act(e, 'attack', true); // 20 ≥ 15
+    const r = act(e, 'attack', true); // 30 ≥ 25
     expect(r).toMatchObject({ backDefeated: true, foeDefeated: false });
     expect(e.backFoe).toBeNull();
     expect(e.target).toBe('front');
@@ -495,6 +495,6 @@ describe('BattleEngine targeting a pair', () => {
     e.setTarget('back');
     const r = act(e, 'sword', false);
     expect(r.damage).toBe(10 * TUNING.sword.base);
-    expect(r.backDamage).toBe(Math.min(15, 10 * TUNING.sword.base));
+    expect(r.backDamage).toBe(Math.min(25, 10 * TUNING.sword.base));
   });
 });

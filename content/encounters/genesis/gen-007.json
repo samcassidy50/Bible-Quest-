@@ -7,8 +7,8 @@
     {
       "id": "shadow-1",
       "name": "Lurking Shadow",
-      "maxHp": 50,
-      "attack": 10,
+      "maxHp": 25,
+      "attack": 17,
       "color": "#3a2f4f",
       "size": 0.8,
       "sprite": "shadow-wolf"
@@ -16,8 +16,8 @@
     {
       "id": "shadow-2",
       "name": "Lurking Shadow",
-      "maxHp": 55,
-      "attack": 11,
+      "maxHp": 25,
+      "attack": 19,
       "color": "#30263f",
       "size": 0.9,
       "sprite": "shadow-wolf"
@@ -25,8 +25,8 @@
     {
       "id": "crouching",
       "name": "Crouching Shadow",
-      "maxHp": 80,
-      "attack": 13,
+      "maxHp": 45,
+      "attack": 22,
       "color": "#1a1426",
       "size": 1.25,
       "sprite": "shadow-wolf"

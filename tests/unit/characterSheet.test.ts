@@ -44,7 +44,9 @@ describe('characterSheet', () => {
     const sheet = characterSheet(save, ENCOUNTERS);
 
     expect(stat(sheet, 'health').value).toBe(`${build.hero.maxHp} HP`);
-    expect(stat(sheet, 'attack').value).toBe(`${build.hero.attack}`);
+    expect(stat(sheet, 'attack').value).toBe(
+      `${Math.round(build.hero.attack * TUNING.attack.base)}`,
+    );
     expect(stat(sheet, 'attack').detail).toContain(
       `${Math.round(build.hero.attack * TUNING.attack.powered * 1.25)} when you answer right`,
     );

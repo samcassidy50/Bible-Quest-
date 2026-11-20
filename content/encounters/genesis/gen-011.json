@@ -7,8 +7,8 @@
     {
       "id": "brick-1",
       "name": "Brick Golem",
-      "maxHp": 50,
-      "attack": 10,
+      "maxHp": 25,
+      "attack": 17,
       "color": "#9a6a3f",
       "size": 0.85,
       "sprite": "fire-spirit"
@@ -16,8 +16,8 @@
     {
       "id": "brick-2",
       "name": "Brick Golem",
-      "maxHp": 55,
-      "attack": 11,
+      "maxHp": 25,
+      "attack": 19,
       "color": "#855a33",
       "size": 0.95,
       "sprite": "fire-spirit"
@@ -25,8 +25,8 @@
     {
       "id": "tower",
       "name": "Tower Golem",
-      "maxHp": 85,
-      "attack": 12,
+      "maxHp": 45,
+      "attack": 20,
       "color": "#5c3d22",
       "size": 1.45,
       "sprite": "minotaur"

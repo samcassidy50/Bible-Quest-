@@ -37,21 +37,23 @@ describe('balance: 3-wave encounter', () => {
   }
 
   it('collecting orbs makes the fight easier at every accuracy', () => {
+    // Win rates are near 100% either way now fights are short, so compare HP left at the end.
     for (const acc of [0.3, 0.6]) {
-      const without = winRate(threeWaves(), acc, RUNS);
-      const withAll = winRate(threeWaves({ unlockedSpecials: ALL }), acc, RUNS);
+      const without = avgHpLeft(threeWaves(), acc);
+      const withAll = avgHpLeft(threeWaves({ unlockedSpecials: ALL }), acc);
       expect(withAll).toBeGreaterThan(without);
     }
   });
 
-  it('fights stay short (median 6–14 hero turns at 60% accuracy)', () => {
+  // A passage has 6 questions; a fight at 60% should end before they run out.
+  it('fights stay short (median 3–6 hero turns at 60% accuracy)', () => {
     const turns = Array.from(
       { length: 501 },
       (_, i) => simulateBattle(threeWaves(), 0.6, i + 1).turns,
     ).sort((a, b) => a - b);
     const median = turns[250] as number;
-    expect(median).toBeGreaterThanOrEqual(6);
-    expect(median).toBeLessThanOrEqual(14);
+    expect(median).toBeGreaterThanOrEqual(3);
+    expect(median).toBeLessThanOrEqual(6);
   });
 });
 
@@ -94,5 +96,11 @@ describe('auto-play policy', () => {
     expect(simulateBattle(threeWaves(), 0.6, 42)).toEqual(simulateBattle(threeWaves(), 0.6, 42));
   });
 });
+
+function avgHpLeft(config: Parameters<typeof simulateBattle>[0], accuracy: number): number {
+  let sum = 0;
+  for (let i = 0; i < RUNS; i++) sum += simulateBattle(config, accuracy, i + 1).heroHpLeft;
+  return sum / RUNS;
+}
 
 const pct = (n: number) => `${Math.round(n * 100)}%`.padStart(4);

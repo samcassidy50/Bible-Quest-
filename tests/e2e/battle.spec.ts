@@ -16,6 +16,20 @@ test('auto-play with correct answers wins all three waves', async ({ page }) => 
   await snap(page, test.info().outputPath('victory.png'));
 });
 
+test('a fight is over within one passage’s questions, and asked questions are saved', async ({
+  page,
+}) => {
+  await page.goto('/?scene=battle&seed=2&autoAnswer=correct&fast=1');
+  await waitFor(page, "s.battle && s.battle.result === 'VICTORY'", 60_000);
+  const b = await battle(page);
+  const asked = (await state(page)).save!.asked;
+  // gen-001 has 6 questions; a perfect fight needs fewer, so none repeats.
+  expect(b.asked).toBeLessThanOrEqual(5);
+  expect(asked).toHaveLength(b.asked);
+  expect(new Set(asked).size).toBe(asked.length);
+  expect(asked.every((id) => id.startsWith('gen-001-'))).toBe(true);
+});
+
 test('auto-play with wrong answers loses, and Retry restarts the fight', async ({ page }) => {
   await page.goto('/?scene=battle&seed=1&autoAnswer=wrong&fast=1&specials=');
   await waitFor(page, "s.battle && s.battle.result === 'DEFEAT' && !!s.targets.primary", 60_000);
@@ -277,7 +291,7 @@ test('tapping the back foe of a pair targets it, and the hit lands there', async
   await hit(); // the back foe falls; the front one is untouched and becomes the target again
   await waitFor(page, "s.battle.backFoeId === null && s.battle.foeId === 'wave-2a'", 30_000);
   const b = await battle(page);
-  expect(b.foeHp).toBe(35);
+  expect(b.foeHp).toBe(20);
   expect(b.target).toBe('front');
 });
 

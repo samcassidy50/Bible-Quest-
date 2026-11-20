@@ -5,6 +5,7 @@ import {
   markHeard,
   ownedArmor,
   newSave,
+  recordAsked,
   recordVictory,
   resetProgress,
   SAVE_VERSION,
@@ -146,6 +147,19 @@ describe('save data', () => {
     expect(r.completed).toEqual({});
     expect(r.heard).toEqual([]);
     expect(r.settings.sound).toBe(false);
+  });
+
+  it('records asked questions and starts a passage over once all were asked', () => {
+    const ids = ['p-q1', 'p-q2', 'p-q3'];
+    let s = recordAsked(newSave(), 'other-q1', ['other-q1', 'other-q2']);
+    s = recordAsked(s, 'p-q1', ids);
+    expect(recordAsked(s, 'p-q1', ids)).toBe(s);
+    s = recordAsked(s, 'p-q2', ids);
+    expect(s.asked).toEqual(['other-q1', 'p-q1', 'p-q2']);
+    s = recordAsked(s, 'p-q3', ids);
+    expect(s.asked).toEqual(['other-q1', 'p-q3']);
+    expect(loadSave(JSON.stringify(s)).asked).toEqual(s.asked);
+    expect(loadSave(JSON.stringify({ ...s, asked: undefined })).asked).toEqual([]);
   });
 });
 

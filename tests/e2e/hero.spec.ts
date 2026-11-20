@@ -38,25 +38,26 @@ test('right answer swings the sword, wrong answer punches, getting hit flinches'
 }) => {
   await page.goto('/?scene=battle&encounter=gen-001&seed=3&specials=&fast=1');
   await heroTurn(page);
+  // Wrong first: a right answer fells the first foe outright, so it never strikes back.
   await tap(page, 'action:attack');
   await waitFor(page, 's.battle.question && s.targets["answer:0"]');
   let q = (await battle(page)).question!;
-  await tap(page, `answer:${q.answerIndex}`);
+  await tap(page, `answer:${(q.answerIndex + 1) % q.choices}`);
+  await waitFor(page, '!!s.targets["continue"]');
+  await tap(page, 'continue');
   await heroTurn(page);
   let anims = (await battle(page)).heroAnims;
-  expect(anims).toContain('slash');
-  expect(anims).not.toContain('punch');
+  expect(anims).toContain('punch');
+  expect(anims).not.toContain('slash');
   expect(anims).toContain('hurt');
 
   await tap(page, 'action:attack');
   await waitFor(page, 's.battle.question && s.targets["answer:0"]');
   q = (await battle(page)).question!;
-  await tap(page, `answer:${(q.answerIndex + 1) % q.choices}`);
-  await waitFor(page, '!!s.targets["continue"]');
-  await tap(page, 'continue');
+  await tap(page, `answer:${q.answerIndex}`);
   await heroTurn(page);
   anims = (await battle(page)).heroAnims;
-  expect(anims).toContain('punch');
+  expect(anims).toContain('slash');
 });
 
 test('powered Sword special slams, the hero celebrates a win and falls on a loss', async ({

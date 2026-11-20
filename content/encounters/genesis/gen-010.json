@@ -8,8 +8,8 @@
     {
       "id": "squall-1",
       "name": "Squall",
-      "maxHp": 50,
-      "attack": 10,
+      "maxHp": 25,
+      "attack": 17,
       "color": "#5a6f7f",
       "size": 0.85,
       "sprite": "squall"
@@ -17,8 +17,8 @@
     {
       "id": "squall-2",
       "name": "Squall",
-      "maxHp": 55,
-      "attack": 11,
+      "maxHp": 25,
+      "attack": 19,
       "color": "#4c5f6e",
       "size": 0.9,
       "sprite": "squall"
@@ -26,8 +26,8 @@
     {
       "id": "tempest",
       "name": "Tempest",
-      "maxHp": 80,
-      "attack": 12,
+      "maxHp": 45,
+      "attack": 20,
       "color": "#26323d",
       "size": 1.4,
       "sprite": "tempest"
