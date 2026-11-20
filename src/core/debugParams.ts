@@ -10,7 +10,7 @@ export const SCENE_KEYS = [
   'map',
   'scripture',
   'battle',
-  'upgrades',
+  'runes',
   'journal',
   'settings',
   'rig',

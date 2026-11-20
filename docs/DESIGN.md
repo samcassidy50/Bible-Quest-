@@ -100,7 +100,22 @@ This is an open question for review: confirm the tone with the stakeholders (see
 
 - **Chapters** map to Bible books; **stages** map to passages.
 - Stars per stage (1–3) based on how many questions were answered correctly.
-- A light upgrade track: HP, attack, and upgrades to each special attack and the Faith Ultimate, bought with stars. No grinding is required to keep reading forward.
+- ~~A light upgrade track bought with stars~~ (replaced 2026-11-20 by runes, below). Stars are now only a score per passage. No grinding is required to keep reading forward.
+- **Runes (2026-11-20):** each passage awards one rune the first time it is won (`rune` in its encounter file, shown on the victory panel). The hero's four items each have **2 rune slots**, and each rune fits **one item only**, colour-coded (and cut-coded, for colour-blind players) by item. The sword is carried from the start; the other items' slots open when the angel gives that armor, and runes for them wait in the rune bag until then. A new rune goes straight into a free slot of its item (and runes waiting for an item go in when it is earned), so a player who never opens the Runes screen still benefits. On the Runes screen (💎 Runes on the map) the player taps a rune in the bag, then a slot of its item, to set or swap it, and taps a set rune to take it out. Rules: `core/progress/runes.ts`; catalog and numbers: `core/battle/runes.ts` (drafts, checked by the balance simulation).
+
+  | Item (gem)                    | Rune     | Effect (per rune; two stack)              |
+  | ----------------------------- | -------- | ----------------------------------------- |
+  | Sword (red ruby ◆)            | Might    | +1 attack                                 |
+  |                               | Zeal     | Hits after a right answer land 25% harder |
+  | Shield (blue sapphire ⬣)      | Life     | +20 max HP                                |
+  |                               | Guarding | Start each fight with 1 shield block      |
+  | Breastplate (green emerald ■) | Mending  | Breastplate heals 40% more                |
+  |                               | Renewal  | Heal 3 HP on each right answer            |
+  | Sandals (gold topaz ▲)        | Haste    | Start each fight with +2 energy           |
+  |                               | Peace    | Sandals stun lasts 1 more turn            |
+
+  Genesis awards, in order: Might, Zeal, Might, Life, Guarding, Life, Mending, Renewal, Haste, Peace, Haste (11 runes for 8 slots, so there is a choice). Saves from before runes drop their upgrade levels on load; stars and progress are kept.
+
 - A "Verse Journal" collects every passage completed, so players can reread it outside of battle.
 - **Passage map (2026-11-12):** passage select is an original parchment map of the Genesis 1–11 lands (The Deep, Eden, Land of Nod, Ararat, Shinar), drawn in code. Only won and playable locations show; winning reveals the next one once (trail draws itself, the hero walks it). Drag to pan; tap a location for its card and Begin.
 
@@ -391,7 +406,7 @@ Each phase ends in something playable, deployed to a preview URL.
 
 ### Phase 5: Progression and retention (≈2 weeks)
 
-- Save/load, stars, upgrades (including special attack and ultimate upgrades), Verse Journal.
+- Save/load, stars, upgrades (including special attack and ultimate upgrades), Verse Journal. (Upgrades replaced by runes on 2026-11-20, see §2.5.)
 - **Status (2026-11-11):** done. Saves (native Preferences / localStorage, validated and self-repairing), stars 1–3 by accuracy, passages unlock in order, upgrades (Health, Strength, Armor Mastery, Faith; 3 levels at 2/3/4 stars), Verse Journal, Settings (sound, narration, reading speed, auto-collect orbs, 20 s question timer, reset). Not done: KJV toggle (only BSB is vendored), fast-answer timer bonus.
 - Settings: timer, text speed, difficulty, translation (BSB/KJV).
 - **Exit:** a player can play for several sessions with persistent progress.

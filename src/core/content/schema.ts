@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { RUNE_IDS } from '../battle/runes';
 import { SPECIAL_IDS } from '../battle/types';
 
 /** Shape of an encounter file in content/encounters/ (docs/DESIGN.md §3.2). */
@@ -93,6 +94,8 @@ export const encounterFileSchema = z
     orbs: z.array(z.object({ word: z.string().optional() }).strict()).max(6),
     /** Armor awarded when this passage is first won. */
     unlocks: z.enum([...SPECIAL_IDS, 'ultimate']).optional(),
+    /** Rune awarded when this passage is first won (core/battle/runes.ts). */
+    rune: z.enum(RUNE_IDS).optional(),
     questions: z.array(questionSchema).min(6),
   })
   .strict();

@@ -10,7 +10,12 @@ const base = (): SaveData => ({
   completed: {},
   heard: [],
   seenOnMap: [],
-  upgrades: { health: 0, strength: 0, armor: 0, faith: 0 },
+  runes: {
+    sword: [null, null],
+    shield: [null, null],
+    breastplate: [null, null],
+    sandals: [null, null],
+  },
   settings: {
     sound: true,
     narration: true,
@@ -71,6 +76,9 @@ test('winning earns stars and reveals the next location once', async ({ page }) 
   await page.goto('/?scene=battle&encounter=gen-001&seed=1&autoAnswer=correct&fast=1');
   await waitFor(page, "s.battle && s.battle.result === 'VICTORY' && !!s.targets.secondary", 60_000);
   expect((await state(page)).save!.completed['gen-001']!.stars).toBe(3);
+  // The first win awards the passage's rune, set straight into the sword.
+  expect((await state(page)).save!.runes.sword).toEqual(['gen-001', null]);
+  await snap(page, test.info().outputPath('victory-rune.png'));
   await expect.poll(() => stored(page)).toMatchObject({ completed: { 'gen-001': { stars: 3 } } });
 
   await tap(page, 'secondary'); // Passages → map
@@ -91,26 +99,52 @@ test('winning earns stars and reveals the next location once', async ({ page }) 
   expect((await state(page)).map!.find((m) => m.id === 'gen-002')!.open).toBe(true);
 });
 
-test('buying an upgrade spends stars and makes the hero stronger', async ({ page }) => {
+test('runes: tap a rune, then a slot of its item; tap a set rune to take it out', async ({
+  page,
+}) => {
   const save = base();
-  save.completed = {
-    'gen-001': { stars: 3, bestAccuracy: 1 },
-    'gen-002': { stars: 2, bestAccuracy: 0.7 },
-  };
+  for (const id of ['gen-001', 'gen-002', 'gen-003', 'gen-004', 'gen-005'])
+    save.completed[id] = { stars: 3, bestAccuracy: 1 };
   await seed(page, save);
-  await page.goto('/?scene=upgrades');
-  await waitFor(page, "s.scene === 'upgrades' && !!s.targets['buy:health']");
-  await tap(page, 'buy:health');
-  await waitFor(page, 's.save.upgrades.health === 1');
-  await tap(page, 'buy:health');
-  await waitFor(page, 's.save.upgrades.health === 2'); // 2 + 3 = 5 stars spent
-  await tap(page, 'buy:health'); // needs 4, none left
+  await page.goto('/?scene=map&fast=1');
+  await waitFor(page, "s.scene === 'map' && !s.mapRevealing && !!s.targets.runes");
+  await tap(page, 'runes');
+  await waitFor(page, "s.scene === 'runes' && !!s.targets['rune:gen-001']");
+  await snap(page, test.info().outputPath('runes-bag.png'));
+
+  // Each tap redraws the screen; wait on the redrawn state before the next tap.
+  const drawn = (selected: string | null, extra = 'true') =>
+    waitFor(
+      page,
+      `s.scene === 'runes' && !!s.runes && s.runes.selected === ${JSON.stringify(selected)} && ${extra}`,
+    );
+  await tap(page, 'rune:gen-001'); // Rune of Might
+  await drawn('gen-001');
+  await tap(page, 'slot:shield:0'); // wrong item: nothing happens
   await page.waitForTimeout(300);
-  expect((await state(page)).save!.upgrades.health).toBe(2);
+  expect((await state(page)).save!.runes.shield).toEqual([null, null]);
+  await tap(page, 'slot:sword:0');
+  await drawn(null, "!s.runes.bag.includes('gen-001')");
+  expect((await state(page)).save!.runes.sword[0]).toBe('gen-001');
+  await tap(page, 'rune:gen-004'); // Rune of Life (the shield is earned at gen-005)
+  await drawn('gen-004');
+  await tap(page, 'slot:shield:1');
+  await drawn(null, "!s.runes.bag.includes('gen-004')");
+  expect((await state(page)).save!.runes.shield[1]).toBe('gen-004');
+  await tap(page, 'rune:gen-002');
+  await drawn('gen-002');
+  await tap(page, 'slot:sword:1');
+  await drawn(null, "!s.runes.bag.includes('gen-002')");
+  expect((await state(page)).save!.runes.sword[1]).toBe('gen-002');
+  await snap(page, test.info().outputPath('runes-set.png'));
+
+  await tap(page, 'slot:sword:0'); // take the Might rune back out
+  await drawn(null, "s.runes.bag.includes('gen-001')");
+  expect((await state(page)).save!.runes.sword[0]).toBeNull();
 
   await page.goto('/?scene=battle&encounter=gen-001&seed=1&freeze=1');
   await heroTurn(page);
-  expect((await battle(page)).heroMaxHp).toBe(130);
+  expect((await battle(page)).heroMaxHp).toBe(120); // Rune of Life
 });
 
 test('the Verse Journal shows completed passages', async ({ page }) => {
@@ -222,7 +256,9 @@ test('the Hero button opens a character sheet with the hero, armor and stats', a
     'gen-001': { stars: 3, bestAccuracy: 1 },
     'gen-002': { stars: 2, bestAccuracy: 0.8 },
   };
-  save.upgrades.health = 1;
+  save.completed['gen-004'] = { stars: 3, bestAccuracy: 1 };
+  save.completed['gen-005'] = { stars: 3, bestAccuracy: 1 };
+  save.runes.shield = ['gen-004', null]; // Rune of Life
   await seed(page, save);
   await page.goto('/?scene=map&fast=1');
   await waitFor(page, "s.scene === 'map' && !s.mapRevealing && !!s.targets.character");
@@ -230,14 +266,14 @@ test('the Hero button opens a character sheet with the hero, armor and stats', a
   await waitFor(page, "s.scene === 'character' && !!s.character");
   const sheet = (await state(page)).character!;
   expect(sheet.hero).toBe('boy');
-  expect(sheet.stats.find((s) => s.id === 'health')!.value).toBe('115 HP');
+  expect(sheet.stats.find((s) => s.id === 'health')!.value).toBe('120 HP');
   expect(sheet.stats.map((s) => s.id)).toEqual([
     'health',
     'attack',
     'defence',
-    'specials',
-    'ultimate',
+    'healing',
     'energy',
+    'ultimate',
   ]);
   await snap(page, test.info().outputPath('character-sheet.png'));
   await tap(page, 'back');

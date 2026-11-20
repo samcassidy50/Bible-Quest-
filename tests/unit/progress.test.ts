@@ -1,35 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { BattleEngine } from '../../src/core/battle/BattleEngine';
-import { HERO_BASE } from '../../src/core/battle/hero';
-import { createRng, type Rng } from '../../src/core/rng';
 import {
-  availableStars,
-  buyUpgrade,
-  canBuyUpgrade,
-  heroBuild,
   isUnlocked,
   loadSave,
   markHeard,
   ownedArmor,
-  MAX_UPGRADE_LEVEL,
   newSave,
-  nextUpgradeCost,
   recordVictory,
   resetProgress,
   SAVE_VERSION,
-  spentStars,
   starsFor,
   totalStars,
   updateSettings,
-  type SaveData,
 } from '../../src/core/progress/progress';
-import { oneWave } from './fixtures';
-
-const withStars = (n: number): SaveData => {
-  let s = newSave();
-  for (let i = 0; i < n; i++) s = recordVictory(s, `e${i}`, 1, 1).save;
-  return s; // n passages × 3 stars
-};
 
 describe('stars', () => {
   it('1 for a win, 2 at 60%, 3 at 90%', () => {
@@ -64,67 +46,6 @@ describe('unlocks', () => {
   });
 });
 
-describe('upgrades', () => {
-  it('cost 2, 3, 4 stars and stop at the max level', () => {
-    let s = withStars(4); // 12 stars
-    expect(nextUpgradeCost(s, 'health')).toBe(2);
-    s = buyUpgrade(s, 'health');
-    s = buyUpgrade(s, 'health');
-    s = buyUpgrade(s, 'health');
-    expect(s.upgrades.health).toBe(MAX_UPGRADE_LEVEL);
-    expect(nextUpgradeCost(s, 'health')).toBeNull();
-    expect(canBuyUpgrade(s, 'health')).toBe(false);
-    expect(buyUpgrade(s, 'health')).toBe(s);
-    expect(spentStars(s)).toBe(9);
-    expect(availableStars(s)).toBe(3);
-  });
-
-  it('cannot spend stars you do not have', () => {
-    const s = withStars(0);
-    expect(canBuyUpgrade(s, 'strength')).toBe(false);
-    expect(buyUpgrade(s, 'strength')).toBe(s);
-  });
-
-  it('turns levels into hero stats and power', () => {
-    expect(heroBuild({ health: 0, strength: 0, armor: 0, faith: 0 })).toEqual({
-      hero: HERO_BASE,
-      specialPower: 1,
-      ultimateBonus: 0,
-    });
-    const b = heroBuild({ health: 2, strength: 3, armor: 1, faith: 2 });
-    expect(b.hero).toEqual({ maxHp: HERO_BASE.maxHp + 30, attack: HERO_BASE.attack + 6 });
-    expect(b.specialPower).toBeCloseTo(1.2);
-    expect(b.ultimateBonus).toBe(2);
-  });
-
-  it('the battle engine applies special power and ultimate bonus', () => {
-    const flat: Rng = { ...createRng(1), next: () => 0.5 };
-    const big = { waves: [{ id: 'b', name: 'b', maxHp: 1000, attack: 50 }] };
-    const sword = new BattleEngine(
-      oneWave({ ...big, unlockedSpecials: ['sword'], specialPower: 1.2 }),
-      flat,
-    );
-    sword.start();
-    sword.choose('sword');
-    expect(sword.answer(true).damage).toBe(36); // 10 × 3 × 1.2
-
-    const heal = new BattleEngine(
-      oneWave({ ...big, unlockedSpecials: ['breastplate'], specialPower: 1.2 }),
-      flat,
-    );
-    heal.start();
-    heal.choose('attack');
-    heal.answer(true);
-    heal.enemyTurn(); // 100 → 50
-    heal.choose('breastplate');
-    expect(heal.answer(true).healed).toBe(42); // 35% × 1.2 of 100
-
-    const ult = new BattleEngine(oneWave({ ...big, startingFaith: 5, ultimateBonus: 2 }), flat);
-    ult.start();
-    expect(ult.choose('ultimate')!.damage).toBe(70); // (5 + 2) × 10
-  });
-});
-
 describe('save data', () => {
   it('starts with sensible defaults', () => {
     const s = newSave();
@@ -138,7 +59,28 @@ describe('save data', () => {
       quickTest: false,
       hero: null,
     });
-    expect(s.upgrades).toEqual({ health: 0, strength: 0, armor: 0, faith: 0 });
+    expect(s.runes).toEqual({
+      sword: [null, null],
+      shield: [null, null],
+      breastplate: [null, null],
+      sandals: [null, null],
+    });
+  });
+
+  it('drops upgrade levels from saves made before runes, keeping the rest', () => {
+    const old = {
+      version: SAVE_VERSION,
+      completed: { 'gen-001': { stars: 2, bestAccuracy: 0.7 } },
+      heard: ['gen-001'],
+      seenOnMap: [],
+      upgrades: { health: 2, strength: 1, armor: 0, faith: 3 },
+      settings: { hero: 'girl' },
+    };
+    const s = loadSave(JSON.stringify(old));
+    expect(s.completed['gen-001']!.stars).toBe(2);
+    expect(s.settings.hero).toBe('girl');
+    expect('upgrades' in s).toBe(false);
+    expect(s.runes.sword).toEqual([null, null]);
   });
 
   it('remembers the chosen hero', () => {
@@ -165,7 +107,7 @@ describe('save data', () => {
       version: SAVE_VERSION,
       completed: { 'gen-001': { stars: 3, bestAccuracy: 1 } },
       heard: 'oops',
-      upgrades: { health: 9, strength: 1, armor: -1, faith: 'x' },
+      runes: { sword: ['gen-001', 7, 'x', 'y'], shield: 'nope' },
       settings: {
         sound: 'loud',
         narration: false,
@@ -179,7 +121,12 @@ describe('save data', () => {
     const s = loadSave(JSON.stringify(raw));
     expect(s.completed['gen-001']!.stars).toBe(3);
     expect(s.heard).toEqual([]);
-    expect(s.upgrades).toEqual({ health: 0, strength: 1, armor: 0, faith: 0 });
+    expect(s.runes).toEqual({
+      sword: ['gen-001', null],
+      shield: [null, null],
+      breastplate: [null, null],
+      sandals: [null, null],
+    });
     expect(s.settings).toEqual({
       sound: true,
       narration: false,

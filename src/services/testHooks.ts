@@ -99,6 +99,8 @@ export interface TestState {
   foeGallery: { encounter: string; foes: (string | null)[] } | null;
   /** Character sheet: the hero shown, each stat's value, and the armor shown. */
   character: { hero: string; stats: { id: string; value: string }[]; armor: string[] } | null;
+  /** Runes screen as last drawn: the rune picked in the bag and the runes waiting there. */
+  runes: { selected: string | null; bag: string[] } | null;
   /** Which hero sheet the last hero sprite drew ('boy' or 'girl'). */
   heroSkin: string | null;
 }
@@ -132,6 +134,7 @@ let state: TestState = {
   foeGallery: null,
   heroSkin: null,
   character: null,
+  runes: null,
 };
 
 export function updateTestState(patch: Partial<TestState>): void {

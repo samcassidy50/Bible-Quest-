@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import { ENCOUNTERS } from '../../content';
 import { characterSheet } from '../../core/progress/characterSheet';
+import { RUNES } from '../../core/battle/runes';
+import { runeIcon } from '../runeIcon';
 import { progress } from '../../services/progress';
 import { updateTestState } from '../../services/testHooks';
 import { ACTION_INFO } from '../battle/actionInfo';
@@ -134,21 +136,10 @@ export class CharacterScene extends Phaser.Scene {
         color: SOFT_INK,
         wordWrap: { width: rightW - pad * 2 - 150, useAdvancedWrap: true },
       });
-      // Upgrade level as pips next to the label (filled = bought).
-      if (stat.upgrade) {
-        const labelW = label.width + 16;
-        for (let p = 0; p < stat.upgrade.max; p++) {
-          this.add
-            .rectangle(
-              rx + pad + labelW + p * 16,
-              y + 24,
-              10,
-              10,
-              p < stat.upgrade.level ? 0xe0a020 : 0xd8c9a0,
-            )
-            .setStrokeStyle(2, 0x6b4a22);
-        }
-      }
+      // The set runes that change this stat, in their item's colour.
+      stat.runes.forEach((kind, n) =>
+        runeIcon(this, rx + pad + label.width + 22 + n * 30, y + 24, 24, RUNES[kind].item, kind),
+      );
     });
 
     updateTestState({

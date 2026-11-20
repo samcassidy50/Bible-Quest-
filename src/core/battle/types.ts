@@ -35,10 +35,18 @@ export interface BattleConfig {
   startingFaith?: number;
   /** Debug `?oneShot=1`: any hit that deals damage defeats the foe outright. */
   oneShot?: boolean;
-  /** Upgrade: multiplier on special damage and healing (default 1). */
-  specialPower?: number;
-  /** Upgrade: extra ultimate damage multiplier (default 0). */
-  ultimateBonus?: number;
+  /** Runes (core/battle/runes.ts), all optional: extra multiplier on hits after a right answer. */
+  poweredBonus?: number;
+  /** Runes: shield blocks the hero starts the fight with. */
+  startingBlocks?: number;
+  /** Runes: multiplier on Breastplate healing (default 1). */
+  healPower?: number;
+  /** Runes: HP healed on each right answer. */
+  healOnCorrect?: number;
+  /** Runes: energy added on top of startingEnergy (still capped at the max). */
+  bonusEnergy?: number;
+  /** Runes: extra turns a Sandals stun lasts. */
+  stunBonus?: number;
 }
 
 export type BattlePhase =

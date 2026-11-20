@@ -44,6 +44,7 @@
     }
   ],
   "unlocks": "sword",
+  "rune": "might",
   "questions": [
     {
       "id": "gen-003-q1",

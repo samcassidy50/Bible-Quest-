@@ -19,7 +19,8 @@ import {
   type MapNode,
   type NodeState,
 } from '../../core/map/worldMap';
-import { availableStars, markSeenOnMap, totalStars } from '../../core/progress/progress';
+import { markSeenOnMap, totalStars } from '../../core/progress/progress';
+import { runesToSet } from '../../core/progress/runes';
 import { createRng } from '../../core/rng';
 import { progress } from '../../services/progress';
 import { readSafeAreaInsets, toGameInsets, type Insets } from '../../services/safeArea';
@@ -401,10 +402,10 @@ export class MapScene extends Phaser.Scene {
       }),
     );
 
-    const spend = availableStars(progress.save);
+    const toSet = runesToSet(progress.save, ENCOUNTERS);
     const items: [string, string, number][] = [
       ['character', '🧑 Hero', 0xc0392b],
-      ['upgrades', spend > 0 ? `💪 Upgrades ★${spend}` : '💪 Upgrades', 0x8e44ad],
+      ['runes', toSet > 0 ? `💎 Runes (${toSet})` : '💎 Runes', 0x8e44ad],
       ['journal', '📖 Journal', 0x2e86de],
       ['settings', '⚙️ Settings', 0x6b4a22],
     ];

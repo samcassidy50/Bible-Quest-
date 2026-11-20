@@ -58,13 +58,19 @@ export class BattleEngine {
     this._back = first.partner ?? null;
     this._backHp = this._back?.maxHp ?? 0;
     this._faith = clamp(config.startingFaith ?? 0, 0, TUNING.faith.max);
-    this._energy = clamp(config.startingEnergy ?? 0, 0, TUNING.energy.max);
+    this._energy = clamp(
+      (config.startingEnergy ?? 0) + (config.bonusEnergy ?? 0),
+      0,
+      TUNING.energy.max,
+    );
+    this._blocks = Math.max(0, config.startingBlocks ?? 0);
   }
 
   // ── State ────────────────────────────────────────────────────────────────
 
-  private get specialPower(): number {
-    return this.config.specialPower ?? 1;
+  /** Rune of Zeal: hits after a right answer land harder. */
+  private powered(mult: number, correct: boolean): number {
+    return correct ? mult * (1 + (this.config.poweredBonus ?? 0)) : mult;
   }
 
   get phase(): BattlePhase {
@@ -194,6 +200,8 @@ export class BattleEngine {
 
     const faithGained = this.updateFaith(correct);
     const result = this.emptyResult(action, correct, faithGained);
+    if (correct && this.config.healOnCorrect)
+      result.healed += this.healHp(this.config.healOnCorrect);
     // Single-target hits land on the chosen foe; the Sword sweeps both whatever the target.
     const hit = (mult: number) => {
       if (this._target === 'back' && this._back) result.backDamage += this.damageBack(mult);
@@ -202,10 +210,10 @@ export class BattleEngine {
 
     switch (action) {
       case 'attack':
-        hit(correct ? TUNING.attack.powered : TUNING.attack.base);
+        hit(this.powered(correct ? TUNING.attack.powered : TUNING.attack.base, correct));
         break;
       case 'sword': {
-        const mult = (correct ? TUNING.sword.powered : TUNING.sword.base) * this.specialPower;
+        const mult = this.powered(correct ? TUNING.sword.powered : TUNING.sword.base, correct);
         result.damage += this.damageFoe(mult);
         result.backDamage += this.damageBack(mult);
         break;
@@ -213,18 +221,18 @@ export class BattleEngine {
       case 'shield':
         result.blocksAdded = correct ? TUNING.shield.poweredBlocks : TUNING.shield.baseBlocks;
         this._blocks += result.blocksAdded;
-        if (correct) hit(TUNING.shield.poweredHit);
+        if (correct) hit(this.powered(TUNING.shield.poweredHit, true));
         break;
       case 'breastplate':
-        result.healed = this.healHero(
+        result.healed += this.healHero(
           (correct ? TUNING.breastplate.poweredHeal : TUNING.breastplate.baseHeal) *
-            this.specialPower,
+            (this.config.healPower ?? 1),
         );
         break;
       case 'sandals':
-        this._foeStun = TUNING.sandals.stunTurns;
+        this._foeStun = TUNING.sandals.stunTurns + (this.config.stunBonus ?? 0);
         result.stunned = true;
-        if (correct) hit(TUNING.sandals.poweredHit);
+        if (correct) hit(this.powered(TUNING.sandals.poweredHit, true));
         break;
     }
     if (action !== 'attack') this._energy -= this.costOf(action);
@@ -272,7 +280,7 @@ export class BattleEngine {
   private resolveUltimate(): HeroActionResult {
     this._faith = 0;
     const result = this.emptyResult('ultimate', null, 0);
-    const mult = TUNING.ultimate.damage + (this.config.ultimateBonus ?? 0);
+    const mult = TUNING.ultimate.damage;
     result.damage = this.damageFoe(mult);
     result.backDamage = this.damageBack(mult);
     result.healed = this.healHero(TUNING.ultimate.heal);
@@ -351,7 +359,10 @@ export class BattleEngine {
   }
 
   private healHero(fraction: number): number {
-    const amount = Math.round(this.config.hero.maxHp * fraction);
+    return this.healHp(Math.round(this.config.hero.maxHp * fraction));
+  }
+
+  private healHp(amount: number): number {
     const healed = Math.min(amount, this.config.hero.maxHp - this._heroHp);
     this._heroHp += healed;
     return healed;

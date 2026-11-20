@@ -50,6 +50,7 @@
     }
   ],
   "unlocks": "breastplate",
+  "rune": "mending",
   "questions": [
     {
       "id": "gen-007-q1",

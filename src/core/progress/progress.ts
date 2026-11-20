@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import { SPECIAL_IDS, type HeroStats, type SpecialId } from '../battle/types';
-import { HERO_BASE } from '../battle/hero';
+import { SPECIAL_IDS, type SpecialId } from '../battle/types';
+import { ITEM_IDS, RUNE_SLOTS, type ItemId } from '../battle/runes';
 
 /**
  * Player progression (docs/DESIGN.md §2.5): stars per passage, unlocks in reading order,
- * star-bought upgrades, and settings. Pure functions over a versioned, validated save.
+ * runes set in the hero's items (core/progress/runes.ts), and settings. Pure functions over a versioned, validated save.
  */
 
 // ── Stars ──────────────────────────────────────────────────────────────────
@@ -19,43 +19,6 @@ export function starsFor(correct: number, asked: number): Stars {
   return 1;
 }
 
-// ── Upgrades ───────────────────────────────────────────────────────────────
-
-export const UPGRADE_IDS = ['health', 'strength', 'armor', 'faith'] as const;
-export type UpgradeId = (typeof UPGRADE_IDS)[number];
-
-export const UPGRADES: Record<UpgradeId, { name: string; icon: string; perLevel: string }> = {
-  health: { name: 'Health', icon: '❤️', perLevel: '+15 max HP' },
-  strength: { name: 'Strength', icon: '💪', perLevel: '+2 attack' },
-  armor: { name: 'Armor Mastery', icon: '🛡️', perLevel: 'Specials +20% stronger' },
-  faith: { name: 'Faith', icon: '✨', perLevel: 'Ultimate +1× damage' },
-};
-
-/** Star cost of each level (level 1 costs 2, level 2 costs 3, level 3 costs 4). */
-export const UPGRADE_COSTS = [2, 3, 4] as const;
-export const MAX_UPGRADE_LEVEL = UPGRADE_COSTS.length;
-
-export type UpgradeLevels = Record<UpgradeId, number>;
-
-export interface HeroBuild {
-  hero: HeroStats;
-  /** Multiplier on special effects (damage, heal). */
-  specialPower: number;
-  /** Extra ultimate damage multiplier added to the base. */
-  ultimateBonus: number;
-}
-
-export function heroBuild(levels: UpgradeLevels): HeroBuild {
-  return {
-    hero: {
-      maxHp: HERO_BASE.maxHp + 15 * levels.health,
-      attack: HERO_BASE.attack + 2 * levels.strength,
-    },
-    specialPower: 1 + 0.2 * levels.armor,
-    ultimateBonus: levels.faith,
-  };
-}
-
 // ── Settings ───────────────────────────────────────────────────────────────
 
 export const READING_SPEEDS = { slow: 0.75, normal: 0.9, fast: 1.05 } as const;
@@ -68,7 +31,17 @@ export const QUESTION_TIME_S = 20;
 
 export const SAVE_VERSION = 1;
 
-const levelSchema = z.number().int().min(0).max(MAX_UPGRADE_LEVEL).catch(0);
+/** A rune slot holds the id of the passage that awarded the rune, or null when empty. */
+const slotsSchema = z
+  .array(z.string().nullable().catch(null))
+  .catch([])
+  .transform((a) => Array.from({ length: RUNE_SLOTS }, (_, i) => a[i] ?? null));
+
+export const emptyRuneSlots = (): Record<ItemId, (string | null)[]> =>
+  Object.fromEntries(ITEM_IDS.map((id) => [id, Array<null>(RUNE_SLOTS).fill(null)])) as Record<
+    ItemId,
+    (string | null)[]
+  >;
 
 export const saveSchema = z.object({
   version: z.literal(SAVE_VERSION),
@@ -83,9 +56,18 @@ export const saveSchema = z.object({
   heard: z.array(z.string()).catch([]),
   /** Map locations whose reveal animation has played. */
   seenOnMap: z.array(z.string()).catch([]),
-  upgrades: z
-    .object({ health: levelSchema, strength: levelSchema, armor: levelSchema, faith: levelSchema })
-    .catch({ health: 0, strength: 0, armor: 0, faith: 0 }),
+  /**
+   * Runes set in each item's slots. Saves from before runes had `upgrades` instead; that field
+   * is dropped on load (zod strips unknown keys) and the stars stay as the passage scores.
+   */
+  runes: z
+    .object({
+      sword: slotsSchema,
+      shield: slotsSchema,
+      breastplate: slotsSchema,
+      sandals: slotsSchema,
+    })
+    .catch(emptyRuneSlots),
   settings: z
     .object({
       sound: z.boolean().catch(true),
@@ -119,7 +101,7 @@ export function newSave(): SaveData {
     completed: {},
     heard: [],
     seenOnMap: [],
-    upgrades: {},
+    runes: {},
     settings: {},
   });
 }
@@ -142,32 +124,6 @@ export function loadSave(raw: string | null | undefined): SaveData {
 
 export function totalStars(save: SaveData): number {
   return Object.values(save.completed).reduce((sum, c) => sum + c.stars, 0);
-}
-
-export function spentStars(save: SaveData): number {
-  let spent = 0;
-  for (const id of UPGRADE_IDS)
-    for (let l = 0; l < save.upgrades[id]; l++) spent += UPGRADE_COSTS[l]!;
-  return spent;
-}
-
-export function availableStars(save: SaveData): number {
-  return totalStars(save) - spentStars(save);
-}
-
-/** Cost of the next level, or null at max. */
-export function nextUpgradeCost(save: SaveData, id: UpgradeId): number | null {
-  return UPGRADE_COSTS[save.upgrades[id]] ?? null;
-}
-
-export function canBuyUpgrade(save: SaveData, id: UpgradeId): boolean {
-  const cost = nextUpgradeCost(save, id);
-  return cost !== null && availableStars(save) >= cost;
-}
-
-export function buyUpgrade(save: SaveData, id: UpgradeId): SaveData {
-  if (!canBuyUpgrade(save, id)) return save;
-  return { ...save, upgrades: { ...save.upgrades, [id]: save.upgrades[id] + 1 } };
 }
 
 /** Records a win; keeps the best stars and accuracy. Returns whether it was a new best. */

@@ -13,7 +13,7 @@ import { TitleScene } from './scenes/TitleScene';
 import { BattleScene } from './scenes/battle/BattleScene';
 import { ScriptureScene } from './scenes/scripture/ScriptureScene';
 import { MapScene } from './scenes/map/MapScene';
-import { UpgradesScene } from './scenes/menus/UpgradesScene';
+import { RunesScene } from './scenes/menus/RunesScene';
 import { JournalScene } from './scenes/menus/JournalScene';
 import { SettingsScene } from './scenes/menus/SettingsScene';
 import { HeroSelectScene } from './scenes/menus/HeroSelectScene';
@@ -62,7 +62,7 @@ async function start(): Promise<void> {
       BootScene,
       TitleScene,
       MapScene,
-      UpgradesScene,
+      RunesScene,
       JournalScene,
       SettingsScene,
       HeroSelectScene,

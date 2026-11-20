@@ -50,6 +50,7 @@
     }
   ],
   "unlocks": "shield",
+  "rune": "guard",
   "questions": [
     {
       "id": "gen-005-q1",

@@ -3,6 +3,8 @@ import { Button } from '../ui/Button';
 import { FONT_PIXEL, tweenAsync } from '../util';
 import { COLOR } from './actionInfo';
 import { pixelBox, UI, UI_SCALE } from '../ui/pixelUi';
+import { ITEMS, RUNES, type RuneId } from '../../core/battle/runes';
+import { runeIcon } from '../runeIcon';
 
 /** Dark brown ink for text on the parchment panel. */
 const INK = '#4a2c12';
@@ -15,7 +17,7 @@ export class ResultPanel extends Phaser.GameObjects.Container {
   constructor(
     scene: Phaser.Scene,
     victory: boolean,
-    stats: { correct: number; asked: number; stars?: number; newBest?: boolean },
+    stats: { correct: number; asked: number; stars?: number; newBest?: boolean; rune?: RuneId },
     primary: { label: string; onTap: () => void },
     secondary: { label: string; onTap: () => void },
   ) {
@@ -94,6 +96,23 @@ export class ResultPanel extends Phaser.GameObjects.Container {
             .setOrigin(1, 0),
         );
       }
+    }
+    if (victory && stats.rune) {
+      // The rune this first win awarded, in its item's colour.
+      const info = RUNES[stats.rune];
+      const y = ph / 2 - 148;
+      const text = scene.add
+        .text(0, y, `New rune: ${info.name}  (${ITEMS[info.item].name})`, {
+          fontFamily: FONT_PIXEL,
+          fontSize: '22px',
+          fontStyle: 'bold',
+          color: INK,
+        })
+        .setOrigin(0.5);
+      text.setX(22);
+      const gem = runeIcon(scene, 22 - text.width / 2 - 26, y, 36, info.item, stats.rune);
+      this.add([gem, text]);
+      detail.setY(detail.y - 14);
     }
     this.setDepth(200).setScale(0.6).setAlpha(0);
     scene.add.existing(this);

@@ -1,3 +1,4 @@
+import type { RuneId } from '../battle/runes';
 import type { FoeSpec, SpecialId } from '../battle/types';
 import type { FoeSpriteId, Setting } from './schema';
 import type { Difficulty } from '../quiz/QuestionDeck';
@@ -61,6 +62,8 @@ export interface Encounter {
   orbs: readonly Orb[];
   /** Armor awarded the first time this passage is won (unlocks a special, or the ultimate). */
   unlocks?: SpecialId | 'ultimate';
+  /** Rune awarded the first time this passage is won. */
+  rune?: RuneId;
   questions: readonly Question[];
 }
 

@@ -34,6 +34,7 @@ export function buildEncounter(raw: unknown, bible: Bible, source = 'encounter')
     })),
     orbs: f.orbs,
     ...(f.unlocks ? { unlocks: f.unlocks } : {}),
+    ...(f.rune ? { rune: f.rune } : {}),
     questions: f.questions,
   };
 
