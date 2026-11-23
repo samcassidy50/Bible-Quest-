@@ -51,6 +51,9 @@ class Strip:
     names: list[str | None]
     # Hero size in this strip relative to the idle strip (measured from body and skin area).
     rel_scale: float
+    # How frames line up sideways: 'feet' (centre of the lowest rows) or 'body' (upper body).
+    # Use 'body' for cycles where the planted foot swaps each step (run), or the hero lurches.
+    anchor: str = 'feet'
 
 
 STRIPS = [
@@ -59,6 +62,7 @@ STRIPS = [
         'run.webp',
         ['run_0', 'run_1', 'run_2', 'run_3', 'run_4', 'run_5', 'run_6', 'run_7'],
         0.48,
+        anchor='body',
     ),
     Strip(
         'slash.webp',
@@ -235,6 +239,27 @@ def feet_anchor_x(img: Image.Image) -> int:
     return round((min(xs) + max(xs)) / 2)
 
 
+def body_anchor_x(img: Image.Image) -> float:
+    """Mean column of the upper body (top 60% of the frame): steadier than the feet in a run."""
+    w, _ = img.size
+    px = img.load()
+    _, top, _, bottom = opaque_bounds(img)
+    rows = range(top, top + round((bottom - top) * 0.6))
+    xs = [x for y in rows for x in range(w) if px[x, y][3]]
+    return sum(xs) / len(xs)
+
+
+def strip_anchors(strip: Strip, imgs: list[Image.Image]) -> list[int]:
+    """Sideways anchor per frame. 'body' strips line up on the upper body, shifted so the strip
+    sits where its feet would put it on average (no jump when switching from idle)."""
+    feet = [feet_anchor_x(img) for img in imgs]
+    if strip.anchor == 'feet':
+        return feet
+    body = [body_anchor_x(img) for img in imgs]
+    offset = sum(f - b for f, b in zip(feet, body)) / len(imgs)
+    return [round(b + offset) for b in body]
+
+
 @dataclass
 class Frame:
     name: str
@@ -253,9 +278,9 @@ def load_frames() -> list[Frame]:
         # Ground line of the strip = lowest opaque row of any frame, so jumps keep their height.
         shrunk = [shrink(src, m, scale) for m in masks]
         ground = max(opaque_bounds(s)[3] for s in shrunk)
-        for name, img in zip(strip.names, shrunk):
+        for name, img, anchor_x in zip(strip.names, shrunk, strip_anchors(strip, shrunk)):
             if name:
-                frames.append(Frame(name, img, feet_anchor_x(img), ground))
+                frames.append(Frame(name, img, anchor_x, ground))
     return frames
 
 
@@ -331,23 +356,18 @@ def write_preview(sheet: Image.Image, cell_w: int, cell_h: int, oy: int, n: int)
 GIRL_IDLE_SOURCE_HEIGHT = 415
 GIRL_STRIPS = [
     Strip('idle.png', ['idle_0', 'idle_1', 'idle_2', 'idle_3'], 1.0),
-    Strip('run.png', [f'run_{i}' for i in range(8)], 0.68),
+    Strip('run.png', [f'run_{i}' for i in range(8)], 0.68, anchor='body'),
     Strip('slash.png', [f'slash_{i}' for i in range(6)], 0.69),
     Strip('slash-powered.png', [f'power_{i}' for i in range(6)], 0.67),
     Strip('victory.png', [f'win_{i}' for i in range(5)], 0.91),
     Strip('cast.png', [f'cast_{i}' for i in range(5)], 0.91),
-    Strip('block.png', [f'block_{i}' for i in range(4)], 0.92),
-    Strip('hurt.png', ['hurt_0', 'hurt_1', 'hurt_2'], 1.22),
+    Strip('block.png', [f'block_{i}' for i in range(4)], 0.91),
+    Strip('hurt.png', ['hurt_0', 'hurt_1', 'hurt_2'], 1.18),
     Strip('poses.png', ['walk', 'thrust'], 1.40),
+    Strip('down.png', [f'down_{i}' for i in range(5)], 0.91),
 ]
-# Frames she has no art for yet → one of her frames to show instead (placeholders).
-GIRL_FALLBACKS = {
-    'down_0': 'block_2',
-    'down_1': 'power_0',
-    'down_2': 'power_4',
-    'down_3': 'power_4',
-    'down_4': 'power_4',
-}
+# Frames she has no art for yet → one of her frames to show instead (placeholders). None now.
+GIRL_FALLBACKS: dict[str, str] = {}
 
 
 def boy_frame_order() -> list[str]:

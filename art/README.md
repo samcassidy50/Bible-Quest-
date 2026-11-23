@@ -33,8 +33,8 @@ at least 40 px of empty magenta between frames so they never touch.
 `hero-girl-raw/` holds the girl hero's strips (ChatGPT-drafted, same format as the boy's).
 `python3 scripts/art/process_hero.py --hero girl --preview` builds `src/assets/hero/hero-girl.png`
 and `src/core/anim/heroGirlSheet.ts` with exactly the boy's frames in the boy's order, so every
-clip plays on either hero. Strips she has no art for yet (down) borrow her other
-frames (`GIRL_FALLBACKS` in the script); add the strip to `GIRL_STRIPS` when it arrives.
+clip plays on either hero. She has every strip the boy has; a strip she lacks can borrow her
+other frames for a while (`GIRL_FALLBACKS` in the script) until it is added to `GIRL_STRIPS`.
 Her `poses.png` has just two frames, `walk` and `thrust`.
 Each strip's `rel_scale` there is her size relative to `idle.png` (check `art/hero-girl-preview.png`).
 
