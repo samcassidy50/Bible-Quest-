@@ -61,6 +61,7 @@ re-run it.
 
   | Sheet                        | Pack                                           | Character          |
   | ---------------------------- | ---------------------------------------------- | ------------------ |
+  | `slime-blue`, `slime-lava`   | Free Slime Mobs Pixel Art Top-Down Sprite Pack | Slime2, Slime3     |
   | `thorn-plant`, `fire-spirit` | Free Fantasy Enemies Pixel Art Sprite Pack     | Plent, Fire_Spirit |
   | `shadow-wolf`                | Free Werewolf Sprite Sheets Pixel Art          | Black_Werewolf     |
   | `minotaur`                   | Free Minotaur Sprite Sheet Pixel Art Pack      | Minotaur_1         |
@@ -85,15 +86,6 @@ re-run it.
   primitives quantised to short colour ramps, so change the painter and re-run it rather than
   editing a PNG. `?scene=foes` shows every passage's foes in the game; `art/foe-gallery.jpg` is a
   picture of all of them.
-
-- `slime-blue` and `slime-lava` are **original**, drafted in ChatGPT as one sheet each in
-  `foes-raw/` (rows idle, attack, hurt, death; facing left). The drafts came with a fake
-  transparency checkerboard painted in. `python3 scripts/art/process_drafted_foes.py --preview`
-  clears it (with `clear_checkerboard.py`; run that alone to remake the `-clear.png` copies kept
-  beside the drafts), cuts the frames, shrinks them by half (shown at 3×, like the hero) and
-  writes `src/assets/foes/<name>.png` (preview in `art/foe-previews/`). It prints the cell, feet
-  and body numbers for `FoeSprite.ts`. A few grey specks stay between the lava
-  slime's flames. Ask for a flat #00FF00 background next time.
 
 - `demon`, `shade` and `thornbeast` are original too, painted by
   `python3 scripts/art/paint_monsters.py --preview`. They are not used in the game yet.

@@ -5,6 +5,7 @@ https://craftpix.net/file-licenses/). The packs themselves are not kept in this 
 pass the unzipped folder of each pack you want to rebuild:
 
     python3 scripts/art/process_foes.py \
+        --slimes   <free-slime-mobs-pixel-art-top-down-sprite-pack> \
         --enemies  <free-fantasy-enemies-pixel-art-sprite-pack> \
         --werewolf <free-werewolf-sprite-sheets-pixel-art> \
         --minotaur <free-minotaur-sprite-sheet-pixel-art-pack>
@@ -26,14 +27,16 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT_DIR = ROOT / 'src' / 'assets' / 'foes'
 
 # id -> (pack argument, [idle, attack, hurt, death] files inside the pack, row, mirror)
-# `row` picks one facing from sheets that stack several.
+# `row` picks one facing from sheets that stack several (the slimes: down, up, left, right).
 FOES: dict[str, tuple[str, list[str], int, bool]] = {
+    'slime-blue': ('slimes', [f'PNG/Slime2/Without_shadow/Slime2_{s}_without_shadow.png' for s in ('Idle', 'Attack', 'Hurt', 'Death')], 2, False),
+    'slime-lava': ('slimes', [f'PNG/Slime3/Without_shadow/Slime3_{s}_without_shadow.png' for s in ('Idle', 'Attack', 'Hurt', 'Death')], 2, False),
     'thorn-plant': ('enemies', [f'Plent/{s}.png' for s in ('Idle', 'Attack_1', 'Hurt', 'Dead')], 0, True),
     'fire-spirit': ('enemies', [f'Fire_Spirit/{s}.png' for s in ('Idle', 'Attack', 'Hurt', 'Dead')], 0, True),
     'shadow-wolf': ('werewolf', [f'Black_Werewolf/{s}.png' for s in ('Idle', 'Attack_1', 'Hurt', 'Dead')], 0, True),
     'minotaur': ('minotaur', [f'Minotaur_1/{s}.png' for s in ('Idle', 'Attack', 'Hurt', 'Dead')], 0, True),
 }
-CELL = {'enemies': 128, 'werewolf': 128, 'minotaur': 128}
+CELL = {'slimes': 64, 'enemies': 128, 'werewolf': 128, 'minotaur': 128}
 STATES = ('idle', 'attack', 'hurt', 'death')
 
 
