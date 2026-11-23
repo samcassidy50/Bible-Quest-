@@ -103,6 +103,11 @@ export interface TestState {
   runes: { selected: string | null; bag: string[] } | null;
   /** Which hero sheet the last hero sprite drew ('boy' or 'girl'). */
   heroSkin: string | null;
+  /**
+   * After a defeat: phrases of the prayer prayed so far, whether a tap prays the next one, and
+   * whether the hero has risen at full life.
+   */
+  revive: { prayed: number; phrases: number; ready: boolean; revived: boolean } | null;
 }
 
 declare global {
@@ -135,6 +140,7 @@ let state: TestState = {
   heroSkin: null,
   character: null,
   runes: null,
+  revive: null,
 };
 
 export function updateTestState(patch: Partial<TestState>): void {

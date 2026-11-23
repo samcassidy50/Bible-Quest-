@@ -74,7 +74,7 @@ The target _layout and feel_ is the screenshot the project started from: a side-
   6. _Optional, setting-controlled:_ a timer (off by default, 20 s when on). Answering fast gives a small bonus but is never required.
 - **Faith meter:** +1 for each correct answer, plus a +1 bonus for 3 correct in a row. Wrong answers don't drain it. At 5 it is full and the **Faith Ultimate** is ready (§2.6). The meter carries across waves within a fight and resets after each fight.
 - **Enemy turn:** the foe attacks on simple timing; damage is fixed per foe with light variance.
-- **Lose state:** if hero HP reaches 0, the player sees "Try again". The verse can be replayed first. There is no permanent loss.
+- **Lose state:** if hero HP reaches 0, the hero falls, the HUD fades and the camera zooms in on the hero. The screen goes black except for a dim beam of light from the sky onto the hero. The player prays the start of the Lord's Prayer (Matthew 6:9-10, retold in `core/content/prayer.ts`), tapping once for each phrase; the beam brightens with each one. Then the hero rises at full life ("Full of life again!") and the screen fades to the map. There is no permanent loss: nothing is saved on a defeat, and the next try at the passage rolls differently.
 
 ### 2.3 Question pool per encounter
 

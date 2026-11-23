@@ -53,9 +53,13 @@ test('win and loss play their own cues', async ({ page }) => {
   expect(sounds[sounds.length - 1]).toBe('victory');
 
   await page.goto('/?scene=battle&encounter=gen-001&seed=1&autoAnswer=wrong&fast=1&specials=');
-  await waitFor(page, "s.battle && s.battle.result === 'DEFEAT' && !!s.targets.primary", 60_000);
+  await waitFor(page, 's.revive && s.revive.revived', 60_000);
   sounds = (await state(page)).sounds;
-  expect(sounds[sounds.length - 1]).toBe('defeat');
+  const fell = sounds.lastIndexOf('defeat');
+  expect(fell).toBeGreaterThan(-1);
+  // Each prayed phrase chimes, then the hero is healed.
+  expect(sounds.slice(fell).filter((c) => c === 'calm')).toHaveLength(5);
+  expect(sounds[sounds.length - 1]).toBe('heal');
 });
 
 test('orbs sparkle when they appear and chime when collected', async ({ page }) => {

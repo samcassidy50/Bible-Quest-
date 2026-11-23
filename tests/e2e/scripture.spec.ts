@@ -125,10 +125,3 @@ test('Skip appears after the verse has been heard once, and forfeits orbs', asyn
   await waitFor(page, "s.scene === 'battle' && !!s.battle");
   expect((await battle(page)).energy).toBe(0); // skipped orbs are forfeited
 });
-
-test('defeat offers Read again, which returns to the verse', async ({ page }) => {
-  await page.goto('/?scene=battle&seed=1&fast=1&autoAnswer=wrong&specials=');
-  await waitFor(page, "s.battle && s.battle.result === 'DEFEAT' && !!s.targets.secondary", 60_000);
-  await tap(page, 'secondary');
-  await waitFor(page, "s.scene === 'scripture' && !!s.scripture");
-});

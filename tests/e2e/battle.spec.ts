@@ -30,14 +30,26 @@ test('a fight is over within one passage’s questions, and asked questions are 
   expect(asked.every((id) => id.startsWith('gen-001-'))).toBe(true);
 });
 
-test('auto-play with wrong answers loses, and Retry restarts the fight', async ({ page }) => {
+test('a fallen hero prays in the light, rises at full life and returns to the map', async ({
+  page,
+}) => {
   await page.goto('/?scene=battle&seed=1&autoAnswer=wrong&fast=1&specials=');
-  await waitFor(page, "s.battle && s.battle.result === 'DEFEAT' && !!s.targets.primary", 60_000);
-  expect((await battle(page)).heroHp).toBe(0);
-  await snap(page, test.info().outputPath('defeat.png'));
+  await waitFor(page, 's.revive && s.revive.ready', 60_000);
+  let b = await battle(page);
+  expect(b.result).toBe('DEFEAT');
+  expect(b.heroHp).toBe(0);
+  await snap(page, test.info().outputPath('prayer.png'));
 
-  await tap(page, 'primary');
-  await waitFor(page, 's.battle.result === null && s.battle.heroHp === 100 && s.battle.wave === 0');
+  await waitFor(page, 's.revive && s.revive.revived', 30_000);
+  b = await battle(page);
+  expect(b.heroHp).toBe(b.heroMaxHp);
+  expect(b.heroAnims[b.heroAnims.length - 1]).toBe('victory');
+  const s = await state(page);
+  expect(s.revive!.prayed).toBe(s.revive!.phrases);
+  await snap(page, test.info().outputPath('revived.png'));
+
+  await waitFor(page, "s.scene === 'map' && s.revive === null", 30_000);
+  expect((await state(page)).save!.completed).not.toHaveProperty('gen-001');
 });
 
 test('tapping through a fight: question card, specials and the ultimate', async ({ page }) => {

@@ -26,6 +26,7 @@ import { Fighter } from './Fighter';
 import { HpBar } from './HpBar';
 import { QuestionCard } from './QuestionCard';
 import { ResultPanel } from './ResultPanel';
+import type { ReviveData } from './ReviveScene';
 import { ArmorPage } from './ArmorPage';
 import { pixelBox, UI } from '../ui/pixelUi';
 import { quickTestOn } from '../quickTest';
@@ -95,6 +96,8 @@ export class BattleScene extends Phaser.Scene {
   private leaveConfirm?: { root: Phaser.GameObjects.Container; leave: Button; stay: Button };
 
   private busy = true;
+  /** The hero has fallen and the prayer overlay (ReviveScene) is running. */
+  private reviving = false;
   private question: Question | null = null;
   private feedback: 'correct' | 'wrong' | null = null;
   private asked = 0;
@@ -114,6 +117,7 @@ export class BattleScene extends Phaser.Scene {
     this.result = undefined;
     this.leaveConfirm = undefined;
     this.busy = true;
+    this.reviving = false;
     this.question = null;
     this.feedback = null;
     this.asked = 0;
@@ -132,6 +136,8 @@ export class BattleScene extends Phaser.Scene {
     const timeScale = (this.registry.get('timeScale') as number | undefined) ?? 1;
     this.tweens.timeScale = timeScale;
     this.time.timeScale = timeScale;
+    // A fall zooms the camera onto the hero; start each fight from the full view.
+    this.cameras.main.setZoom(1).setScroll(0, 0);
 
     this.engine = new BattleEngine(
       {
@@ -623,7 +629,7 @@ export class BattleScene extends Phaser.Scene {
       await Promise.all([this.foeDefeated(), this.backDefeated()]);
       this.drawWaves();
       await this.hero.act('victory');
-      await this.showResult(true);
+      await this.showResult();
       return;
     }
     if (res.foeDefeated && res.nextWave !== null) {
@@ -637,7 +643,7 @@ export class BattleScene extends Phaser.Scene {
     await this.playEnemy(enemy);
     if (enemy.defeat) {
       await this.hero.act('die');
-      await this.showResult(false);
+      await this.fallAndPray();
       return;
     }
     this.setBusy(false);
@@ -1016,55 +1022,101 @@ export class BattleScene extends Phaser.Scene {
     this.sync();
   }
 
-  private async showResult(victory: boolean): Promise<void> {
+  /**
+   * The hero has fallen (docs/DESIGN.md §2.2): the HUD fades, the camera zooms in on the hero, and
+   * ReviveScene darkens everything but a beam of light from the sky while the player prays. The
+   * hero rises at full life and the game returns to the map. Nothing is lost.
+   */
+  private async fallAndPray(): Promise<void> {
+    this.reviving = true;
+    // The next try at this passage rolls differently.
+    this.registry.set('attempt', ((this.registry.get('attempt') as number | undefined) ?? 0) + 1);
     this.actionBar.refresh(this.engine, false);
     this.closeLeaveConfirm();
     this.leaveButton.setVisible(false);
-    const retry = () => {
-      // Same orbs, new rolls: the collected specials stay in the registry.
-      this.registry.set('attempt', ((this.registry.get('attempt') as number | undefined) ?? 0) + 1);
-      this.scene.restart();
+    sfx.play('defeat');
+    this.sync();
+
+    const hud = [
+      this.heroPanel,
+      this.actionBar,
+      this.foeBar,
+      this.backBar,
+      this.wavePips,
+      this.refText,
+      this.targetMarker,
+    ].filter((o) => o !== undefined);
+    void tweenAsync(this, { targets: hud, alpha: 0, duration: 400 });
+
+    // The standing hero fills about half the screen height, a little left of centre, so the
+    // prayer has room on the right.
+    const { width: W, height: H } = this.scale.gameSize;
+    const figure = this.hero.figureHeight;
+    const zoom = Phaser.Math.Clamp((H * 0.5) / figure, 1.3, 3);
+    const heroScreenX = W * 0.3;
+    const focusX = this.hero.x + (W / 2 - heroScreenX) / zoom;
+    const focusY = this.groundY - figure / 2;
+    await tweenAsync(this, {
+      targets: this.cameras.main,
+      zoom,
+      scrollX: focusX - W / 2,
+      scrollY: focusY - H / 2,
+      duration: 1400,
+      ease: 'Sine.inOut',
+    });
+
+    const data: ReviveData = {
+      heroX: heroScreenX,
+      heroTop: H / 2 - (figure * zoom) / 2,
+      heroFeet: H / 2 + (figure * zoom) / 2,
+      autoPray: this.debug.autoAnswer !== undefined,
+      onPrayed: async () => {
+        this.engine.revive();
+        this.heroBar.setValue(this.engine.heroHp);
+        sfx.play('heal');
+        this.sync();
+        await this.hero.act('victory');
+        this.sync();
+      },
     };
-    const readAgain = () => this.scene.start('scripture');
+    this.scene.launch('revive', data);
+  }
+
+  /** The win panel: stars, any new rune, then on to the next passage or back to the map. */
+  private async showResult(): Promise<void> {
+    this.actionBar.refresh(this.engine, false);
+    this.closeLeaveConfirm();
+    this.leaveButton.setVisible(false);
     const next = nextEncounter(this.encounter.id);
-    let stars: number | undefined;
-    let newBest = false;
-    const firstWin = victory && !(this.encounter.id in progress.save.completed);
-    if (victory) {
-      let result!: ReturnType<typeof recordVictory>;
-      progress.update(
-        (s) => (result = recordVictory(s, this.encounter.id, this.correct, this.asked)).save,
-      );
-      // A first win awards the passage's rune; it goes straight into a free slot of its item.
-      if (firstWin) progress.update((s) => autoSetOnFirstWin(s, ENCOUNTERS, this.encounter.id));
-      stars = result.stars;
-      newBest = result.newBest;
-    }
+    const firstWin = !(this.encounter.id in progress.save.completed);
+    let result!: ReturnType<typeof recordVictory>;
+    progress.update(
+      (s) => (result = recordVictory(s, this.encounter.id, this.correct, this.asked)).save,
+    );
+    // A first win awards the passage's rune; it goes straight into a free slot of its item.
+    if (firstWin) progress.update((s) => autoSetOnFirstWin(s, ENCOUNTERS, this.encounter.id));
     const goNext = () => {
-      if (!next) return readAgain();
-      this.registry.set('encounterId', next.id);
-      this.registry.remove('collectedEnergy');
+      if (next) {
+        this.registry.set('encounterId', next.id);
+        this.registry.remove('collectedEnergy');
+      }
       this.scene.start('scripture');
     };
     // First win of a passage that awards armor: the angel presents it.
     if (firstWin && this.encounter.unlocks) await this.presentArmor(this.encounter.unlocks);
-    sfx.play(victory ? 'victory' : 'defeat');
+    sfx.play('victory');
     this.result = new ResultPanel(
       this,
-      victory,
+      true,
       {
         correct: this.correct,
         asked: this.asked,
-        stars,
-        newBest,
+        stars: result.stars,
+        newBest: result.newBest,
         rune: firstWin ? this.encounter.rune : undefined,
       },
-      victory
-        ? { label: next ? 'Next passage' : 'Play again', onTap: goNext }
-        : { label: 'Retry', onTap: retry },
-      victory
-        ? { label: 'Passages', onTap: () => this.scene.start('map') }
-        : { label: 'Read again', onTap: readAgain },
+      { label: next ? 'Next passage' : 'Play again', onTap: goNext },
+      { label: 'Passages', onTap: () => this.scene.start('map') },
     );
     await this.result.appear();
     this.sync();
@@ -1155,7 +1207,8 @@ export class BattleScene extends Phaser.Scene {
       busy: this.busy,
       gameWidth: width,
       gameHeight: height,
-      targets,
+      // While the prayer runs, its scene owns the tap targets.
+      ...(this.reviving ? {} : { targets }),
       battle: {
         encounter: this.encounter.id,
         phase: e.phase,

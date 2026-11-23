@@ -11,6 +11,7 @@ import { progress } from './services/progress';
 import { BootScene } from './scenes/BootScene';
 import { TitleScene } from './scenes/TitleScene';
 import { BattleScene } from './scenes/battle/BattleScene';
+import { ReviveScene } from './scenes/battle/ReviveScene';
 import { ScriptureScene } from './scenes/scripture/ScriptureScene';
 import { MapScene } from './scenes/map/MapScene';
 import { RunesScene } from './scenes/menus/RunesScene';
@@ -69,6 +70,7 @@ async function start(): Promise<void> {
       CharacterScene,
       ScriptureScene,
       BattleScene,
+      ReviveScene,
       AnimViewerScene,
       SoundBoardScene,
       BackdropViewerScene,

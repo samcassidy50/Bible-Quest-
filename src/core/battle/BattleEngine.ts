@@ -117,6 +117,15 @@ export class BattleEngine {
   get heroMaxHp(): number {
     return this.config.hero.maxHp;
   }
+
+  /**
+   * After a defeat the hero prays and is restored to full life (docs/DESIGN.md §2.2). The fight
+   * stays lost: the phase remains DEFEAT and the player goes back to the map.
+   */
+  revive(): void {
+    this.expectPhase('DEFEAT');
+    this._heroHp = this.config.hero.maxHp;
+  }
   get foeHp(): number {
     return this._foeHp;
   }

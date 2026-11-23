@@ -338,6 +338,19 @@ describe('Waves, victory and defeat', () => {
     expect(e.phase).toBe('DEFEAT');
     expect(e.isOver).toBe(true);
   });
+
+  it('revive restores full HP after a defeat, and the fight stays lost', () => {
+    const e = started(oneWave({ hero: { maxHp: 20, attack: 1 } }));
+    expect(() => e.revive()).toThrow();
+    act(e, 'attack');
+    e.enemyTurn();
+    act(e, 'attack');
+    e.enemyTurn();
+    e.revive();
+    expect(e.heroHp).toBe(20);
+    expect(e.phase).toBe('DEFEAT');
+    expect(e.availableActions()).toEqual([]);
+  });
 });
 
 describe('BattleEngine oneShot (debug)', () => {

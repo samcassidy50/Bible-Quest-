@@ -73,7 +73,7 @@ test('powered Sword special slams, the hero celebrates a win and falls on a loss
   await snap(page, test.info().outputPath('victory.png'));
 
   await page.goto('/?scene=battle&encounter=gen-001&seed=1&autoAnswer=wrong&fast=1&specials=');
-  await waitFor(page, "s.battle && s.battle.result === 'DEFEAT' && !!s.targets.primary", 60_000);
+  await waitFor(page, 's.revive && s.revive.ready', 60_000);
   anims = (await battle(page)).heroAnims;
   expect(anims[anims.length - 1]).toBe('die');
   await snap(page, test.info().outputPath('defeat.png'));
