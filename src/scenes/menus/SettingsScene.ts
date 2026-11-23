@@ -66,9 +66,16 @@ const ROWS: Row[] = [
         {
           key: 'quickTest',
           label: 'Quick test mode',
-          hint: 'Dev builds only: one hit defeats a foe; Skip on every reading',
+          hint: 'Test builds only: one hit defeats a foe; Skip on every reading',
           value: (s: Settings) => (s.quickTest ? 'On' : 'Off'),
           next: (s: Settings) => ({ quickTest: !s.quickTest }),
+        },
+        {
+          key: 'unlockAll',
+          label: 'Unlock all passages',
+          hint: 'Test builds only: every passage on the map is open',
+          value: (s: Settings) => (s.unlockAll ? 'On' : 'Off'),
+          next: (s: Settings) => ({ unlockAll: !s.unlockAll }),
         },
       ]
     : []),
@@ -91,23 +98,29 @@ export class SettingsScene extends Phaser.Scene {
     const rowW = Math.min(W - 80, 860);
     const left = (W - rowW) / 2;
 
+    // Rows share the height between the title and the Reset button, so a short phone screen
+    // (or an extra test row) never runs them into it.
+    const top = insets.top + 100;
+    const bottom = H - insets.bottom - 50 - 28 - 14;
+    const step = Math.min(92, (bottom - top) / ROWS.length);
+    const boxH = step - 4;
     ROWS.forEach((row, i) => {
-      const y = insets.top + 110 + i * (ROWS.length > 5 ? 84 : 92);
-      pixelBox(this, UI.button, left + rowW / 2, y + 40, rowW, 81).setTint(0x3a3166);
-      this.add.text(left + 24, y + 12, row.label, {
+      const y = top + i * step;
+      pixelBox(this, UI.button, left + rowW / 2, y + boxH / 2, rowW, boxH).setTint(0x3a3166);
+      this.add.text(left + 24, y + boxH * 0.12, row.label, {
         fontFamily: FONT_UI,
         fontSize: '25px',
         fontStyle: 'bold',
         color: '#fdf6e3',
       });
-      this.add.text(left + 24, y + 47, row.hint, {
+      this.add.text(left + 24, y + boxH * 0.56, row.hint, {
         fontFamily: FONT_UI,
         fontSize: '17px',
         color: '#b9a9d9',
       });
-      const b = new Button(this, left + rowW - 100, y + 40, {
+      const b = new Button(this, left + rowW - 100, y + boxH / 2, {
         width: 160,
-        height: 60,
+        height: Math.min(60, boxH - 14),
         radius: 30,
         label: row.value(s),
         fontSize: 24,

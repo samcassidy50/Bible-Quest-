@@ -5,6 +5,7 @@ import { pixelBox, UI } from '../ui/pixelUi';
 const PLATE = 0xfff0c8;
 import { ENCOUNTERS } from '../../content';
 import type { DebugParams } from '../../core/debugParams';
+import { unlockAllOn } from '../quickTest';
 import {
   bezier,
   dashedCurve,
@@ -96,7 +97,7 @@ export class MapScene extends Phaser.Scene {
     this.cameras.main.setBounds(0, 0, WORLD_W, mapH);
 
     const save = progress.save;
-    const unlockAll = this.debug.unlockAll;
+    const unlockAll = this.debug.unlockAll || unlockAllOn();
     const states = new Map(nodeStates(save, unlockAll).map((s) => [s.id, s.state]));
     // Animate at most a couple of reveals; big jumps (like ?unlockAll) just appear.
     const fresh = newlyRevealed(save, unlockAll);
@@ -592,7 +593,7 @@ export class MapScene extends Phaser.Scene {
         y: Math.round(this.card.y + this.beginBtn.y),
       };
     }
-    const states = nodeStates(progress.save, this.debug.unlockAll);
+    const states = nodeStates(progress.save, this.debug.unlockAll || unlockAllOn());
     updateTestState({
       gameWidth: width,
       gameHeight: height,

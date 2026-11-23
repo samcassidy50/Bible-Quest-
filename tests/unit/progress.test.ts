@@ -58,6 +58,7 @@ describe('save data', () => {
       autoCollect: false,
       timer: false,
       quickTest: false,
+      unlockAll: false,
       hero: null,
     });
     expect(s.runes).toEqual({
@@ -116,6 +117,7 @@ describe('save data', () => {
         autoCollect: true,
         timer: false,
         quickTest: 'yes',
+        unlockAll: 1,
         hero: 'dragon',
       },
     };
@@ -135,6 +137,7 @@ describe('save data', () => {
       autoCollect: true,
       timer: false,
       quickTest: false,
+      unlockAll: false,
       hero: null,
     });
   });

@@ -79,6 +79,8 @@ export const saveSchema = z.object({
       timer: z.boolean().catch(false),
       /** Dev builds only: foes fall in one hit and every reading can be skipped. */
       quickTest: z.boolean().catch(false),
+      /** Dev and test builds only: every passage on the map is open. */
+      unlockAll: z.boolean().catch(false),
       /** The hero the player chose; null until they pick one (then the choose screen shows). */
       hero: z.enum(['boy', 'girl']).nullable().catch(null),
     })
@@ -89,6 +91,7 @@ export const saveSchema = z.object({
       autoCollect: false,
       timer: false,
       quickTest: false,
+      unlockAll: false,
       hero: null,
     }),
 });

@@ -8,3 +8,8 @@ import { progress } from '../services/progress';
 export function quickTestOn(): boolean {
   return TEST_HOOKS_ENABLED && progress.save.settings.quickTest;
 }
+
+/** Unlock all passages (Settings, dev and test builds only): every passage on the map is open. */
+export function unlockAllOn(): boolean {
+  return TEST_HOOKS_ENABLED && progress.save.settings.unlockAll;
+}

@@ -24,6 +24,7 @@ const base = (): SaveData => ({
     autoCollect: false,
     timer: false,
     quickTest: false,
+    unlockAll: false,
     hero: 'boy',
   },
 });
