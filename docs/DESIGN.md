@@ -124,7 +124,7 @@ This is an open question for review: confirm the tone with the stakeholders (see
 
 > **Revised 2026-11-12 (supersedes the orb-unlock rules below):**
 >
-> - **Armor is earned along the map.** The hero starts with only Attack. An angel (original character) presents each piece the first time its passage is won: Sword of the Spirit after passage 3, Shield of Faith after 5, Breastplate of Righteousness after 7, Sandals of Peace after 9, and the Full Armor of God ultimate after 10 (`unlocks` in each encounter file).
+> - **Armor is earned along the map.** The hero starts with only Attack. An angel (original character) presents each piece the first time its passage is won: Sword of the Spirit after passage 1 (the first battle), Shield of Faith after 5, Breastplate of Righteousness after 7, Sandals of Peace after 9, and the Full Armor of God ultimate after 10 (`unlocks` in each encounter file).
 > - **Reading orbs give energy.** Each orb tapped during the reading is +1 ⚡ (3 orbs in passages 1–3, then 5). Energy carries into that fight.
 > - **Specials cost energy** (Sword 3, Shield 2, Breastplate 3, Sandals 2; max 10) and can be used as often as energy allows, not once per fight. A wrong answer still spends the energy. The ultimate still uses the Faith meter.
 

@@ -11,8 +11,8 @@ test('a new player has only the basic attack', async ({ page }) => {
   expect(b.ultimateUnlocked).toBe(false);
 });
 
-test('winning passage 3 for the first time: the angel presents the Sword', async ({ page }) => {
-  await page.goto('/?scene=battle&encounter=gen-003&seed=1&autoAnswer=correct&fast=1');
+test('winning passage 1 for the first time: the angel presents the Sword', async ({ page }) => {
+  await page.goto('/?scene=battle&encounter=gen-001&seed=1&autoAnswer=correct&fast=1');
   await waitFor(page, "s.battle && s.battle.gift === 'sword'", 60_000);
   await waitFor(page, "!!s.targets['gift-continue']");
   await snap(page, test.info().outputPath('angel.png'));
@@ -24,19 +24,19 @@ test('winning passage 3 for the first time: the angel presents the Sword', async
   );
 
   // The Sword is now owned in later fights (with enough energy).
-  await page.goto('/?scene=battle&encounter=gen-004&seed=1&energy=10&freeze=1');
+  await page.goto('/?scene=battle&encounter=gen-002&seed=1&energy=10&freeze=1');
   await heroTurn(page);
   expect((await battle(page)).available).toEqual(['attack', 'sword']);
 
   // Winning it again does not bring the angel back.
-  await page.goto('/?scene=battle&encounter=gen-003&seed=1&autoAnswer=correct&fast=1');
+  await page.goto('/?scene=battle&encounter=gen-001&seed=1&autoAnswer=correct&fast=1');
   await waitFor(page, "s.battle && s.battle.result === 'VICTORY' && !!s.targets.primary", 60_000);
   expect((await state(page)).sounds.filter((x) => x === 'ultimate')).toHaveLength(0);
 });
 
 test('tapping Receive takes the gift', async ({ page }) => {
   test.setTimeout(150_000);
-  await page.goto('/?scene=battle&encounter=gen-003&seed=2&fast=1');
+  await page.goto('/?scene=battle&encounter=gen-001&seed=2&fast=1');
   // Win by tapping right answers.
   const deadline = Date.now() + 100_000;
   while (Date.now() < deadline) {
