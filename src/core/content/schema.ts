@@ -94,7 +94,7 @@ export const encounterFileSchema = z
     orbs: z.array(z.object({ word: z.string().optional() }).strict()).max(6),
     /** Armor awarded when this passage is first won. */
     unlocks: z.enum([...SPECIAL_IDS, 'ultimate']).optional(),
-    /** Rune awarded when this passage is first won (core/battle/runes.ts). */
+    /** Blessing awarded when this passage is first won (core/battle/runes.ts). */
     rune: z.enum(RUNE_IDS).optional(),
     questions: z.array(questionSchema).min(6),
   })

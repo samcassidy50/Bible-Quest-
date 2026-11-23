@@ -11,12 +11,12 @@ import type { SpecialId } from '../battle/types';
 import { ownedArmor, type SaveData } from './progress';
 
 /**
- * The hero's runes (docs/DESIGN.md §2.5): each passage awards one rune the first time it is won
- * (`rune` in its encounter file). The player sets runes into their items' slots. A rune is known
- * by the id of the passage that awarded it, so two runes of the same kind stay distinct.
+ * The hero's blessings (docs/DESIGN.md §2.5): each passage awards one blessing the first time it is won
+ * (`rune` in its encounter file). The player sets blessings into their items' slots. A blessing is known
+ * by the id of the passage that awarded it, so two blessings of the same kind stay distinct.
  */
 
-/** The part of an encounter the rune rules read. */
+/** The part of an encounter the blessing rules read. */
 export interface RuneSource {
   id: string;
   rune?: RuneId;
@@ -32,7 +32,7 @@ export interface OwnedRune {
   slot: { item: ItemId; index: number } | null;
 }
 
-/** Runes earned so far, in the order they were awarded along the map. */
+/** Blessings earned so far, in the order they were awarded along the map. */
 export function ownedRunes(save: SaveData, encounters: readonly RuneSource[]): OwnedRune[] {
   const placed = new Map<string, { item: ItemId; index: number }>();
   for (const item of ITEM_IDS)
@@ -55,9 +55,9 @@ export function itemOpen(save: SaveData, encounters: readonly RuneSource[], item
 }
 
 /**
- * The save's slots with anything that no longer fits removed: runes not (or no longer) owned,
- * runes in the wrong item, items not yet open, and duplicates. Old or hand-edited saves never
- * give the hero runes they have not earned.
+ * The save's slots with anything that no longer fits removed: blessings not (or no longer) owned,
+ * blessings in the wrong item, items not yet open, and duplicates. Old or hand-edited saves never
+ * give the hero blessings they have not earned.
  */
 export function validSlots(
   save: SaveData,
@@ -81,19 +81,19 @@ export function validSlots(
   return out;
 }
 
-/** The kinds of the runes set in the hero's items. */
+/** The kinds of the blessings set in the hero's items. */
 export function setRuneKinds(save: SaveData, encounters: readonly RuneSource[]): RuneId[] {
   return ownedRunes(save, encounters)
     .filter((r) => r.slot)
     .map((r) => r.kind);
 }
 
-/** What the set runes add to a fight (hero stats and bonuses for BattleConfig). */
+/** What the set blessings add to a fight (hero stats and bonuses for BattleConfig). */
 export function heroLoadout(save: SaveData, encounters: readonly RuneSource[]): RuneLoadout {
   return runeLoadout(setRuneKinds(save, encounters));
 }
 
-/** Runes waiting in the bag that could be set right now (an open item has a free slot). */
+/** Blessings waiting in the bag that could be set right now (an open item has a free slot). */
 export function runesToSet(save: SaveData, encounters: readonly RuneSource[]): number {
   const slots = validSlots(save, encounters);
   const free = (item: ItemId) =>
@@ -106,7 +106,7 @@ export function runesToSet(save: SaveData, encounters: readonly RuneSource[]): n
 }
 
 /**
- * Sets an owned rune into a slot of its own item, taking it out of wherever it was. Whatever was
+ * Sets an owned blessing into a slot of its own item, taking it out of wherever it was. Whatever was
  * in that slot goes back to the bag. Returns the save unchanged when the move is not allowed.
  */
 export function setRune(
@@ -125,7 +125,7 @@ export function setRune(
   return { ...save, runes: slots };
 }
 
-/** Takes the rune out of a slot and back into the bag. */
+/** Takes the blessing out of a slot and back into the bag. */
 export function clearSlot(
   save: SaveData,
   encounters: readonly RuneSource[],
@@ -139,8 +139,8 @@ export function clearSlot(
 }
 
 /**
- * Sets a newly won rune straight into the first free slot of its item, if the item is open
- * (so a player who never opens the Runes screen still gets its effect).
+ * Sets a newly won blessing straight into the first free slot of its item, if the item is open
+ * (so a player who never opens the Equipment screen still gets its effect).
  */
 export function autoSetRune(
   save: SaveData,
@@ -154,8 +154,8 @@ export function autoSetRune(
 }
 
 /**
- * After the first win of a passage: sets its rune, and if the win opened an item, any runes for
- * that item that were waiting in the bag. Runes the player took out themselves stay out.
+ * After the first win of a passage: sets its blessing, and if the win opened an item, any blessings for
+ * that item that were waiting in the bag. Blessings the player took out themselves stay out.
  */
 export function autoSetOnFirstWin(
   save: SaveData,

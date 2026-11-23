@@ -136,7 +136,7 @@ export class CharacterScene extends Phaser.Scene {
         color: SOFT_INK,
         wordWrap: { width: rightW - pad * 2 - 150, useAdvancedWrap: true },
       });
-      // The set runes that change this stat, in their item's colour.
+      // The set blessings that change this stat, in their item's colour.
       stat.runes.forEach((kind, n) =>
         runeIcon(this, rx + pad + label.width + 22 + n * 30, y + 24, 24, RUNES[kind].item, kind),
       );

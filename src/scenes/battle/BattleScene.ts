@@ -184,7 +184,7 @@ export class BattleScene extends Phaser.Scene {
       this.debug.freeze,
     );
     this.hero = new Fighter(this, 0, 0, 'hero');
-    this.hero.setShield(this.engine.blocks); // a Rune of Guarding starts the fight with blocks
+    this.hero.setShield(this.engine.blocks); // a Blessing of Guarding starts the fight with blocks
     this.foe = this.makeFoe(this.engine.foe as EncounterFoe);
 
     this.foeBar = new HpBar(
@@ -1082,7 +1082,7 @@ export class BattleScene extends Phaser.Scene {
     this.scene.launch('revive', data);
   }
 
-  /** The win panel: stars, any new rune, then on to the next passage or back to the map. */
+  /** The win panel: stars, any new blessing, then on to the next passage or back to the map. */
   private async showResult(): Promise<void> {
     this.actionBar.refresh(this.engine, false);
     this.closeLeaveConfirm();
@@ -1093,7 +1093,7 @@ export class BattleScene extends Phaser.Scene {
     progress.update(
       (s) => (result = recordVictory(s, this.encounter.id, this.correct, this.asked)).save,
     );
-    // A first win awards the passage's rune; it goes straight into a free slot of its item.
+    // A first win awards the passage's blessing; it goes straight into a free slot of its item.
     if (firstWin) progress.update((s) => autoSetOnFirstWin(s, ENCOUNTERS, this.encounter.id));
     const goNext = () => {
       if (next) {

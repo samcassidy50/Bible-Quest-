@@ -98,11 +98,11 @@ export class ResultPanel extends Phaser.GameObjects.Container {
       }
     }
     if (victory && stats.rune) {
-      // The rune this first win awarded, in its item's colour.
+      // The blessing this first win awarded, in its item's colour.
       const info = RUNES[stats.rune];
       const y = ph / 2 - 148;
       const text = scene.add
-        .text(0, y, `New rune: ${info.name}  (${ITEMS[info.item].name})`, {
+        .text(0, y, `New blessing: ${info.name}  (${ITEMS[info.item].name})`, {
           fontFamily: FONT_PIXEL,
           fontSize: '22px',
           fontStyle: 'bold',

@@ -5,7 +5,7 @@ import itemArtUrl from '../assets/items/item-art.png';
 /**
  * Large pixel-art pictures of the four items, built from an AI-drafted sheet by
  * scripts/art/process_item_art.py (keep ORDER and CELL in sync with that script). Used where an
- * item is shown big, such as the Runes screen; small UI keeps the 20 px icons (icons.ts).
+ * item is shown big, such as the Equipment screen; small UI keeps the 20 px icons (icons.ts).
  */
 const ORDER: ItemId[] = ['sword', 'shield', 'breastplate', 'sandals'];
 export const ITEM_ART_CELL = 56;

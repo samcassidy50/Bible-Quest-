@@ -18,16 +18,16 @@ const SLOT = 120;
 type Targets = Record<string, { x: number; y: number }>;
 
 /**
- * Runes (docs/DESIGN.md §2.5): every item has two slots, and each rune fits one item only, in
+ * Blessings (docs/DESIGN.md §2.5): every item has two slots, and each blessing fits one item only, in
  * that item's colour. The screen opens on one button per item; tapping one shows that item's
- * slots and the runes that fit it. Tap a rune to set it in a free slot (or, when both are full,
- * then tap a slot to swap it in); tap a set rune to take it back out. Rules live in
+ * slots and the blessings that fit it. Tap a blessing to set it in a free slot (or, when both are full,
+ * then tap a slot to swap it in); tap a set blessing to take it back out. Rules live in
  * core/progress/runes.ts; this scene only draws and forwards.
  */
 export class RunesScene extends Phaser.Scene {
   /** The item opened, or null for the item buttons. */
   private item: ItemId | null = null;
-  /** The rune picked (its passage id), waiting for a slot tap because both slots are full. */
+  /** The blessing picked (its passage id), waiting for a slot tap because both slots are full. */
   private selected: string | null = null;
   private info?: Phaser.GameObjects.Text;
 
@@ -130,7 +130,7 @@ export class RunesScene extends Phaser.Scene {
       const note = !open
         ? `Earn the ${ACTION_INFO[item].short} on the map`
         : waiting > 0
-          ? `${waiting} new rune${waiting > 1 ? 's' : ''} to set`
+          ? `${waiting} new blessing${waiting > 1 ? 's' : ''} to set`
           : '';
       if (note)
         this.add
@@ -157,9 +157,9 @@ export class RunesScene extends Phaser.Scene {
     this.publish(targets, []);
   }
 
-  // ── One item: its slots and the runes that fit it ─────────────────────────
+  // ── One item: its slots and the blessings that fit it ─────────────────────────
   private drawItem(item: ItemId): void {
-    const { insets, back } = menuFrame(this, `${ITEMS[item].name} Runes`, 'runes', {
+    const { insets, back } = menuFrame(this, `${ITEMS[item].name} Blessings`, 'runes', {
       item: null,
       selected: null,
     });
@@ -209,7 +209,7 @@ export class RunesScene extends Phaser.Scene {
         runeIcon(this, sx, slotY, SLOT - 34, item, rune?.kind);
         if (rune)
           this.add
-            .text(sx, slotY + SLOT / 2 + 8, RUNES[rune.kind].name.replace('Rune of ', ''), {
+            .text(sx, slotY + SLOT / 2 + 8, RUNES[rune.kind].name.replace('Blessing of ', ''), {
               fontFamily: FONT_UI,
               fontSize: '19px',
               fontStyle: 'bold',
@@ -234,12 +234,12 @@ export class RunesScene extends Phaser.Scene {
       targets[`slot:${item}:${s}`] = center(socket);
     }
 
-    // Right: the runes for this item still in the bag.
+    // Right: the blessings for this item still in the bag.
     const rx = x0 + leftW + gap;
     pixelBox(this, UI.panel, rx + rightW / 2, top + panelH / 2, rightW, panelH);
     const bag = runes.filter((r) => !r.slot);
     this.add
-      .text(rx + 28, top + 26, `${ITEMS[item].name} runes in your bag (${bag.length})`, {
+      .text(rx + 28, top + 26, `${ITEMS[item].name} blessings in your bag (${bag.length})`, {
         fontFamily: FONT_UI,
         fontSize: '21px',
         fontStyle: 'bold',
@@ -287,18 +287,16 @@ export class RunesScene extends Phaser.Scene {
       .setOrigin(0, 1);
     const name = ITEMS[item].name;
     if (!open)
-      this.info.setText(`Earn the ${ACTION_INFO[item].short} on the map to set these runes.`);
+      this.info.setText(`Earn the ${ACTION_INFO[item].short} on the map to set these blessings.`);
     else if (selected)
       this.info.setText(
         `Both slots are full: tap a slot to swap in the ${RUNES[selected.kind].name}.`,
       );
     else if (runes.length === 0)
-      this.info.setText(
-        `Win passages on the map to earn ${ITEMS[item].gem} runes for the ${name}.`,
-      );
+      this.info.setText(`Win passages on the map to earn blessings for the ${name}.`);
     else if (bag.length > 0)
-      this.info.setText('Tap a rune to set it. Tap a set rune to take it out.');
-    else this.info.setText('Tap a set rune to take it out.');
+      this.info.setText('Tap a blessing to set it. Tap a set blessing to take it out.');
+    else this.info.setText('Tap a set blessing to take it out.');
 
     this.publish(
       targets,
@@ -318,7 +316,7 @@ export class RunesScene extends Phaser.Scene {
     });
   }
 
-  /** A rune goes straight into the first free slot; with both full it waits for a slot tap. */
+  /** A blessing goes straight into the first free slot; with both full it waits for a slot tap. */
   private tapBag(item: ItemId, id: string): void {
     const save = progress.save;
     if (!itemOpen(save, ENCOUNTERS, item)) return;

@@ -4,7 +4,7 @@ import { ITEM_IDS, RUNE_SLOTS, type ItemId } from '../battle/runes';
 
 /**
  * Player progression (docs/DESIGN.md §2.5): stars per passage, unlocks in reading order,
- * runes set in the hero's items (core/progress/runes.ts), and settings. Pure functions over a versioned, validated save.
+ * blessings set in the hero's items (core/progress/runes.ts), and settings. Pure functions over a versioned, validated save.
  */
 
 // ── Stars ──────────────────────────────────────────────────────────────────
@@ -31,7 +31,7 @@ export const QUESTION_TIME_S = 20;
 
 export const SAVE_VERSION = 1;
 
-/** A rune slot holds the id of the passage that awarded the rune, or null when empty. */
+/** A blessing slot holds the id of the passage that awarded the blessing, or null when empty. */
 const slotsSchema = z
   .array(z.string().nullable().catch(null))
   .catch([])
@@ -59,7 +59,7 @@ export const saveSchema = z.object({
   /** Map locations whose reveal animation has played. */
   seenOnMap: z.array(z.string()).catch([]),
   /**
-   * Runes set in each item's slots. Saves from before runes had `upgrades` instead; that field
+   * Blessings set in each item's slots. Saves from before blessings had `upgrades` instead; that field
    * is dropped on load (zod strips unknown keys) and the stars stay as the passage scores.
    */
   runes: z

@@ -102,8 +102,8 @@ export interface TestState {
   /** Character sheet: the hero shown, each stat's value, and the armor shown. */
   character: { hero: string; stats: { id: string; value: string }[]; armor: string[] } | null;
   /**
-   * Runes screen as last drawn: the item opened (null on the item buttons), the rune picked and
-   * the runes waiting in the bag (only that item's when one is open).
+   * Equipment screen as last drawn: the item opened (null on the item buttons), the blessing picked and
+   * the blessings waiting in the bag (only that item's when one is open).
    */
   runes: { item: string | null; selected: string | null; bag: string[] } | null;
   /** Which hero sheet the last hero sprite drew ('boy' or 'girl'). */

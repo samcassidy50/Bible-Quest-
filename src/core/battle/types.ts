@@ -35,7 +35,7 @@ export interface BattleConfig {
   startingFaith?: number;
   /** Debug `?oneShot=1`: any hit that deals damage defeats the foe outright. */
   oneShot?: boolean;
-  /** Runes (core/battle/runes.ts), all optional: extra multiplier on hits after a right answer. */
+  /** Blessings (core/battle/runes.ts), all optional: extra multiplier on hits after a right answer. */
   poweredBonus?: number;
   /** Runes: shield blocks the hero starts the fight with. */
   startingBlocks?: number;

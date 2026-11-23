@@ -61,7 +61,7 @@ export interface Encounter {
   orbs: readonly Orb[];
   /** Armor awarded the first time this passage is won (unlocks a special, or the ultimate). */
   unlocks?: SpecialId | 'ultimate';
-  /** Rune awarded the first time this passage is won. */
+  /** Blessing awarded the first time this passage is won. */
   rune?: RuneId;
   questions: readonly Question[];
 }

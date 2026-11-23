@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-Builds the rune gem sheet from the CraftPix "Top-Down Crystals Pixel Art" pack
+Builds the blessing gem sheet from the CraftPix "Top-Down Crystals Pixel Art" pack
 (https://craftpix.net, licence: https://craftpix.net/file-licenses/). The pack itself is not kept
 in this repository, so pass its unzipped folder:
 
     python3 scripts/art/process_runes.py --pack <top-down-crystals-pixel-art> [--preview]
 
-Each item's runes use one crystal, recoloured to that item's gem colour (keep ITEMS in
+Each item's blessings use one crystal, recoloured to that item's gem colour (keep ITEMS in
 src/core/battle/runes.ts and ORDER in src/scenes/runeIcon.ts in sync). The crystals have
-different shapes, so a rune reads without colour too.
+different shapes, so a blessing reads without colour too.
 
 Output: src/assets/items/runes.png, a grid of CELL px cells. Row 0 is the large crystal of each
 item (pack size 1), row 1 the small one (pack size 3, sharper at small sizes), both centred in

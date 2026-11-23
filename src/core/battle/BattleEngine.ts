@@ -68,7 +68,7 @@ export class BattleEngine {
 
   // ── State ────────────────────────────────────────────────────────────────
 
-  /** Rune of Zeal: hits after a right answer land harder. */
+  /** Blessing of Zeal: hits after a right answer land harder. */
   private powered(mult: number, correct: boolean): number {
     return correct ? mult * (1 + (this.config.poweredBonus ?? 0)) : mult;
   }

@@ -110,11 +110,11 @@ describe('owning and setting runes', () => {
     s = setRune(s, ENC, 'a', 'sword', 0);
     s = setRune(s, ENC, 'b', 'sword', 1);
     expect(s.runes.sword).toEqual(['a', 'b']);
-    // Setting into a filled slot sends the old rune back to the bag.
+    // Setting into a filled slot sends the old blessing back to the bag.
     s = setRune(s, ENC, 'c', 'sword', 0);
     expect(s.runes.sword).toEqual(['c', 'b']);
     expect(ownedRunes(s, ENC).find((r) => r.id === 'a')!.slot).toBeNull();
-    // Moving a set rune to the other slot takes it out of the first.
+    // Moving a set blessing to the other slot takes it out of the first.
     s = setRune(s, ENC, 'c', 'sword', 1);
     expect(s.runes.sword).toEqual([null, 'c']);
     expect(setRuneKinds(s, ENC)).toEqual(['might']);
@@ -145,7 +145,7 @@ describe('owning and setting runes', () => {
 
   it('counts runes waiting that could be set now', () => {
     let s = win(newSave(), 'a', 'b', 'c', 'd');
-    expect(runesToSet(s, ENC)).toBe(2); // three sword runes, two slots; the Life rune waits
+    expect(runesToSet(s, ENC)).toBe(2); // three sword blessings, two slots; the Life blessing waits
     s = setRune(setRune(s, ENC, 'a', 'sword', 0), ENC, 'b', 'sword', 1);
     expect(runesToSet(s, ENC)).toBe(0);
     s = win(s, 'e');

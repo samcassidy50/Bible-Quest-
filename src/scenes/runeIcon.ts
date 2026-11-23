@@ -3,7 +3,7 @@ import { ITEMS, RUNES, type ItemId, type RuneId } from '../core/battle/runes';
 import runesSheetUrl from '../assets/items/runes.png';
 
 /**
- * A rune gem: a pixel-art crystal (src/assets/items/runes.png, built by
+ * A blessing gem: a pixel-art crystal (src/assets/items/runes.png, built by
  * scripts/art/process_runes.py; keep ORDER in sync with that script). Colour and crystal shape both
  * show the item it fits, so they read without colour too, and a white mark on a dark badge shows
  * its kind. sword: ruby · shield: sapphire · breastplate: emerald · sandals: topaz.
@@ -27,7 +27,7 @@ export function useNearestFilterForRunes(textures: Phaser.Textures.TextureManage
     textures.get(RUNES_TEXTURE).setFilter(Phaser.Textures.FilterMode.NEAREST);
 }
 
-/** The white mark for each rune kind, as stroked segments in unit coordinates. */
+/** The white mark for each blessing kind, as stroked segments in unit coordinates. */
 const MARKS: Record<RuneId, [number, number, number, number][]> = {
   might: [
     [0, -0.45, 0, 0.45],
@@ -71,7 +71,7 @@ const MARKS: Record<RuneId, [number, number, number, number][]> = {
 };
 
 /**
- * Draws a gem at (x, y), about `size` px tall. Pass a rune for a full gem with its mark, or only
+ * Draws a gem at (x, y), about `size` px tall. Pass a blessing for a full gem with its mark, or only
  * an item for an empty slot: that item's crystal as a dim silhouette.
  */
 export function runeIcon(
@@ -92,7 +92,7 @@ export function runeIcon(
     gem.setTintFill(0x000000).setAlpha(0.35);
     return box;
   }
-  // Too small for a legible mark: the crystal alone (callers name the rune beside it).
+  // Too small for a legible mark: the crystal alone (callers name the blessing beside it).
   if (size < MARK_FROM) return box;
   // The mark sits on a round badge at the lower right, so it stays clear on any crystal.
   const r = Math.max(7, size * 0.24);
@@ -108,7 +108,7 @@ export function runeIcon(
   return box;
 }
 
-/** "#rrggbb" for text in an item's rune colour. */
+/** "#rrggbb" for text in an item's blessing colour. */
 export const runeHex = (item: ItemId): string =>
   `#${ITEMS[item].color.toString(16).padStart(6, '0')}`;
 

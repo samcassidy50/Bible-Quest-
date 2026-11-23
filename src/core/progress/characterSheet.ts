@@ -12,7 +12,7 @@ export interface StatLine {
   value: string;
   /** What it means in battle, in a child's words. */
   detail: string;
-  /** The set runes that change this stat, drawn beside it in their item's colour. */
+  /** The set blessings that change this stat, drawn beside it in their item's colour. */
   runes: RuneId[];
 }
 
