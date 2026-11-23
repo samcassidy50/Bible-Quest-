@@ -56,7 +56,7 @@ The target _layout and feel_ is the screenshot the project started from: a side-
 | Background   | Parallax layers (sky, far hills, near ground) scroll left to suggest running.                                                                                                                                                      |
 | Hero         | Run-cycle animation. The hero moves from the left edge toward the center/right over the length of the reading.                                                                                                                     |
 | Verse text   | A banner along the bottom with a semi-opaque backdrop. Text scrolls right to left like a news ticker, and the scroll speed is synced to the narration length. Reference shown (e.g. _Genesis 1:1–2_).                              |
-| Narration    | Audio reads the verse. Phase 1 uses the browser's Web Speech API (TTS). Recorded narration comes later.                                                                                                                            |
+| Narration    | Audio reads the verse. Recorded clips (one per verse, Kokoro "Bella" voice, `scripts/audio/narrate.py`) play when they match the verse text; any other verse is read by the device's TTS.                                          |
 | Glowing orbs | While the verse is read, glowing **Armor orbs** float up along the hero's path. Tapping an orb unlocks that special attack **for the upcoming fight only**. See §2.6.                                                              |
 | Controls     | **Skip** (after the first time the verse is heard; skipping forfeits any orbs not yet collected), **Replay** (uncollected orbs appear again), and **Show full text** (a static readable panel for slow readers and accessibility). |
 | Exit         | When narration ends, the hero reaches the foe and the scene cross-fades into battle.                                                                                                                                               |
@@ -102,7 +102,7 @@ This is an open question for review: confirm the tone with the stakeholders (see
 - **Chapters** map to Bible books; **stages** map to passages.
 - Stars per stage (1–3) based on how many questions were answered correctly.
 - ~~A light upgrade track bought with stars~~ (replaced 2026-11-20 by runes, below). Stars are now only a score per passage. No grinding is required to keep reading forward.
-- **Runes (2026-11-20):** each passage awards one rune the first time it is won (`rune` in its encounter file, shown on the victory panel). The hero's four items each have **2 rune slots**, and each rune fits **one item only**, colour-coded (and cut-coded, for colour-blind players) by item. The sword is carried from the start; the other items' slots open when the angel gives that armor, and runes for them wait in the rune bag until then. A new rune goes straight into a free slot of its item (and runes waiting for an item go in when it is earned), so a player who never opens the Runes screen still benefits. On the Runes screen (💎 Runes on the map) the player taps a rune in the bag, then a slot of its item, to set or swap it, and taps a set rune to take it out. Rules: `core/progress/runes.ts`; catalog and numbers: `core/battle/runes.ts` (drafts, checked by the balance simulation).
+- **Runes (2026-11-20):** each passage awards one rune the first time it is won (`rune` in its encounter file, shown on the victory panel). The hero's four items each have **2 rune slots**, and each rune fits **one item only**, colour-coded (and shape-coded, for colour-blind players) by item: each item's runes are one pixel-art crystal (CraftPix crystals pack, see `art/README.md`) with the rune's mark on a badge. The sword is carried from the start; the other items' slots open when the angel gives that armor, and runes for them wait in the rune bag until then. A new rune goes straight into a free slot of its item (and runes waiting for an item go in when it is earned), so a player who never opens the Runes screen still benefits. The Runes screen (💎 Runes on the map) opens on one button per item; tapping one shows that item's two slots and only the runes that fit it. Tapping a rune sets it in a free slot (when both are full, tap a slot next to swap it in), and tapping a set rune takes it out. Rules: `core/progress/runes.ts`; catalog and numbers: `core/battle/runes.ts` (drafts, checked by the balance simulation).
 
   | Item (gem)                    | Rune     | Effect (per rune; two stack)              |
   | ----------------------------- | -------- | ----------------------------------------- |
@@ -175,7 +175,7 @@ Validation: `special` must be one of `sword | shield | breastplate | sandals`, w
 | Build/dev       | **Vite**                                                                                                                                                                    | Instant dev server, hot module reload, and simple static builds.                                                                                                                                                              |
 | UI overlays     | Phaser-native UI (scenes and containers)                                                                                                                                    | Keeps one rendering model. A DOM overlay can be added later for the accessible text panel.                                                                                                                                    |
 | Narration       | Prototype: native device TTS via `@capacitor-community/text-to-speech`. Release: **pre-generated AI neural-voice audio files** bundled in the app                           | Browser `speechSynthesis` is unreliable inside Android WebViews, so it isn't used on mobile. Pre-generated audio sounds the same on every device, works offline, and can include word timings for karaoke-style highlighting. |
-| Bible text      | **Berean Standard Bible (BSB)**, public domain (switched from the World English Bible on 2026-11-12 because it reads more naturally aloud)                                  | A modern, readable English translation with no licensing cost. KJV is also public domain and could be an optional toggle. Avoid NIV/ESV unless they are licensed.                                                             |
+| Bible text      | **Kid-friendly retelling** (2026-11-23) in `content/source/retelling/`: simple words, same meaning, retold verse by verse from a public-domain translation                  | Easier to read and hear for children. Retold verses are drafts until a human reviews them. Avoid basing retellings on NIV/ESV unless they are licensed.                                                                       |
 | Content         | JSON files in `content/`, validated by **Zod** schemas                                                                                                                      | Easy to author and diff, and broken content is caught at build time.                                                                                                                                                          |
 | Save data       | **`@capacitor/preferences`** (native key-value storage) behind a `SaveService` interface; `localStorage` only in the web dev build                                          | iOS can clear WebView `localStorage` when the device is low on space, so native storage is used for real saves. The interface allows cloud sync later.                                                                        |
 | Native features | `@capacitor/haptics` (powered hits), `@capacitor/screen-orientation` (lock landscape), `@capacitor/status-bar`, `@capacitor/splash-screen`, `@capacitor/app` (pause/resume) | Makes the game feel native, and it pauses correctly when interrupted by a phone call.                                                                                                                                         |
@@ -242,7 +242,7 @@ INTRO → HERO_CHOOSE ─(attack | special)─▶ HERO_QUESTION → HERO_ACTION(
 
 ### 3.2 Content schema
 
-> **Implemented in Phase 3 with one change:** encounter files store a `passage` reference (e.g. `"GEN 1:1-2"`) instead of verse text. The game resolves the text from the vendored BSB source at load time, so Scripture can't be mistyped in content files. The draft below is kept for history; see `content/encounters/genesis/` and `src/core/content/schema.ts` for the real format.
+> **Implemented in Phase 3 with one change:** encounter files store a `passage` reference (e.g. `"GEN 1:1-2"`) instead of verse text. The game resolves the text from the retelling source (`content/source/retelling/`) at load time, so verse text lives in one place. The draft below is kept for history; see `content/encounters/genesis/` and `src/core/content/schema.ts` for the real format.
 
 ```jsonc
 // content/genesis/001-creation.json
@@ -340,7 +340,7 @@ Later arcs: Abraham (12–25), Isaac and Jacob (25–36), Joseph (37–50), and 
 
 ## 6. Content Authoring and Review
 
-1. Pick the passage. A script imports the verse text **from a vendored public-domain BSB source file** (`content/source/bsb/`). **AI never types or paraphrases Scripture.** CI checks every verse in the content files word for word against the source file.
+1. Pick the passage and add its kid-friendly retelling to `content/source/retelling/`, retold verse by verse from a public-domain translation (never from memory). **A human reviews every retold verse** for faithfulness. Record its narration with `scripts/audio/narrate.py`.
 2. An AI agent drafts at least 6 questions per encounter using a fixed prompt template, and the same script also records the `highlight` phrases. **A human reviews every question** for accuracy and grounding before it is merged.
 3. Run `npm run validate:content`.
 4. Theological/content review: a checklist in the PR template.
@@ -402,14 +402,15 @@ Each phase ends in something playable, deployed to a preview URL.
 - VFX: powered-attack glow and particles, hit sparks.
 - A unique animation and effect for each special attack and the Faith Ultimate; orb glow, collect, and fly-to-slot effects.
 - Music, SFX, and recorded narration for arc 1 (optional at this point).
-  - **Status (2026-11-11):** 22 sound effects done, synthesized in code (no files or licences): hits timed to animation frames, specials, answer feedback, orbs, waves, victory and defeat. Sound board at `?scene=sounds`. Music and recorded narration not started.
+  - **Status (2026-11-11):** 22 sound effects done, synthesized in code (no files or licences): hits timed to animation frames, specials, answer feedback, orbs, waves, victory and defeat. Sound board at `?scene=sounds`. Music not started.
+  - **Narration status (2026-11-23):** every verse is recorded with the free, offline Kokoro voice model (Apache 2.0), voice "Bella", one MP3 per verse in `src/assets/narration/` (`scripts/audio/narrate.py`). The reading scrolls to the clips' real lengths. No word-level timings yet.
 - **Exit:** the slice looks and sounds like the target feel.
 
 ### Phase 5: Progression and retention (≈2 weeks)
 
 - Save/load, stars, upgrades (including special attack and ultimate upgrades), Verse Journal. (Upgrades replaced by runes on 2026-11-20, see §2.5.)
-- **Status (2026-11-11):** done. Saves (native Preferences / localStorage, validated and self-repairing), stars 1–3 by accuracy, passages unlock in order, upgrades (Health, Strength, Armor Mastery, Faith; 3 levels at 2/3/4 stars), Verse Journal, Settings (sound, narration, reading speed, auto-collect orbs, 20 s question timer, reset). Not done: KJV toggle (only BSB is vendored), fast-answer timer bonus.
-- Settings: timer, text speed, difficulty, translation (BSB/KJV).
+- **Status (2026-11-11):** done. Saves (native Preferences / localStorage, validated and self-repairing), stars 1–3 by accuracy, passages unlock in order, upgrades (Health, Strength, Armor Mastery, Faith; 3 levels at 2/3/4 stars), Verse Journal, Settings (sound, narration, reading speed, auto-collect orbs, 20 s question timer, reset). Not done: fast-answer timer bonus.
+- Settings: timer, text speed, difficulty.
 - **Exit:** a player can play for several sessions with persistent progress.
 
 ### Phase 6: Store release (≈2 weeks)
@@ -479,17 +480,17 @@ A Vitest script runs 10,000 simulated battles per encounter at answer accuracies
 | WebView performance on low-end Android                   | Performance budget plus real-device checks each phase. Godot is the fallback (§3).                                          |
 | App store rejection (kids, privacy)                      | Decide the audience early (§10). Follow the Phase 6 policy checklist from the start.                                        |
 | Questions that aren't actually answerable from the verse | Automatic `highlight` check plus human review. Track accuracy per question after launch.                                    |
-| TTS quality varies by device                             | Recorded narration in Phase 4/5; captions always on.                                                                        |
-| Translation licensing                                    | Use public-domain BSB/KJV only, unless a license is obtained.                                                               |
+| TTS quality varies by device                             | Recorded narration (done 2026-11-23); captions always on.                                                                   |
+| Translation licensing                                    | Retell only from public-domain translations, unless a license is obtained.                                                  |
 | Doctrinal sensitivity                                    | Foes are abstract or temptation-themed; a content reviewer signs off on each arc.                                           |
 | Players skip reading                                     | Questions require the verse, the replay button is always there, and stars reward accuracy.                                  |
 
 ## 10. Open Questions
 
 1. Target audience: children (8–12), families, or all ages? This affects reading level, the timer default, and COPPA.
-2. Translation: BSB by default with KJV as an option?
+2. ~~Translation~~: **decided 2026-11-23, a kid-friendly retelling** (see §3).
 3. Is the foe theming in §2.4 the right tone?
-4. Will recorded narration be voiced by a person or by high-quality TTS?
+4. ~~Narration voice~~: **decided 2026-11-23, Kokoro TTS ("Bella")**, recorded ahead of time.
 5. ~~Platform priority~~: **decided, mobile-first (iOS + Android).** Which ships first, or both at once? (An Apple Developer account costs $99/yr; Google Play is a one-time $25.)
 6. Hero identity: a named original character, or a customizable "pilgrim"?
 7. Art: AI-generated, purchased packs, or a commissioned artist (§11.3)?
@@ -503,14 +504,14 @@ The game is mostly built by AI agents (Claude Code). The human acts as **product
 
 ### 11.1 What AI does and doesn't do
 
-| AI does                                                                         | Human does                                            |
-| ------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| All code, tests, CI, Fastlane setup                                             | Approves and merges every PR                          |
-| Drafts questions from imported verses                                           | Reviews every question for accuracy and grounding     |
-| Generates narration audio (neural TTS)                                          | Listens and spot-checks pronunciation (Hebrew names!) |
-| Drafts store listings and screenshots                                           | Store accounts, signing certificates, submission      |
-| Fixes failing CI and review comments                                            | Playtests on real phones each phase                   |
-| **Never:** types or paraphrases Scripture, or ships content that isn't reviewed |                                                       |
+| AI does                                                                        | Human does                                            |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------- |
+| All code, tests, CI, Fastlane setup                                            | Approves and merges every PR                          |
+| Drafts kid-friendly retellings and questions                                   | Reviews every retold verse and question for accuracy  |
+| Generates narration audio (neural TTS)                                         | Listens and spot-checks pronunciation (Hebrew names!) |
+| Drafts store listings and screenshots                                          | Store accounts, signing certificates, submission      |
+| Fixes failing CI and review comments                                           | Playtests on real phones each phase                   |
+| **Never:** retells Scripture from memory, or ships content that isn't reviewed |                                                       |
 
 ### 11.2 Working rules (go into `CLAUDE.md`)
 

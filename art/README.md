@@ -108,6 +108,27 @@ re-run it.
   they stay crisp; preview in `art/ui-preview.png`). Used by the win/lose screen
   (`ResultPanel.ts`) via `src/scenes/ui/pixelUi.ts`.
 
+# Item art
+
+- `src/assets/items/item-art.png` (large sword, shield, breastplate and sandals pictures, used on
+  the Runes screen) is **original** art drafted in ChatGPT as one sheet,
+  `art/items-raw/armor-of-god.webp` (flat magenta background, about 12 screen px per art pixel).
+  `python3 scripts/art/process_item_art.py --preview` measures the pixel grid, reads one colour
+  per art pixel, keys out the magenta and snaps colours to one palette (preview in
+  `art/item-art-preview.png`). Never edit the PNG by hand; redraw the source and re-run it. Small
+  UI (action buttons) keeps the painted 20 px icons from `paint_icons.py`.
+
+# Rune art
+
+- `src/assets/items/runes.png` (the rune gems) is **third-party art** from the CraftPix free pack
+  "Top-Down Crystals Pixel Art" (https://craftpix.net), under the CraftPix file licence
+  (https://craftpix.net/file-licenses/). One crystal per item, recoloured to its gem: Red (ruby,
+  sword), Blue (sapphire, shield), Green (emerald, breastplate), Yellow (topaz, sandals). The pack
+  is not kept here; rebuild with
+  `python3 scripts/art/process_runes.py --pack <unzipped pack> --preview` (preview in
+  `art/runes-preview.png`). Drawn by `src/scenes/runeIcon.ts`, which adds each rune's white mark
+  on a small badge in code.
+
 # Backdrop art
 
 Every passage has its own environment, painted by `python3 scripts/art/paint_backdrops.py`

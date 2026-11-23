@@ -130,7 +130,7 @@ describe('hero clips', () => {
 });
 
 describe('girl hero sheet', () => {
-  it('has exactly the boy\'s frames, so every clip plays on either hero', () => {
+  it("has exactly the boy's frames, so every clip plays on either hero", () => {
     expect(HERO_GIRL_SHEET.frameCount).toBe(Object.keys(HERO_FRAMES).length);
     expect(HERO_GIRL_SHEET.standingHeight).toBe(HERO_SHEET.standingHeight);
   });

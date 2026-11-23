@@ -37,7 +37,7 @@
       "word": "cursed"
     },
     {
-      "word": "toil"
+      "word": "work"
     },
     {
       "word": "thorns"
@@ -55,19 +55,19 @@
       "id": "gen-006-q1",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What would the ground yield?",
+      "prompt": "What would the ground grow?",
       "choices": ["Thorns and thistles", "Gold and silver", "Only flowers", "Nothing at all"],
       "answerIndex": 0,
-      "highlight": "Both thorns and thistles it will yield"
+      "highlight": "It will grow thorns and thistles"
     },
     {
       "id": "gen-006-q2",
       "type": "fill_blank",
       "difficulty": "medium",
-      "prompt": "By the sweat of your ____ you will eat your bread.",
-      "choices": ["brow", "back", "feet", "arms"],
+      "prompt": "You will ____ and work hard for your bread.",
+      "choices": ["sweat", "sleep", "sing", "rest"],
       "answerIndex": 0,
-      "highlight": "By the sweat of your brow"
+      "highlight": "You will sweat and work hard for your bread"
     },
     {
       "id": "gen-006-q3",
@@ -75,43 +75,38 @@
       "difficulty": "medium",
       "prompt": "Why was the ground cursed?",
       "choices": [
-        "Adam ate from the tree God commanded him not to eat from",
+        "Adam ate from the tree God told him not to eat from",
         "Adam planted too many trees",
         "It rained too much",
         "The animals trampled it"
       ],
       "answerIndex": 0,
-      "highlight": "have eaten from the tree of which I commanded you not to eat"
+      "highlight": "ate from the tree I told you not to eat from"
     },
     {
       "id": "gen-006-q4",
       "type": "true_false",
       "difficulty": "easy",
-      "prompt": "True or false: these verses say that Adam is dust and will return to dust.",
+      "prompt": "True or false: God said Adam is dust and will go back to dust.",
       "choices": ["True", "False"],
       "answerIndex": 0,
-      "highlight": "For dust you are, and to dust you shall return"
+      "highlight": "You are dust, and you will go back to dust"
     },
     {
       "id": "gen-006-q5",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "How would Adam eat from the ground?",
-      "choices": ["Through toil", "With no effort", "Only on holidays", "With help from angels"],
+      "prompt": "How would Adam get food from the ground?",
+      "choices": ["By working hard", "With no effort", "Only on holidays", "With help from angels"],
       "answerIndex": 0,
-      "highlight": "through toil you will eat of it"
+      "highlight": "You will work hard to get food from it"
     },
     {
       "id": "gen-006-q6",
       "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "What would Adam eat, according to verse 18?",
-      "choices": [
-        "The plants of the field",
-        "Fish from the sea",
-        "Bread from the sky",
-        "Honey from rocks"
-      ],
+      "prompt": "What would Adam eat from the field?",
+      "choices": ["Plants", "Fish", "Bread from the sky", "Honey from rocks"],
       "answerIndex": 0,
       "highlight": "you will eat the plants of the field"
     }

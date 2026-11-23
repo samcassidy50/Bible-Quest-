@@ -1,8 +1,8 @@
 import type { Verse } from './types';
 
 /**
- * Vendored Scripture (docs/DESIGN.md §6). Verse text only ever comes from the public-domain
- * source files in content/source/bsb/ — encounter files store a passage reference, never text.
+ * Passage text (docs/DESIGN.md §6). Verse text only ever comes from the kid-friendly retelling in
+ * content/source/retelling/ — encounter files store a passage reference, never text.
  */
 
 export const BOOK_NAMES: Record<string, string> = {

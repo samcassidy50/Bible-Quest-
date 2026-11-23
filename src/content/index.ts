@@ -1,11 +1,11 @@
 import { parseVpl } from '../core/content/bible';
 import { buildEncounter, canonicalOrder, validateCollection } from '../core/content/build';
 import type { Encounter } from '../core/content/types';
-import genesisSource from '../../content/source/bsb/GEN.txt?raw';
+import genesisSource from '../../content/source/retelling/GEN.txt?raw';
 
 /**
  * ContentService (docs/DESIGN.md §3.1): loads every encounter file, resolves its verses from the
- * vendored BSB text, and validates it. Any content mistake throws at startup (and in CI).
+ * kid-friendly retelling in content/source/retelling/, and validates it. Any content mistake throws at startup (and in CI).
  */
 export const BOOK_ORDER = ['GEN'] as const;
 

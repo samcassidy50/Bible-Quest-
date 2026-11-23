@@ -37,10 +37,10 @@
       "word": "garden"
     },
     {
-      "word": "cultivate"
+      "word": "care"
     },
     {
-      "word": "freely"
+      "word": "tree"
     },
     {
       "word": "knowledge"
@@ -55,33 +55,33 @@
       "id": "gen-004-q1",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "Where did the LORD God place the man?",
+      "prompt": "Where did the Lord God put the man?",
       "choices": ["The Garden of Eden", "A city", "An ark", "A mountain"],
       "answerIndex": 0,
-      "highlight": "placed him in the Garden of Eden"
+      "highlight": "put him in the Garden of Eden"
     },
     {
       "id": "gen-004-q2",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What was the man’s work in the garden?",
+      "prompt": "What was the man’s job in the garden?",
       "choices": [
-        "To cultivate and keep it",
+        "To work it and take care of it",
         "To build a tower",
         "To name the stars",
         "To catch fish"
       ],
       "answerIndex": 0,
-      "highlight": "to cultivate and keep it"
+      "highlight": "to work it and take care of it"
     },
     {
       "id": "gen-004-q3",
       "type": "true_false",
       "difficulty": "medium",
-      "prompt": "True or false: God said the man could eat freely from every tree of the garden.",
+      "prompt": "True or false: God said the man could eat from any tree in the garden, except one.",
       "choices": ["True", "False"],
       "answerIndex": 0,
-      "highlight": "You may eat freely from every tree of the garden"
+      "highlight": "You may eat from any tree in the garden"
     },
     {
       "id": "gen-004-q4",
@@ -96,7 +96,7 @@
       "id": "gen-004-q5",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What did God say would happen in the day the man ate of that tree?",
+      "prompt": "What did God say would happen if the man ate from that tree?",
       "choices": [
         "He would surely die",
         "He would fly",
@@ -110,10 +110,10 @@
       "id": "gen-004-q6",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "Who commanded the man?",
-      "choices": ["The LORD God", "The serpent", "An angel", "The woman"],
+      "prompt": "Who told the man the rule?",
+      "choices": ["The Lord God", "The serpent", "An angel", "The woman"],
       "answerIndex": 0,
-      "highlight": "the LORD God commanded him"
+      "highlight": "The Lord God told him"
     }
   ]
 }

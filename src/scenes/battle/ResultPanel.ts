@@ -110,7 +110,7 @@ export class ResultPanel extends Phaser.GameObjects.Container {
         })
         .setOrigin(0.5);
       text.setX(22);
-      const gem = runeIcon(scene, 22 - text.width / 2 - 26, y, 36, info.item, stats.rune);
+      const gem = runeIcon(scene, 22 - text.width / 2 - 30, y, 44, info.item, stats.rune);
       this.add([gem, text]);
       detail.setY(detail.y - 14);
     }

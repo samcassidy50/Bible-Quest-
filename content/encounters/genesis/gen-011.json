@@ -40,13 +40,13 @@
       "word": "tower"
     },
     {
-      "word": "name"
+      "word": "famous"
     },
     {
       "word": "language"
     },
     {
-      "word": "confuse"
+      "word": "mix"
     }
   ],
   "rune": "haste",
@@ -58,52 +58,52 @@
       "prompt": "What did the people want to build?",
       "choices": ["A city with a tower", "An ark", "A garden", "A bridge"],
       "answerIndex": 0,
-      "highlight": "let us build for ourselves a city with a tower"
+      "highlight": "let’s build a city for ourselves, with a tower"
     },
     {
       "id": "gen-011-q2",
       "type": "multiple_choice",
       "difficulty": "easy",
       "prompt": "How high did they want the tower to reach?",
-      "choices": ["To the heavens", "To the mountains", "Just above the houses", "To the sea"],
+      "choices": ["Up to the heavens", "To the mountains", "Just above the houses", "To the sea"],
       "answerIndex": 0,
-      "highlight": "a tower that reaches to the heavens"
+      "highlight": "a tower that reaches up to the heavens"
     },
     {
       "id": "gen-011-q3",
       "type": "fill_blank",
       "difficulty": "medium",
-      "prompt": "That we may make a ____ for ourselves.",
-      "choices": ["name", "home", "boat", "garden"],
+      "prompt": "“Then we will become ____.”",
+      "choices": ["famous", "sleepy", "hungry", "lost"],
       "answerIndex": 0,
-      "highlight": "that we may make a name for ourselves"
+      "highlight": "Then we will become famous"
     },
     {
       "id": "gen-011-q4",
       "type": "multiple_choice",
       "difficulty": "easy",
       "prompt": "Who came down to see the city and the tower?",
-      "choices": ["The LORD", "An angel", "Noah", "A king"],
+      "choices": ["The Lord", "An angel", "Noah", "A king"],
       "answerIndex": 0,
-      "highlight": "the LORD came down to see the city and the tower"
+      "highlight": "the Lord came down to see the city and the tower"
     },
     {
       "id": "gen-011-q5",
       "type": "true_false",
       "difficulty": "easy",
-      "prompt": "True or false: the people were speaking the same language.",
+      "prompt": "True or false: the people all spoke the same language.",
       "choices": ["True", "False"],
       "answerIndex": 0,
-      "highlight": "one people speaking the same language"
+      "highlight": "they all speak the same language"
     },
     {
       "id": "gen-011-q6",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What did the LORD say He would confuse?",
+      "prompt": "What did the Lord say He would mix up?",
       "choices": ["Their language", "Their tower", "Their food", "Their animals"],
       "answerIndex": 0,
-      "highlight": "confuse their language"
+      "highlight": "mix up their language"
     }
   ]
 }

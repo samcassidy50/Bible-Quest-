@@ -100,7 +100,7 @@ test('winning earns stars and reveals the next location once', async ({ page }) 
   expect((await state(page)).map!.find((m) => m.id === 'gen-002')!.open).toBe(true);
 });
 
-test('runes: tap a rune, then a slot of its item; tap a set rune to take it out', async ({
+test('runes: tap an item, then a rune to set it; swap when full; tap a set rune to take it out', async ({
   page,
 }) => {
   const save = base();
@@ -110,38 +110,51 @@ test('runes: tap a rune, then a slot of its item; tap a set rune to take it out'
   await page.goto('/?scene=map&fast=1');
   await waitFor(page, "s.scene === 'map' && !s.mapRevealing && !!s.targets.runes");
   await tap(page, 'runes');
-  await waitFor(page, "s.scene === 'runes' && !!s.targets['rune:gen-001']");
-  await snap(page, test.info().outputPath('runes-bag.png'));
+  await waitFor(
+    page,
+    "s.scene === 'runes' && !!s.runes && s.runes.item === null && !!s.targets['item:sword']",
+  );
+  await snap(page, test.info().outputPath('runes-items.png'));
 
   // Each tap redraws the screen; wait on the redrawn state before the next tap.
-  const drawn = (selected: string | null, extra = 'true') =>
+  const drawn = (item: string | null, selected: string | null, extra = 'true') =>
     waitFor(
       page,
-      `s.scene === 'runes' && !!s.runes && s.runes.selected === ${JSON.stringify(selected)} && ${extra}`,
+      `s.scene === 'runes' && !!s.runes && s.runes.item === ${JSON.stringify(item)} && ` +
+        `s.runes.selected === ${JSON.stringify(selected)} && ${extra}`,
     );
-  await tap(page, 'rune:gen-001'); // Rune of Might
-  await drawn('gen-001');
-  await tap(page, 'slot:shield:0'); // wrong item: nothing happens
-  await page.waitForTimeout(300);
-  expect((await state(page)).save!.runes.shield).toEqual([null, null]);
-  await tap(page, 'slot:sword:0');
-  await drawn(null, "!s.runes.bag.includes('gen-001')");
-  expect((await state(page)).save!.runes.sword[0]).toBe('gen-001');
-  await tap(page, 'rune:gen-004'); // Rune of Life (the shield is earned at gen-005)
-  await drawn('gen-004');
-  await tap(page, 'slot:shield:1');
-  await drawn(null, "!s.runes.bag.includes('gen-004')");
-  expect((await state(page)).save!.runes.shield[1]).toBe('gen-004');
-  await tap(page, 'rune:gen-002');
-  await drawn('gen-002');
-  await tap(page, 'slot:sword:1');
-  await drawn(null, "!s.runes.bag.includes('gen-002')");
-  expect((await state(page)).save!.runes.sword[1]).toBe('gen-002');
-  await snap(page, test.info().outputPath('runes-set.png'));
+  await tap(page, 'item:sword');
+  await drawn('sword', null, "!!s.targets['rune:gen-001']");
+  // Only the sword's runes are listed (Might, Zeal, Might), not the shield's Life.
+  expect((await state(page)).runes!.bag).toEqual(['gen-001', 'gen-002', 'gen-003']);
+  await snap(page, test.info().outputPath('runes-sword.png'));
 
-  await tap(page, 'slot:sword:0'); // take the Might rune back out
-  await drawn(null, "s.runes.bag.includes('gen-001')");
-  expect((await state(page)).save!.runes.sword[0]).toBeNull();
+  await tap(page, 'rune:gen-001'); // into the first free slot
+  await drawn('sword', null, "!s.runes.bag.includes('gen-001')");
+  expect((await state(page)).save!.runes.sword[0]).toBe('gen-001');
+  await tap(page, 'rune:gen-002');
+  await drawn('sword', null, "!s.runes.bag.includes('gen-002')");
+  expect((await state(page)).save!.runes.sword).toEqual(['gen-001', 'gen-002']);
+
+  await tap(page, 'rune:gen-003'); // both full: picked, waiting for a slot
+  await drawn('sword', 'gen-003');
+  await snap(page, test.info().outputPath('runes-swap.png'));
+  await tap(page, 'slot:sword:0');
+  await drawn('sword', null, "s.runes.bag.includes('gen-001')");
+  expect((await state(page)).save!.runes.sword).toEqual(['gen-003', 'gen-002']);
+
+  await tap(page, 'slot:sword:1'); // take the Zeal rune back out
+  await drawn('sword', null, "s.runes.bag.includes('gen-002')");
+  expect((await state(page)).save!.runes.sword[1]).toBeNull();
+
+  await tap(page, 'back');
+  await drawn(null, null, "!!s.targets['item:shield']");
+  await tap(page, 'item:shield');
+  await drawn('shield', null, "!!s.targets['rune:gen-004']"); // Rune of Life (shield from gen-005)
+  await tap(page, 'rune:gen-004');
+  await drawn('shield', null, "!s.runes.bag.includes('gen-004')");
+  expect((await state(page)).save!.runes.shield[0]).toBe('gen-004');
+  await snap(page, test.info().outputPath('runes-shield.png'));
 
   await page.goto('/?scene=battle&encounter=gen-001&seed=1&freeze=1');
   await heroTurn(page);

@@ -19,3 +19,9 @@ android/app/src/main/assets/public
 art/hero-preview.png
 backdrop-previews/
 __pycache__/
+
+# Local APK copies for side-loading
+builds/
+
+# Python environment for recording narration (scripts/audio/narrate.py)
+.venv-narration/

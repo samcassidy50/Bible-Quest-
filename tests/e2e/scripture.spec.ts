@@ -7,9 +7,16 @@ test.describe.configure({ timeout: 90_000 });
 const scripture = async (page: Parameters<typeof state>[0]) =>
   (await state(page)).scripture as ScriptureTestState;
 
-test('tapping an energy orb during the reading carries energy into the fight', async ({ page }) => {
+test('tapping an energy orb during the reading carries energy into the fight', async ({
+  browser,
+}, info) => {
   // Real-time reading plus a fight; software rendering in the slower browser profile needs headroom.
   test.setTimeout(150_000);
+  // Tapping a moving orb needs the page to answer quickly. At the Android profile's 2.6x pixel
+  // density, software rendering alongside other workers can take seconds per tap, by which time the
+  // orb has risen out of reach, so this test renders at 1x (same layout, same touch input).
+  const context = await browser.newContext({ ...info.project.use, deviceScaleFactor: 1 });
+  const page = await context.newPage();
   await page.goto('/?scene=scripture&seed=1&narration=off');
   await waitFor(page, "s.scene === 'scripture' && !!s.scripture");
   const s0 = await scripture(page);
@@ -18,21 +25,27 @@ test('tapping an energy orb during the reading carries energy into the fight', a
   expect(s0.energy).toBe(0);
 
   // Like a real player: tap an orb as it drifts up. If the busy test machine misses every orb,
-  // press Replay (missed orbs come back) and try again.
+  // press Replay (missed orbs come back) and try again. The orb keeps rising while a tap is on its
+  // way, so tap straight from the state just read (canvas measured once, screenshot afterwards).
+  const box = (await page.locator('#game canvas').boundingBox())!;
   for (let reading = 0; reading < 3; reading++) {
     await waitFor(
       page,
       "s.scripture && (s.scripture.energy > 0 || s.scripture.finishing || Object.keys(s.targets).some((k) => k.startsWith('orb:')))",
       45_000,
     );
-    if (reading === 0) await snap(page, test.info().outputPath('reading-orb.png'));
     while (true) {
       const st = await state(page);
       const s = st.scripture;
       if (!s || s.energy > 0 || s.finishing) break;
       const key = Object.keys(st.targets).find((k) => k.startsWith('orb:'));
       if (!key) break;
-      await tapIfPresent(page, key);
+      const t = st.targets[key]!;
+      await page.touchscreen.tap(
+        box.x + (t.x * box.width) / st.gameWidth,
+        box.y + (t.y * box.height) / st.gameHeight,
+      );
+      if (reading === 0) await snap(page, test.info().outputPath('reading-orb.png'));
       await page.waitForTimeout(150);
     }
     const s = (await state(page)).scripture;
@@ -44,6 +57,24 @@ test('tapping an energy orb during the reading carries energy into the fight', a
   await waitFor(page, "s.scene === 'battle' && !!s.battle", 60_000);
   await heroTurn(page);
   expect((await battle(page)).energy).toBeGreaterThan(0);
+  await context.close();
+});
+
+test('the reading uses the recorded voice for every verse, timed by the clips', async ({
+  page,
+}) => {
+  // Genesis 1:3–5. Narration on (no narration=off or fast=1), so the recorded clips are in use.
+  await page.goto('/?scene=scripture&encounter=gen-002&seed=1');
+  await waitFor(page, "s.scripture && s.scripture.encounter === 'gen-002'");
+  const s0 = await scripture(page);
+  expect(s0.recordedRefs).toEqual(['1:3', '1:4', '1:5']);
+  // The reading lasts as long as the three clips (3.75 s + 5.375 s + 8.325 s at normal speed).
+  expect(Math.abs(s0.durationMs - 17_450)).toBeLessThan(50);
+
+  // With narration off, nothing plays and the reading falls back to the estimated pace.
+  await page.goto('/?scene=scripture&encounter=gen-002&seed=1&narration=off');
+  await waitFor(page, "s.scripture && s.scripture.encounter === 'gen-002'");
+  expect((await scripture(page)).recordedRefs).toEqual([]);
 });
 
 test('every verse of the passage is read before the battle starts', async ({ page }) => {

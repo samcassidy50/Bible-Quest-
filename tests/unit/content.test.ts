@@ -15,12 +15,11 @@ describe('content: Genesis 1–11', () => {
   });
 
   it.each(ENCOUNTERS.map((e) => [e.id, e] as [string, typeof e]))(
-    '%s: verses come word for word from the BSB source',
+    '%s: verses come word for word from the retelling source',
     (_id, e) => {
       const gen = BIBLE.get('GEN')!;
       expect(e.verses.length).toBeGreaterThan(0);
       for (const v of e.verses) expect(v.text).toBe(gen.get(v.ref));
-      expect(e.translation).toBe('BSB');
     },
   );
 
@@ -87,9 +86,10 @@ describe('content: Genesis 1–11', () => {
   });
 });
 
-describe('vendored BSB source', () => {
-  it('has all 1,533 verses of Genesis', () => {
-    expect(BIBLE.get('GEN')!.size).toBe(1533);
+describe('retelling source', () => {
+  it('holds exactly the verses the passages read, so no retold verse goes unused', () => {
+    const used = new Set(ENCOUNTERS.flatMap((e) => e.verses.map((v) => v.ref)));
+    expect([...BIBLE.get('GEN')!.keys()].sort()).toEqual([...used].sort());
   });
 
   it('parses the first verse exactly', () => {

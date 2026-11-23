@@ -34,7 +34,7 @@
   ],
   "orbs": [
     {
-      "word": "crafty"
+      "word": "tricky"
     },
     {
       "word": "touch"
@@ -43,10 +43,10 @@
       "word": "eyes"
     },
     {
-      "word": "pleasing"
+      "word": "look"
     },
     {
-      "word": "wisdom"
+      "word": "wise"
     }
   ],
   "unlocks": "shield",
@@ -58,13 +58,13 @@
       "difficulty": "medium",
       "prompt": "How is the serpent described?",
       "choices": [
-        "More crafty than any beast of the field",
-        "The biggest beast",
-        "The kindest beast",
-        "The fastest beast"
+        "More tricky than any other wild animal",
+        "The biggest animal",
+        "The kindest animal",
+        "The fastest animal"
       ],
       "answerIndex": 0,
-      "highlight": "more crafty than any beast of the field"
+      "highlight": "more tricky than any other wild animal"
     },
     {
       "id": "gen-005-q2",
@@ -107,15 +107,15 @@
       "id": "gen-005-q5",
       "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "What did the woman see about the tree?",
+      "prompt": "What did the woman see about the fruit?",
       "choices": [
-        "It was good for food and pleasing to the eyes",
+        "It was good for food and nice to look at",
         "It was dry and dead",
         "It was too high to reach",
-        "It had no fruit"
+        "It was rotten"
       ],
       "answerIndex": 0,
-      "highlight": "the tree was good for food"
+      "highlight": "good for food and nice to look at"
     },
     {
       "id": "gen-005-q6",

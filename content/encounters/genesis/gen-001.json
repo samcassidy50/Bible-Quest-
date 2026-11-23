@@ -37,7 +37,7 @@
       "word": "beginning"
     },
     {
-      "word": "formless"
+      "word": "shape"
     },
     {
       "word": "waters"
@@ -49,10 +49,10 @@
       "id": "gen-001-q1",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What did God create in the beginning?",
+      "prompt": "What did God make in the beginning?",
       "choices": ["The heavens and the earth", "The sun and the moon", "The animals", "A garden"],
       "answerIndex": 0,
-      "highlight": "God created the heavens and the earth"
+      "highlight": "God made the heavens and the earth"
     },
     {
       "id": "gen-001-q2",
@@ -61,25 +61,30 @@
       "prompt": "True or false: at the start, the earth was full of light.",
       "choices": ["True", "False"],
       "answerIndex": 1,
-      "highlight": "darkness was over the surface of the deep"
+      "highlight": "Darkness covered the deep waters"
     },
     {
       "id": "gen-001-q3",
       "type": "fill_blank",
       "difficulty": "medium",
-      "prompt": "The Spirit of God was hovering over the surface of the ____.",
+      "prompt": "The Spirit of God was hovering over the ____.",
       "choices": ["waters", "mountains", "garden", "sky"],
       "answerIndex": 0,
-      "highlight": "hovering over the surface of the waters"
+      "highlight": "hovering over the waters"
     },
     {
       "id": "gen-001-q4",
       "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "How does the verse describe the earth at first?",
-      "choices": ["Full of animals", "Formless and void", "Covered in trees", "Bright and sunny"],
+      "prompt": "What was the earth like at first?",
+      "choices": [
+        "Full of animals",
+        "It had no shape and was empty",
+        "Covered in trees",
+        "Bright and sunny"
+      ],
       "answerIndex": 1,
-      "highlight": "formless and void"
+      "highlight": "The earth had no shape, and it was empty"
     },
     {
       "id": "gen-001-q5",
@@ -94,7 +99,7 @@
       "id": "gen-001-q6",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "When did God create the heavens and the earth?",
+      "prompt": "When did God make the heavens and the earth?",
       "choices": ["After the flood", "On the seventh day", "In the garden", "In the beginning"],
       "answerIndex": 3,
       "highlight": "In the beginning"

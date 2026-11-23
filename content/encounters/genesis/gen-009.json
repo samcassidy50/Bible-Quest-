@@ -44,13 +44,13 @@
   ],
   "orbs": [
     {
-      "word": "hundredth"
+      "word": "hundred"
     },
     {
       "word": "month"
     },
     {
-      "word": "fountains"
+      "word": "springs"
     },
     {
       "word": "floodgates"
@@ -66,35 +66,35 @@
       "id": "gen-009-q1",
       "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "In which year of Noah’s life did the flood begin?",
+      "prompt": "How old was Noah when the flood began?",
       "choices": [
-        "The six hundredth year",
-        "The fortieth year",
-        "The hundredth year",
-        "The nine hundredth year"
+        "Six hundred years old",
+        "Forty years old",
+        "One hundred years old",
+        "Nine hundred years old"
       ],
       "answerIndex": 0,
-      "highlight": "In the six hundredth year of Noah’s life"
+      "highlight": "When Noah was six hundred years old"
     },
     {
       "id": "gen-009-q2",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What burst forth?",
+      "prompt": "What burst open?",
       "choices": [
-        "All the fountains of the great deep",
+        "All the springs deep under the earth",
         "The doors of the ark",
         "The tower",
         "The garden gate"
       ],
       "answerIndex": 0,
-      "highlight": "all the fountains of the great deep burst forth"
+      "highlight": "all the springs deep under the earth burst open"
     },
     {
       "id": "gen-009-q3",
       "type": "fill_blank",
       "difficulty": "easy",
-      "prompt": "The rain fell upon the earth for forty days and forty ____.",
+      "prompt": "Rain fell on the earth for forty days and forty ____.",
       "choices": ["nights", "weeks", "years", "hours"],
       "answerIndex": 0,
       "highlight": "forty days and forty nights"
@@ -103,10 +103,10 @@
       "id": "gen-009-q4",
       "type": "true_false",
       "difficulty": "easy",
-      "prompt": "True or false: the floodgates of the heavens were opened.",
+      "prompt": "True or false: the floodgates of the sky were opened.",
       "choices": ["True", "False"],
       "answerIndex": 0,
-      "highlight": "the floodgates of the heavens were opened"
+      "highlight": "the floodgates of the sky were opened"
     },
     {
       "id": "gen-009-q5",

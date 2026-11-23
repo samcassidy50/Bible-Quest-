@@ -1,243 +1,351 @@
 import Phaser from 'phaser';
 import { ENCOUNTERS } from '../../content';
 import { ITEM_IDS, ITEMS, RUNE_SLOTS, RUNES, type ItemId } from '../../core/battle/runes';
-import {
-  clearSlot,
-  heroLoadout,
-  itemOpen,
-  ownedRunes,
-  setRune,
-  validSlots,
-} from '../../core/progress/runes';
+import { clearSlot, itemOpen, ownedRunes, setRune, validSlots } from '../../core/progress/runes';
 import { progress } from '../../services/progress';
 import { sfx } from '../../services/sfx';
 import { updateTestState } from '../../services/testHooks';
 import { ACTION_INFO } from '../battle/actionInfo';
-import { iconSprite } from '../icons';
+import { ITEM_ART_CELL, itemArtSprite } from '../itemArt';
 import { runeHex, runeIcon } from '../runeIcon';
 import { PIXEL_INK, pixelBox, UI } from '../ui/pixelUi';
 import { FONT_UI } from '../util';
 import { center, menuFrame } from './menuFrame';
 
 const SOFT_INK = '#7a5a3a';
-const SLOT = 92;
+const SLOT = 120;
+
+type Targets = Record<string, { x: number; y: number }>;
 
 /**
  * Runes (docs/DESIGN.md §2.5): every item has two slots, and each rune fits one item only, in
- * that item's colour. Tap a rune in the bag, then a slot of its item, to set it; tap a set rune
- * to take it back out. Rules live in core/progress/runes.ts; this scene only draws and forwards.
+ * that item's colour. The screen opens on one button per item; tapping one shows that item's
+ * slots and the runes that fit it. Tap a rune to set it in a free slot (or, when both are full,
+ * then tap a slot to swap it in); tap a set rune to take it back out. Rules live in
+ * core/progress/runes.ts; this scene only draws and forwards.
  */
 export class RunesScene extends Phaser.Scene {
-  /** The rune picked in the bag (its passage id), waiting for a slot tap. */
+  /** The item opened, or null for the item buttons. */
+  private item: ItemId | null = null;
+  /** The rune picked (its passage id), waiting for a slot tap because both slots are full. */
   private selected: string | null = null;
-  private info!: Phaser.GameObjects.Text;
+  private info?: Phaser.GameObjects.Text;
 
   constructor() {
     super('runes');
   }
 
-  init(data: { selected?: string | null }): void {
+  init(data: { item?: ItemId | null; selected?: string | null }): void {
+    this.item = data.item ?? null;
     this.selected = data.selected ?? null;
   }
 
   create(): void {
+    if (this.item) this.drawItem(this.item);
+    else this.drawOverview();
+  }
+
+  // ── The item buttons ──────────────────────────────────────────────────────
+  private drawOverview(): void {
     const { insets, back } = menuFrame(this, 'Runes', 'map');
     const { width: W, height: H } = this.scale.gameSize;
     const save = progress.save;
     const runes = ownedRunes(save, ENCOUNTERS);
     const slots = validSlots(save, ENCOUNTERS);
     const byId = new Map(runes.map((r) => [r.id, r]));
-    const selected = this.selected ? byId.get(this.selected) : undefined;
-    const targets: Record<string, { x: number; y: number }> = { back: center(back) };
+    const targets: Targets = { back: center(back) };
 
-    const total = Math.min(W - insets.left - insets.right - 48, 1180);
+    // Use nearly the whole width: the Back button sits above the row, so no side margin is needed.
+    const total = Math.min(W - insets.left - insets.right - 40, 1600);
     const x0 = (W - total) / 2;
-    const top = insets.top + 92;
-    const bottom = H - insets.bottom - 16;
-    const bagH = 170;
-    const gap = 16;
+    const top = insets.top + 100;
+    const bottom = H - insets.bottom - 20;
+    const gap = 32;
     const cardW = (total - gap * (ITEM_IDS.length - 1)) / ITEM_IDS.length;
-    const cardH = bottom - top - bagH - gap;
+    const cardH = bottom - top;
+    const cy = top + cardH / 2;
+    // The panel under each picture (name, slots, news); the picture gets the rest of the height.
+    const PANEL_H = 210;
+    const picH = cardH - PANEL_H;
+    // Whole-number scale of the item picture so it stays crisp, as big as fits the space.
+    const artScale = Math.max(1, Math.floor(Math.min(picH - 30, cardW - 40) / ITEM_ART_CELL));
 
-    // ── Item cards, each with its slots ───────────────────────────────────────
     ITEM_IDS.forEach((item, i) => {
       const cx = x0 + i * (cardW + gap) + cardW / 2;
       const open = itemOpen(save, ENCOUNTERS, item);
-      const card = pixelBox(this, UI.panel, cx, top + cardH / 2, cardW, cardH);
-      if (!open) card.setTint(0x9a9080);
-      const icon = iconSprite(this, item, 2).setPosition(cx - cardW / 2 + 44, top + 46);
-      if (!open) icon.setAlpha(0.4);
+      const waiting = runes.filter((r) => r.item === item && !r.slot).length;
+      const y0 = cy - cardH / 2;
+      // A border round the whole column: the item picture, then one panel with its name, slots
+      // and news, set inside the border.
+      const PAD = 10;
       this.add
-        .text(cx - cardW / 2 + 76, top + 26, ITEMS[item].name, {
+        .graphics()
+        .fillStyle(0x120c26, 0.55)
+        .fillRoundedRect(cx - cardW / 2, y0, cardW, cardH, 14)
+        .lineStyle(4, open ? 0xc9a24a : 0x6b5a3a, 1)
+        .strokeRoundedRect(cx - cardW / 2, y0, cardW, cardH, 14);
+      const nameH = 64;
+      const panelTop = y0 + picH;
+      const panel = pixelBox(
+        this,
+        UI.panel,
+        cx,
+        panelTop + (cardH - picH - PAD) / 2,
+        cardW - PAD * 2,
+        cardH - picH - PAD,
+      );
+      if (!open) panel.setTint(0x9a9080);
+      const nameTop = panelTop + 8;
+      const slotTop = nameTop + nameH - 8;
+
+      const icon = itemArtSprite(this, item, artScale).setPosition(cx, y0 + picH / 2);
+      if (!open) icon.setAlpha(0.45);
+
+      const name = this.add
+        .text(cx, nameTop + nameH / 2, ITEMS[item].name, {
           fontFamily: FONT_UI,
-          fontSize: '24px',
+          fontSize: '36px',
           fontStyle: 'bold',
           color: open ? PIXEL_INK : SOFT_INK,
         })
-        .setOrigin(0, 0);
-      this.add.text(cx - cardW / 2 + 76, top + 54, `${ITEMS[item].gem} · ${ITEMS[item].theme}`, {
-        fontFamily: FONT_UI,
-        fontSize: '15px',
-        fontStyle: 'bold',
-        color: runeHex(item),
-        stroke: '#3a2410',
-        strokeThickness: 2,
-      });
+        .setOrigin(0.5);
+      // Long names (Breastplate) shrink to fit the panel rather than spill over its edge.
+      const room = cardW - PAD * 2 - 36;
+      if (name.width > room) name.setFontSize(Math.floor((36 * room) / name.width));
 
-      const slotY = top + 92 + (cardH - 92) * 0.3;
+      // The two slots in small, so the player sees what is set without opening the item.
+      const miniY = slotTop + 50;
       for (let s = 0; s < RUNE_SLOTS; s++) {
-        const sx = cx + (s - (RUNE_SLOTS - 1) / 2) * (SLOT + 22);
-        const id = slots[item][s] ?? null;
-        const fits = open && selected?.item === item;
-        const socket = this.add
-          .rectangle(sx, slotY, SLOT, SLOT, 0x2a1d10, open ? 0.85 : 0.35)
-          .setStrokeStyle(fits ? 5 : 3, fits ? 0xfff1b0 : 0x6b4a22);
-        if (open) {
-          const rune = id ? byId.get(id) : undefined;
-          runeIcon(this, sx, slotY, SLOT - 26, item, rune?.kind);
-          if (rune)
-            this.add
-              .text(sx, slotY + SLOT / 2 + 8, RUNES[rune.kind].name.replace('Rune of ', ''), {
-                fontFamily: FONT_UI,
-                fontSize: '17px',
-                fontStyle: 'bold',
-                color: runeHex(item),
-                stroke: '#3a2410',
-                strokeThickness: 3,
-              })
-              .setOrigin(0.5, 0);
-          this.add
-            .text(
-              sx,
-              slotY + SLOT / 2 + (rune ? 32 : 8),
-              rune ? RUNES[rune.kind].effect : 'Empty',
-              {
-                fontFamily: FONT_UI,
-                fontSize: '14px',
-                color: rune ? PIXEL_INK : SOFT_INK,
-                align: 'center',
-                wordWrap: { width: SLOT + 14, useAdvancedWrap: true },
-              },
-            )
-            .setOrigin(0.5, 0);
-        } else {
-          this.add.text(sx, slotY, '🔒', { fontSize: '30px' }).setOrigin(0.5).setAlpha(0.6);
-        }
-        socket.setInteractive({ useHandCursor: open }).on('pointerup', () => this.tapSlot(item, s));
-        targets[`slot:${item}:${s}`] = center(socket);
-      }
-      if (!open) {
+        const sx = cx + (s - (RUNE_SLOTS - 1) / 2) * 74;
         this.add
-          .text(cx, top + cardH - 28, `Earn the ${ACTION_INFO[item].short} on the map`, {
+          .rectangle(sx, miniY, 62, 62, 0x2a1d10, open ? 0.85 : 0.35)
+          .setStrokeStyle(3, 0x6b4a22);
+        if (open) {
+          const id = slots[item][s];
+          runeIcon(this, sx, miniY, 44, item, id ? byId.get(id)?.kind : undefined);
+        } else {
+          this.add.text(sx, miniY, '🔒', { fontSize: '22px' }).setOrigin(0.5).setAlpha(0.6);
+        }
+      }
+      const note = !open
+        ? `Earn the ${ACTION_INFO[item].short} on the map`
+        : waiting > 0
+          ? `${waiting} new rune${waiting > 1 ? 's' : ''} to set`
+          : '';
+      if (note)
+        this.add
+          .text(cx, miniY + 42, note, {
             fontFamily: FONT_UI,
             fontSize: '15px',
-            color: SOFT_INK,
+            fontStyle: open ? 'bold' : 'normal',
+            color: open ? '#2f7a3a' : SOFT_INK,
             align: 'center',
             wordWrap: { width: cardW - 40 },
           })
-          .setOrigin(0.5, 1);
-      }
+          .setOrigin(0.5, 0);
+
+      const hit = this.add
+        .zone(cx, cy, cardW, cardH)
+        .setInteractive({ useHandCursor: true })
+        .on('pointerup', () => {
+          sfx.play('uiTap');
+          this.scene.restart({ item, selected: null });
+        });
+      targets[`item:${item}`] = center(hit);
     });
 
-    // ── The bag: runes not set yet ────────────────────────────────────────────
-    const bagY = bottom - bagH / 2;
-    pixelBox(this, UI.panel, W / 2, bagY, total, bagH);
+    this.publish(targets, []);
+  }
+
+  // ── One item: its slots and the runes that fit it ─────────────────────────
+  private drawItem(item: ItemId): void {
+    const { insets, back } = menuFrame(this, `${ITEMS[item].name} Runes`, 'runes', {
+      item: null,
+      selected: null,
+    });
+    const { width: W, height: H } = this.scale.gameSize;
+    const save = progress.save;
+    const open = itemOpen(save, ENCOUNTERS, item);
+    const runes = ownedRunes(save, ENCOUNTERS).filter((r) => r.item === item);
+    const slots = validSlots(save, ENCOUNTERS)[item];
+    const byId = new Map(runes.map((r) => [r.id, r]));
+    const selected = this.selected ? byId.get(this.selected) : undefined;
+    const targets: Targets = { back: center(back) };
+
+    const total = Math.min(W - insets.left - insets.right - 48, 1180);
+    const x0 = (W - total) / 2;
+    const top = insets.top + 100;
+    const bottom = H - insets.bottom - 16;
+    const gap = 20;
+    const leftW = Math.round(total * 0.42);
+    const rightW = total - leftW - gap;
+    const panelH = bottom - top;
+
+    // Left: the item and its two slots.
+    const lx = x0 + leftW / 2;
+    const card = pixelBox(this, UI.panel, lx, top + panelH / 2, leftW, panelH);
+    if (!open) card.setTint(0x9a9080);
+    // The item picture big and centred, its name under it, then its two slots.
+    itemArtSprite(this, item, 3).setPosition(lx, top + 26 + (ITEM_ART_CELL * 3) / 2);
+    this.add
+      .text(lx, top + 34 + ITEM_ART_CELL * 3, ITEMS[item].name, {
+        fontFamily: FONT_UI,
+        fontSize: '30px',
+        fontStyle: 'bold',
+        color: PIXEL_INK,
+      })
+      .setOrigin(0.5, 0);
+
+    const slotY = top + 110 + ITEM_ART_CELL * 3 + SLOT / 2;
+    for (let s = 0; s < RUNE_SLOTS; s++) {
+      const sx = lx + (s - (RUNE_SLOTS - 1) / 2) * (SLOT + 30);
+      const id = slots[s] ?? null;
+      const swap = open && !!selected;
+      const socket = this.add
+        .rectangle(sx, slotY, SLOT, SLOT, 0x2a1d10, open ? 0.85 : 0.35)
+        .setStrokeStyle(swap ? 5 : 3, swap ? 0xfff1b0 : 0x6b4a22);
+      if (open) {
+        const rune = id ? byId.get(id) : undefined;
+        runeIcon(this, sx, slotY, SLOT - 34, item, rune?.kind);
+        if (rune)
+          this.add
+            .text(sx, slotY + SLOT / 2 + 8, RUNES[rune.kind].name.replace('Rune of ', ''), {
+              fontFamily: FONT_UI,
+              fontSize: '19px',
+              fontStyle: 'bold',
+              color: runeHex(item),
+              stroke: '#3a2410',
+              strokeThickness: 3,
+            })
+            .setOrigin(0.5, 0);
+        this.add
+          .text(sx, slotY + SLOT / 2 + (rune ? 36 : 8), rune ? RUNES[rune.kind].effect : 'Empty', {
+            fontFamily: FONT_UI,
+            fontSize: '15px',
+            color: rune ? PIXEL_INK : SOFT_INK,
+            align: 'center',
+            wordWrap: { width: SLOT + 20, useAdvancedWrap: true },
+          })
+          .setOrigin(0.5, 0);
+      } else {
+        this.add.text(sx, slotY, '🔒', { fontSize: '34px' }).setOrigin(0.5).setAlpha(0.6);
+      }
+      socket.setInteractive({ useHandCursor: open }).on('pointerup', () => this.tapSlot(item, s));
+      targets[`slot:${item}:${s}`] = center(socket);
+    }
+
+    // Right: the runes for this item still in the bag.
+    const rx = x0 + leftW + gap;
+    pixelBox(this, UI.panel, rx + rightW / 2, top + panelH / 2, rightW, panelH);
     const bag = runes.filter((r) => !r.slot);
     this.add
-      .text(x0 + 28, bagY - bagH / 2 + 22, `Rune bag (${bag.length})`, {
+      .text(rx + 28, top + 26, `${ITEMS[item].name} runes in your bag (${bag.length})`, {
         fontFamily: FONT_UI,
-        fontSize: '20px',
+        fontSize: '21px',
         fontStyle: 'bold',
         color: PIXEL_INK,
       })
       .setOrigin(0, 0);
-    const step = 74;
+    const rowH = 84;
     bag.forEach((r, i) => {
-      const x = x0 + 60 + i * step;
-      const y = bagY + 16;
+      const y = top + 100 + i * rowH;
       const isSel = r.id === this.selected;
       const hit = this.add
-        .rectangle(x, y, 64, 64, isSel ? 0xfff1b0 : 0x000000, isSel ? 0.9 : 0.12)
+        .rectangle(rx + rightW / 2, y, rightW - 48, rowH - 10, isSel ? 0xfff1b0 : 0x000000)
+        .setFillStyle(isSel ? 0xfff1b0 : 0x000000, isSel ? 0.9 : 0.08)
         .setStrokeStyle(isSel ? 4 : 0, 0xb07d00);
-      runeIcon(this, x, y, 50, r.item, r.kind);
-      hit.setInteractive({ useHandCursor: true }).on('pointerup', () => this.tapBag(r.id));
+      runeIcon(this, rx + 70, y, 54, item, r.kind);
+      this.add
+        .text(rx + 114, y - 4, RUNES[r.kind].name, {
+          fontFamily: FONT_UI,
+          fontSize: '19px',
+          fontStyle: 'bold',
+          color: runeHex(item),
+          stroke: '#3a2410',
+          strokeThickness: 3,
+        })
+        .setOrigin(0, 1);
+      this.add
+        .text(rx + 114, y + 2, RUNES[r.kind].effect, {
+          fontFamily: FONT_UI,
+          fontSize: '16px',
+          color: PIXEL_INK,
+        })
+        .setOrigin(0, 0);
+      hit.setInteractive({ useHandCursor: true }).on('pointerup', () => this.tapBag(item, r.id));
       targets[`rune:${r.id}`] = center(hit);
     });
 
-    const effects = summary(heroLoadout(save, ENCOUNTERS));
     this.info = this.add
-      .text(x0 + 60 + Math.max(bag.length, 1) * step, bagY + 16, '', {
+      .text(rx + 28, bottom - 24, '', {
         fontFamily: FONT_UI,
-        fontSize: '18px',
-        color: PIXEL_INK,
-        wordWrap: { width: x0 + total - 40 - (x0 + 60 + Math.max(bag.length, 1) * step) },
+        fontSize: '17px',
+        color: SOFT_INK,
+        wordWrap: { width: rightW - 56 },
         lineSpacing: 4,
       })
-      .setOrigin(0, 0.5);
-    if (bag.length === 0) this.info.setX(x0 + 28);
-    if (selected) {
-      const fits = ITEMS[selected.item].name;
+      .setOrigin(0, 1);
+    const name = ITEMS[item].name;
+    if (!open)
+      this.info.setText(`Earn the ${ACTION_INFO[item].short} on the map to set these runes.`);
+    else if (selected)
       this.info.setText(
-        `${RUNES[selected.kind].name}: ${RUNES[selected.kind].effect}.\n` +
-          (itemOpen(save, ENCOUNTERS, selected.item)
-            ? `Tap a ${fits} slot to set it.`
-            : `Fits the ${fits}: earn it on the map first.`),
+        `Both slots are full: tap a slot to swap in the ${RUNES[selected.kind].name}.`,
       );
-    } else if (runes.length === 0) {
-      this.info.setText('Win a passage on the map to earn your first rune.');
-    } else {
+    else if (runes.length === 0)
       this.info.setText(
-        (bag.length > 0 ? 'Tap a rune, then a slot of its item. ' : '') +
-          `Your runes: ${effects}. Tap a set rune to take it out.`,
+        `Win passages on the map to earn ${ITEMS[item].gem} runes for the ${name}.`,
       );
-    }
+    else if (bag.length > 0)
+      this.info.setText('Tap a rune to set it. Tap a set rune to take it out.');
+    else this.info.setText('Tap a set rune to take it out.');
 
+    this.publish(
+      targets,
+      bag.map((r) => r.id),
+    );
+  }
+
+  private publish(targets: Targets, bag: string[]): void {
+    const { width: W, height: H } = this.scale.gameSize;
     updateTestState({
       ready: true,
       scene: 'runes',
       targets,
-      runes: { selected: this.selected, bag: bag.map((r) => r.id) },
+      runes: { item: this.item, selected: this.selected, bag },
       gameWidth: W,
       gameHeight: H,
     });
   }
 
-  private tapBag(id: string): void {
+  /** A rune goes straight into the first free slot; with both full it waits for a slot tap. */
+  private tapBag(item: ItemId, id: string): void {
+    const save = progress.save;
+    if (!itemOpen(save, ENCOUNTERS, item)) return;
+    const free = validSlots(save, ENCOUNTERS)[item].findIndex((s) => s === null);
+    if (free >= 0) {
+      progress.update((s) => setRune(s, ENCOUNTERS, id, item, free));
+      sfx.play('poweredUp');
+      this.scene.restart({ item, selected: null });
+      return;
+    }
     sfx.play('uiTap');
-    this.scene.restart({ selected: this.selected === id ? null : id });
+    this.scene.restart({ item, selected: this.selected === id ? null : id });
   }
 
   private tapSlot(item: ItemId, index: number): void {
     const save = progress.save;
     if (!itemOpen(save, ENCOUNTERS, item)) return;
-    const rune = this.selected
-      ? ownedRunes(save, ENCOUNTERS).find((r) => r.id === this.selected)
-      : undefined;
-    if (rune) {
-      if (rune.item !== item) {
-        this.info.setText(`The ${RUNES[rune.kind].name} only fits the ${ITEMS[rune.item].name}.`);
-        return;
-      }
-      progress.update((s) => setRune(s, ENCOUNTERS, rune.id, item, index));
+    if (this.selected) {
+      const id = this.selected;
+      progress.update((s) => setRune(s, ENCOUNTERS, id, item, index));
       sfx.play('poweredUp');
-      this.scene.restart({ selected: null });
+      this.scene.restart({ item, selected: null });
       return;
     }
     if (!validSlots(save, ENCOUNTERS)[item][index]) return;
     progress.update((s) => clearSlot(s, ENCOUNTERS, item, index));
     sfx.play('uiTap');
-    this.scene.restart({ selected: null });
+    this.scene.restart({ item, selected: null });
   }
-}
-
-/** The set runes' effects in a few words (core numbers, so it matches the battle). */
-function summary(l: ReturnType<typeof heroLoadout>): string {
-  const parts = [`${l.hero.maxHp} HP`, `${l.hero.attack} attack`];
-  if (l.poweredBonus) parts.push(`right answers +${Math.round(l.poweredBonus * 100)}%`);
-  if (l.startingBlocks) parts.push(`${l.startingBlocks} starting block`);
-  if (l.healPower > 1) parts.push(`healing +${Math.round((l.healPower - 1) * 100)}%`);
-  if (l.healOnCorrect) parts.push(`+${l.healOnCorrect} HP per right answer`);
-  if (l.bonusEnergy) parts.push(`+${l.bonusEnergy} energy`);
-  if (l.stunBonus) parts.push(`+${l.stunBonus} stun turn`);
-  return parts.join(', ');
 }

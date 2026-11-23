@@ -14,7 +14,13 @@ import { hapticTap } from '../../services/haptics';
 import { sfx } from '../../services/sfx';
 import { progress } from '../../services/progress';
 import { markHeard, READING_SPEEDS } from '../../core/progress/progress';
-import { createNarration, type Narration } from '../../services/narration';
+import {
+  createNarration,
+  RecordedNarration,
+  verseClip,
+  type Narration,
+  type VerseClip,
+} from '../../services/narration';
 import { readSafeAreaInsets, toGameInsets, type Insets } from '../../services/safeArea';
 import { updateTestState } from '../../services/testHooks';
 import { pixelBox, UI } from '../ui/pixelUi';
@@ -45,6 +51,10 @@ export class ScriptureScene extends Phaser.Scene {
   private debug!: DebugParams;
   private encounter!: Encounter;
   private narration!: Narration;
+  /** Recorded clip per verse (undefined where the device voice reads it). */
+  private clips: (VerseClip | undefined)[] = [];
+  /** Real per-verse reading time when every verse is recorded; otherwise estimated. */
+  private verseMs?: number[];
   private text = '';
   private durationMs = 0;
   private timeScale = 1;
@@ -97,7 +107,15 @@ export class ScriptureScene extends Phaser.Scene {
       wait: (ms) => wait(this, ms),
       rate: READING_SPEEDS[settings.readingSpeed],
     });
-    this.durationMs = estimateNarrationMs(this.text, this.narration.rate);
+    this.clips = this.encounter.verses.map((v) => verseClip(this.encounter.book, v.ref, v.text));
+    const recorded = this.narration instanceof RecordedNarration ? this.narration : undefined;
+    this.verseMs =
+      recorded && this.clips.every(Boolean)
+        ? this.clips.map((c) => recorded.clipMs(c as VerseClip))
+        : undefined;
+    this.durationMs = this.verseMs
+      ? this.verseMs.reduce((a, b) => a + b, 0)
+      : estimateNarrationMs(this.text, this.narration.rate);
 
     this.active = new Map();
     this.wordGlows = new Map();
@@ -188,6 +206,7 @@ export class ScriptureScene extends Phaser.Scene {
       verseEndPx,
       this.durationMs,
       this.narration.rate,
+      this.verseMs,
     );
 
     // Energy collected so far, top right.
@@ -300,9 +319,9 @@ export class ScriptureScene extends Phaser.Scene {
    */
   private async readAloud(id: number): Promise<void> {
     const stale = () => id !== this.readingId || this.finishing;
-    for (const verse of this.encounter.verses) {
+    for (const [i, verse] of this.encounter.verses.entries()) {
       if (stale()) return;
-      await this.narration.speak(verse.text);
+      await this.narration.speak(verse.text, this.clips[i]);
       if (stale()) return;
       this.spokenRefs.push(verse.ref);
     }
@@ -450,17 +469,12 @@ export class ScriptureScene extends Phaser.Scene {
       lineSpacing: 6,
       wordWrap: { width: pw - 72, useAdvancedWrap: true },
     });
-    const title = this.add.text(
-      -pw / 2 + 36,
-      26,
-      `${this.encounter.reference} (${this.encounter.translation})`,
-      {
-        fontFamily: FONT_UI,
-        fontSize: '22px',
-        fontStyle: 'bold',
-        color: '#8a5a00',
-      },
-    );
+    const title = this.add.text(-pw / 2 + 36, 26, this.encounter.reference, {
+      fontFamily: FONT_UI,
+      fontSize: '22px',
+      fontStyle: 'bold',
+      color: '#8a5a00',
+    });
     const ph = text.height + 100;
     const bg = pixelBox(this, UI.panel, 0, ph / 2, pw, ph);
     this.fullText = this.add
@@ -551,6 +565,10 @@ export class ScriptureScene extends Phaser.Scene {
         narrationDone: this.narrationDone,
         verseRefs: this.encounter.verses.map((v) => v.ref),
         spokenRefs: [...this.spokenRefs],
+        recordedRefs:
+          this.narration instanceof RecordedNarration
+            ? this.encounter.verses.filter((_, i) => this.clips[i]).map((v) => v.ref)
+            : [],
         tickerX: Math.round(this.ticker.x),
         tickerWidth: Math.round(this.ticker.width),
         orbs: this.tracker.all.map((o) => ({ ...o, atMs: scheduled.get(o.id) ?? -1 })),

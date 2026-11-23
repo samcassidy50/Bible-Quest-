@@ -56,7 +56,6 @@ export interface Encounter {
   reference: string;
   setting: Setting;
   weather?: 'storm' | 'clearing';
-  translation: 'BSB';
   verses: readonly Verse[];
   waves: readonly EncounterFoe[];
   orbs: readonly Orb[];

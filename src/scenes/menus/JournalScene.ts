@@ -65,7 +65,7 @@ export class JournalScene extends Phaser.Scene {
       .fillRoundedRect(0, 0, w, h, 24)
       .lineStyle(4, COLOR.gold)
       .strokeRoundedRect(0, 0, w, h, 24);
-    const head = this.add.text(28, 22, `${e.title} · ${e.reference} (${e.translation})`, {
+    const head = this.add.text(28, 22, `${e.title} · ${e.reference}`, {
       fontFamily: FONT_UI,
       fontSize: '22px',
       fontStyle: 'bold',

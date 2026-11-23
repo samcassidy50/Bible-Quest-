@@ -1,44 +1,31 @@
 import Phaser from 'phaser';
 import { ITEMS, RUNES, type ItemId, type RuneId } from '../core/battle/runes';
+import runesSheetUrl from '../assets/items/runes.png';
 
 /**
- * A rune gem drawn in code: colour and cut both show the item it fits (so they read without
- * colour too), and a white mark shows its kind. sword: ruby diamond · shield: sapphire octagon ·
- * breastplate: emerald square · sandals: topaz triangle.
+ * A rune gem: a pixel-art crystal (src/assets/items/runes.png, built by
+ * scripts/art/process_runes.py; keep ORDER in sync with that script). Colour and crystal shape both
+ * show the item it fits, so they read without colour too, and a white mark on a dark badge shows
+ * its kind. sword: ruby · shield: sapphire · breastplate: emerald · sandals: topaz.
  */
-const CUTS: Record<ItemId, [number, number][]> = {
-  sword: [
-    [0, -1],
-    [0.72, 0],
-    [0, 1],
-    [-0.72, 0],
-  ],
-  shield: [
-    [-0.4, -0.95],
-    [0.4, -0.95],
-    [0.95, -0.4],
-    [0.95, 0.4],
-    [0.4, 0.95],
-    [-0.4, 0.95],
-    [-0.95, 0.4],
-    [-0.95, -0.4],
-  ],
-  breastplate: [
-    [-0.55, -0.85],
-    [0.55, -0.85],
-    [0.8, -0.6],
-    [0.8, 0.6],
-    [0.55, 0.85],
-    [-0.55, 0.85],
-    [-0.8, 0.6],
-    [-0.8, -0.6],
-  ],
-  sandals: [
-    [0, -0.95],
-    [0.95, 0.75],
-    [-0.95, 0.75],
-  ],
-};
+const ORDER: ItemId[] = ['sword', 'shield', 'breastplate', 'sandals'];
+const CELL = 64;
+/** Rough size of the crystals inside their cell (large row, small row). */
+const CONTENT = { large: 50, small: 25 };
+/** Below this display size the small crystal is used (crisper than shrinking the large one). */
+const SMALL_BELOW = 34;
+/** Smallest display size that still gets the kind mark. */
+const MARK_FROM = 30;
+export const RUNES_TEXTURE = 'runes';
+
+export function loadRunesSheet(load: Phaser.Loader.LoaderPlugin): void {
+  load.spritesheet(RUNES_TEXTURE, runesSheetUrl, { frameWidth: CELL, frameHeight: CELL });
+}
+
+export function useNearestFilterForRunes(textures: Phaser.Textures.TextureManager): void {
+  if (textures.exists(RUNES_TEXTURE))
+    textures.get(RUNES_TEXTURE).setFilter(Phaser.Textures.FilterMode.NEAREST);
+}
 
 /** The white mark for each rune kind, as stroked segments in unit coordinates. */
 const MARKS: Record<RuneId, [number, number, number, number][]> = {
@@ -83,14 +70,9 @@ const MARKS: Record<RuneId, [number, number, number, number][]> = {
   ],
 };
 
-const shade = (c: number, f: number) => {
-  const ch = (s: number) => Math.min(255, Math.max(0, Math.round(((c >> s) & 0xff) * f)));
-  return (ch(16) << 16) | (ch(8) << 8) | ch(0);
-};
-
 /**
- * Draws a gem at (x, y), `size` px tall. Pass a rune for a full gem, or only an item for an
- * empty slot's outline in that item's colour.
+ * Draws a gem at (x, y), about `size` px tall. Pass a rune for a full gem with its mark, or only
+ * an item for an empty slot: that item's crystal as a dim silhouette.
  */
 export function runeIcon(
   scene: Phaser.Scene,
@@ -99,26 +81,31 @@ export function runeIcon(
   size: number,
   item: ItemId,
   rune?: RuneId,
-): Phaser.GameObjects.Graphics {
-  const g = scene.add.graphics({ x, y });
-  const r = size / 2;
-  const color = ITEMS[item].color;
-  const pts = CUTS[item].map(([px, py]) => new Phaser.Math.Vector2(px * r, py * r));
+): Phaser.GameObjects.Container {
+  const box = scene.add.container(x, y);
+  const small = size < SMALL_BELOW;
+  const frame = ORDER.indexOf(item) + (small ? ORDER.length : 0);
+  const scale = size / (small ? CONTENT.small : CONTENT.large);
+  const gem = scene.add.sprite(0, 0, RUNES_TEXTURE, frame).setScale(scale);
+  box.add(gem);
   if (!rune) {
-    g.fillStyle(0x000000, 0.25).fillPoints(pts, true);
-    g.lineStyle(Math.max(2, size / 16), color, 0.9).strokePoints(pts, true);
-    return g;
+    gem.setTintFill(0x000000).setAlpha(0.35);
+    return box;
   }
-  // Body, a darker lower facet, a light upper facet, outline, then the mark.
-  g.fillStyle(color).fillPoints(pts, true);
-  const lower = pts.map((p) => new Phaser.Math.Vector2(p.x * 0.6, p.y * 0.6 + r * 0.25));
-  g.fillStyle(shade(color, 0.72)).fillPoints(lower, true);
-  const upper = pts.map((p) => new Phaser.Math.Vector2(p.x * 0.45 - r * 0.12, p.y * 0.4 - r * 0.3));
-  g.fillStyle(shade(color, 1.45), 0.85).fillPoints(upper, true);
-  g.lineStyle(Math.max(2, size / 14), shade(color, 0.4)).strokePoints(pts, true);
-  g.lineStyle(Math.max(2, size / 12), 0xffffff, 0.95);
-  for (const [x1, y1, x2, y2] of MARKS[rune]) g.lineBetween(x1 * r, y1 * r, x2 * r, y2 * r);
-  return g;
+  // Too small for a legible mark: the crystal alone (callers name the rune beside it).
+  if (size < MARK_FROM) return box;
+  // The mark sits on a round badge at the lower right, so it stays clear on any crystal.
+  const r = Math.max(7, size * 0.24);
+  const bx = size * 0.32;
+  const by = size * 0.3;
+  const g = scene.add.graphics({ x: bx, y: by });
+  g.fillStyle(0x1a120a, 0.85).fillCircle(0, 0, r);
+  g.lineStyle(Math.max(1, r / 6), ITEMS[item].color, 1).strokeCircle(0, 0, r);
+  g.lineStyle(Math.max(1.5, r / 4), 0xffffff, 0.95);
+  const m = r * 1.15;
+  for (const [x1, y1, x2, y2] of MARKS[rune]) g.lineBetween(x1 * m, y1 * m, x2 * m, y2 * m);
+  box.add(g);
+  return box;
 }
 
 /** "#rrggbb" for text in an item's rune colour. */

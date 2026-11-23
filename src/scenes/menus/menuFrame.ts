@@ -3,11 +3,16 @@ import { readSafeAreaInsets, toGameInsets, type Insets } from '../../services/sa
 import { Button } from '../ui/Button';
 import { FONT_TITLE } from '../util';
 
-/** Shared background, heading and back button for the menu screens. Returns the safe insets. */
+/**
+ * Shared background, heading and back button for the menu screens. Returns the safe insets.
+ * `backData` is passed to the scene Back opens (needed when it is this scene, which otherwise
+ * restarts with its current data).
+ */
 export function menuFrame(
   scene: Phaser.Scene,
   heading: string,
   backTo = 'map',
+  backData?: object,
 ): { insets: Insets; back: Button } {
   const { width: W, height: H } = scene.scale.gameSize;
   const insets = toGameInsets(readSafeAreaInsets(), W, scene.scale.displaySize.width);
@@ -32,7 +37,7 @@ export function menuFrame(
     label: '‹ Back',
     fontSize: 22,
     fill: 0x2a2350,
-    onTap: () => scene.scene.start(backTo),
+    onTap: () => scene.scene.start(backTo, backData),
   });
   return { insets, back };
 }

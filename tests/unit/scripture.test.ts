@@ -43,6 +43,18 @@ describe('narration timing', () => {
     expect(readingTimeline(['', ''], [0, 0], 1000).map((k) => k.t)).toEqual([0, 1000, 1000]);
   });
 
+  it('uses real clip lengths for the verse knots when narration is recorded', () => {
+    // Text lengths would put the first knot early; the clips say the first verse is the long one.
+    const knots = readingTimeline(
+      ['One two.', 'Three four five six.'],
+      [100, 400],
+      9000,
+      1,
+      [6000, 3000],
+    );
+    expect(knots.map((k) => k.t)).toEqual([0, 6000, 9000]);
+  });
+
   it('interpolates the reading offset within each verse and inverts it', () => {
     const knots = [
       { t: 0, x: 0 },

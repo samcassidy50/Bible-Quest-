@@ -50,7 +50,7 @@
       "id": "gen-003-q1",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "In whose image did God create man?",
+      "prompt": "In whose image did God make people?",
       "choices": [
         "In the image of God",
         "In an angel’s image",
@@ -58,39 +58,39 @@
         "In a star’s image"
       ],
       "answerIndex": 0,
-      "highlight": "in the image of God He created him"
+      "highlight": "In the image of God He made them"
     },
     {
       "id": "gen-003-q2",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What did God make man to rule over?",
+      "prompt": "What did God make people to rule over?",
       "choices": [
-        "The fish, the birds, and the livestock",
+        "The fish, the birds, and the farm animals",
         "Only the stars",
         "The angels",
         "Nothing at all"
       ],
       "answerIndex": 0,
-      "highlight": "to rule over the fish of the sea and the birds of the air"
+      "highlight": "rule over the fish in the sea and the birds in the sky"
     },
     {
       "id": "gen-003-q3",
       "type": "fill_blank",
       "difficulty": "medium",
-      "prompt": "Male and ____ He created them.",
+      "prompt": "He made them male and ____.",
       "choices": ["female", "child", "angel", "animal"],
       "answerIndex": 0,
-      "highlight": "male and female He created them"
+      "highlight": "He made them male and female"
     },
     {
       "id": "gen-003-q4",
       "type": "true_false",
       "difficulty": "easy",
-      "prompt": "True or false: God said man would be made after His likeness.",
+      "prompt": "True or false: God made people to be like Him.",
       "choices": ["True", "False"],
       "answerIndex": 0,
-      "highlight": "after Our likeness"
+      "highlight": "to be like Us"
     },
     {
       "id": "gen-003-q5",
@@ -99,16 +99,16 @@
       "prompt": "Where do the fish live, in these verses?",
       "choices": ["In the sea", "In the sky", "In the garden", "In the desert"],
       "answerIndex": 0,
-      "highlight": "the fish of the sea"
+      "highlight": "the fish in the sea"
     },
     {
       "id": "gen-003-q6",
       "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "Which creatures do these verses say are of the air?",
-      "choices": ["The birds", "The fish", "The livestock", "The creeping things"],
+      "prompt": "Which creatures do these verses say are in the sky?",
+      "choices": ["The birds", "The fish", "The farm animals", "The crawling creatures"],
       "answerIndex": 0,
-      "highlight": "the birds of the air"
+      "highlight": "the birds in the sky"
     }
   ]
 }

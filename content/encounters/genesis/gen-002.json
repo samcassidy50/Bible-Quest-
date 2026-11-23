@@ -37,7 +37,7 @@
       "word": "light"
     },
     {
-      "word": "separated"
+      "word": "apart"
     },
     {
       "word": "evening"
@@ -72,10 +72,10 @@
       "id": "gen-002-q3",
       "type": "fill_blank",
       "difficulty": "medium",
-      "prompt": "He separated the light from the ____.",
+      "prompt": "He set the light apart from the ____.",
       "choices": ["darkness", "water", "land", "sky"],
       "answerIndex": 0,
-      "highlight": "He separated the light from the darkness"
+      "highlight": "He set the light apart from the darkness"
     },
     {
       "id": "gen-002-q4",
@@ -93,7 +93,7 @@
       "prompt": "What did God call the darkness?",
       "choices": ["Evening", "Shadow", "Night", "Sky"],
       "answerIndex": 2,
-      "highlight": "the darkness He called “night.”"
+      "highlight": "He called the darkness “night.”"
     },
     {
       "id": "gen-002-q6",
@@ -102,7 +102,7 @@
       "prompt": "Which day was this?",
       "choices": ["The seventh day", "The first day", "The third day", "The last day"],
       "answerIndex": 1,
-      "highlight": "the first day"
+      "highlight": "That was the first day"
     }
   ]
 }

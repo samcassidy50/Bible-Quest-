@@ -38,7 +38,7 @@
       "word": "sign"
     },
     {
-      "word": "covenant"
+      "word": "promise"
     },
     {
       "word": "creature"
@@ -57,34 +57,34 @@
       "id": "gen-010-q1",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What did God set in the clouds?",
+      "prompt": "What did God put in the clouds?",
       "choices": ["His rainbow", "A star", "A crown", "The moon"],
       "answerIndex": 0,
-      "highlight": "I have set My rainbow in the clouds"
+      "highlight": "I have put My rainbow in the clouds"
     },
     {
       "id": "gen-010-q2",
       "type": "multiple_choice",
       "difficulty": "easy",
       "prompt": "What is the rainbow a sign of?",
-      "choices": ["A covenant", "A storm", "A war", "A king"],
+      "choices": ["A promise", "A storm", "A war", "A king"],
       "answerIndex": 0,
-      "highlight": "it will be a sign of the covenant"
+      "highlight": "It will be the sign of the promise"
     },
     {
       "id": "gen-010-q3",
       "type": "fill_blank",
       "difficulty": "medium",
       "prompt": "This is the sign of the ____ I am making.",
-      "choices": ["covenant", "tower", "garden", "ark"],
+      "choices": ["promise", "tower", "garden", "ark"],
       "answerIndex": 0,
-      "highlight": "This is the sign of the covenant I am making"
+      "highlight": "This is the sign of the promise I am making"
     },
     {
       "id": "gen-010-q4",
       "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "Who is the covenant made with?",
+      "prompt": "Who is the promise made with?",
       "choices": ["Every living creature", "Only the birds", "Only the fish", "No one"],
       "answerIndex": 0,
       "highlight": "every living creature with you"
@@ -93,19 +93,19 @@
       "id": "gen-010-q5",
       "type": "true_false",
       "difficulty": "medium",
-      "prompt": "True or false: the covenant was only for one generation.",
+      "prompt": "True or false: the promise was only for a short time.",
       "choices": ["True", "False"],
       "answerIndex": 1,
-      "highlight": "a covenant for all generations to come"
+      "highlight": "a promise for all time to come"
     },
     {
       "id": "gen-010-q6",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "The rainbow is a sign of the covenant between God and...",
+      "prompt": "The rainbow is a sign of the promise between God and...",
       "choices": ["The earth", "The moon", "The tower", "The serpent"],
       "answerIndex": 0,
-      "highlight": "the covenant between Me and the earth"
+      "highlight": "the promise between Me and the earth"
     }
   ]
 }

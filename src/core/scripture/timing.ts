@@ -31,16 +31,17 @@ export interface ReadingKnot {
 /**
  * Reading timeline for a passage read verse by verse: one knot at the end of each verse, so the
  * ticker can be re-synced to the voice whenever a verse finishes. Verse times come from the
- * per-verse estimate scaled to `durationMs`; `verseEndPx[i]` is how far into the ticker text verse
- * `i` ends.
+ * per-verse estimate (or, for recorded narration, each clip's real length in `verseMs`) scaled to
+ * `durationMs`; `verseEndPx[i]` is how far into the ticker text verse `i` ends.
  */
 export function readingTimeline(
   verseTexts: readonly string[],
   verseEndPx: readonly number[],
   durationMs: number,
   rate = 1,
+  verseMs?: readonly number[],
 ): ReadingKnot[] {
-  const est = verseTexts.map((v) => estimateNarrationMs(v, rate));
+  const est = verseTexts.map((v, i) => verseMs?.[i] ?? estimateNarrationMs(v, rate));
   const total = est.reduce((a, b) => a + b, 0);
   const knots: ReadingKnot[] = [{ t: 0, x: 0 }];
   let acc = 0;

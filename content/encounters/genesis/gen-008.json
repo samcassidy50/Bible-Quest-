@@ -37,7 +37,7 @@
       "word": "Noah"
     },
     {
-      "word": "violence"
+      "word": "fighting"
     },
     {
       "word": "ark"
@@ -46,7 +46,7 @@
       "word": "rooms"
     },
     {
-      "word": "pitch"
+      "word": "tar"
     }
   ],
   "rune": "renewal",
@@ -64,43 +64,43 @@
       "id": "gen-008-q2",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What was the earth full of?",
-      "choices": ["Violence", "Water", "Gold", "Music"],
+      "prompt": "What had people filled the earth with?",
+      "choices": ["Fighting and hurting", "Water", "Gold", "Music"],
       "answerIndex": 0,
-      "highlight": "the earth is full of violence"
+      "highlight": "people have filled the earth with fighting and hurting"
     },
     {
       "id": "gen-008-q3",
       "type": "fill_blank",
       "difficulty": "medium",
-      "prompt": "Make for yourself an ark of ____ wood.",
+      "prompt": "Build yourself an ark out of ____ wood.",
       "choices": ["gopher", "oak", "cedar", "pine"],
       "answerIndex": 0,
-      "highlight": "Make for yourself an ark of gopher wood"
+      "highlight": "Build yourself an ark out of gopher wood"
     },
     {
       "id": "gen-008-q4",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What did God tell Noah to make in the ark?",
+      "prompt": "What did God tell Noah to make inside the ark?",
       "choices": ["Rooms", "Gardens", "Towers", "Wells"],
       "answerIndex": 0,
-      "highlight": "make rooms in the ark"
+      "highlight": "Make rooms inside it"
     },
     {
       "id": "gen-008-q5",
       "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "What was the ark to be coated with?",
-      "choices": ["Pitch", "Paint", "Glue", "Mud"],
+      "prompt": "What was the ark to be covered with?",
+      "choices": ["Tar", "Paint", "Glue", "Mud"],
       "answerIndex": 0,
-      "highlight": "coat it with pitch inside and out"
+      "highlight": "cover it with tar inside and out"
     },
     {
       "id": "gen-008-q6",
       "type": "true_false",
       "difficulty": "easy",
-      "prompt": "True or false: the ark was to be coated only on the outside.",
+      "prompt": "True or false: the ark was to be covered only on the outside.",
       "choices": ["True", "False"],
       "answerIndex": 1,
       "highlight": "inside and out"

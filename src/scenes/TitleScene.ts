@@ -64,12 +64,12 @@ export class TitleScene extends Phaser.Scene {
       .setLetterSpacing(4)
       .setShadow(0, 2, '#1a0c04', 4, false, true);
 
-    // The opening verse, straight from the vendored source text.
+    // The opening verse, from the retelling source text.
     const opening = getEncounter('gen-001');
     const first = opening.verses[0];
     this.verseBack = this.add.graphics().setDepth(4);
     this.verse = this.add
-      .text(0, 0, first ? `“${first.text}”\nGenesis ${first.ref} (${opening.translation})` : '', {
+      .text(0, 0, first ? `“${first.text}”\nGenesis ${first.ref}` : '', {
         fontFamily: FONT_VERSE,
         fontSize: '28px',
         fontStyle: 'italic',
@@ -161,7 +161,9 @@ export class TitleScene extends Phaser.Scene {
     const groundY = height * 0.8;
 
     this.backdrop?.layout(width, height, groundY);
-    this.hero?.setPosition(cx - Math.min(430, width * 0.3), groundY);
+    // The run frames lift the feet a couple of art pixels above the sprite origin, so plant
+    // him 2 art pixels lower to keep the shoes on the dirt line rather than floating over it.
+    this.hero?.setPosition(cx - Math.min(430, width * 0.3), groundY + 2 * HERO_SCALE);
 
     // Darker at the top so the name reads against the sky (the backdrop's sun brings the rays).
     this.shade?.clear();

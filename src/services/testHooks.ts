@@ -52,6 +52,8 @@ export interface ScriptureTestState {
   verseRefs: string[];
   /** Verses the voice has finished reading in the current reading, in order. */
   spokenRefs: string[];
+  /** Verses read from a recorded clip (the rest use the device voice, or silence when off). */
+  recordedRefs: string[];
   /** Left edge of the scrolling verse text and its width (game px); the spoken word sits mid-screen. */
   tickerX: number;
   tickerWidth: number;
@@ -99,8 +101,11 @@ export interface TestState {
   foeGallery: { encounter: string; foes: (string | null)[] } | null;
   /** Character sheet: the hero shown, each stat's value, and the armor shown. */
   character: { hero: string; stats: { id: string; value: string }[]; armor: string[] } | null;
-  /** Runes screen as last drawn: the rune picked in the bag and the runes waiting there. */
-  runes: { selected: string | null; bag: string[] } | null;
+  /**
+   * Runes screen as last drawn: the item opened (null on the item buttons), the rune picked and
+   * the runes waiting in the bag (only that item's when one is open).
+   */
+  runes: { item: string | null; selected: string | null; bag: string[] } | null;
   /** Which hero sheet the last hero sprite drew ('boy' or 'girl'). */
   heroSkin: string | null;
   /**

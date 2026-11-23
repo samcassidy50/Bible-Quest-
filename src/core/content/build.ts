@@ -25,7 +25,6 @@ export function buildEncounter(raw: unknown, bible: Bible, source = 'encounter')
     reference: formatReference(ref),
     setting: f.setting,
     ...(f.weather ? { weather: f.weather } : {}),
-    translation: 'BSB',
     verses: resolvePassage(bible, f.passage),
     waves: f.waves.map(({ partner, ...w }) => ({
       ...w,
