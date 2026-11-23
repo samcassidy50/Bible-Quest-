@@ -264,7 +264,7 @@ test('a new player chooses a hero after the title; the choice is saved and used'
   await waitFor(page, "s.scene === 'settings' && s.save.settings.hero === 'boy'", 30_000);
 });
 
-test('the Hero button opens a character sheet with the hero, armor and stats', async ({ page }) => {
+test('the character sheet shows the hero, armor and stats', async ({ page }) => {
   const save = base();
   save.completed = {
     'gen-001': { stars: 3, bestAccuracy: 1 },
@@ -274,9 +274,8 @@ test('the Hero button opens a character sheet with the hero, armor and stats', a
   save.completed['gen-005'] = { stars: 3, bestAccuracy: 1 };
   save.runes.shield = ['gen-004', null]; // Rune of Life
   await seed(page, save);
-  await page.goto('/?scene=map&fast=1');
-  await waitFor(page, "s.scene === 'map' && !s.mapRevealing && !!s.targets.character");
-  await tap(page, 'character');
+  // No map button opens it at the moment; the debug link does.
+  await page.goto('/?scene=character&fast=1');
   await waitFor(page, "s.scene === 'character' && !!s.character");
   const sheet = (await state(page)).character!;
   expect(sheet.hero).toBe('boy');

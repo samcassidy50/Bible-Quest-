@@ -47,7 +47,7 @@ export class RunesScene extends Phaser.Scene {
 
   // ── The item buttons ──────────────────────────────────────────────────────
   private drawOverview(): void {
-    const { insets, back } = menuFrame(this, 'Runes', 'map');
+    const { insets, back } = menuFrame(this, 'Equipment', 'map');
     const { width: W, height: H } = this.scale.gameSize;
     const save = progress.save;
     const runes = ownedRunes(save, ENCOUNTERS);

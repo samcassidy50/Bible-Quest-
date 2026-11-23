@@ -404,8 +404,7 @@ export class MapScene extends Phaser.Scene {
 
     const toSet = runesToSet(progress.save, ENCOUNTERS);
     const items: [string, string, number][] = [
-      ['character', '🧑 Hero', 0xc0392b],
-      ['runes', toSet > 0 ? `💎 Runes (${toSet})` : '💎 Runes', 0x8e44ad],
+      ['runes', toSet > 0 ? `🛡️ Equipment (${toSet})` : '🛡️ Equipment', 0x8e44ad],
       ['journal', '📖 Journal', 0x2e86de],
       ['settings', '⚙️ Settings', 0x6b4a22],
     ];
