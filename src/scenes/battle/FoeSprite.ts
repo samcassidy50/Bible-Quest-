@@ -26,9 +26,10 @@ const ROWS: FoeAnim[] = ['idle', 'attack', 'hurt', 'death'];
 export type FoeGait = 'hop' | 'glide';
 
 /**
- * Foe sheets: third-party packs cut by scripts/art/process_foes.py, and original foes painted by
- * scripts/art/paint_foes.py (see art/README.md). One row per state, facing left; keep cells, columns and frame counts in sync with that
- * script's output.
+ * Foe sheets: third-party packs cut by scripts/art/process_foes.py, original foes painted by
+ * scripts/art/paint_foes.py, and drafted foes cut by scripts/art/process_drafted_foes.py (see
+ * art/README.md). One row per state, facing left; keep cells, columns and frame counts in sync
+ * with those scripts' output.
  */
 interface Sheet {
   url: string;
@@ -52,8 +53,11 @@ interface Sheet {
   impact?: number;
 }
 
-/** The slimes are tiny, so they are shown at twice the hero's pixel size. */
-const SLIME = { cell: 64, feet: { x: 33.5, y: 40 }, bodyHeight: 28, scale: 6, shadow: 26 };
+/**
+ * The slimes are ChatGPT-drafted sheets cut by scripts/art/process_drafted_foes.py (it prints these
+ * numbers), shown at the hero's pixel size.
+ */
+const SLIME = { scale: 3 };
 
 /**
  * The 128px packs draw their feet flush with the bottom edge of the cell. Standing them one pixel
@@ -80,14 +84,26 @@ const SHEETS: Record<FoeSpriteId, Sheet> = {
   'slime-blue': {
     ...SLIME,
     url: slimeBlueUrl,
-    cols: 11,
-    frames: { idle: 6, attack: 11, hurt: 5, death: 10 },
+    cell: 84,
+    cols: 9,
+    frames: { idle: 5, attack: 9, hurt: 5, death: 9 },
+    feet: { x: 42, y: 71 },
+    bodyHeight: 40,
+    shadow: 36,
+    front: 15,
+    impact: 6, // the splash
   },
   'slime-lava': {
     ...SLIME,
     url: slimeLavaUrl,
+    cell: 114,
     cols: 10,
     frames: { idle: 6, attack: 9, hurt: 5, death: 10 },
+    feet: { x: 57, y: 101 },
+    bodyHeight: 54,
+    shadow: 40,
+    front: 16,
+    impact: 5, // the flames at their tallest
   },
   'thorn-plant': {
     url: thornPlantUrl,

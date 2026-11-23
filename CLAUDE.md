@@ -56,6 +56,7 @@ Before saying a task is done, run: `npm run lint && npm run typecheck && npm run
 - A foe shows sprite art by naming a sheet in `"sprite"` in its encounter JSON (ids in `FOE_SPRITES`, `src/core/content/schema.ts`; layouts in `src/scenes/battle/FoeSprite.ts`). Every sheet has one row per state: idle, attack, hurt, death, facing left.
 - Original foes (hissling, serpent, gust, storm-cloud, wave, flood-surge, squall, tempest) are pixel art painted by `python3 scripts/art/paint_foes.py [name…] [--preview]` (engine in `scripts/art/foe_engine.py`, needs Pillow) into `src/assets/foes/<name>.png`; never edit those PNGs by hand. They share one layout (`PAINTED` in `FoeSprite.ts`: 128px cells, 8 columns).
 - The other sheets are third-party packs cut by `scripts/art/process_foes.py` (credits in `art/README.md`).
+- The slimes (slime-blue, slime-lava) are ChatGPT-drafted sheets in `art/foes-raw/`, cut by `python3 scripts/art/process_drafted_foes.py [--preview]` (it clears the painted checkerboard background and prints the numbers for `FoeSprite.ts`); never edit the PNGs by hand.
 
 ## Armor, energy and the angel
 
