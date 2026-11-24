@@ -6,7 +6,7 @@ test.describe.configure({ timeout: 90_000 });
 
 const KEY = 'bible-quest-save';
 const base = (): SaveData => ({
-  version: 1,
+  version: 2,
   completed: {},
   heard: [],
   asked: [],

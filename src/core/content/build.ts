@@ -1,6 +1,12 @@
 import { resolvePassage, formatReference, parsePassage, type Bible } from './bible';
 import { encounterFileSchema } from './schema';
-import { encounterText, type Encounter } from './types';
+import {
+  encounterText,
+  textUpToSection,
+  type Encounter,
+  type EncounterFoe,
+  type EncounterSection,
+} from './types';
 
 /**
  * Turns a raw encounter file into a playable Encounter: validates the shape with Zod, pulls the
@@ -17,6 +23,29 @@ export function buildEncounter(raw: unknown, bible: Bible, source = 'encounter')
   }
   const f = parsed.data;
   const ref = parsePassage(f.passage);
+  const fail = (msg: string) => {
+    throw new Error(`${source} (${f.id}): ${msg}`);
+  };
+
+  // Sections must cover the passage in order, with no gaps or overlaps.
+  let nextVerse = ref.from;
+  const sections: EncounterSection[] = f.sections.map((sec, i) => {
+    const [a, b = a] = sec.verses.split('-').map(Number) as [number, number?];
+    if (a !== nextVerse || b < a || b > ref.to)
+      fail(
+        `section ${i + 1} reads verses ${sec.verses}; expected it to start at verse ${nextVerse} and stay within ${ref.from}-${ref.to}`,
+      );
+    nextVerse = b + 1;
+    const sub = `${ref.book} ${ref.chapter}:${a}-${b}`;
+    return {
+      reference: formatReference(parsePassage(sub)),
+      verses: resolvePassage(bible, sub),
+      foe: toFoe(sec.foe),
+      orbs: sec.orbs,
+    };
+  });
+  if (nextVerse !== ref.to + 1) fail(`sections end at verse ${nextVerse - 1}, not ${ref.to}`);
+
   const encounter: Encounter = {
     id: f.id,
     title: f.title,
@@ -25,13 +54,10 @@ export function buildEncounter(raw: unknown, bible: Bible, source = 'encounter')
     reference: formatReference(ref),
     setting: f.setting,
     ...(f.weather ? { weather: f.weather } : {}),
+    sections,
     verses: resolvePassage(bible, f.passage),
-    waves: f.waves.map(({ partner, ...w }) => ({
-      ...w,
-      color: parseInt(w.color.slice(1), 16),
-      ...(partner ? { partner: { ...partner, color: parseInt(partner.color.slice(1), 16) } } : {}),
-    })),
-    orbs: f.orbs,
+    waves: sections.map((s) => s.foe),
+    orbs: sections.flatMap((s) => s.orbs),
     ...(f.unlocks ? { unlocks: f.unlocks } : {}),
     ...(f.rune ? { rune: f.rune } : {}),
     questions: f.questions,
@@ -42,6 +68,19 @@ export function buildEncounter(raw: unknown, bible: Bible, source = 'encounter')
     throw new Error(`${source} (${f.id}):\n${errors.map((e) => `  - ${e}`).join('\n')}`);
   return encounter;
 }
+
+type RawFoe = { color: string; partner?: RawFoe } & Omit<EncounterFoe, 'color' | 'partner'>;
+
+function toFoe({ partner, ...w }: RawFoe): EncounterFoe {
+  return {
+    ...w,
+    color: parseInt(w.color.slice(1), 16),
+    ...(partner ? { partner: toFoe(partner) } : {}),
+  };
+}
+
+/** Each section needs at least this many questions of its own. */
+export const MIN_QUESTIONS_PER_SECTION = 2;
 
 /** Content rules that need the resolved verse text. Returns human-readable problems. */
 export function validateEncounter(e: Encounter): string[] {
@@ -55,10 +94,27 @@ export function validateEncounter(e: Encounter): string[] {
       errors.push(`question id "${q.id}" should start with "${e.id}-"`);
     if (!text.includes(q.highlight))
       errors.push(`${q.id}: highlight "${q.highlight}" is not in the verse text`);
+    else if (q.section > e.sections.length)
+      errors.push(`${q.id}: section ${q.section}, but the passage has ${e.sections.length}`);
+    else if (!textUpToSection(e, q.section).includes(q.highlight))
+      errors.push(
+        `${q.id}: highlight "${q.highlight}" is not read by section ${q.section} (questions may only ask about what has been read so far)`,
+      );
     if (q.answerIndex >= q.choices.length)
       errors.push(`${q.id}: answerIndex ${q.answerIndex} is out of range`);
     if (new Set(q.choices).size !== q.choices.length) errors.push(`${q.id}: duplicate choices`);
   }
+  e.sections.forEach((sec, i) => {
+    const own = e.questions.filter((q) => q.section === i + 1).length;
+    if (own < MIN_QUESTIONS_PER_SECTION)
+      errors.push(
+        `section ${i + 1} has ${own} question(s); it needs at least ${MIN_QUESTIONS_PER_SECTION}`,
+      );
+    const secText = sec.verses.map((v) => v.text).join(' ');
+    for (const o of sec.orbs)
+      if (o.word && !secText.includes(o.word))
+        errors.push(`orb word "${o.word}" is not in section ${i + 1}`);
+  });
   const words = new Set<string>();
   for (const o of e.orbs) {
     if (!o.word) continue;

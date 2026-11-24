@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { ScriptureTestState } from '../../src/services/testHooks';
-import { battle, heroTurn, snap, state, tap, tapIfPresent, waitFor } from './helpers';
+import { ENCOUNTERS } from '../../src/content';
+import { battle, heroTurn, playTurn, snap, state, tap, tapIfPresent, waitFor } from './helpers';
 
 test.describe.configure({ timeout: 90_000 });
 
@@ -21,7 +22,7 @@ test('tapping an energy orb during the reading carries energy into the fight', a
   await waitFor(page, "s.scene === 'scripture' && !!s.scripture");
   const s0 = await scripture(page);
   expect(s0.canSkip).toBe(false); // first time hearing this verse
-  expect(s0.orbs.map((o) => o.id)).toEqual(['orb-0', 'orb-1', 'orb-2']);
+  expect(s0.orbs.map((o) => o.id)).toEqual(['orb-0', 'orb-1']); // the first reading's two orbs
   expect(s0.energy).toBe(0);
 
   // Like a real player: tap an orb as it drifts up. If the busy test machine misses every orb,
@@ -78,12 +79,12 @@ test('the reading uses the recorded voice for every verse, timed by the clips', 
 });
 
 test('every verse of the passage is read before the battle starts', async ({ page }) => {
-  // Genesis 3:1–6: the longest passage, six verses.
-  await page.goto('/?scene=scripture&encounter=gen-005&seed=1&fast=1');
-  await waitFor(page, "s.scripture && s.scripture.encounter === 'gen-005'");
+  // The first reading of gen-007: Genesis 2:8–9.
+  await page.goto('/?scene=scripture&encounter=gen-007&seed=1&fast=1');
+  await waitFor(page, "s.scripture && s.scripture.encounter === 'gen-007'");
   const s0 = await scripture(page);
-  expect(s0.verseRefs).toHaveLength(6);
-  expect(s0.spokenRefs.length).toBeLessThan(6);
+  expect(s0.verseRefs).toEqual(['2:8', '2:9']);
+  expect(s0.spokenRefs.length).toBeLessThan(2);
   // The first word starts in the middle of the screen, where the spoken word stays.
   expect(Math.abs(s0.tickerX - (await state(page)).gameWidth / 2)).toBeLessThan(60);
 
@@ -155,4 +156,30 @@ test('Skip appears after the verse has been heard once, and forfeits orbs', asyn
   await tap(page, 'skip');
   await waitFor(page, "s.scene === 'battle' && !!s.battle");
   expect((await battle(page)).energy).toBe(0); // skipped orbs are forfeited
+});
+
+test('reading and fighting take turns, and each fight only asks about what has been read', async ({
+  page,
+}) => {
+  test.setTimeout(150_000);
+  const e = ENCOUNTERS.find((x) => x.id === 'gen-002')!;
+  const sectionOf = new Map(e.questions.map((q) => [q.id, q.section]));
+  await page.goto('/?scene=scripture&encounter=gen-002&seed=1&fast=1&narration=off');
+  for (let i = 0; i < e.sections.length; i++) {
+    await waitFor(page, `s.scene === 'scripture' && s.scripture.section === ${i}`, 60_000);
+    const sc = await scripture(page);
+    expect(sc.sectionCount).toBe(3);
+    expect(sc.verseRefs).toEqual(e.sections[i]!.verses.map((v) => v.ref));
+    if (i === 1) await snap(page, test.info().outputPath('second-reading.png'));
+    await waitFor(page, `s.scene === 'battle' && s.battle.wave === ${i}`, 60_000);
+    expect((await battle(page)).foeId).toBe(e.waves[i]!.id);
+    // Win this fight, checking every question belongs to a section already read.
+    while ((await state(page)).scene === 'battle' && !(await battle(page)).result) {
+      if ((await battle(page)).wave !== i) break;
+      await playTurn(page, 'attack', true);
+      const asked = (await state(page)).save!.asked.at(-1)!;
+      expect(sectionOf.get(asked), asked).toBeLessThanOrEqual(i + 1);
+    }
+  }
+  await waitFor(page, "s.battle && s.battle.result === 'VICTORY'", 60_000);
 });

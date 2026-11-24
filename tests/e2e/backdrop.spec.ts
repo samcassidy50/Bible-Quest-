@@ -3,19 +3,19 @@ import { snap, state, waitFor } from './helpers';
 
 test.describe.configure({ timeout: 90_000 });
 
-/** Every environment and the passage set in it (flood twice: storm and clearing), in story order. */
+/** Every environment and a passage set in it (flood twice: storm and clearing), in story order. */
 const ENVIRONMENTS: [string, string][] = [
   ['deep', 'gen-001'],
-  ['light', 'gen-002'],
-  ['shore', 'gen-003'],
-  ['garden', 'gen-004'],
-  ['grove', 'gen-005'],
-  ['wilderness', 'gen-006'],
-  ['fields', 'gen-007'],
-  ['shipyard', 'gen-008'],
-  ['flood-storm', 'gen-009'],
-  ['flood-clearing', 'gen-010'],
-  ['babel', 'gen-011'],
+  ['shore', 'gen-002'],
+  ['light', 'gen-003'],
+  ['fields', 'gen-004'],
+  ['garden', 'gen-007'],
+  ['grove', 'gen-009'],
+  ['wilderness', 'gen-011'],
+  ['shipyard', 'gen-019'],
+  ['flood-storm', 'gen-022'],
+  ['flood-clearing', 'gen-024'],
+  ['babel', 'gen-031'],
 ];
 
 for (const [name, id] of ENVIRONMENTS) {

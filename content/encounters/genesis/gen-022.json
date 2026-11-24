@@ -1,0 +1,166 @@
+{
+  "id": "gen-022",
+  "title": "The Flood Begins",
+  "passage": "GEN 7:11-16",
+  "setting": "flood",
+  "weather": "storm",
+  "sections": [
+    {
+      "verses": "11-12",
+      "foe": {
+        "id": "wave-1",
+        "name": "Rising Wave",
+        "maxHp": 25,
+        "attack": 17,
+        "color": "#2f6f9a",
+        "size": 0.85,
+        "sprite": "wave"
+      },
+      "orbs": [
+        {
+          "word": "month"
+        },
+        {
+          "word": "springs"
+        },
+        {
+          "word": "floodgates"
+        },
+        {
+          "word": "forty"
+        }
+      ]
+    },
+    {
+      "verses": "13-14",
+      "foe": {
+        "id": "wave-2a",
+        "name": "Rising Wave",
+        "maxHp": 20,
+        "attack": 14,
+        "color": "#285f85",
+        "size": 0.8,
+        "sprite": "wave",
+        "partner": {
+          "id": "wave-2b",
+          "name": "Rising Wave",
+          "maxHp": 20,
+          "attack": 14,
+          "color": "#2f6f9a",
+          "size": 0.8,
+          "sprite": "wave"
+        }
+      },
+      "orbs": [
+        {
+          "word": "wings"
+        }
+      ]
+    },
+    {
+      "verses": "15-16",
+      "foe": {
+        "id": "surge",
+        "name": "Flood Surge",
+        "maxHp": 45,
+        "attack": 22,
+        "color": "#173e5c",
+        "size": 1.3,
+        "sprite": "flood-surge"
+      },
+      "orbs": [
+        {
+          "word": "shut"
+        }
+      ]
+    }
+  ],
+  "rune": "haste",
+  "questions": [
+    {
+      "id": "gen-022-q1",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What burst open deep under the earth?",
+      "choices": ["The springs", "The rocks", "The mountains", "The trees"],
+      "answerIndex": 0,
+      "highlight": "all the springs deep under the earth burst open",
+      "section": 1
+    },
+    {
+      "id": "gen-022-q2",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What was opened in the sky?",
+      "choices": ["The floodgates", "The doors", "A window", "A tower"],
+      "answerIndex": 0,
+      "highlight": "the floodgates of the sky were opened",
+      "section": 1
+    },
+    {
+      "id": "gen-022-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How long did the rain fall?",
+      "choices": ["Forty days and forty nights", "Seven days", "One hundred days", "One night"],
+      "answerIndex": 0,
+      "highlight": "Rain fell on the earth for forty days and forty nights",
+      "section": 1
+    },
+    {
+      "id": "gen-022-q4",
+      "type": "multiple_choice",
+      "difficulty": "hard",
+      "prompt": "On which day of the second month did the flood start?",
+      "choices": ["The seventeenth day", "The first day", "The tenth day", "The thirtieth day"],
+      "answerIndex": 0,
+      "highlight": "on the seventeenth day of the second month",
+      "section": 1
+    },
+    {
+      "id": "gen-022-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Who went into the ark with Noah?",
+      "choices": [
+        "His wife, his three sons, and their wives",
+        "Only the birds",
+        "His neighbours",
+        "No one"
+      ],
+      "answerIndex": 0,
+      "highlight": "together with Noah’s wife and the wives of his three sons",
+      "section": 2
+    },
+    {
+      "id": "gen-022-q8",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What went into the ark with Noah’s family?",
+      "choices": ["Every kind of animal and bird", "Only fish", "Only lions", "No animals"],
+      "answerIndex": 0,
+      "highlight": "every kind of wild animal",
+      "section": 2
+    },
+    {
+      "id": "gen-022-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who shut Noah in the ark?",
+      "choices": ["The Lord", "Noah’s sons", "The wind", "An angel"],
+      "answerIndex": 0,
+      "highlight": "Then the Lord shut him in",
+      "section": 3
+    },
+    {
+      "id": "gen-022-q7",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "The creatures came to Noah two by two.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "Two by two, every kind of creature",
+      "section": 3
+    }
+  ]
+}

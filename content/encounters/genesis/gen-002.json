@@ -1,46 +1,59 @@
 {
   "id": "gen-002",
-  "title": "Let There Be Light",
-  "passage": "GEN 1:3-5",
-  "setting": "light",
-  "waves": [
+  "title": "Sky, Sea and Land",
+  "passage": "GEN 1:6-13",
+  "setting": "shore",
+  "sections": [
     {
-      "id": "wisp-1",
-      "name": "Shadow Wisp",
-      "maxHp": 25,
-      "attack": 15,
-      "color": "#4b3b78",
-      "size": 0.8,
-      "sprite": "slime-blue"
+      "verses": "6-8",
+      "foe": {
+        "id": "churning-wave-1",
+        "name": "Churning Wave",
+        "maxHp": 25,
+        "attack": 17,
+        "color": "#2f6f9a",
+        "size": 0.8,
+        "sprite": "wave"
+      },
+      "orbs": [
+        {
+          "word": "sky"
+        }
+      ]
     },
     {
-      "id": "wisp-2",
-      "name": "Shadow Wisp",
-      "maxHp": 25,
-      "attack": 17,
-      "color": "#3d2f66",
-      "size": 0.9,
-      "sprite": "slime-blue"
+      "verses": "9-10",
+      "foe": {
+        "id": "churning-wave-2",
+        "name": "Churning Wave",
+        "maxHp": 25,
+        "attack": 19,
+        "color": "#285f85",
+        "size": 0.9,
+        "sprite": "wave"
+      },
+      "orbs": [
+        {
+          "word": "seas"
+        }
+      ]
     },
     {
-      "id": "shade",
-      "name": "Shade of the Deep",
-      "maxHp": 40,
-      "attack": 20,
-      "color": "#241a45",
-      "size": 1.25,
-      "sprite": "slime-blue"
-    }
-  ],
-  "orbs": [
-    {
-      "word": "light"
-    },
-    {
-      "word": "apart"
-    },
-    {
-      "word": "evening"
+      "verses": "11-13",
+      "foe": {
+        "id": "restless-deep",
+        "name": "Restless Deep",
+        "maxHp": 45,
+        "attack": 22,
+        "color": "#173e5c",
+        "size": 1.3,
+        "sprite": "flood-surge"
+      },
+      "orbs": [
+        {
+          "word": "seeds"
+        }
+      ]
     }
   ],
   "rune": "zeal",
@@ -49,60 +62,61 @@
       "id": "gen-002-q1",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What did God say?",
-      "choices": [
-        "Let there be light",
-        "Let there be water",
-        "Let there be animals",
-        "Let there be land"
-      ],
+      "prompt": "What did God call the space between the waters?",
+      "choices": ["Sky", "Sea", "Land", "Night"],
       "answerIndex": 0,
-      "highlight": "Let there be light"
-    },
-    {
-      "id": "gen-002-q2",
-      "type": "true_false",
-      "difficulty": "easy",
-      "prompt": "True or false: God saw that the light was good.",
-      "choices": ["True", "False"],
-      "answerIndex": 0,
-      "highlight": "God saw that the light was good"
-    },
-    {
-      "id": "gen-002-q3",
-      "type": "fill_blank",
-      "difficulty": "medium",
-      "prompt": "He set the light apart from the ____.",
-      "choices": ["darkness", "water", "land", "sky"],
-      "answerIndex": 0,
-      "highlight": "He set the light apart from the darkness"
-    },
-    {
-      "id": "gen-002-q4",
-      "type": "multiple_choice",
-      "difficulty": "easy",
-      "prompt": "What did God call the light?",
-      "choices": ["Night", "Day", "Morning", "Sun"],
-      "answerIndex": 1,
-      "highlight": "God called the light “day,”"
+      "highlight": "God called the space “sky.”",
+      "section": 1
     },
     {
       "id": "gen-002-q5",
       "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Which day did God make the sky?",
+      "choices": ["The second day", "The first day", "The third day", "The seventh day"],
+      "answerIndex": 0,
+      "highlight": "That was the second day",
+      "section": 1
+    },
+    {
+      "id": "gen-002-q2",
+      "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What did God call the darkness?",
-      "choices": ["Evening", "Shadow", "Night", "Sky"],
-      "answerIndex": 2,
-      "highlight": "He called the darkness “night.”"
+      "prompt": "What appeared when the waters gathered into one place?",
+      "choices": ["Dry land", "A rainbow", "Ice", "Fire"],
+      "answerIndex": 0,
+      "highlight": "let dry land appear",
+      "section": 2
+    },
+    {
+      "id": "gen-002-q3",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did God call the gathered waters?",
+      "choices": ["Seas", "Rivers", "Rain", "Clouds"],
+      "answerIndex": 0,
+      "highlight": "He called the gathered waters “seas.”",
+      "section": 2
+    },
+    {
+      "id": "gen-002-q4",
+      "type": "fill_blank",
+      "difficulty": "medium",
+      "prompt": "Trees with fruit that have ____ inside.",
+      "choices": ["seeds", "stones", "water", "honey"],
+      "answerIndex": 0,
+      "highlight": "trees with fruit that have seeds inside",
+      "section": 3
     },
     {
       "id": "gen-002-q6",
-      "type": "multiple_choice",
+      "type": "true_false",
       "difficulty": "easy",
-      "prompt": "Which day was this?",
-      "choices": ["The seventh day", "The first day", "The third day", "The last day"],
-      "answerIndex": 1,
-      "highlight": "That was the first day"
+      "prompt": "On the third day, the earth grew grass and plants.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "The earth grew grass and plants with seeds",
+      "section": 3
     }
   ]
 }

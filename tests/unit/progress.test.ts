@@ -48,6 +48,24 @@ describe('unlocks', () => {
 });
 
 describe('save data', () => {
+  it('keeps only the settings of a version 1 save (its passage ids no longer exist)', () => {
+    const v1 = {
+      version: 1,
+      completed: { 'gen-001': { stars: 3, bestAccuracy: 1 } },
+      heard: ['gen-001'],
+      asked: [],
+      seenOnMap: ['gen-001'],
+      runes: {},
+      settings: { hero: 'girl', narration: false },
+    };
+    const s = loadSave(JSON.stringify(v1));
+    expect(s.version).toBe(SAVE_VERSION);
+    expect(s.completed).toEqual({});
+    expect(s.seenOnMap).toEqual([]);
+    expect(s.settings.hero).toBe('girl');
+    expect(s.settings.narration).toBe(false);
+  });
+
   it('starts with sensible defaults', () => {
     const s = newSave();
     expect(s.version).toBe(SAVE_VERSION);

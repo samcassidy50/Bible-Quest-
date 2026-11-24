@@ -1,0 +1,129 @@
+{
+  "id": "gen-019",
+  "title": "Build the Ark",
+  "passage": "GEN 6:9-16",
+  "setting": "shipyard",
+  "sections": [
+    {
+      "verses": "9-12",
+      "foe": {
+        "id": "gust-1",
+        "name": "Gust",
+        "maxHp": 25,
+        "attack": 17,
+        "color": "#5b6b8a",
+        "size": 0.8,
+        "sprite": "gust"
+      },
+      "orbs": [
+        {
+          "word": "walked"
+        },
+        {
+          "word": "Japheth"
+        }
+      ]
+    },
+    {
+      "verses": "13-16",
+      "foe": {
+        "id": "storm-cloud",
+        "name": "Storm Cloud",
+        "maxHp": 45,
+        "attack": 20,
+        "color": "#2c3650",
+        "size": 1.3,
+        "sprite": "storm-cloud"
+      },
+      "orbs": [
+        {
+          "word": "ark"
+        },
+        {
+          "word": "tar"
+        },
+        {
+          "word": "door"
+        }
+      ]
+    }
+  ],
+  "rune": "zeal",
+  "questions": [
+    {
+      "id": "gen-019-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who did Noah walk with?",
+      "choices": ["God", "An angel", "His sons", "The animals"],
+      "answerIndex": 0,
+      "highlight": "Noah walked with God",
+      "section": 1
+    },
+    {
+      "id": "gen-019-q2",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What were the names of Noah’s three sons?",
+      "choices": [
+        "Shem, Ham, and Japheth",
+        "Cain, Abel, and Seth",
+        "Adam, Eden, and Ararat",
+        "Babel, Shinar, and Nod"
+      ],
+      "answerIndex": 0,
+      "highlight": "Shem, Ham, and Japheth",
+      "section": 1
+    },
+    {
+      "id": "gen-019-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What was the earth full of?",
+      "choices": ["Fighting and hurting", "Gold and silver", "Flowers", "Snow"],
+      "answerIndex": 0,
+      "highlight": "full of fighting and hurting",
+      "section": 1
+    },
+    {
+      "id": "gen-019-q4",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What wood was the ark made of?",
+      "choices": ["Gopher wood", "Oak", "Pine", "Bamboo"],
+      "answerIndex": 0,
+      "highlight": "gopher wood",
+      "section": 2
+    },
+    {
+      "id": "gen-019-q5",
+      "type": "fill_blank",
+      "difficulty": "easy",
+      "prompt": "“Cover it with ____ inside and out.”",
+      "choices": ["tar", "paint", "gold", "leaves"],
+      "answerIndex": 0,
+      "highlight": "cover it with tar inside and out",
+      "section": 2
+    },
+    {
+      "id": "gen-019-q6",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "How many decks did the ark have?",
+      "choices": ["Three", "One", "Two", "Ten"],
+      "answerIndex": 0,
+      "highlight": "a lower deck, a middle deck, and an upper deck",
+      "section": 2
+    },
+    {
+      "id": "gen-019-q7",
+      "type": "multiple_choice",
+      "difficulty": "hard",
+      "prompt": "How long was the ark?",
+      "choices": ["Three hundred cubits", "Fifty cubits", "Thirty cubits", "One cubit"],
+      "answerIndex": 0,
+      "highlight": "three hundred cubits long",
+      "section": 2
+    }
+  ]
+}

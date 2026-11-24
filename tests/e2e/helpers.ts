@@ -49,7 +49,8 @@ export async function playTurn(page: Page, action: string, correct = true): Prom
     await waitFor(page, '!!s.targets["continue"]');
     await tap(page, 'continue');
   }
-  await waitFor(page, 's.battle.question === null');
+  // A foe's fall can lead straight into the next reading, where there is no battle state.
+  await waitFor(page, '!s.battle || s.battle.question === null');
 }
 
 /** Screenshot after the canvas has drawn the latest state (state updates land a frame early). */

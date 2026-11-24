@@ -151,6 +151,11 @@ export class BattleEngine {
   get energy(): number {
     return this._energy;
   }
+
+  /** Energy from orbs collected in a reading between fights (capped at the maximum). */
+  addEnergy(n: number): void {
+    this._energy = clamp(this._energy + Math.max(0, n), 0, TUNING.energy.max);
+  }
   costOf(id: SpecialId): number {
     return TUNING.energy.cost[id];
   }

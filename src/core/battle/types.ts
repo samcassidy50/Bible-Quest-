@@ -23,7 +23,7 @@ export interface FoeSpec {
 
 export interface BattleConfig {
   hero: HeroStats;
-  /** One foe per wave, fought in order (1–3 waves). */
+  /** One foe per wave, fought in order (1–4 waves: one per reading section). */
   waves: readonly FoeSpec[];
   /** Armor the hero owns (earned along the map, or `?specials=` in debug builds). */
   unlockedSpecials: readonly SpecialId[];

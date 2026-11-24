@@ -1,62 +1,65 @@
 {
   "id": "gen-009",
-  "title": "The Flood",
-  "passage": "GEN 7:11-12",
-  "setting": "flood",
-  "weather": "storm",
-  "waves": [
+  "title": "The Tricky Serpent",
+  "passage": "GEN 3:1-7",
+  "setting": "grove",
+  "sections": [
     {
-      "id": "wave-1",
-      "name": "Rising Wave",
-      "maxHp": 25,
-      "attack": 17,
-      "color": "#2f6f9a",
-      "size": 0.85,
-      "sprite": "wave"
-    },
-    {
-      "id": "wave-2a",
-      "name": "Rising Wave",
-      "maxHp": 20,
-      "attack": 14,
-      "color": "#285f85",
-      "size": 0.8,
-      "sprite": "wave",
-      "partner": {
-        "id": "wave-2b",
-        "name": "Rising Wave",
-        "maxHp": 20,
-        "attack": 14,
-        "color": "#2f6f9a",
+      "verses": "1-3",
+      "foe": {
+        "id": "hissling-1",
+        "name": "Hissling",
+        "maxHp": 25,
+        "attack": 17,
+        "color": "#2e7d5b",
         "size": 0.8,
-        "sprite": "wave"
-      }
+        "sprite": "hissling"
+      },
+      "orbs": [
+        {
+          "word": "tricky"
+        },
+        {
+          "word": "touch"
+        }
+      ]
     },
     {
-      "id": "surge",
-      "name": "Flood Surge",
-      "maxHp": 45,
-      "attack": 22,
-      "color": "#173e5c",
-      "size": 1.3,
-      "sprite": "flood-surge"
-    }
-  ],
-  "orbs": [
-    {
-      "word": "hundred"
+      "verses": "4-5",
+      "foe": {
+        "id": "hissling-2",
+        "name": "Hissling",
+        "maxHp": 25,
+        "attack": 19,
+        "color": "#256b4d",
+        "size": 0.9,
+        "sprite": "hissling"
+      },
+      "orbs": [
+        {
+          "word": "eyes"
+        }
+      ]
     },
     {
-      "word": "month"
-    },
-    {
-      "word": "springs"
-    },
-    {
-      "word": "floodgates"
-    },
-    {
-      "word": "forty"
+      "verses": "6-7",
+      "foe": {
+        "id": "serpent",
+        "name": "The Serpent",
+        "maxHp": 45,
+        "attack": 22,
+        "color": "#123d2b",
+        "size": 1.3,
+        "sprite": "serpent"
+      },
+      "orbs": [
+        {
+          "word": "wise"
+        },
+        {
+          "word": "fig"
+        }
+      ]
     }
   ],
   "unlocks": "sandals",
@@ -66,65 +69,91 @@
       "id": "gen-009-q1",
       "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "How old was Noah when the flood began?",
+      "prompt": "How is the serpent described?",
       "choices": [
-        "Six hundred years old",
-        "Forty years old",
-        "One hundred years old",
-        "Nine hundred years old"
+        "More tricky than any other wild animal",
+        "The biggest animal",
+        "The kindest animal",
+        "The fastest animal"
       ],
       "answerIndex": 0,
-      "highlight": "When Noah was six hundred years old"
+      "highlight": "more tricky than any other wild animal",
+      "section": 1
     },
     {
       "id": "gen-009-q2",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What burst open?",
+      "prompt": "Which tree did God say they must not eat from or touch?",
       "choices": [
-        "All the springs deep under the earth",
-        "The doors of the ark",
-        "The tower",
-        "The garden gate"
+        "The tree in the middle of the garden",
+        "The tallest tree",
+        "Every tree",
+        "The tree by the river"
       ],
       "answerIndex": 0,
-      "highlight": "all the springs deep under the earth burst open"
+      "highlight": "the tree in the middle of the garden",
+      "section": 1
     },
     {
       "id": "gen-009-q3",
       "type": "fill_blank",
-      "difficulty": "easy",
-      "prompt": "Rain fell on the earth for forty days and forty ____.",
-      "choices": ["nights", "weeks", "years", "hours"],
+      "difficulty": "medium",
+      "prompt": "“You will not surely ____,” the serpent told the woman.",
+      "choices": ["die", "eat", "sleep", "leave"],
       "answerIndex": 0,
-      "highlight": "forty days and forty nights"
+      "highlight": "You will not surely die",
+      "section": 2
     },
     {
       "id": "gen-009-q4",
-      "type": "true_false",
+      "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "True or false: the floodgates of the sky were opened.",
-      "choices": ["True", "False"],
+      "prompt": "What did the serpent say would happen to their eyes?",
+      "choices": [
+        "They would be opened",
+        "They would close",
+        "They would see in the dark",
+        "Nothing"
+      ],
       "answerIndex": 0,
-      "highlight": "the floodgates of the sky were opened"
+      "highlight": "your eyes will be opened",
+      "section": 2
     },
     {
       "id": "gen-009-q5",
       "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "In which month did it begin?",
-      "choices": ["The second month", "The first month", "The seventh month", "The last month"],
+      "prompt": "What did the woman see about the fruit?",
+      "choices": [
+        "It was good for food and nice to look at",
+        "It was dry and dead",
+        "It was too high to reach",
+        "It was rotten"
+      ],
       "answerIndex": 0,
-      "highlight": "the second month"
+      "highlight": "good for food and nice to look at",
+      "section": 3
     },
     {
       "id": "gen-009-q6",
       "type": "multiple_choice",
-      "difficulty": "hard",
-      "prompt": "On which day of the month?",
-      "choices": ["The seventeenth day", "The first day", "The fortieth day", "The tenth day"],
+      "difficulty": "easy",
+      "prompt": "Who did the woman give some of the fruit to?",
+      "choices": ["Her husband", "The serpent", "An angel", "No one"],
       "answerIndex": 0,
-      "highlight": "on the seventeenth day of the second month"
+      "highlight": "She also gave some to her husband",
+      "section": 3
+    },
+    {
+      "id": "gen-009-q7",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did they sew together to cover themselves?",
+      "choices": ["Fig leaves", "Animal skins", "Grass", "Feathers"],
+      "answerIndex": 0,
+      "highlight": "they sewed fig leaves together",
+      "section": 3
     }
   ]
 }

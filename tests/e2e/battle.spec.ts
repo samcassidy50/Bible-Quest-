@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { ENCOUNTERS } from '../../src/content';
 import { battle, heroTurn, playTurn, snap, state, tap, waitFor } from './helpers';
 
 const ALL = 'sword,shield,breastplate,sandals';
@@ -132,13 +133,13 @@ test('title → choose hero → passage select → chosen passage', async ({ pag
   // A new player picks a hero first.
   await waitFor(page, "s.scene === 'heroSelect' && !!s.targets['hero:boy']");
   await tap(page, 'hero:boy');
-  await waitFor(page, "s.scene === 'map' && !s.mapRevealing && !!s.targets['stage:gen-011']");
+  await waitFor(page, "s.scene === 'map' && !s.mapRevealing && !!s.targets['stage:gen-027']");
   await snap(page, test.info().outputPath('map.png'));
-  await tap(page, 'stage:gen-011'); // ?unlockAll centres the map on the last location
+  await tap(page, 'stage:gen-027'); // ?unlockAll centres the map on the end of the Noah path
   await waitFor(page, '!!s.targets.begin');
   await tap(page, 'begin');
   await waitFor(page, "s.scene === 'scripture' && !!s.scripture");
-  expect((await state(page)).scripture!.encounter).toBe('gen-011');
+  expect((await state(page)).scripture!.encounter).toBe('gen-027');
   expect((await state(page)).scripture!.orbs).toHaveLength(5);
 });
 
@@ -166,10 +167,10 @@ test('answer choices are shuffled, not always first', async ({ page }) => {
 test('sprite foes play their attack, hurt and death frames', async ({ page }) => {
   test.setTimeout(120_000); // two auto-played fights, with foes walking up to attack
   const foes = [
-    ['gen-003', 'slime-lava'],
-    ['gen-004', 'thorn-plant'],
-    ['gen-007', 'shadow-wolf'],
-    ['gen-011', 'fire-spirit'],
+    ['gen-005', 'slime-lava'],
+    ['gen-007', 'thorn-plant'],
+    ['gen-010', 'shadow-wolf'],
+    ['gen-031', 'fire-spirit'],
   ] as const;
   for (const [encounter, sprite] of foes) {
     await page.goto(`/?scene=battle&encounter=${encounter}&seed=1&specials=&freeze=1`);
@@ -179,7 +180,7 @@ test('sprite foes play their attack, hurt and death frames', async ({ page }) =>
   }
 
   // The Babel boss is the third wave.
-  await page.goto('/?scene=battle&encounter=gen-011&seed=1&autoAnswer=correct&fast=1');
+  await page.goto('/?scene=battle&encounter=gen-031&seed=1&autoAnswer=correct&fast=1');
   await waitFor(
     page,
     "s.battle && s.battle.wave === 2 && s.battle.foeSprite === 'minotaur' && !s.busy",
@@ -198,10 +199,10 @@ test('sprite foes play their attack, hurt and death frames', async ({ page }) =>
 
 test('painted foes open the serpent, storm and flood passages', async ({ page }) => {
   const foes = [
-    ['gen-005', 'hissling'],
-    ['gen-008', 'gust'],
-    ['gen-009', 'wave'],
-    ['gen-010', 'squall'],
+    ['gen-009', 'hissling'],
+    ['gen-019', 'gust'],
+    ['gen-022', 'wave'],
+    ['gen-027', 'squall'],
   ] as const;
   for (const [encounter, sprite] of foes) {
     await page.goto(`/?scene=battle&encounter=${encounter}&seed=1&specials=&freeze=1`);
@@ -214,17 +215,17 @@ test('painted foes open the serpent, storm and flood passages', async ({ page })
 test('painted bosses arrive on the last wave and play their defeat frames', async ({ page }) => {
   test.setTimeout(120_000);
   const bosses = [
-    ['gen-005', 'serpent'],
-    ['gen-008', 'storm-cloud'],
-    ['gen-009', 'flood-surge'],
-    ['gen-010', 'tempest'],
+    ['gen-009', 'serpent'],
+    ['gen-019', 'storm-cloud'],
+    ['gen-022', 'flood-surge'],
+    ['gen-027', 'tempest'],
   ] as const;
   for (const [encounter, boss] of bosses) {
     await page.goto(
       `/?scene=battle&encounter=${encounter}&seed=1&autoAnswer=correct&fast=1&oneShot=1`,
     );
     await waitFor(page, `s.battle && s.battle.wave === 2 && s.battle.foeSprite === '${boss}'`);
-    if (encounter === 'gen-005') await snap(page, test.info().outputPath(`${boss}.png`));
+    if (encounter === 'gen-009') await snap(page, test.info().outputPath(`${boss}.png`));
     await waitFor(page, "s.battle.result === 'VICTORY' && !!s.targets.primary", 60_000);
     expect((await battle(page)).foeAnims).toContain('death');
   }
@@ -234,11 +235,10 @@ test('foe gallery shows every passage with sprite art for all of its foes', asyn
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto('/?scene=foes&freeze=1');
-  for (let n = 1; n <= 11; n++) {
-    const id = `gen-${String(n).padStart(3, '0')}`;
+  for (const id of ENCOUNTERS.map((e) => e.id)) {
     await waitFor(page, `s.scene === 'foes' && s.foeGallery && s.foeGallery.encounter === '${id}'`);
     const foes = (await state(page)).foeGallery!.foes;
-    expect(foes, `${id} foes`).toHaveLength(3);
+    expect(foes, `${id} foes`).toHaveLength(ENCOUNTERS.find((e) => e.id === id)!.waves.length);
     expect(
       foes.every((sprite) => !!sprite),
       `${id} sprites`,
@@ -264,7 +264,7 @@ test('?oneShot=1 wins each wave in one hit, and the health bar empties before th
 test('a pair wave: two foes on the field, and the back one steps up when the front falls', async ({
   page,
 }) => {
-  await page.goto('/?scene=battle&encounter=gen-009&seed=1&oneShot=1&fast=1');
+  await page.goto('/?scene=battle&encounter=gen-022&seed=1&oneShot=1&fast=1');
   const hit = async () => {
     await heroTurn(page);
     await tap(page, 'action:attack');
@@ -285,7 +285,7 @@ test('a pair wave: two foes on the field, and the back one steps up when the fro
 });
 
 test('tapping the back foe of a pair targets it, and the hit lands there', async ({ page }) => {
-  await page.goto('/?scene=battle&encounter=gen-009&seed=1&oneShot=1&fast=1');
+  await page.goto('/?scene=battle&encounter=gen-022&seed=1&oneShot=1&fast=1');
   const hit = async () => {
     await heroTurn(page);
     await tap(page, 'action:attack');

@@ -1,52 +1,51 @@
 {
   "id": "gen-005",
-  "title": "The Temptation",
-  "passage": "GEN 3:1-6",
-  "setting": "grove",
-  "waves": [
+  "title": "Made in God’s Image",
+  "passage": "GEN 1:26-31",
+  "setting": "shore",
+  "sections": [
     {
-      "id": "hissling-1",
-      "name": "Hissling",
-      "maxHp": 25,
-      "attack": 17,
-      "color": "#2e7d5b",
-      "size": 0.8,
-      "sprite": "hissling"
+      "verses": "26-27",
+      "foe": {
+        "id": "dust-mote-1",
+        "name": "Dust Mote",
+        "maxHp": 25,
+        "attack": 17,
+        "color": "#7a6a52",
+        "size": 0.8,
+        "sprite": "slime-lava"
+      },
+      "orbs": [
+        {
+          "word": "image"
+        },
+        {
+          "word": "female"
+        }
+      ]
     },
     {
-      "id": "hissling-2",
-      "name": "Hissling",
-      "maxHp": 25,
-      "attack": 19,
-      "color": "#256b4d",
-      "size": 0.9,
-      "sprite": "hissling"
-    },
-    {
-      "id": "serpent",
-      "name": "The Serpent",
-      "maxHp": 45,
-      "attack": 22,
-      "color": "#123d2b",
-      "size": 1.3,
-      "sprite": "serpent"
-    }
-  ],
-  "orbs": [
-    {
-      "word": "tricky"
-    },
-    {
-      "word": "touch"
-    },
-    {
-      "word": "eyes"
-    },
-    {
-      "word": "look"
-    },
-    {
-      "word": "wise"
+      "verses": "28-31",
+      "foe": {
+        "id": "dust-wraith",
+        "name": "Dust Wraith",
+        "maxHp": 45,
+        "attack": 20,
+        "color": "#4a3f30",
+        "size": 1.2,
+        "sprite": "slime-lava"
+      },
+      "orbs": [
+        {
+          "word": "children"
+        },
+        {
+          "word": "food"
+        },
+        {
+          "word": "good"
+        }
+      ]
     }
   ],
   "unlocks": "shield",
@@ -55,76 +54,67 @@
     {
       "id": "gen-005-q1",
       "type": "multiple_choice",
-      "difficulty": "medium",
-      "prompt": "How is the serpent described?",
-      "choices": [
-        "More tricky than any other wild animal",
-        "The biggest animal",
-        "The kindest animal",
-        "The fastest animal"
-      ],
+      "difficulty": "easy",
+      "prompt": "In whose image did God make people?",
+      "choices": ["His own image", "An angel’s image", "An animal’s image", "A star’s image"],
       "answerIndex": 0,
-      "highlight": "more tricky than any other wild animal"
+      "highlight": "So God made people in His own image",
+      "section": 1
     },
     {
       "id": "gen-005-q2",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "Which tree did God say they must not eat from or touch?",
-      "choices": [
-        "The tree in the middle of the garden",
-        "The tallest tree",
-        "Every tree",
-        "The tree by the river"
-      ],
+      "prompt": "How did God make people?",
+      "choices": ["Male and female", "Only men", "As animals", "As angels"],
       "answerIndex": 0,
-      "highlight": "the tree in the middle of the garden"
+      "highlight": "He made them male and female",
+      "section": 1
     },
     {
       "id": "gen-005-q3",
       "type": "fill_blank",
-      "difficulty": "medium",
-      "prompt": "“You will not surely ____,” the serpent told the woman.",
-      "choices": ["die", "eat", "sleep", "leave"],
+      "difficulty": "easy",
+      "prompt": "“Have many children and fill the ____.”",
+      "choices": ["earth", "sky", "sea", "garden"],
       "answerIndex": 0,
-      "highlight": "You will not surely die"
+      "highlight": "Have many children and fill the earth",
+      "section": 2
     },
     {
       "id": "gen-005-q4",
       "type": "multiple_choice",
-      "difficulty": "easy",
-      "prompt": "What did the serpent say would happen to their eyes?",
-      "choices": [
-        "They would be opened",
-        "They would close",
-        "They would see in the dark",
-        "Nothing"
-      ],
+      "difficulty": "medium",
+      "prompt": "What did God give people for food?",
+      "choices": ["Plants with seeds and fruit from trees", "Only meat", "Only bread", "Nothing"],
       "answerIndex": 0,
-      "highlight": "your eyes will be opened"
+      "highlight": "every plant with seeds",
+      "section": 2
     },
     {
       "id": "gen-005-q5",
       "type": "multiple_choice",
-      "difficulty": "medium",
-      "prompt": "What did the woman see about the fruit?",
+      "difficulty": "easy",
+      "prompt": "What did God think of everything He had made?",
       "choices": [
-        "It was good for food and nice to look at",
-        "It was dry and dead",
-        "It was too high to reach",
-        "It was rotten"
+        "It was very good",
+        "It was too small",
+        "It needed fixing",
+        "It was not finished"
       ],
       "answerIndex": 0,
-      "highlight": "good for food and nice to look at"
+      "highlight": "it was very good",
+      "section": 2
     },
     {
       "id": "gen-005-q6",
       "type": "multiple_choice",
-      "difficulty": "easy",
-      "prompt": "Who did the woman give some of the fruit to?",
-      "choices": ["Her husband", "The serpent", "An angel", "No one"],
+      "difficulty": "medium",
+      "prompt": "Which day was this?",
+      "choices": ["The sixth day", "The fifth day", "The seventh day", "The first day"],
       "answerIndex": 0,
-      "highlight": "She also gave some to her husband"
+      "highlight": "That was the sixth day",
+      "section": 2
     }
   ]
 }

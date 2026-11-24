@@ -31,9 +31,10 @@ Before saying a task is done, run: `npm run lint && npm run typecheck && npm run
 
 - Verse text is a **kid-friendly retelling** in `content/source/retelling/` (one verse per line; see its README). Retell from a public-domain translation open beside you, never from memory: simple words, same meaning, nothing added or left out that changes the passage. Each retold passage is a **draft** until a human reviews it; say so when you commit.
 - After changing any retold verse, re-record its narration: `.venv-narration/bin/python scripts/audio/narrate.py` (Bella voice, Kokoro, setup in the script's header). A unit test fails while a verse has no up-to-date clip.
+- Passages follow the plan in `docs/genesis-encounters.md`; an encounter's id is its number there (`gen-019`). The map is a tree of paths (`after` in `src/core/map/worldMap.ts`): add a new encounter there too.
 - Encounter files (`content/encounters/<book>/<id>.json`) store a passage reference like `"GEN 1:1-2"`, never verse text. The Zod schema rejects a `verses` field. `src/content/index.ts` resolves the text and validates every rule at startup.
 - Run `npm run validate:content` after editing content. It checks the schema, that every `highlight` and orb `word` appears in the verse text, unique ids, and canonical order.
-- Every question must be answerable from the verse(s) read in that encounter; its `highlight` must appear word for word in the verse text.
+- Each encounter splits its passage into 1–4 `sections` (verse range, foe, orbs), read and fought in turn. Every question has a `section`: it must be answerable from the verses read by then, and its `highlight` must appear word for word in that section or an earlier one. At least 2 questions per section.
 - Foes are personified obstacles, chaos, or temptations, never biblical people.
 - AI-drafted questions are **drafts**: say so in the PR so a human reviews them.
 
@@ -66,7 +67,7 @@ Before saying a task is done, run: `npm run lint && npm run typecheck && npm run
 
 ## Backgrounds
 
-- Ten original environments (`src/scenes/backdrop/Backdrop.ts`), one per passage: deep, light, shore, garden, grove, wilderness, fields, shipyard, flood (weather `storm` or `clearing`), babel. Each passage picks one with `setting` (and `weather` for flood) in its encounter JSON; a unit test checks no two passages share a backdrop.
+- Ten original environments (`src/scenes/backdrop/Backdrop.ts`): deep, light, shore, garden, grove, wilderness, fields, shipyard, flood (weather `storm` or `clearing`), babel. Each passage picks one with `setting` (and `weather` for flood) in its encounter JSON; passages may share one.
 - Their layers are pixel art painted by `python3 scripts/art/paint_backdrops.py [env…] [--preview]` (needs Pillow) into `src/assets/backdrops/<env>-<layer>.png` (sky, far, mid, ground, optional landmark). Never edit those PNGs by hand; change the painter and re-run it. It checks that strips tile seamlessly. Default `--res 2` (2 screen px per painted pixel) is the chosen look. Any layer without a PNG is drawn in code instead, and the code effects (mist, rays, rain…) always play on top.
 - Text-free viewer: `?scene=backdrops` (tap or → for the next, `&env=garden` to start on one, `&freeze=1` for still screenshots).
 

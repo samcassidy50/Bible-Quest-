@@ -1,0 +1,115 @@
+{
+  "id": "gen-023",
+  "title": "Water Everywhere",
+  "passage": "GEN 7:17-24",
+  "setting": "flood",
+  "weather": "storm",
+  "sections": [
+    {
+      "verses": "17-20",
+      "foe": {
+        "id": "rising-wave-1",
+        "name": "Rising Wave",
+        "maxHp": 25,
+        "attack": 17,
+        "color": "#2a6690",
+        "size": 0.8,
+        "sprite": "wave"
+      },
+      "orbs": [
+        {
+          "word": "lifted"
+        },
+        {
+          "word": "floated"
+        },
+        {
+          "word": "mountains"
+        },
+        {
+          "word": "cubits"
+        }
+      ]
+    },
+    {
+      "verses": "21-24",
+      "foe": {
+        "id": "the-deluge",
+        "name": "The Deluge",
+        "maxHp": 45,
+        "attack": 22,
+        "color": "#123450",
+        "size": 1.4,
+        "sprite": "flood-surge"
+      },
+      "orbs": [
+        {
+          "word": "left"
+        }
+      ]
+    }
+  ],
+  "rune": "life",
+  "questions": [
+    {
+      "id": "gen-023-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the deep waters do to the ark?",
+      "choices": ["Lifted it high above the earth", "Broke it", "Sank it", "Turned it over"],
+      "answerIndex": 0,
+      "highlight": "lifted the ark high above the earth",
+      "section": 1
+    },
+    {
+      "id": "gen-023-q2",
+      "type": "fill_blank",
+      "difficulty": "easy",
+      "prompt": "The ark ____ on top of the waters.",
+      "choices": ["floated", "sank", "danced", "slept"],
+      "answerIndex": 0,
+      "highlight": "the ark floated on top of the waters",
+      "section": 1
+    },
+    {
+      "id": "gen-023-q3",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did the waters cover?",
+      "choices": ["All the tall mountains", "Only the valleys", "Nothing", "Only the gardens"],
+      "answerIndex": 0,
+      "highlight": "all the tall mountains under the whole sky were covered",
+      "section": 1
+    },
+    {
+      "id": "gen-023-q4",
+      "type": "multiple_choice",
+      "difficulty": "hard",
+      "prompt": "How much higher than the mountains did the water rise?",
+      "choices": ["Fifteen cubits", "One cubit", "One hundred cubits", "Fifty cubits"],
+      "answerIndex": 0,
+      "highlight": "fifteen cubits higher than the mountains",
+      "section": 1
+    },
+    {
+      "id": "gen-023-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who was left?",
+      "choices": ["Noah and those with him in the ark", "Only the fish", "Everyone", "No one"],
+      "answerIndex": 0,
+      "highlight": "Only Noah was left, and those who were with him in the ark",
+      "section": 2
+    },
+    {
+      "id": "gen-023-q6",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "How long did the waters cover the earth?",
+      "choices": ["One hundred fifty days", "Seven days", "Forty years", "Ten days"],
+      "answerIndex": 0,
+      "highlight": "one hundred fifty days",
+      "section": 2
+    }
+  ]
+}

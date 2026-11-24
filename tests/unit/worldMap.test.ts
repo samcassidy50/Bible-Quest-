@@ -2,11 +2,17 @@ import { describe, expect, it } from 'vitest';
 import { ENCOUNTERS } from '../../src/content';
 import {
   bezier,
+  childrenOf,
+  choosingPath,
   dashedCurve,
   focusNode,
+  mapNode,
   MAP_NODES,
+  MAP_PATHS,
   newlyRevealed,
+  nextOnMap,
   nodeStates,
+  parentOf,
   trailControl,
   WORLD_H,
   WORLD_W,
@@ -14,6 +20,12 @@ import {
 import { markSeenOnMap, newSave, recordVictory } from '../../src/core/progress/progress';
 
 const won = (...ids: string[]) => ids.reduce((s, id) => recordVictory(s, id, 1, 1).save, newSave());
+
+const BEGINNINGS = Array.from({ length: 11 }, (_, i) => `gen-${String(i + 1).padStart(3, '0')}`);
+const open = (s: ReturnType<typeof newSave>, unlockAll = false) =>
+  nodeStates(s, unlockAll)
+    .filter((n) => n.state === 'open')
+    .map((n) => n.id);
 
 describe('map layout', () => {
   it('has one location per encounter, in reading order, inside the map', () => {
@@ -24,6 +36,31 @@ describe('map layout', () => {
       expect(n.y).toBeGreaterThan(100);
       expect(n.y).toBeLessThan(WORLD_H - 100);
     }
+  });
+
+  it('keeps locations apart so their name plates do not overlap', () => {
+    for (const a of MAP_NODES)
+      for (const b of MAP_NODES)
+        if (a !== b)
+          expect(Math.hypot(a.x - b.x, a.y - b.y), `${a.id}–${b.id}`).toBeGreaterThan(170);
+  });
+
+  it('Beginnings is one trail, then it forks into the Noah and Babel paths', () => {
+    expect(mapNode('gen-001')!.after).toBeUndefined();
+    for (let i = 1; i < BEGINNINGS.length; i++)
+      expect(mapNode(BEGINNINGS[i]!)!.after).toBe(BEGINNINGS[i - 1]);
+    expect(childrenOf('gen-011').map((n) => n.id)).toEqual(['gen-019', 'gen-031']);
+    expect(MAP_PATHS.map((p) => p.ids[0])).toEqual(['gen-019', 'gen-031']);
+    expect(MAP_PATHS[0]!.ids).toHaveLength(9);
+    for (const n of MAP_NODES.slice(1)) expect(parentOf(n), n.id).toBeDefined();
+  });
+
+  it('nextOnMap follows a trail and stops at a fork or the end of a path', () => {
+    expect(nextOnMap('gen-001')).toBe('gen-002');
+    expect(nextOnMap('gen-011')).toBeNull();
+    expect(nextOnMap('gen-026')).toBe('gen-027');
+    expect(nextOnMap('gen-027')).toBeNull();
+    expect(nextOnMap('gen-031')).toBeNull();
   });
 });
 
@@ -39,6 +76,21 @@ describe('reveal rules', () => {
     expect(states.slice(0, 4).map((s) => s.state)).toEqual(['done', 'done', 'open', 'hidden']);
   });
 
+  it('finishing Beginnings opens both paths, and each path then opens on its own', () => {
+    expect(open(won(...BEGINNINGS.slice(0, 10)))).toEqual(['gen-011']);
+    const fork = won(...BEGINNINGS);
+    expect(open(fork)).toEqual(['gen-019', 'gen-031']);
+    expect(open(won(...BEGINNINGS, 'gen-019'))).toEqual(['gen-020', 'gen-031']);
+    expect(open(won(...BEGINNINGS, 'gen-031'))).toEqual(['gen-019']);
+  });
+
+  it('shows the choice of paths until one is started', () => {
+    expect(choosingPath(won(...BEGINNINGS.slice(0, 10)))).toBe(false);
+    expect(choosingPath(won(...BEGINNINGS))).toBe(true);
+    expect(choosingPath(won(...BEGINNINGS, 'gen-031'))).toBe(false);
+    expect(choosingPath(won(...BEGINNINGS, 'gen-019'))).toBe(false);
+  });
+
   it('unlockAll opens everything', () => {
     expect(nodeStates(newSave(), true).every((s) => s.state !== 'hidden')).toBe(true);
   });
@@ -51,12 +103,17 @@ describe('reveal rules', () => {
     s = recordVictory(s, 'gen-001', 1, 1).save;
     expect(newlyRevealed(s)).toEqual(['gen-002']);
     expect(markSeenOnMap(s, ['gen-001'])).toBe(s);
+    s = markSeenOnMap(won(...BEGINNINGS), BEGINNINGS);
+    expect(newlyRevealed(s)).toEqual(['gen-019', 'gen-031']);
   });
 
-  it('focuses the furthest visible location', () => {
+  it('puts the hero at the furthest open location, or at the fork while choosing', () => {
     expect(focusNode(newSave()).id).toBe('gen-001');
     expect(focusNode(won('gen-001', 'gen-002')).id).toBe('gen-003');
-    expect(focusNode(newSave(), true).id).toBe('gen-011');
+    expect(focusNode(won(...BEGINNINGS)).id).toBe('gen-011');
+    expect(focusNode(won(...BEGINNINGS, 'gen-019', 'gen-020')).id).toBe('gen-021');
+    expect(focusNode(won(...BEGINNINGS, 'gen-031')).id).toBe('gen-019');
+    expect(focusNode(newSave(), true).id).toBe('gen-027');
   });
 });
 
@@ -84,13 +141,13 @@ describe('trails', () => {
   });
 
   it('trails bend alternately between consecutive locations', () => {
-    const c1 = trailControl(1);
-    const c2 = trailControl(2);
-    const side = (i: number, p: { x: number; y: number }) => {
-      const s = MAP_NODES[i - 1]!;
-      const e = MAP_NODES[i]!;
+    const side = (id: string) => {
+      const e = mapNode(id)!;
+      const s = parentOf(e)!;
+      const p = trailControl(e);
       return Math.sign((e.x - s.x) * (p.y - s.y) - (e.y - s.y) * (p.x - s.x));
     };
-    expect(side(1, c1)).not.toBe(side(2, c2));
+    expect(side('gen-002')).not.toBe(side('gen-003'));
+    expect(side('gen-020')).not.toBe(side('gen-021'));
   });
 });

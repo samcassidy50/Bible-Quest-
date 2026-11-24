@@ -45,6 +45,9 @@ export interface BattleTestState {
 
 export interface ScriptureTestState {
   encounter: string;
+  /** Which reading section this is (0-based), and how many the passage has. */
+  section: number;
+  sectionCount: number;
   durationMs: number;
   elapsedMs: number;
   narrationDone: boolean;
@@ -91,6 +94,8 @@ export interface TestState {
   mapRevealing: boolean;
   /** Map: the location whose card is open. */
   mapCard: string | null;
+  /** True while the map shows the "Choose your path" sign at a fork. */
+  mapChoosing: boolean;
   /** Backdrop viewer: the environment on screen. */
   backdrop: string | null;
   /** Backdrop viewer: layers of that environment drawn from painted images (sky, far, mid…). */
@@ -138,6 +143,7 @@ let state: TestState = {
   map: null,
   mapRevealing: false,
   mapCard: null,
+  mapChoosing: false,
   backdrop: null,
   backdropPainted: [],
   journalOpen: null,

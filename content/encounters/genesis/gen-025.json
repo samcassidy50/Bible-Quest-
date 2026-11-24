@@ -1,0 +1,159 @@
+{
+  "id": "gen-025",
+  "title": "Out of the Ark",
+  "passage": "GEN 8:13-22",
+  "setting": "flood",
+  "weather": "clearing",
+  "sections": [
+    {
+      "verses": "13-14",
+      "foe": {
+        "id": "squall-1",
+        "name": "Squall",
+        "maxHp": 25,
+        "attack": 17,
+        "color": "#62788a",
+        "size": 0.8,
+        "sprite": "squall"
+      },
+      "orbs": [
+        {
+          "word": "dry"
+        }
+      ]
+    },
+    {
+      "verses": "15-19",
+      "foe": {
+        "id": "squall-2",
+        "name": "Squall",
+        "maxHp": 25,
+        "attack": 19,
+        "color": "#536878",
+        "size": 0.9,
+        "sprite": "squall"
+      },
+      "orbs": [
+        {
+          "word": "family"
+        }
+      ]
+    },
+    {
+      "verses": "20-22",
+      "foe": {
+        "id": "fading-tempest",
+        "name": "Fading Tempest",
+        "maxHp": 45,
+        "attack": 20,
+        "color": "#34424e",
+        "size": 1.3,
+        "sprite": "tempest"
+      },
+      "orbs": [
+        {
+          "word": "altar"
+        },
+        {
+          "word": "harvest"
+        },
+        {
+          "word": "night"
+        }
+      ]
+    }
+  ],
+  "rune": "peace",
+  "questions": [
+    {
+      "id": "gen-025-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Noah see when he took the covering off the ark?",
+      "choices": ["The ground was drying", "The water was rising", "A city", "A tower"],
+      "answerIndex": 0,
+      "highlight": "he saw that the ground was drying",
+      "section": 1
+    },
+    {
+      "id": "gen-025-q7",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "When was the earth completely dry?",
+      "choices": [
+        "On the twenty-seventh day of the second month",
+        "On the first day",
+        "After forty days",
+        "After one night"
+      ],
+      "answerIndex": 0,
+      "highlight": "the earth was completely dry",
+      "section": 1
+    },
+    {
+      "id": "gen-025-q2",
+      "type": "fill_blank",
+      "difficulty": "easy",
+      "prompt": "“Come out of the ____.”",
+      "choices": ["ark", "garden", "tower", "cave"],
+      "answerIndex": 0,
+      "highlight": "Come out of the ark",
+      "section": 2
+    },
+    {
+      "id": "gen-025-q8",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Why did God want the animals to come out of the ark?",
+      "choices": [
+        "To spread over the earth and have many young",
+        "To go back to Eden",
+        "To build a tower",
+        "To sleep"
+      ],
+      "answerIndex": 0,
+      "highlight": "Let them spread over the earth",
+      "section": 2
+    },
+    {
+      "id": "gen-025-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Noah build after he came out?",
+      "choices": ["An altar to the Lord", "A house", "A tower", "A boat"],
+      "answerIndex": 0,
+      "highlight": "Noah built an altar to the Lord",
+      "section": 3
+    },
+    {
+      "id": "gen-025-q4",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did the Lord say He would never again do?",
+      "choices": ["Destroy every living thing", "Make it rain", "Make summer", "Plant a garden"],
+      "answerIndex": 0,
+      "highlight": "I will never again destroy every living thing",
+      "section": 3
+    },
+    {
+      "id": "gen-025-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "As long as the earth lasts, what will never stop?",
+      "choices": ["Planting time and harvest", "Floods", "Building towers", "Thunder"],
+      "answerIndex": 0,
+      "highlight": "planting time and harvest",
+      "section": 3
+    },
+    {
+      "id": "gen-025-q6",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "Day and night will never stop as long as the earth lasts.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "day and night will never stop",
+      "section": 3
+    }
+  ]
+}

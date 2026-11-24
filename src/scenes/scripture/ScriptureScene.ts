@@ -51,7 +51,12 @@ const ORB_RISE = 150;
  */
 export class ScriptureScene extends Phaser.Scene {
   private debug!: DebugParams;
+  /** The section being read, as a passage of its own (its verses, orbs and foe). */
   private encounter!: Encounter;
+  /** The whole passage. */
+  private full!: Encounter;
+  /** Which reading section this is (0-based). */
+  private section = 0;
   private narration!: Narration;
   /** Recorded clip per verse (undefined where the device voice reads it). */
   private clips: (VerseClip | undefined)[] = [];
@@ -96,9 +101,23 @@ export class ScriptureScene extends Phaser.Scene {
 
   create(): void {
     this.debug = this.registry.get('debug') as DebugParams;
-    this.encounter = getEncounter(
+    this.full = getEncounter(
       (this.registry.get('encounterId') as string | undefined) ?? this.debug.encounter,
     );
+    // The battle sets the next section before handing back to a reading; otherwise read the first.
+    this.section = Math.min(
+      (this.registry.get('readingSection') as number | undefined) ?? 0,
+      this.full.sections.length - 1,
+    );
+    this.registry.remove('readingSection');
+    const sec = this.full.sections[this.section]!;
+    this.encounter = {
+      ...this.full,
+      reference: sec.reference,
+      verses: sec.verses,
+      orbs: sec.orbs,
+      waves: [sec.foe],
+    };
     this.timeScale = (this.registry.get('timeScale') as number | undefined) ?? 1;
     this.tweens.timeScale = this.timeScale;
     this.time.timeScale = this.timeScale;
@@ -139,6 +158,17 @@ export class ScriptureScene extends Phaser.Scene {
 
     updateTestState({ ready: true, scene: 'scripture', battle: null });
     this.startReading();
+    // Auto-play (tests) goes straight through the readings between fights.
+    if (this.midBattle && this.debug.autoAnswer) void this.finish(true);
+  }
+
+  /** A reading between two fights of the same passage: the battle waits, asleep, for it. */
+  private get midBattle(): boolean {
+    return this.section > 0;
+  }
+
+  private get lastSection(): boolean {
+    return this.section === this.full.sections.length - 1;
   }
 
   private get canSkip(): boolean {
@@ -520,7 +550,8 @@ export class ScriptureScene extends Phaser.Scene {
     if (this.finishing) return;
     this.finishing = true;
     this.schedule = [];
-    if (completed) {
+    // The passage counts as heard once its last section has been read to the end.
+    if (completed && this.lastSection) {
       progress.update((s) => markHeard(s, this.encounter.id));
     }
     for (const b of [this.skipBtn, this.replayBtn, this.fullTextBtn]) b.setVisible(false);
@@ -528,7 +559,7 @@ export class ScriptureScene extends Phaser.Scene {
     this.fullText = undefined;
     this.sync();
 
-    // The first foe appears ahead and the hero runs up to it, then cut to battle.
+    // This section's foe appears ahead and the hero runs up to it, then cut to the fight.
     const { width: W } = this.scale.gameSize;
     const spec = this.encounter.waves[0] as EncounterFoe;
     const foe = new Fighter(this, W + 150, this.groundY, 'foe', spec.color, spec.size, spec.sprite);
@@ -537,9 +568,16 @@ export class ScriptureScene extends Phaser.Scene {
       tweenAsync(this, { targets: this.hero, x: W * 0.45, duration: 700, ease: 'Quad.inOut' }),
     ]);
     this.hero.stopRun();
-    this.registry.set('collectedEnergy', this.tracker.collected.length);
+    const energy = this.tracker.collected.length;
     this.cameras.main.fadeOut(300, 5, 3, 13);
     await new Promise<void>((r) => this.cameras.main.once('camerafadeoutcomplete', () => r()));
+    if (this.midBattle) {
+      // Back to the fight in progress, with this reading's energy.
+      this.scene.wake('battle', { energy });
+      this.scene.stop();
+      return;
+    }
+    this.registry.set('collectedEnergy', energy);
     this.scene.start('battle');
   }
 
@@ -591,6 +629,8 @@ export class ScriptureScene extends Phaser.Scene {
       busy: this.finishing,
       scripture: {
         encounter: this.encounter.id,
+        section: this.section,
+        sectionCount: this.full.sections.length,
         durationMs: this.durationMs,
         elapsedMs: Math.round(this.elapsed),
         narrationDone: this.narrationDone,

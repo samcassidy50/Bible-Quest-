@@ -63,9 +63,21 @@ test('tapping Receive takes the gift', async ({ page }) => {
 });
 
 test('the map card opens without naming the armor reward', async ({ page }) => {
-  await page.goto('/?scene=map&unlockAll=1&fast=1');
-  await waitFor(page, "s.scene === 'map' && !s.mapRevealing && !!s.targets['stage:gen-010']");
-  await tap(page, 'stage:gen-010');
-  await waitFor(page, "s.mapCard === 'gen-010'");
+  // Beginnings won up to the last passage, which awards the Full Armor.
+  const completed = Object.fromEntries(
+    Array.from({ length: 10 }, (_, i) => [
+      `gen-${String(i + 1).padStart(3, '0')}`,
+      { stars: 3, bestAccuracy: 1 },
+    ]),
+  );
+  const save = { version: 2, completed, seenOnMap: [...Object.keys(completed), 'gen-011'] };
+  await page.addInitScript(
+    (v) => window.localStorage.setItem('bible-quest-save', v),
+    JSON.stringify(save),
+  );
+  await page.goto('/?scene=map&fast=1');
+  await waitFor(page, "s.scene === 'map' && !s.mapRevealing && !!s.targets['stage:gen-011']");
+  await tap(page, 'stage:gen-011');
+  await waitFor(page, "s.mapCard === 'gen-011'");
   await snap(page, test.info().outputPath('map-card.png'));
 });

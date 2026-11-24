@@ -1,0 +1,188 @@
+{
+  "id": "gen-024",
+  "title": "The Raven and the Dove",
+  "passage": "GEN 8:1-12",
+  "setting": "flood",
+  "weather": "clearing",
+  "sections": [
+    {
+      "verses": "1-3",
+      "foe": {
+        "id": "squall-1",
+        "name": "Squall",
+        "maxHp": 25,
+        "attack": 17,
+        "color": "#5a6f7f",
+        "size": 0.8,
+        "sprite": "squall"
+      },
+      "orbs": [
+        {
+          "word": "wind"
+        }
+      ]
+    },
+    {
+      "verses": "4-5",
+      "foe": {
+        "id": "squall-2",
+        "name": "Squall",
+        "maxHp": 25,
+        "attack": 19,
+        "color": "#4c5f6e",
+        "size": 0.9,
+        "sprite": "squall"
+      },
+      "orbs": [
+        {
+          "word": "Ararat"
+        }
+      ]
+    },
+    {
+      "verses": "6-9",
+      "foe": {
+        "id": "squall-3",
+        "name": "Squall",
+        "maxHp": 25,
+        "attack": 19,
+        "color": "#56697a",
+        "size": 0.95,
+        "sprite": "squall"
+      },
+      "orbs": [
+        {
+          "word": "raven"
+        },
+        {
+          "word": "dove"
+        }
+      ]
+    },
+    {
+      "verses": "10-12",
+      "foe": {
+        "id": "lingering-storm",
+        "name": "Lingering Storm",
+        "maxHp": 45,
+        "attack": 20,
+        "color": "#2c3a46",
+        "size": 1.3,
+        "sprite": "storm-cloud"
+      },
+      "orbs": [
+        {
+          "word": "olive"
+        }
+      ]
+    }
+  ],
+  "rune": "mending",
+  "questions": [
+    {
+      "id": "gen-024-q1",
+      "type": "fill_blank",
+      "difficulty": "easy",
+      "prompt": "But God ____ Noah.",
+      "choices": ["remembered", "forgot", "chased", "scolded"],
+      "answerIndex": 0,
+      "highlight": "But God remembered Noah",
+      "section": 1
+    },
+    {
+      "id": "gen-024-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did God send over the earth?",
+      "choices": ["A wind", "Fire", "More rain", "Snow"],
+      "answerIndex": 0,
+      "highlight": "God sent a wind over the earth",
+      "section": 1
+    },
+    {
+      "id": "gen-024-q3",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Where did the ark come to rest?",
+      "choices": ["On the mountains of Ararat", "In Eden", "On a beach", "In Babel"],
+      "answerIndex": 0,
+      "highlight": "the ark came to rest on the mountains of Ararat",
+      "section": 2
+    },
+    {
+      "id": "gen-024-q7",
+      "type": "multiple_choice",
+      "difficulty": "hard",
+      "prompt": "When could the tops of the mountains be seen?",
+      "choices": [
+        "On the first day of the tenth month",
+        "On the first day of the first month",
+        "After one week",
+        "Never"
+      ],
+      "answerIndex": 0,
+      "highlight": "On the first day of the tenth month",
+      "section": 2
+    },
+    {
+      "id": "gen-024-q4",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Which bird did Noah send out first?",
+      "choices": ["A raven", "A dove", "An eagle", "A sparrow"],
+      "answerIndex": 0,
+      "highlight": "he sent out a raven",
+      "section": 3
+    },
+    {
+      "id": "gen-024-q8",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did Noah open after forty days?",
+      "choices": ["The window he had made in the ark", "The door", "A box of food", "The roof"],
+      "answerIndex": 0,
+      "highlight": "Noah opened the window he had made in the ark",
+      "section": 3
+    },
+    {
+      "id": "gen-024-q9",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Why did the dove come back the first time?",
+      "choices": [
+        "It found no place to rest its feet",
+        "It was hungry",
+        "It was scared of the raven",
+        "It was cold"
+      ],
+      "answerIndex": 0,
+      "highlight": "the dove found no place to rest its feet",
+      "section": 3
+    },
+    {
+      "id": "gen-024-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the dove bring back in its beak?",
+      "choices": ["A fresh olive leaf", "A fish", "A stone", "A thorn"],
+      "answerIndex": 0,
+      "highlight": "in its beak was a fresh olive leaf",
+      "section": 4
+    },
+    {
+      "id": "gen-024-q6",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What happened the last time Noah sent out the dove?",
+      "choices": [
+        "It did not come back",
+        "It came back with a fish",
+        "It brought a raven",
+        "It sat on the roof"
+      ],
+      "answerIndex": 0,
+      "highlight": "this time it did not come back to him",
+      "section": 4
+    }
+  ]
+}

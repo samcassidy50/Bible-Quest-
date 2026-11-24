@@ -6,10 +6,12 @@
 
 ## 1. Overview
 
-Bible Quest is a 2D side-view, turn-based RPG where a single hero journeys through the Bible, starting in Genesis. Every encounter has two parts:
+Bible Quest is a 2D side-view, turn-based RPG where a single hero journeys through the Bible, starting in Genesis. Every encounter is a passage split into **1–4 sections**, and each section has two parts:
 
-1. **Scripture intro.** One or two verses are read aloud while the text scrolls across the bottom of the screen and the hero runs across the landscape.
-2. **Battle.** A turn-based fight against a themed foe. Before each of the hero's attacks, the player answers a question about the verse they just heard. A correct answer **powers up** the attack.
+1. **Scripture reading.** The section's verses are read aloud while the text scrolls across the bottom of the screen and the hero runs across the landscape.
+2. **Battle.** A turn-based fight against that section's themed foe. Before each of the hero's attacks, the player answers a question about what they have heard so far (the section just read first, then earlier sections as review). A correct answer **powers up** the attack.
+
+Reading and fighting take turns until the last section's foe (the passage's boss) falls. The hero's health, faith and energy carry from one fight to the next, and each reading's orbs add energy for the fight after it (2026-11-25; before this a whole passage was read, then all its foes fought).
 
 The game teaches Scripture through repetition and recall, wrapped in a combat loop that's fun on its own.
 
@@ -64,7 +66,7 @@ The target _layout and feel_ is the screenshot the project started from: a side-
 ### 2.2 Battle
 
 - **Turn-based:** Hero turn → Enemy turn → repeat.
-- **Waves:** 1–3 foes per encounter, shown as pips at the top of the screen (our own icon, not skulls copied from the reference).
+- **Waves:** one foe (or a pair) per section, so 1–4 per encounter, shown as pips at the top of the screen (our own icon, not skulls copied from the reference). Between waves the battle sleeps while the next section is read.
 - **Hero turn:**
   1. **Choose an action** from the action bar: **Attack**, one of the **special attacks** unlocked by orbs this fight (§2.6), or the **Faith Ultimate** when the Faith meter is full.
   2. A question card slides in (it pauses combat). The Faith Ultimate skips this step, because it was already earned by answering questions.
@@ -78,7 +80,7 @@ The target _layout and feel_ is the screenshot the project started from: a side-
 
 ### 2.3 Question pool per encounter
 
-- Each encounter needs **at least 6 questions** so a fight with several turns doesn't repeat too quickly. Questions are shuffled without replacement and recycled only if the pool runs out.
+- Each encounter needs **at least 6 questions**, and **at least 2 per section**. Every question names its `section`; its `highlight` must be in that section or an earlier one, so a fight never asks about verses not read yet. Questions are shuffled without replacement and recycled only if the pool runs out.
 - **Short fights (2026-11-20):** foes have less HP and hit harder, and a right answer hits for 3×, so the first two foes fall to one right answer each and a fight at 60% accuracy takes about 5 questions (the balance test keeps the median at 3–6). The save remembers which questions were asked (`asked`); the next fight on a passage asks the unasked ones first, and the list for a passage starts over once all of its questions have been asked.
 - Questions must be answerable **from the verse(s) just read**. This is a hard content rule that we check in review.
 - Difficulty tags (`easy` / `medium` / `hard`) let a future difficulty setting filter the pool.
@@ -115,16 +117,17 @@ This is an open question for review: confirm the tone with the stakeholders (see
   | Sandals (gold topaz ▲)        | Haste    | Start each fight with +2 energy           |
   |                               | Peace    | Sandals stun lasts 1 more turn            |
 
-  Genesis awards, in order: Might, Zeal, Might, Life, Guarding, Life, Mending, Renewal, Haste, Peace, Haste (11 blessings for 8 slots, so there is a choice). Saves from before blessings drop their upgrade levels on load; stars and progress are kept.
+  Beginnings awards, in order: Might, Zeal, Might, Life, Guarding, Life, Mending, Renewal, Haste, Peace, Haste (11 blessings for 8 slots, so there is a choice); the Noah path awards Zeal, Guarding, Renewal, Haste, Life, Mending, Peace, Might, Peace, and Babel awards Zeal. Saves from before blessings drop their upgrade levels on load; stars and progress are kept.
 
 - A "Verse Journal" collects every passage completed, so players can reread it outside of battle.
-- **Passage map (2026-11-12):** passage select is an original parchment map of the Genesis 1–11 lands (The Deep, Eden, Land of Nod, Ararat, Shinar), drawn in code. Only won and playable locations show; winning reveals the next one once (trail draws itself, the hero walks it). Drag to pan; tap a location for its card and Begin.
+- **Passage map (2026-11-12):** passage select is an original parchment map of the Genesis 1–11 lands (The Deep, Eden, Ararat, Shinar), drawn in code. Only won and playable locations show; winning reveals the next one once (trail draws itself, the hero walks it). Drag to pan; tap a location for its card and Begin.
+- **Paths (2026-11-25):** the map is a tree (`after` on each location in `core/map/worldMap.ts`). Beginnings is one trail; winning its last passage reveals two paths at once, Noah and the Flood (9 passages) and The Tower of Babel (1), and a "Choose your path" sign stands at the fork until one is started. Each path then opens on its own, and the other stays playable. After a win, "Next passage" follows the trail; at the fork the win panel offers "Choose your path" (to the map) instead.
 
 ### 2.6 Special attacks, Faith Ultimate, and Armor orbs
 
 > **Revised 2026-11-12 (supersedes the orb-unlock rules below):**
 >
-> - **Armor is earned along the map.** The hero starts with only Attack. An angel (original character) presents each piece the first time its passage is won: Sword of the Spirit after passage 1 (the first battle), Shield of Faith after 5, Breastplate of Righteousness after 7, Sandals of Peace after 9, and the Full Armor of God ultimate after 10 (`unlocks` in each encounter file).
+> - **Armor is earned along the map.** The hero starts with only Attack. An angel (original character) presents each piece the first time its passage is won: Sword of the Spirit after passage 1 (the first battle), Shield of Faith after 5, Breastplate of Righteousness after 7, Sandals of Peace after 9, and the Full Armor of God ultimate after 11, the last passage of Beginnings, so either path starts fully armed (`unlocks` in each encounter file).
 > - **Reading orbs give energy.** Each orb tapped during the reading is +1 ⚡ (3 orbs in passages 1–3, then 5). Energy carries into that fight.
 > - **Specials cost energy** (Sword 3, Shield 2, Breastplate 3, Sandals 2; max 10) and can be used as often as energy allows, not once per fight. A wrong answer still spends the energy. The ultimate still uses the Faith meter.
 
@@ -303,21 +306,15 @@ INTRO → HERO_CHOOSE ─(attack | special)─▶ HERO_QUESTION → HERO_ACTION(
 
 ## 4. Content Plan: Starting in Genesis
 
-Content is authored as **passage → encounter** pairs. The first arc ("Beginnings") covers Genesis 1–11:
+Content is authored as **passage → encounter** pairs. **Re-split 2026-11-25:** the plan in `docs/genesis-encounters.md` breaks all of Genesis into 169 passages of about 9 verses, read in order (encounter ids are its numbers, e.g. `gen-019`, so skipped passages can be added later without renaming). What is built now:
 
-| #   | Passage     | Theme                      | Foe                        |
-| --- | ----------- | -------------------------- | -------------------------- |
-| 1   | Gen 1:1–2   | In the beginning           | Shade of the Deep          |
-| 2   | Gen 1:3–5   | Let there be light         | Shade of the Deep (wave 2) |
-| 3   | Gen 1:26–27 | Made in God's image        | Dust Wraith                |
-| 4   | Gen 2:15–17 | The garden and the command | Thornling                  |
-| 5   | Gen 3:1–6   | The temptation             | The Serpent                |
-| 6   | Gen 3:17–19 | Thorns and thistles        | Thornbeast                 |
-| 7   | Gen 4:6–7   | Sin crouching at the door  | Crouching Shadow           |
-| 8   | Gen 6:13–14 | Build the ark              | Storm Cloud                |
-| 9   | Gen 7:11–12 | The flood                  | Flood Surge                |
-| 10  | Gen 9:12–13 | The rainbow covenant       | Boss: Tempest              |
-| 11  | Gen 11:4–7  | Babel                      | Boss: Tower Golem          |
+| Arc / path         | Encounters      | Passages                              |
+| ------------------ | --------------- | ------------------------------------- |
+| Beginnings         | gen-001–gen-011 | Gen 1:1–3:19 (creation to Eden)       |
+| Noah and the Flood | gen-019–gen-027 | Gen 6:9–9:17 (the ark to the rainbow) |
+| The Tower of Babel | gen-031         | Gen 11:1-9                            |
+
+Not built yet (left out for now, as chosen in the plan): Gen 3:20–6:8, 9:18–10:32, 11:10-32. Foes and backdrops reuse the existing art, so passages may share a backdrop. Saves from before the re-split (version 1) keep their settings but start the map again.
 
 Later arcs: Abraham (12–25), Isaac and Jacob (25–36), Joseph (37–50), and then Exodus.
 
@@ -433,7 +430,7 @@ Each phase ends in something playable, deployed to a preview URL.
 | Level                  | Tool                                                                                        | What it covers                                                                                                                                                                                                                                                                                              |
 | ---------------------- | ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Unit**               | **Vitest**                                                                                  | `core/`: battle state transitions, damage math (normal vs powered), combo/special, wave progression, win/lose, `QuestionDeck` (no repeats until the pool is empty, difficulty filtering), progression and stars. The RNG is seeded, so results are deterministic. Target: at least 90% coverage of `core/`. |
-| **Content**            | Vitest + Zod (`validate:content`)                                                           | Every JSON file matches the schema; highlights appear word for word in the verses; at least 6 questions; unique IDs; canonical order. Runs on every PR.                                                                                                                                                     |
+| **Content**            | Vitest + Zod (`validate:content`)                                                           | Every JSON file matches the schema; highlights appear word for word in the verses, read by the question's section; sections cover the passage in order; at least 6 questions and 2 per section; unique IDs; canonical order. Runs on every PR.                                                              |
 | **Integration**        | Vitest + jsdom/headless Phaser                                                              | `ContentService` loading, `SaveService` round-trip, `NarrationService` with a fake TTS.                                                                                                                                                                                                                     |
 | **End to end**         | **Playwright** (Chromium, WebKit, mobile viewport)                                          | Boot → Scripture scene → skip → answer correctly → see powered attack → win → result. Also the lose path and retry. Uses debug URL params and a `window.__TEST__` hook that exposes game state (e.g. hero HP, current question ID).                                                                         |
 | **Visual regression**  | Playwright screenshots                                                                      | Battle HUD and question card at 1280×720 and phone landscape, compared against baselines. Animations are frozen with `?seed=…&freeze=1`.                                                                                                                                                                    |

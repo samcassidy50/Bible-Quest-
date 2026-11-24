@@ -14,6 +14,8 @@ const choiceQuestion = z.object({
   choices: z.array(z.string().min(1)),
   answerIndex: z.number().int().min(0),
   highlight: z.string().min(2),
+  /** Reading section (1-based) the question belongs to; see Question.section. */
+  section: z.number().int().min(1),
 });
 
 export const questionSchema = z.discriminatedUnion('type', [
@@ -85,13 +87,23 @@ export const encounterFileSchema = z
     setting: z.enum(SETTINGS),
     /** Flood only: a storm, or the storm clearing with a rainbow. */
     weather: z.enum(['storm', 'clearing']).optional(),
-    /** Each wave is one foe, or a pair: a foe with a `partner` standing behind it. */
-    waves: z
-      .array(foeSchema.extend({ partner: foeSchema.optional() }).strict())
+    /**
+     * The passage split into 1–4 readings, each followed by a fight with its foe (or a pair: a
+     * foe with a `partner` standing behind it). `verses` is a range in the passage's chapter.
+     */
+    sections: z
+      .array(
+        z
+          .object({
+            verses: z.string().regex(/^\d+(-\d+)?$/, 'a verse range like "3-5"'),
+            foe: foeSchema.extend({ partner: foeSchema.optional() }).strict(),
+            /** Energy orbs in this reading, each +1 energy. */
+            orbs: z.array(z.object({ word: z.string().optional() }).strict()).max(4),
+          })
+          .strict(),
+      )
       .min(1)
-      .max(3),
-    /** Energy orbs in the reading, each +1 energy. */
-    orbs: z.array(z.object({ word: z.string().optional() }).strict()).max(6),
+      .max(4),
     /** Armor awarded when this passage is first won. */
     unlocks: z.enum([...SPECIAL_IDS, 'ultimate']).optional(),
     /** Blessing awarded when this passage is first won (core/battle/runes.ts). */

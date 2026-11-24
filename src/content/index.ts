@@ -1,6 +1,7 @@
 import { parseVpl } from '../core/content/bible';
 import { buildEncounter, canonicalOrder, validateCollection } from '../core/content/build';
 import type { Encounter } from '../core/content/types';
+import { nextOnMap } from '../core/map/worldMap';
 import genesisSource from '../../content/source/retelling/GEN.txt?raw';
 
 /**
@@ -29,8 +30,11 @@ export function getEncounter(id: string | undefined): Encounter {
   return ENCOUNTERS.find((e) => e.id === id) ?? (ENCOUNTERS[0] as Encounter);
 }
 
-/** The encounter after `id` in reading order, or null at the end. */
+/**
+ * The encounter that follows `id` on its map trail, or null at the end of a path or at a fork
+ * (where the player chooses the next path on the map).
+ */
 export function nextEncounter(id: string): Encounter | null {
-  const i = ENCOUNTERS.findIndex((e) => e.id === id);
-  return i >= 0 && i < ENCOUNTERS.length - 1 ? (ENCOUNTERS[i + 1] as Encounter) : null;
+  const next = nextOnMap(id);
+  return ENCOUNTERS.find((e) => e.id === next) ?? null;
 }

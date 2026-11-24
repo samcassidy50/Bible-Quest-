@@ -1,0 +1,166 @@
+{
+  "id": "gen-021",
+  "title": "Into the Ark",
+  "passage": "GEN 7:1-10",
+  "setting": "shipyard",
+  "sections": [
+    {
+      "verses": "1-4",
+      "foe": {
+        "id": "restless-wind-1",
+        "name": "Restless Wind",
+        "maxHp": 25,
+        "attack": 17,
+        "color": "#55657e",
+        "size": 0.8,
+        "sprite": "gust"
+      },
+      "orbs": [
+        {
+          "word": "right"
+        },
+        {
+          "word": "seven"
+        },
+        {
+          "word": "forty"
+        }
+      ]
+    },
+    {
+      "verses": "5-7",
+      "foe": {
+        "id": "restless-wind-2",
+        "name": "Restless Wind",
+        "maxHp": 25,
+        "attack": 19,
+        "color": "#4a5970",
+        "size": 0.9,
+        "sprite": "gust"
+      },
+      "orbs": [
+        {
+          "word": "hundred"
+        },
+        {
+          "word": "escape"
+        }
+      ]
+    },
+    {
+      "verses": "8-10",
+      "foe": {
+        "id": "thunderhead",
+        "name": "Thunderhead",
+        "maxHp": 45,
+        "attack": 22,
+        "color": "#232c42",
+        "size": 1.35,
+        "sprite": "storm-cloud"
+      },
+      "orbs": [
+        {
+          "word": "two"
+        }
+      ]
+    }
+  ],
+  "rune": "renewal",
+  "questions": [
+    {
+      "id": "gen-021-q1",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Why did God tell Noah to go into the ark?",
+      "choices": [
+        "God saw that Noah did what is right",
+        "Noah was rich",
+        "Noah was tired",
+        "Noah asked to"
+      ],
+      "answerIndex": 0,
+      "highlight": "I have seen that you do what is right",
+      "section": 1
+    },
+    {
+      "id": "gen-021-q2",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "How many pairs of every kind of clean animal did Noah take?",
+      "choices": ["Seven", "Two", "Ten", "One"],
+      "answerIndex": 0,
+      "highlight": "seven pairs of every kind of clean animal",
+      "section": 1
+    },
+    {
+      "id": "gen-021-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How long would it rain?",
+      "choices": ["Forty days and forty nights", "Seven days", "One night", "A whole year"],
+      "answerIndex": 0,
+      "highlight": "forty days and forty nights",
+      "section": 1
+    },
+    {
+      "id": "gen-021-q4",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "How old was Noah when the flood came?",
+      "choices": [
+        "Six hundred years old",
+        "Forty years old",
+        "Ninety years old",
+        "One hundred years old"
+      ],
+      "answerIndex": 0,
+      "highlight": "Noah was six hundred years old",
+      "section": 2
+    },
+    {
+      "id": "gen-021-q7",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who went into the ark with Noah?",
+      "choices": [
+        "His sons, his wife, and his sons’ wives",
+        "Only his sons",
+        "His neighbours",
+        "No one"
+      ],
+      "answerIndex": 0,
+      "highlight": "Noah went into the ark with his sons, his wife, and his sons’ wives",
+      "section": 2
+    },
+    {
+      "id": "gen-021-q8",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "Noah did everything the Lord told him.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "Noah did everything the Lord told him",
+      "section": 2
+    },
+    {
+      "id": "gen-021-q5",
+      "type": "fill_blank",
+      "difficulty": "easy",
+      "prompt": "The animals went into the ark two by ____.",
+      "choices": ["two", "ten", "night", "day"],
+      "answerIndex": 0,
+      "highlight": "two by two",
+      "section": 3
+    },
+    {
+      "id": "gen-021-q6",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "When did the flood waters come?",
+      "choices": ["After seven days", "After forty days", "The next morning", "After a year"],
+      "answerIndex": 0,
+      "highlight": "After seven days, the flood waters came",
+      "section": 3
+    }
+  ]
+}

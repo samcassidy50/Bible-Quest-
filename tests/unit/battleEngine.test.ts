@@ -139,6 +139,16 @@ describe('Special attacks', () => {
     expect(started(oneWave({ startingEnergy: 99 })).energy).toBe(10);
   });
 
+  it('a reading between fights adds its orbs to the energy, up to the maximum', () => {
+    const e = started(oneWave({ startingEnergy: 2 }));
+    e.addEnergy(3);
+    expect(e.energy).toBe(5);
+    e.addEnergy(-4);
+    expect(e.energy).toBe(5);
+    e.addEnergy(99);
+    expect(e.energy).toBe(10);
+  });
+
   it('the ultimate stays locked until earned, even with a full Faith meter', () => {
     const e = started(oneWave({ startingFaith: 5, ultimateUnlocked: false }));
     expect(e.ultimateUnlocked).toBe(false);

@@ -16,6 +16,8 @@ import { QuestionDeck } from '../../core/quiz/QuestionDeck';
 import { createRng, type Rng } from '../../core/rng';
 import { shuffleChoices } from '../../core/quiz/shuffleChoices';
 import { ENCOUNTERS, getEncounter, nextEncounter } from '../../content';
+import { childrenOf } from '../../core/map/worldMap';
+import { sectionQuestions } from '../../core/content/types';
 import { ownedArmor } from '../../core/progress/progress';
 import { readSafeAreaInsets, toGameInsets, type Insets } from '../../services/safeArea';
 import { updateTestState } from '../../services/testHooks';
@@ -101,6 +103,8 @@ export class BattleScene extends Phaser.Scene {
   private question: Question | null = null;
   private feedback: 'correct' | 'wrong' | null = null;
   private asked = 0;
+  /** Question ids asked in this battle, so a later fight's review questions come after new ones. */
+  private askedHere: string[] = [];
   private correct = 0;
   private powerUps = 0;
 
@@ -121,6 +125,7 @@ export class BattleScene extends Phaser.Scene {
     this.question = null;
     this.feedback = null;
     this.asked = 0;
+    this.askedHere = [];
     this.correct = 0;
     this.powerUps = 0;
 
@@ -152,7 +157,6 @@ export class BattleScene extends Phaser.Scene {
       },
       rng,
     );
-    this.deck = new QuestionDeck(this.encounter.questions, rng, undefined, progress.save.asked);
 
     this.buildScene();
     this.layout();
@@ -161,6 +165,7 @@ export class BattleScene extends Phaser.Scene {
     this.events.on('card-continue-ready', () => this.sync());
 
     this.engine.start();
+    this.dealDeck();
     updateTestState({ ready: true, scene: 'battle', scripture: null });
     void this.intro();
   }
@@ -169,6 +174,16 @@ export class BattleScene extends Phaser.Scene {
    * Armor the hero owns: earned by winning passages along the map (each passage's `unlocks`).
    * `?specials=` overrides it for testing and also unlocks the ultimate.
    */
+  /**
+   * Questions for the current fight: those of the section just read first, then earlier sections'
+   * as review. Never anything from a section not read yet.
+   */
+  private dealDeck(): void {
+    const { pool, current } = sectionQuestions(this.encounter, this.engine.waveIndex + 1);
+    const seen = [...progress.save.asked, ...this.askedHere];
+    this.deck = new QuestionDeck(pool, this.rng, undefined, seen, current);
+  }
+
   private armor(): { specials: SpecialId[]; ultimate: boolean } {
     if (this.debug.specials) return { specials: this.debug.specials, ultimate: true };
     return ownedArmor(progress.save, ENCOUNTERS);
@@ -495,6 +510,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     const drawn = this.deck.draw();
+    this.askedHere.push(drawn.id);
     const passageIds = this.encounter.questions.map((x) => x.id);
     progress.update((s) => recordAsked(s, drawn.id, passageIds));
     const q = shuffleChoices(drawn, this.rng);
@@ -634,6 +650,8 @@ export class BattleScene extends Phaser.Scene {
     }
     if (res.foeDefeated && res.nextWave !== null) {
       await Promise.all([this.foeDefeated(), this.backDefeated()]);
+      await this.hero.act('victory');
+      await this.readNextSection();
       await this.spawnNextFoe();
       this.setBusy(false);
       return;
@@ -866,6 +884,31 @@ export class BattleScene extends Phaser.Scene {
     this.sync();
   }
 
+  /**
+   * Between fights the next part of the passage is read: the battle sleeps while the reading
+   * scene runs, then wakes with the energy from that reading's orbs. Health and faith carry on.
+   */
+  private async readNextSection(): Promise<void> {
+    const cam = this.cameras.main;
+    cam.fadeOut(300, 5, 3, 13);
+    await new Promise<void>((r) => cam.once('camerafadeoutcomplete', () => r()));
+    const energy = await new Promise<number>((resolve) => {
+      this.events.once('wake', (_sys: unknown, data?: { energy?: number }) =>
+        resolve(data?.energy ?? 0),
+      );
+      this.registry.set('readingSection', this.engine.waveIndex);
+      this.scene.run('scripture');
+      this.scene.sleep();
+    });
+    updateTestState({ ready: true, scene: 'battle', scripture: null });
+    if (!this.debug.freeze) this.hero.idle(); // out of the cheer from the last fight
+    cam.fadeIn(300, 5, 3, 13);
+    this.engine.addEnergy(energy);
+    this.drawFaith();
+    this.dealDeck();
+    this.actionBar.refresh(this.engine, false);
+  }
+
   private async spawnNextFoe(): Promise<void> {
     const spec = this.engine.foe as EncounterFoe;
     this.foe.destroy();
@@ -1088,6 +1131,8 @@ export class BattleScene extends Phaser.Scene {
     this.closeLeaveConfirm();
     this.leaveButton.setVisible(false);
     const next = nextEncounter(this.encounter.id);
+    // Where paths split, the player picks the next one on the map.
+    const atFork = childrenOf(this.encounter.id).length > 1;
     const firstWin = !(this.encounter.id in progress.save.completed);
     let result!: ReturnType<typeof recordVictory>;
     progress.update(
@@ -1115,7 +1160,9 @@ export class BattleScene extends Phaser.Scene {
         newBest: result.newBest,
         rune: firstWin ? this.encounter.rune : undefined,
       },
-      { label: next ? 'Next passage' : 'Play again', onTap: goNext },
+      atFork
+        ? { label: 'Choose your path', onTap: () => this.scene.start('map') }
+        : { label: next ? 'Next passage' : 'Play again', onTap: goNext },
       { label: 'Passages', onTap: () => this.scene.start('map') },
     );
     await this.result.appear();

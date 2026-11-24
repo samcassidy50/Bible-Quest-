@@ -1,0 +1,175 @@
+{
+  "id": "gen-031",
+  "title": "The Tower of Babel",
+  "passage": "GEN 11:1-9",
+  "setting": "babel",
+  "sections": [
+    {
+      "verses": "1-2",
+      "foe": {
+        "id": "brick-golem-1",
+        "name": "Brick Golem",
+        "maxHp": 25,
+        "attack": 17,
+        "color": "#9a6a3f",
+        "size": 0.85,
+        "sprite": "fire-spirit"
+      },
+      "orbs": [
+        {
+          "word": "language"
+        }
+      ]
+    },
+    {
+      "verses": "3-4",
+      "foe": {
+        "id": "brick-golem-2",
+        "name": "Brick Golem",
+        "maxHp": 25,
+        "attack": 19,
+        "color": "#855a33",
+        "size": 0.95,
+        "sprite": "fire-spirit"
+      },
+      "orbs": [
+        {
+          "word": "bricks"
+        },
+        {
+          "word": "tower"
+        },
+        {
+          "word": "famous"
+        }
+      ]
+    },
+    {
+      "verses": "5-7",
+      "foe": {
+        "id": "brick-golem-3",
+        "name": "Brick Golem",
+        "maxHp": 25,
+        "attack": 19,
+        "color": "#7a5230",
+        "size": 1.0,
+        "sprite": "fire-spirit"
+      },
+      "orbs": [
+        {
+          "word": "mix"
+        }
+      ]
+    },
+    {
+      "verses": "8-9",
+      "foe": {
+        "id": "tower-golem",
+        "name": "Tower Golem",
+        "maxHp": 45,
+        "attack": 20,
+        "color": "#5c3d22",
+        "size": 1.45,
+        "sprite": "minotaur"
+      },
+      "orbs": [
+        {
+          "word": "scattered"
+        }
+      ]
+    }
+  ],
+  "rune": "zeal",
+  "questions": [
+    {
+      "id": "gen-031-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How many languages did the whole world have?",
+      "choices": ["One", "Two", "Ten", "Seventy"],
+      "answerIndex": 0,
+      "highlight": "the whole world had one language",
+      "section": 1
+    },
+    {
+      "id": "gen-031-q2",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Where did the people settle?",
+      "choices": ["On a plain in the land of Shinar", "In Eden", "On Ararat", "By the sea"],
+      "answerIndex": 0,
+      "highlight": "a flat plain in the land of Shinar",
+      "section": 1
+    },
+    {
+      "id": "gen-031-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did they use instead of stone?",
+      "choices": ["Bricks", "Wood", "Ice", "Gold"],
+      "answerIndex": 0,
+      "highlight": "They used bricks instead of stone",
+      "section": 2
+    },
+    {
+      "id": "gen-031-q4",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Why did they want to build the tower?",
+      "choices": [
+        "To become famous and not be scattered",
+        "To see God",
+        "To escape a flood",
+        "To count the stars"
+      ],
+      "answerIndex": 0,
+      "highlight": "Then we will become famous",
+      "section": 2
+    },
+    {
+      "id": "gen-031-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the Lord do to their language?",
+      "choices": ["Mixed it up", "Wrote it down", "Made it louder", "Took it away"],
+      "answerIndex": 0,
+      "highlight": "mix up their language",
+      "section": 3
+    },
+    {
+      "id": "gen-031-q8",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Why did the Lord come down?",
+      "choices": [
+        "To see the city and the tower",
+        "To help build the tower",
+        "To rest",
+        "To find Noah"
+      ],
+      "answerIndex": 0,
+      "highlight": "the Lord came down to see the city and the tower",
+      "section": 3
+    },
+    {
+      "id": "gen-031-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the people stop building?",
+      "choices": ["The city", "Their houses", "Boats", "Altars"],
+      "answerIndex": 0,
+      "highlight": "they stopped building the city",
+      "section": 4
+    },
+    {
+      "id": "gen-031-q7",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What was the city called?",
+      "choices": ["Babel", "Eden", "Shinar", "Ararat"],
+      "answerIndex": 0,
+      "highlight": "it was called Babel",
+      "section": 4
+    }
+  ]
+}

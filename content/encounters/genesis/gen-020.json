@@ -1,0 +1,129 @@
+{
+  "id": "gen-020",
+  "title": "Two of Every Kind",
+  "passage": "GEN 6:17-22",
+  "setting": "shipyard",
+  "sections": [
+    {
+      "verses": "17-18",
+      "foe": {
+        "id": "squall-1",
+        "name": "Squall",
+        "maxHp": 25,
+        "attack": 17,
+        "color": "#5a6f7f",
+        "size": 0.8,
+        "sprite": "squall"
+      },
+      "orbs": [
+        {
+          "word": "flood"
+        },
+        {
+          "word": "promise"
+        }
+      ]
+    },
+    {
+      "verses": "19-22",
+      "foe": {
+        "id": "gathering-storm",
+        "name": "Gathering Storm",
+        "maxHp": 45,
+        "attack": 20,
+        "color": "#26323d",
+        "size": 1.35,
+        "sprite": "storm-cloud"
+      },
+      "orbs": [
+        {
+          "word": "two"
+        },
+        {
+          "word": "food"
+        },
+        {
+          "word": "everything"
+        }
+      ]
+    }
+  ],
+  "rune": "guard",
+  "questions": [
+    {
+      "id": "gen-020-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What was God going to bring on the earth?",
+      "choices": ["A flood of waters", "A fire", "A sandstorm", "Snow"],
+      "answerIndex": 0,
+      "highlight": "a flood of waters",
+      "section": 1
+    },
+    {
+      "id": "gen-020-q2",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What would God make with Noah?",
+      "choices": ["His promise", "A tower", "A city", "A garden"],
+      "answerIndex": 0,
+      "highlight": "I will make My promise with you",
+      "section": 1
+    },
+    {
+      "id": "gen-020-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Who would go into the ark?",
+      "choices": [
+        "Noah, his wife, his sons, and their wives",
+        "Only Noah",
+        "Everyone on earth",
+        "Only the animals"
+      ],
+      "answerIndex": 0,
+      "highlight": "you and your sons, your wife, and your sons’ wives",
+      "section": 1
+    },
+    {
+      "id": "gen-020-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How many of every kind of living creature should Noah bring?",
+      "choices": ["Two", "One", "Ten", "Twenty"],
+      "answerIndex": 0,
+      "highlight": "Bring two of every kind of living creature",
+      "section": 2
+    },
+    {
+      "id": "gen-020-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Why did Noah bring the animals into the ark?",
+      "choices": ["To keep them alive", "To sell them", "To race them", "To name them"],
+      "answerIndex": 0,
+      "highlight": "to keep them alive with you",
+      "section": 2
+    },
+    {
+      "id": "gen-020-q6",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did God tell Noah to store away?",
+      "choices": ["Every kind of food", "Gold", "Toys", "Only water"],
+      "answerIndex": 0,
+      "highlight": "Take every kind of food that is eaten",
+      "section": 2
+    },
+    {
+      "id": "gen-020-q7",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "Noah did everything just as God told him.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "Noah did everything just as God told him",
+      "section": 2
+    }
+  ]
+}

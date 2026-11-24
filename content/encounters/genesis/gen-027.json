@@ -1,0 +1,144 @@
+{
+  "id": "gen-027",
+  "title": "The Rainbow Promise",
+  "passage": "GEN 9:8-17",
+  "setting": "flood",
+  "weather": "clearing",
+  "sections": [
+    {
+      "verses": "8-11",
+      "foe": {
+        "id": "squall-1",
+        "name": "Squall",
+        "maxHp": 25,
+        "attack": 17,
+        "color": "#5a6f7f",
+        "size": 0.85,
+        "sprite": "squall"
+      },
+      "orbs": [
+        {
+          "word": "promise"
+        },
+        {
+          "word": "flood"
+        }
+      ]
+    },
+    {
+      "verses": "12-13",
+      "foe": {
+        "id": "squall-2",
+        "name": "Squall",
+        "maxHp": 25,
+        "attack": 19,
+        "color": "#4c5f6e",
+        "size": 0.9,
+        "sprite": "squall"
+      },
+      "orbs": [
+        {
+          "word": "rainbow"
+        },
+        {
+          "word": "clouds"
+        }
+      ]
+    },
+    {
+      "verses": "14-17",
+      "foe": {
+        "id": "tempest",
+        "name": "Tempest",
+        "maxHp": 45,
+        "attack": 20,
+        "color": "#26323d",
+        "size": 1.4,
+        "sprite": "tempest"
+      },
+      "orbs": [
+        {
+          "word": "forever"
+        }
+      ]
+    }
+  ],
+  "rune": "peace",
+  "questions": [
+    {
+      "id": "gen-027-q1",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Who did God make His promise with?",
+      "choices": [
+        "Noah, his children, and every living creature",
+        "Only the birds",
+        "Only Noah",
+        "The serpent"
+      ],
+      "answerIndex": 0,
+      "highlight": "I am making My promise with you and with your children after you",
+      "section": 1
+    },
+    {
+      "id": "gen-027-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did God promise would never happen again?",
+      "choices": ["A flood to destroy the earth", "Rain", "Night", "Winter"],
+      "answerIndex": 0,
+      "highlight": "Never again will there be a flood to destroy the earth",
+      "section": 1
+    },
+    {
+      "id": "gen-027-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What is the sign of God’s promise?",
+      "choices": ["The rainbow", "A dove", "A star", "The ark"],
+      "answerIndex": 0,
+      "highlight": "I have put My rainbow in the clouds",
+      "section": 2
+    },
+    {
+      "id": "gen-027-q7",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "How long is the promise for?",
+      "choices": ["For all time to come", "For one year", "Until Noah is old", "For a week"],
+      "answerIndex": 0,
+      "highlight": "a promise for all time to come",
+      "section": 2
+    },
+    {
+      "id": "gen-027-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where does the rainbow appear?",
+      "choices": ["In the clouds", "In the sea", "In the garden", "In the ark"],
+      "answerIndex": 0,
+      "highlight": "the rainbow appears in the clouds",
+      "section": 3
+    },
+    {
+      "id": "gen-027-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What will God do when He sees the rainbow?",
+      "choices": ["Remember His promise", "Send rain", "Go to sleep", "Build a tower"],
+      "answerIndex": 0,
+      "highlight": "I will remember My promise",
+      "section": 3
+    },
+    {
+      "id": "gen-027-q6",
+      "type": "fill_blank",
+      "difficulty": "medium",
+      "prompt": "The promise that lasts ____.",
+      "choices": ["forever", "a week", "a year", "one day"],
+      "answerIndex": 0,
+      "highlight": "the promise that lasts forever",
+      "section": 3
+    }
+  ]
+}

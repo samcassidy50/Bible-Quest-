@@ -1,109 +1,152 @@
 {
   "id": "gen-011",
-  "title": "The Tower of Babel",
-  "passage": "GEN 11:4-7",
-  "setting": "babel",
-  "waves": [
+  "title": "Thorns and Thistles",
+  "passage": "GEN 3:14-19",
+  "setting": "wilderness",
+  "sections": [
     {
-      "id": "brick-1",
-      "name": "Brick Golem",
-      "maxHp": 25,
-      "attack": 17,
-      "color": "#9a6a3f",
-      "size": 0.85,
-      "sprite": "fire-spirit"
+      "verses": "14-15",
+      "foe": {
+        "id": "thorn-sprout",
+        "name": "Thorn Sprout",
+        "maxHp": 25,
+        "attack": 17,
+        "color": "#6b4f2a",
+        "size": 0.8,
+        "sprite": "thorn-plant"
+      },
+      "orbs": [
+        {
+          "word": "belly"
+        },
+        {
+          "word": "crush"
+        },
+        {
+          "word": "heel"
+        }
+      ]
     },
     {
-      "id": "brick-2",
-      "name": "Brick Golem",
-      "maxHp": 25,
-      "attack": 19,
-      "color": "#855a33",
-      "size": 0.95,
-      "sprite": "fire-spirit"
+      "verses": "16",
+      "foe": {
+        "id": "thistle-brute",
+        "name": "Thistle Brute",
+        "maxHp": 25,
+        "attack": 19,
+        "color": "#5a3f1f",
+        "size": 0.95,
+        "sprite": "thorn-plant"
+      },
+      "orbs": [
+        {
+          "word": "husband"
+        }
+      ]
     },
     {
-      "id": "tower",
-      "name": "Tower Golem",
-      "maxHp": 45,
-      "attack": 20,
-      "color": "#5c3d22",
-      "size": 1.45,
-      "sprite": "minotaur"
+      "verses": "17-19",
+      "foe": {
+        "id": "thornbeast",
+        "name": "Thornbeast",
+        "maxHp": 45,
+        "attack": 22,
+        "color": "#3b2812",
+        "size": 1.3,
+        "sprite": "thorn-plant"
+      },
+      "orbs": [
+        {
+          "word": "thorns"
+        },
+        {
+          "word": "dust"
+        }
+      ]
     }
   ],
-  "orbs": [
-    {
-      "word": "city"
-    },
-    {
-      "word": "tower"
-    },
-    {
-      "word": "famous"
-    },
-    {
-      "word": "language"
-    },
-    {
-      "word": "mix"
-    }
-  ],
+  "unlocks": "ultimate",
   "rune": "haste",
   "questions": [
     {
       "id": "gen-011-q1",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What did the people want to build?",
-      "choices": ["A city with a tower", "An ark", "A garden", "A bridge"],
+      "prompt": "How would the serpent move?",
+      "choices": ["On its belly", "On four legs", "By flying", "By swimming"],
       "answerIndex": 0,
-      "highlight": "let’s build a city for ourselves, with a tower"
+      "highlight": "You will crawl on your belly",
+      "section": 1
     },
     {
       "id": "gen-011-q2",
-      "type": "multiple_choice",
-      "difficulty": "easy",
-      "prompt": "How high did they want the tower to reach?",
-      "choices": ["Up to the heavens", "To the mountains", "Just above the houses", "To the sea"],
+      "type": "fill_blank",
+      "difficulty": "medium",
+      "prompt": "“He will ____ your head.”",
+      "choices": ["crush", "pat", "wash", "crown"],
       "answerIndex": 0,
-      "highlight": "a tower that reaches up to the heavens"
+      "highlight": "He will crush your head",
+      "section": 1
     },
     {
       "id": "gen-011-q3",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What would the serpent strike?",
+      "choices": ["His heel", "His hand", "His head", "His back"],
+      "answerIndex": 0,
+      "highlight": "you will strike his heel",
+      "section": 1
+    },
+    {
+      "id": "gen-011-q7",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did God say would be very painful for the woman?",
+      "choices": ["Having children", "Walking", "Eating", "Sleeping"],
+      "answerIndex": 0,
+      "highlight": "I will make it very painful for you to have children",
+      "section": 2
+    },
+    {
+      "id": "gen-011-q8",
       "type": "fill_blank",
       "difficulty": "medium",
-      "prompt": "“Then we will become ____.”",
-      "choices": ["famous", "sleepy", "hungry", "lost"],
+      "prompt": "“You will long for your ____.”",
+      "choices": ["husband", "garden", "home", "mother"],
       "answerIndex": 0,
-      "highlight": "Then we will become famous"
+      "highlight": "You will long for your husband",
+      "section": 2
     },
     {
       "id": "gen-011-q4",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "Who came down to see the city and the tower?",
-      "choices": ["The Lord", "An angel", "Noah", "A king"],
+      "prompt": "What would the cursed ground grow?",
+      "choices": ["Thorns and thistles", "Gold", "Only flowers", "Candy"],
       "answerIndex": 0,
-      "highlight": "the Lord came down to see the city and the tower"
+      "highlight": "thorns and thistles",
+      "section": 3
     },
     {
       "id": "gen-011-q5",
-      "type": "true_false",
-      "difficulty": "easy",
-      "prompt": "True or false: the people all spoke the same language.",
-      "choices": ["True", "False"],
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "How would Adam get his food?",
+      "choices": ["By working hard and sweating", "Easily", "From the serpent", "From the sky"],
       "answerIndex": 0,
-      "highlight": "they all speak the same language"
+      "highlight": "You will sweat and work hard for your bread",
+      "section": 3
     },
     {
       "id": "gen-011-q6",
-      "type": "multiple_choice",
+      "type": "fill_blank",
       "difficulty": "easy",
-      "prompt": "What did the Lord say He would mix up?",
-      "choices": ["Their language", "Their tower", "Their food", "Their animals"],
+      "prompt": "“You are dust, and you will go back to ____.”",
+      "choices": ["dust", "Eden", "the sea", "sleep"],
       "answerIndex": 0,
-      "highlight": "mix up their language"
+      "highlight": "you will go back to dust",
+      "section": 3
     }
   ]
 }

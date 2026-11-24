@@ -1,52 +1,51 @@
 {
   "id": "gen-006",
-  "title": "Thorns and Thistles",
-  "passage": "GEN 3:17-19",
-  "setting": "wilderness",
-  "waves": [
+  "title": "God Rests",
+  "passage": "GEN 2:1-7",
+  "setting": "light",
+  "sections": [
     {
-      "id": "sprout-1",
-      "name": "Thorn Sprout",
-      "maxHp": 25,
-      "attack": 17,
-      "color": "#6b4f2a",
-      "size": 0.8,
-      "sprite": "thorn-plant"
+      "verses": "1-3",
+      "foe": {
+        "id": "restless-spark-1",
+        "name": "Restless Spark",
+        "maxHp": 25,
+        "attack": 17,
+        "color": "#c0632e",
+        "size": 0.8,
+        "sprite": "fire-spirit"
+      },
+      "orbs": [
+        {
+          "word": "seventh"
+        },
+        {
+          "word": "rested"
+        },
+        {
+          "word": "holy"
+        }
+      ]
     },
     {
-      "id": "thistle",
-      "name": "Thistle Brute",
-      "maxHp": 25,
-      "attack": 19,
-      "color": "#5a3f1f",
-      "size": 0.95,
-      "sprite": "thorn-plant"
-    },
-    {
-      "id": "thornbeast",
-      "name": "Thornbeast",
-      "maxHp": 45,
-      "attack": 22,
-      "color": "#3b2812",
-      "size": 1.3,
-      "sprite": "thorn-plant"
-    }
-  ],
-  "orbs": [
-    {
-      "word": "cursed"
-    },
-    {
-      "word": "work"
-    },
-    {
-      "word": "thorns"
-    },
-    {
-      "word": "sweat"
-    },
-    {
-      "word": "dust"
+      "verses": "4-7",
+      "foe": {
+        "id": "restless-blaze",
+        "name": "Restless Blaze",
+        "maxHp": 45,
+        "attack": 22,
+        "color": "#7a3a1c",
+        "size": 1.3,
+        "sprite": "fire-spirit"
+      },
+      "orbs": [
+        {
+          "word": "mist"
+        },
+        {
+          "word": "breath"
+        }
+      ]
     }
   ],
   "rune": "life",
@@ -55,60 +54,61 @@
       "id": "gen-006-q1",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What would the ground grow?",
-      "choices": ["Thorns and thistles", "Gold and silver", "Only flowers", "Nothing at all"],
+      "prompt": "What did God do on the seventh day?",
+      "choices": ["He rested", "He made the sun", "He made the sea", "He planted a garden"],
       "answerIndex": 0,
-      "highlight": "It will grow thorns and thistles"
+      "highlight": "on the seventh day He rested",
+      "section": 1
     },
     {
       "id": "gen-006-q2",
-      "type": "fill_blank",
+      "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "You will ____ and work hard for your bread.",
-      "choices": ["sweat", "sleep", "sing", "rest"],
+      "prompt": "What did God do to the seventh day?",
+      "choices": ["Blessed it and made it holy", "Made it longer", "Made it dark", "Forgot it"],
       "answerIndex": 0,
-      "highlight": "You will sweat and work hard for your bread"
+      "highlight": "God blessed the seventh day and made it holy",
+      "section": 1
     },
     {
       "id": "gen-006-q3",
       "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "Why was the ground cursed?",
-      "choices": [
-        "Adam ate from the tree God told him not to eat from",
-        "Adam planted too many trees",
-        "It rained too much",
-        "The animals trampled it"
-      ],
+      "prompt": "What watered the ground before it rained?",
+      "choices": ["A mist", "A river", "Snow", "The sea"],
       "answerIndex": 0,
-      "highlight": "ate from the tree I told you not to eat from"
+      "highlight": "a mist came up from the earth",
+      "section": 2
     },
     {
       "id": "gen-006-q4",
-      "type": "true_false",
+      "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "True or false: God said Adam is dust and will go back to dust.",
-      "choices": ["True", "False"],
+      "prompt": "What did the Lord God make the man from?",
+      "choices": ["The dust of the ground", "Wood", "Water", "Light"],
       "answerIndex": 0,
-      "highlight": "You are dust, and you will go back to dust"
+      "highlight": "the dust of the ground",
+      "section": 2
     },
     {
       "id": "gen-006-q5",
-      "type": "multiple_choice",
+      "type": "fill_blank",
       "difficulty": "easy",
-      "prompt": "How would Adam get food from the ground?",
-      "choices": ["By working hard", "With no effort", "Only on holidays", "With help from angels"],
+      "prompt": "He breathed the ____ of life into his nose.",
+      "choices": ["breath", "fire", "water", "song"],
       "answerIndex": 0,
-      "highlight": "You will work hard to get food from it"
+      "highlight": "breath of life",
+      "section": 2
     },
     {
       "id": "gen-006-q6",
-      "type": "multiple_choice",
+      "type": "true_false",
       "difficulty": "medium",
-      "prompt": "What would Adam eat from the field?",
-      "choices": ["Plants", "Fish", "Bread from the sky", "Honey from rocks"],
+      "prompt": "Before this, there was no one to work the ground.",
+      "choices": ["True", "False"],
       "answerIndex": 0,
-      "highlight": "you will eat the plants of the field"
+      "highlight": "there was no one to work the ground",
+      "section": 2
     }
   ]
 }

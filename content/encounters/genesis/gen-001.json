@@ -1,46 +1,45 @@
 {
   "id": "gen-001",
   "title": "In the Beginning",
-  "passage": "GEN 1:1-2",
+  "passage": "GEN 1:1-5",
   "setting": "deep",
-  "waves": [
+  "sections": [
     {
-      "id": "wisp-1",
-      "name": "Shadow Wisp",
-      "maxHp": 20,
-      "attack": 15,
-      "color": "#4b3b78",
-      "size": 0.8,
-      "sprite": "slime-blue"
+      "verses": "1-2",
+      "foe": {
+        "id": "shadow-wisp-1",
+        "name": "Shadow Wisp",
+        "maxHp": 20,
+        "attack": 15,
+        "color": "#4b3b78",
+        "size": 0.8,
+        "sprite": "slime-blue"
+      },
+      "orbs": [
+        {
+          "word": "beginning"
+        },
+        {
+          "word": "waters"
+        }
+      ]
     },
     {
-      "id": "wisp-2",
-      "name": "Shadow Wisp",
-      "maxHp": 25,
-      "attack": 17,
-      "color": "#3d2f66",
-      "size": 0.9,
-      "sprite": "slime-blue"
-    },
-    {
-      "id": "shade",
-      "name": "Shade of the Deep",
-      "maxHp": 40,
-      "attack": 20,
-      "color": "#241a45",
-      "size": 1.25,
-      "sprite": "slime-blue"
-    }
-  ],
-  "orbs": [
-    {
-      "word": "beginning"
-    },
-    {
-      "word": "shape"
-    },
-    {
-      "word": "waters"
+      "verses": "3-5",
+      "foe": {
+        "id": "shade-of-the-deep",
+        "name": "Shade of the Deep",
+        "maxHp": 40,
+        "attack": 20,
+        "color": "#241a45",
+        "size": 1.25,
+        "sprite": "slime-blue"
+      },
+      "orbs": [
+        {
+          "word": "light"
+        }
+      ]
     }
   ],
   "unlocks": "sword",
@@ -51,59 +50,70 @@
       "type": "multiple_choice",
       "difficulty": "easy",
       "prompt": "What did God make in the beginning?",
-      "choices": ["The heavens and the earth", "The sun and the moon", "The animals", "A garden"],
+      "choices": ["The heavens and the earth", "The sun and the moon", "The animals", "The garden"],
       "answerIndex": 0,
-      "highlight": "God made the heavens and the earth"
+      "highlight": "God made the heavens and the earth",
+      "section": 1
     },
     {
       "id": "gen-001-q2",
-      "type": "true_false",
+      "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "True or false: at the start, the earth was full of light.",
-      "choices": ["True", "False"],
-      "answerIndex": 1,
-      "highlight": "Darkness covered the deep waters"
+      "prompt": "What covered the deep waters?",
+      "choices": ["Darkness", "Ice", "Light", "Clouds"],
+      "answerIndex": 0,
+      "highlight": "Darkness covered the deep waters",
+      "section": 1
     },
     {
       "id": "gen-001-q3",
       "type": "fill_blank",
       "difficulty": "medium",
-      "prompt": "The Spirit of God was hovering over the ____.",
-      "choices": ["waters", "mountains", "garden", "sky"],
+      "prompt": "And the Spirit of God was ____ over the waters.",
+      "choices": ["hovering", "sleeping", "walking", "singing"],
       "answerIndex": 0,
-      "highlight": "hovering over the waters"
+      "highlight": "hovering over the waters",
+      "section": 1
     },
     {
       "id": "gen-001-q4",
-      "type": "multiple_choice",
-      "difficulty": "medium",
-      "prompt": "What was the earth like at first?",
-      "choices": [
-        "Full of animals",
-        "It had no shape and was empty",
-        "Covered in trees",
-        "Bright and sunny"
-      ],
-      "answerIndex": 1,
-      "highlight": "The earth had no shape, and it was empty"
+      "type": "fill_blank",
+      "difficulty": "easy",
+      "prompt": "God said, “Let there be ____,” and there was light.",
+      "choices": ["light", "water", "land", "stars"],
+      "answerIndex": 0,
+      "highlight": "Let there be light",
+      "section": 2
     },
     {
       "id": "gen-001-q5",
-      "type": "multiple_choice",
+      "type": "true_false",
       "difficulty": "easy",
-      "prompt": "Who was hovering over the waters?",
-      "choices": ["An angel", "A dove", "The Spirit of God", "Adam"],
-      "answerIndex": 2,
-      "highlight": "the Spirit of God was hovering"
+      "prompt": "God saw that the light was good.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "God saw that the light was good",
+      "section": 2
     },
     {
       "id": "gen-001-q6",
       "type": "multiple_choice",
-      "difficulty": "easy",
-      "prompt": "When did God make the heavens and the earth?",
-      "choices": ["After the flood", "On the seventh day", "In the garden", "In the beginning"],
-      "answerIndex": 3,
-      "highlight": "In the beginning"
+      "difficulty": "medium",
+      "prompt": "What did God call the darkness?",
+      "choices": ["Night", "Day", "Morning", "The deep"],
+      "answerIndex": 0,
+      "highlight": "He called the darkness “night.”",
+      "section": 2
+    },
+    {
+      "id": "gen-001-q7",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Which day was this?",
+      "choices": ["The first day", "The second day", "The fourth day", "The seventh day"],
+      "answerIndex": 0,
+      "highlight": "That was the first day",
+      "section": 2
     }
   ]
 }

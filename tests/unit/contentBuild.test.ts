@@ -6,6 +6,7 @@ import {
   resolvePassage,
 } from '../../src/core/content/bible';
 import { buildEncounter, canonicalOrder, validateCollection } from '../../src/core/content/build';
+import { sectionQuestions, textUpToSection } from '../../src/core/content/types';
 import { shuffleChoices } from '../../src/core/quiz/shuffleChoices';
 import { createRng } from '../../src/core/rng';
 
@@ -20,15 +21,16 @@ const q = (n: number, extra: Record<string, unknown> = {}) => ({
   choices: ['Alpha', 'Beta', 'Gamma', 'Delta'],
   answerIndex: 0,
   highlight: 'Alpha beta',
+  section: 1,
   ...extra,
 });
+const foe = (id = 'foe') => ({ id, name: 'Foe', maxHp: 10, attack: 1, color: '#123456', size: 1 });
 const file = (extra: Record<string, unknown> = {}) => ({
   id: 'test-1',
   title: 'Test',
   passage: 'GEN 1:1-2',
   setting: 'deep',
-  waves: [{ id: 'foe', name: 'Foe', maxHp: 10, attack: 1, color: '#123456', size: 1 }],
-  orbs: [{ word: 'epsilon' }],
+  sections: [{ verses: '1-2', foe: foe(), orbs: [{ word: 'epsilon' }] }],
   questions: [1, 2, 3, 4, 5, 6].map((n) => q(n)),
   ...extra,
 });
@@ -74,7 +76,7 @@ describe('buildEncounter', () => {
     expect(() => buildEncounter(file({ questions: [q(1)] }), bible, 'x.json')).toThrow(
       /x\.json: invalid file[\s\S]*questions/,
     );
-    expect(() => buildEncounter(file({ waves: [] }), bible)).toThrow(/waves/);
+    expect(() => buildEncounter(file({ sections: [] }), bible)).toThrow(/sections/);
     const tfBad = file({
       questions: [1, 2, 3, 4, 5]
         .map((n) => q(n))
@@ -85,10 +87,9 @@ describe('buildEncounter', () => {
 
   it('reports every content rule that is broken', () => {
     const bad = file({
-      orbs: [{ word: 'omega' }, { word: 'omega' }, {}],
-      waves: [
-        { id: 'foe', name: 'Foe', maxHp: 10, attack: 1, color: '#123456', size: 1 },
-        { id: 'foe', name: 'Foe', maxHp: 10, attack: 1, color: '#123456', size: 1 },
+      sections: [
+        { verses: '1', foe: foe(), orbs: [{ word: 'omega' }, { word: 'omega' }, {}] },
+        { verses: '2', foe: foe(), orbs: [] },
       ],
       questions: [
         q(1, { highlight: 'not in text' }),
@@ -96,7 +97,7 @@ describe('buildEncounter', () => {
         q(3, { choices: ['A', 'A', 'B', 'C'] }),
         q(4, { id: 'other-q4' }),
         q(1),
-        q(6),
+        q(6, { section: 3 }),
       ],
     });
     let message = '';
@@ -114,6 +115,9 @@ describe('buildEncounter', () => {
       'word "omega"',
       'duplicate orb word "omega"',
       'duplicate foe id "foe"',
+      'orb word "omega" is not in section 1',
+      'section 2 has 0 question(s)',
+      'section 3, but the passage has 2',
     ]) {
       expect(message).toContain(part);
     }
@@ -125,7 +129,7 @@ describe('buildEncounter', () => {
       file({
         id: 'test-2',
         passage: 'GEN 2:1',
-        orbs: [],
+        sections: [{ verses: '1', foe: foe(), orbs: [] }],
         questions: [1, 2, 3, 4, 5, 6].map((n) =>
           q(n, { id: `test-2-q${n}`, highlight: 'Eta theta' }),
         ),
@@ -192,20 +196,86 @@ describe('armor rewards', () => {
       /"sword" is awarded by both test-1 and test-2/,
     );
     expect(() => buildEncounter(file({ unlocks: 'laser' }), bible)).toThrow(/unlocks/);
-    expect(() => buildEncounter(file({ orbs: [{ special: 'sword' }] }), bible)).toThrow(
-      /invalid file/,
-    );
+    expect(() =>
+      buildEncounter(
+        file({ sections: [{ verses: '1-2', foe: foe(), orbs: [{ special: 'sword' }] }] }),
+        bible,
+      ),
+    ).toThrow(/invalid file/);
   });
 });
 
 describe('foe sprites', () => {
-  const foe = { id: 'foe', name: 'Foe', maxHp: 10, attack: 1, color: '#123456', size: 1 };
+  const withSprite = (sprite: string) =>
+    file({ sections: [{ verses: '1-2', foe: { ...foe(), sprite }, orbs: [] }] });
   it('a foe may name known sprite art, and nothing else', () => {
-    const built = buildEncounter(file({ waves: [{ ...foe, sprite: 'slime-lava' }] }), bible);
-    expect(built.waves[0]?.sprite).toBe('slime-lava');
+    expect(buildEncounter(withSprite('slime-lava'), bible).waves[0]?.sprite).toBe('slime-lava');
     expect(buildEncounter(file(), bible).waves[0]?.sprite).toBeUndefined();
-    expect(() => buildEncounter(file({ waves: [{ ...foe, sprite: 'dragon' }] }), bible)).toThrow(
-      /sprite/,
-    );
+    expect(() => buildEncounter(withSprite('dragon'), bible)).toThrow(/sprite/);
+  });
+});
+
+describe('reading sections', () => {
+  const twoParts = (questions: unknown[]) =>
+    file({
+      sections: [
+        { verses: '1', foe: foe('a'), orbs: [{ word: 'beta' }] },
+        { verses: '2', foe: foe('b'), orbs: [{ word: 'zeta' }] },
+      ],
+      questions,
+    });
+  const four = [
+    q(1),
+    q(2, { highlight: 'gamma' }),
+    q(3, { highlight: 'Delta', section: 2 }),
+    q(4, { highlight: 'zeta', section: 2 }),
+    q(5, { section: 2 }), // review: asks about section 1 in the second fight
+    q(6, { highlight: 'beta' }),
+  ];
+
+  it('splits the passage into readings, each with its own verses, foe and orbs', () => {
+    const e = buildEncounter(twoParts(four), bible);
+    expect(e.sections.map((s) => s.reference)).toEqual(['Genesis 1:1', 'Genesis 1:2']);
+    expect(e.sections[1]!.verses[0]!.text).toBe('Delta epsilon zeta.');
+    expect(e.waves.map((w) => w.id)).toEqual(['a', 'b']);
+    expect(e.orbs).toEqual([{ word: 'beta' }, { word: 'zeta' }]);
+    expect(e.verses).toHaveLength(2);
+  });
+
+  it('only asks about what has been read: the fight after a section draws from it and earlier ones', () => {
+    const e = buildEncounter(twoParts(four), bible);
+    expect(textUpToSection(e, 1)).toBe('Alpha beta gamma.');
+    const first = sectionQuestions(e, 1);
+    expect(first.pool.map((x) => x.id)).toEqual(['test-1-q1', 'test-1-q2', 'test-1-q6']);
+    expect(first.current).toEqual(['test-1-q1', 'test-1-q2', 'test-1-q6']);
+    const second = sectionQuestions(e, 2);
+    expect(second.pool).toHaveLength(6);
+    expect(second.current).toEqual(['test-1-q3', 'test-1-q4', 'test-1-q5']);
+  });
+
+  it('rejects a question about a part not read yet', () => {
+    const early = [...four.slice(0, 5), q(6, { highlight: 'Delta', section: 1 })];
+    expect(() => buildEncounter(twoParts(early), bible)).toThrow(/not read by section 1/);
+  });
+
+  it('requires the sections to cover the passage in order', () => {
+    const parts = (a: string, b: string) =>
+      file({
+        sections: [
+          { verses: a, foe: foe('a'), orbs: [] },
+          { verses: b, foe: foe('b'), orbs: [] },
+        ],
+      });
+    expect(() => buildEncounter(parts('1', '1'), bible)).toThrow(/start at verse 2/);
+    expect(() => buildEncounter(parts('2', '1'), bible)).toThrow(/start at verse 1/);
+    expect(() =>
+      buildEncounter(file({ sections: [{ verses: '1', foe: foe(), orbs: [] }] }), bible),
+    ).toThrow(/sections end at verse 1, not 2/);
+    expect(() =>
+      buildEncounter(
+        file({ sections: [1, 2, 3, 4, 5].map(() => ({ verses: '1', foe: foe(), orbs: [] })) }),
+        bible,
+      ),
+    ).toThrow(/sections/);
   });
 });

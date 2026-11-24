@@ -1,52 +1,65 @@
 {
   "id": "gen-007",
-  "title": "Sin at the Door",
-  "passage": "GEN 4:6-7",
-  "setting": "fields",
-  "waves": [
+  "title": "The Garden of Eden",
+  "passage": "GEN 2:8-17",
+  "setting": "garden",
+  "sections": [
     {
-      "id": "shadow-1",
-      "name": "Lurking Shadow",
-      "maxHp": 25,
-      "attack": 17,
-      "color": "#3a2f4f",
-      "size": 0.8,
-      "sprite": "shadow-wolf"
+      "verses": "8-9",
+      "foe": {
+        "id": "thornling-1",
+        "name": "Thornling",
+        "maxHp": 25,
+        "attack": 17,
+        "color": "#3f6b3a",
+        "size": 0.8,
+        "sprite": "thorn-plant"
+      },
+      "orbs": [
+        {
+          "word": "Eden"
+        },
+        {
+          "word": "knowledge"
+        }
+      ]
     },
     {
-      "id": "shadow-2",
-      "name": "Lurking Shadow",
-      "maxHp": 25,
-      "attack": 19,
-      "color": "#30263f",
-      "size": 0.9,
-      "sprite": "shadow-wolf"
+      "verses": "10-14",
+      "foe": {
+        "id": "thornling-2",
+        "name": "Thornling",
+        "maxHp": 25,
+        "attack": 17,
+        "color": "#355c31",
+        "size": 0.9,
+        "sprite": "thorn-plant"
+      },
+      "orbs": [
+        {
+          "word": "rivers"
+        },
+        {
+          "word": "gold"
+        }
+      ]
     },
     {
-      "id": "crouching",
-      "name": "Crouching Shadow",
-      "maxHp": 45,
-      "attack": 22,
-      "color": "#1a1426",
-      "size": 1.25,
-      "sprite": "shadow-wolf"
-    }
-  ],
-  "orbs": [
-    {
-      "word": "angry"
-    },
-    {
-      "word": "upset"
-    },
-    {
-      "word": "right"
-    },
-    {
-      "word": "door"
-    },
-    {
-      "word": "rule"
+      "verses": "15-17",
+      "foe": {
+        "id": "thorn-sentinel",
+        "name": "Thorn Sentinel",
+        "maxHp": 40,
+        "attack": 20,
+        "color": "#24401f",
+        "size": 1.2,
+        "sprite": "thorn-plant"
+      },
+      "orbs": [
+        {
+          "word": "care"
+        }
+      ]
     }
   ],
   "unlocks": "breastplate",
@@ -56,65 +69,76 @@
       "id": "gen-007-q1",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "Who did the Lord speak to?",
-      "choices": ["Cain", "Noah", "Adam", "Abel"],
+      "prompt": "Where did the Lord God plant a garden?",
+      "choices": ["In the east, in Eden", "In the west", "On a mountain", "In the sea"],
       "answerIndex": 0,
-      "highlight": "the Lord said to Cain"
+      "highlight": "planted a garden in the east, in Eden",
+      "section": 1
     },
     {
       "id": "gen-007-q2",
       "type": "multiple_choice",
-      "difficulty": "easy",
-      "prompt": "What did the Lord ask Cain?",
+      "difficulty": "medium",
+      "prompt": "Which two trees were in the middle of the garden?",
       "choices": [
-        "Why are you angry?",
-        "Are you hungry?",
-        "What is your name?",
-        "Who made the sky?"
+        "The tree of life and the tree of the knowledge of good and evil",
+        "An apple tree and a fig tree",
+        "Two olive trees",
+        "A palm tree and an oak tree"
       ],
       "answerIndex": 0,
-      "highlight": "Why are you angry?"
+      "highlight": "the tree of life and the tree of the knowledge of good and evil",
+      "section": 1
     },
     {
       "id": "gen-007-q3",
-      "type": "fill_blank",
+      "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "Sin is crouching at your ____.",
-      "choices": ["door", "window", "river", "gate"],
+      "prompt": "Into how many rivers did the river split?",
+      "choices": ["Four", "Two", "Seven", "Ten"],
       "answerIndex": 0,
-      "highlight": "sin is crouching at your door"
+      "highlight": "it split into four rivers",
+      "section": 2
     },
     {
       "id": "gen-007-q4",
-      "type": "true_false",
+      "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "True or false: the Lord told Cain that he must rule over sin.",
-      "choices": ["True", "False"],
+      "prompt": "What is in the land of Havilah?",
+      "choices": ["Gold", "Snow", "Dragons", "Fire"],
       "answerIndex": 0,
-      "highlight": "you must rule over it"
+      "highlight": "where there is gold",
+      "section": 2
     },
     {
       "id": "gen-007-q5",
       "type": "multiple_choice",
-      "difficulty": "hard",
-      "prompt": "What did the Lord say would happen if Cain did what is right?",
-      "choices": [
-        "He would be accepted",
-        "He would be forgotten",
-        "He would be sent away",
-        "He would become king"
-      ],
+      "difficulty": "easy",
+      "prompt": "Why did God put the man in the garden?",
+      "choices": ["To work it and take care of it", "To hide", "To sleep", "To build a tower"],
       "answerIndex": 0,
-      "highlight": "If you do what is right, won’t you be accepted?"
+      "highlight": "to work it and take care of it",
+      "section": 3
     },
     {
       "id": "gen-007-q6",
-      "type": "multiple_choice",
-      "difficulty": "hard",
-      "prompt": "What wants to have Cain?",
-      "choices": ["Sin", "An angel", "His father", "A lion"],
+      "type": "fill_blank",
+      "difficulty": "easy",
+      "prompt": "“You may eat from any ____ in the garden.”",
+      "choices": ["tree", "river", "rock", "flower"],
       "answerIndex": 0,
-      "highlight": "It wants to have you"
+      "highlight": "You may eat from any tree in the garden",
+      "section": 3
+    },
+    {
+      "id": "gen-007-q7",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did God say would happen if the man ate from the tree of the knowledge of good and evil?",
+      "choices": ["He would surely die", "He would fly", "He would become a king", "Nothing"],
+      "answerIndex": 0,
+      "highlight": "you will surely die",
+      "section": 3
     }
   ]
 }

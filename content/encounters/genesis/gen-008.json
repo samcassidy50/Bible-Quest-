@@ -1,52 +1,68 @@
 {
   "id": "gen-008",
-  "title": "Build the Ark",
-  "passage": "GEN 6:13-14",
-  "setting": "shipyard",
-  "waves": [
+  "title": "A Helper for Adam",
+  "passage": "GEN 2:18-25",
+  "setting": "garden",
+  "sections": [
     {
-      "id": "gust-1",
-      "name": "Gust",
-      "maxHp": 25,
-      "attack": 17,
-      "color": "#5b6b8a",
-      "size": 0.8,
-      "sprite": "gust"
+      "verses": "18-20",
+      "foe": {
+        "id": "lonely-gust-1",
+        "name": "Lonely Gust",
+        "maxHp": 25,
+        "attack": 17,
+        "color": "#6b7a8a",
+        "size": 0.8,
+        "sprite": "gust"
+      },
+      "orbs": [
+        {
+          "word": "alone"
+        },
+        {
+          "word": "helper"
+        },
+        {
+          "word": "name"
+        }
+      ]
     },
     {
-      "id": "gust-2",
-      "name": "Gust",
-      "maxHp": 25,
-      "attack": 19,
-      "color": "#4d5c78",
-      "size": 0.9,
-      "sprite": "gust"
+      "verses": "21-23",
+      "foe": {
+        "id": "lonely-gust-2",
+        "name": "Lonely Gust",
+        "maxHp": 25,
+        "attack": 19,
+        "color": "#5c6b7a",
+        "size": 0.9,
+        "sprite": "gust"
+      },
+      "orbs": [
+        {
+          "word": "sleep"
+        },
+        {
+          "word": "rib"
+        }
+      ]
     },
     {
-      "id": "storm",
-      "name": "Storm Cloud",
-      "maxHp": 45,
-      "attack": 20,
-      "color": "#2c3650",
-      "size": 1.3,
-      "sprite": "storm-cloud"
-    }
-  ],
-  "orbs": [
-    {
-      "word": "Noah"
-    },
-    {
-      "word": "fighting"
-    },
-    {
-      "word": "ark"
-    },
-    {
-      "word": "rooms"
-    },
-    {
-      "word": "tar"
+      "verses": "24-25",
+      "foe": {
+        "id": "gloom-cloud",
+        "name": "Gloom Cloud",
+        "maxHp": 45,
+        "attack": 20,
+        "color": "#3a4656",
+        "size": 1.3,
+        "sprite": "storm-cloud"
+      },
+      "orbs": [
+        {
+          "word": "mother"
+        }
+      ]
     }
   ],
   "rune": "renewal",
@@ -55,55 +71,96 @@
       "id": "gen-008-q1",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "Who did God speak to?",
-      "choices": ["Noah", "Adam", "Cain", "Moses"],
+      "prompt": "What did God say was not good?",
+      "choices": [
+        "For the man to be alone",
+        "For the man to work",
+        "For the man to sleep",
+        "For the man to eat"
+      ],
       "answerIndex": 0,
-      "highlight": "God said to Noah"
+      "highlight": "It is not good for the man to be alone",
+      "section": 1
     },
     {
       "id": "gen-008-q2",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What had people filled the earth with?",
-      "choices": ["Fighting and hurting", "Water", "Gold", "Music"],
+      "prompt": "What did the man do when God brought him the animals?",
+      "choices": ["He named them", "He rode them", "He hid from them", "He counted them"],
       "answerIndex": 0,
-      "highlight": "people have filled the earth with fighting and hurting"
+      "highlight": "to see what he would name them",
+      "section": 1
     },
     {
       "id": "gen-008-q3",
-      "type": "fill_blank",
+      "type": "true_false",
       "difficulty": "medium",
-      "prompt": "Build yourself an ark out of ____ wood.",
-      "choices": ["gopher", "oak", "cedar", "pine"],
-      "answerIndex": 0,
-      "highlight": "Build yourself an ark out of gopher wood"
+      "prompt": "A helper just right for the man was found among the animals.",
+      "choices": ["True", "False"],
+      "answerIndex": 1,
+      "highlight": "But no helper just right for the man was found",
+      "section": 1
     },
     {
       "id": "gen-008-q4",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What did God tell Noah to make inside the ark?",
-      "choices": ["Rooms", "Gardens", "Towers", "Wells"],
+      "prompt": "What did God make the man fall into?",
+      "choices": ["A deep sleep", "A river", "A pit", "A hole"],
       "answerIndex": 0,
-      "highlight": "Make rooms inside it"
+      "highlight": "a deep sleep",
+      "section": 2
     },
     {
       "id": "gen-008-q5",
       "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "What was the ark to be covered with?",
-      "choices": ["Tar", "Paint", "Glue", "Mud"],
+      "prompt": "What did God make the woman from?",
+      "choices": ["The man’s rib", "Dust", "Water", "A tree"],
       "answerIndex": 0,
-      "highlight": "cover it with tar inside and out"
+      "highlight": "made a woman from the rib",
+      "section": 2
     },
     {
       "id": "gen-008-q6",
+      "type": "fill_blank",
+      "difficulty": "medium",
+      "prompt": "“This one is bone of my ____.”",
+      "choices": ["bones", "house", "garden", "family"],
+      "answerIndex": 0,
+      "highlight": "bone of my bones",
+      "section": 2
+    },
+    {
+      "id": "gen-008-q7",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Who does a man leave when he is joined to his wife?",
+      "choices": ["His father and mother", "His friends", "His animals", "His garden"],
+      "answerIndex": 0,
+      "highlight": "a man leaves his father and mother",
+      "section": 3
+    },
+    {
+      "id": "gen-008-q8",
+      "type": "fill_blank",
+      "difficulty": "easy",
+      "prompt": "And the two become ____.",
+      "choices": ["one", "friends", "tired", "strong"],
+      "answerIndex": 0,
+      "highlight": "the two become one",
+      "section": 3
+    },
+    {
+      "id": "gen-008-q9",
       "type": "true_false",
       "difficulty": "easy",
-      "prompt": "True or false: the ark was to be covered only on the outside.",
+      "prompt": "The man and his wife felt ashamed.",
       "choices": ["True", "False"],
       "answerIndex": 1,
-      "highlight": "inside and out"
+      "highlight": "they did not feel ashamed",
+      "section": 3
     }
   ]
 }

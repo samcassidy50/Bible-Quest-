@@ -1,52 +1,51 @@
 {
   "id": "gen-004",
-  "title": "The Garden",
-  "passage": "GEN 2:15-17",
-  "setting": "garden",
-  "waves": [
+  "title": "Fish, Birds and Animals",
+  "passage": "GEN 1:20-25",
+  "setting": "fields",
+  "sections": [
     {
-      "id": "thornling-1",
-      "name": "Thornling",
-      "maxHp": 25,
-      "attack": 17,
-      "color": "#3f6b3a",
-      "size": 0.8,
-      "sprite": "thorn-plant"
+      "verses": "20-23",
+      "foe": {
+        "id": "wild-howler-1",
+        "name": "Wild Howler",
+        "maxHp": 25,
+        "attack": 17,
+        "color": "#5a4a3a",
+        "size": 0.8,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "creatures"
+        },
+        {
+          "word": "birds"
+        },
+        {
+          "word": "young"
+        }
+      ]
     },
     {
-      "id": "thornling-2",
-      "name": "Thornling",
-      "maxHp": 25,
-      "attack": 17,
-      "color": "#355c31",
-      "size": 0.9,
-      "sprite": "thorn-plant"
-    },
-    {
-      "id": "sentinel",
-      "name": "Thorn Sentinel",
-      "maxHp": 40,
-      "attack": 20,
-      "color": "#24401f",
-      "size": 1.2,
-      "sprite": "thorn-plant"
-    }
-  ],
-  "orbs": [
-    {
-      "word": "garden"
-    },
-    {
-      "word": "care"
-    },
-    {
-      "word": "tree"
-    },
-    {
-      "word": "knowledge"
-    },
-    {
-      "word": "die"
+      "verses": "24-25",
+      "foe": {
+        "id": "untamed-beast",
+        "name": "Untamed Beast",
+        "maxHp": 45,
+        "attack": 22,
+        "color": "#2e241a",
+        "size": 1.35,
+        "sprite": "minotaur"
+      },
+      "orbs": [
+        {
+          "word": "crawl"
+        },
+        {
+          "word": "wild"
+        }
+      ]
     }
   ],
   "rune": "life",
@@ -55,65 +54,76 @@
       "id": "gen-004-q1",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "Where did the Lord God put the man?",
-      "choices": ["The Garden of Eden", "A city", "An ark", "A mountain"],
+      "prompt": "What did God fill the waters with?",
+      "choices": ["Living creatures", "Rocks", "Trees", "Light"],
       "answerIndex": 0,
-      "highlight": "put him in the Garden of Eden"
+      "highlight": "Let the waters be full of living creatures",
+      "section": 1
     },
     {
       "id": "gen-004-q2",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What was the man’s job in the garden?",
-      "choices": [
-        "To work it and take care of it",
-        "To build a tower",
-        "To name the stars",
-        "To catch fish"
-      ],
+      "prompt": "What did God make to fly across the sky?",
+      "choices": ["Birds", "Bees", "Clouds", "Dragons"],
       "answerIndex": 0,
-      "highlight": "to work it and take care of it"
+      "highlight": "let birds fly above the earth across the sky",
+      "section": 1
     },
     {
       "id": "gen-004-q3",
-      "type": "true_false",
+      "type": "fill_blank",
       "difficulty": "medium",
-      "prompt": "True or false: God said the man could eat from any tree in the garden, except one.",
-      "choices": ["True", "False"],
+      "prompt": "God blessed them and said, “Have many ____.”",
+      "choices": ["young", "toys", "homes", "friends"],
       "answerIndex": 0,
-      "highlight": "You may eat from any tree in the garden"
+      "highlight": "Have many young",
+      "section": 1
     },
     {
       "id": "gen-004-q4",
-      "type": "fill_blank",
+      "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "You must not eat from the tree of the knowledge of good and ____.",
-      "choices": ["evil", "light", "life", "joy"],
+      "prompt": "Which day did God make the sea creatures and birds?",
+      "choices": ["The fifth day", "The third day", "The first day", "The seventh day"],
       "answerIndex": 0,
-      "highlight": "the tree of the knowledge of good and evil"
+      "highlight": "That was the fifth day",
+      "section": 1
+    },
+    {
+      "id": "gen-004-q6",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "God made each animal of its own kind.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "each of its own kind",
+      "section": 1
     },
     {
       "id": "gen-004-q5",
       "type": "multiple_choice",
-      "difficulty": "easy",
-      "prompt": "What did God say would happen if the man ate from that tree?",
+      "difficulty": "medium",
+      "prompt": "Which kinds of land animals did God make?",
       "choices": [
-        "He would surely die",
-        "He would fly",
-        "He would be king",
-        "Nothing would happen"
+        "Farm animals, creatures that crawl, and wild animals",
+        "Only fish and whales",
+        "Only lions",
+        "Only farm animals"
       ],
       "answerIndex": 0,
-      "highlight": "you will surely die"
+      "highlight": "farm animals, creatures that crawl, and wild animals",
+      "section": 2
     },
     {
-      "id": "gen-004-q6",
+      "id": "gen-004-q7",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "Who told the man the rule?",
-      "choices": ["The Lord God", "The serpent", "An angel", "The woman"],
+      "prompt": "Where did God bring the farm animals and wild animals out of?",
+      "choices": ["The earth", "The sea", "The sky", "The garden"],
       "answerIndex": 0,
-      "highlight": "The Lord God told him"
+      "highlight": "Let the earth bring out living creatures",
+      "section": 2
     }
   ]
 }

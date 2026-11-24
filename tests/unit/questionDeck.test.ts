@@ -22,6 +22,16 @@ describe('QuestionDeck', () => {
     }
   });
 
+  it('asks the section just read first, then other new questions, then seen ones', () => {
+    for (let seed = 1; seed <= 20; seed++) {
+      const deck = new QuestionDeck(qs, createRng(seed), undefined, ['q1'], ['q5', 'q6', 'q1']);
+      const order = Array.from({ length: 6 }, () => deck.draw().id);
+      expect(order.slice(0, 2).sort()).toEqual(['q5', 'q6']);
+      expect(order.slice(2, 5).sort()).toEqual(['q2', 'q3', 'q4']);
+      expect(order[5]).toBe('q1');
+    }
+  });
+
   it('draws every question once before repeating', () => {
     const deck = new QuestionDeck(qs, createRng(1));
     const ids = Array.from({ length: 6 }, () => deck.draw().id);

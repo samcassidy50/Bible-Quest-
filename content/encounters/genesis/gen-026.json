@@ -1,0 +1,129 @@
+{
+  "id": "gen-026",
+  "title": "A New Beginning",
+  "passage": "GEN 9:1-7",
+  "setting": "fields",
+  "sections": [
+    {
+      "verses": "1-3",
+      "foe": {
+        "id": "prowling-shadow-1",
+        "name": "Prowling Shadow",
+        "maxHp": 25,
+        "attack": 17,
+        "color": "#3a2f4f",
+        "size": 0.8,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "blessed"
+        },
+        {
+          "word": "fish"
+        },
+        {
+          "word": "plants"
+        }
+      ]
+    },
+    {
+      "verses": "4-7",
+      "foe": {
+        "id": "crouching-shadow",
+        "name": "Crouching Shadow",
+        "maxHp": 45,
+        "attack": 22,
+        "color": "#1a1426",
+        "size": 1.25,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "lifeblood"
+        },
+        {
+          "word": "image"
+        }
+      ]
+    }
+  ],
+  "rune": "might",
+  "questions": [
+    {
+      "id": "gen-026-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did God do for Noah and his sons?",
+      "choices": [
+        "He blessed them",
+        "He sent them away",
+        "He gave them a tower",
+        "He made them kings"
+      ],
+      "answerIndex": 0,
+      "highlight": "God blessed Noah and his sons",
+      "section": 1
+    },
+    {
+      "id": "gen-026-q2",
+      "type": "fill_blank",
+      "difficulty": "easy",
+      "prompt": "“Have many children, and fill the ____.”",
+      "choices": ["earth", "ark", "sea", "sky"],
+      "answerIndex": 0,
+      "highlight": "Have many children, and fill the earth",
+      "section": 1
+    },
+    {
+      "id": "gen-026-q3",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "How would the animals feel about people?",
+      "choices": [
+        "They would be afraid of them",
+        "They would chase them",
+        "They would ignore them",
+        "They would sing to them"
+      ],
+      "answerIndex": 0,
+      "highlight": "will be afraid of you",
+      "section": 1
+    },
+    {
+      "id": "gen-026-q4",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "As well as green plants, what did God now give people for food?",
+      "choices": ["Every living thing that moves", "Only fruit", "Only bread", "Stones"],
+      "answerIndex": 0,
+      "highlight": "Every living thing that moves will be food for you",
+      "section": 1
+    },
+    {
+      "id": "gen-026-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What must they not eat?",
+      "choices": ["Meat that still has its lifeblood in it", "Fruit", "Bread", "Green plants"],
+      "answerIndex": 0,
+      "highlight": "you must not eat meat that still has its lifeblood in it",
+      "section": 2
+    },
+    {
+      "id": "gen-026-q6",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Why is taking a person’s life so serious?",
+      "choices": [
+        "God made people in His own image",
+        "People are tall",
+        "People are fast",
+        "People are old"
+      ],
+      "answerIndex": 0,
+      "highlight": "God made people in His own image",
+      "section": 2
+    }
+  ]
+}

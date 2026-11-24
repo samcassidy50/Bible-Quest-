@@ -1,111 +1,114 @@
 {
   "id": "gen-010",
-  "title": "The Rainbow",
-  "passage": "GEN 9:12-13",
-  "setting": "flood",
-  "weather": "clearing",
-  "waves": [
+  "title": "Hiding from God",
+  "passage": "GEN 3:8-13",
+  "setting": "grove",
+  "sections": [
     {
-      "id": "squall-1",
-      "name": "Squall",
-      "maxHp": 25,
-      "attack": 17,
-      "color": "#5a6f7f",
-      "size": 0.85,
-      "sprite": "squall"
+      "verses": "8-10",
+      "foe": {
+        "id": "lurking-shadow-1",
+        "name": "Lurking Shadow",
+        "maxHp": 25,
+        "attack": 17,
+        "color": "#3a2f4f",
+        "size": 0.8,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "cool"
+        },
+        {
+          "word": "hid"
+        },
+        {
+          "word": "afraid"
+        }
+      ]
     },
     {
-      "id": "squall-2",
-      "name": "Squall",
-      "maxHp": 25,
-      "attack": 19,
-      "color": "#4c5f6e",
-      "size": 0.9,
-      "sprite": "squall"
-    },
-    {
-      "id": "tempest",
-      "name": "Tempest",
-      "maxHp": 45,
-      "attack": 20,
-      "color": "#26323d",
-      "size": 1.4,
-      "sprite": "tempest"
+      "verses": "11-13",
+      "foe": {
+        "id": "shadow-of-shame",
+        "name": "Shadow of Shame",
+        "maxHp": 45,
+        "attack": 22,
+        "color": "#1a1426",
+        "size": 1.25,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "gave"
+        },
+        {
+          "word": "tricked"
+        }
+      ]
     }
   ],
-  "orbs": [
-    {
-      "word": "sign"
-    },
-    {
-      "word": "promise"
-    },
-    {
-      "word": "creature"
-    },
-    {
-      "word": "rainbow"
-    },
-    {
-      "word": "clouds"
-    }
-  ],
-  "unlocks": "ultimate",
   "rune": "peace",
   "questions": [
     {
       "id": "gen-010-q1",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What did God put in the clouds?",
-      "choices": ["His rainbow", "A star", "A crown", "The moon"],
+      "prompt": "When did they hear the Lord God walking in the garden?",
+      "choices": ["In the cool of the day", "At midnight", "At sunrise", "In the rain"],
       "answerIndex": 0,
-      "highlight": "I have put My rainbow in the clouds"
+      "highlight": "in the cool of the day",
+      "section": 1
     },
     {
       "id": "gen-010-q2",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "What is the rainbow a sign of?",
-      "choices": ["A promise", "A storm", "A war", "A king"],
+      "prompt": "Where did the man and his wife hide?",
+      "choices": ["Among the trees of the garden", "In a cave", "Under the river", "In a tent"],
       "answerIndex": 0,
-      "highlight": "It will be the sign of the promise"
+      "highlight": "among the trees of the garden",
+      "section": 1
     },
     {
       "id": "gen-010-q3",
       "type": "fill_blank",
-      "difficulty": "medium",
-      "prompt": "This is the sign of the ____ I am making.",
-      "choices": ["promise", "tower", "garden", "ark"],
+      "difficulty": "easy",
+      "prompt": "The Lord God called to the man, “Where are ____?”",
+      "choices": ["you", "they", "we", "the animals"],
       "answerIndex": 0,
-      "highlight": "This is the sign of the promise I am making"
+      "highlight": "Where are you?",
+      "section": 1
     },
     {
       "id": "gen-010-q4",
       "type": "multiple_choice",
-      "difficulty": "medium",
-      "prompt": "Who is the promise made with?",
-      "choices": ["Every living creature", "Only the birds", "Only the fish", "No one"],
+      "difficulty": "easy",
+      "prompt": "Why did the man hide?",
+      "choices": ["He was afraid", "He was playing a game", "He was tired", "He was cold"],
       "answerIndex": 0,
-      "highlight": "every living creature with you"
+      "highlight": "I was afraid",
+      "section": 1
     },
     {
       "id": "gen-010-q5",
-      "type": "true_false",
+      "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "True or false: the promise was only for a short time.",
-      "choices": ["True", "False"],
-      "answerIndex": 1,
-      "highlight": "a promise for all time to come"
+      "prompt": "Who did the man say gave him fruit from the tree?",
+      "choices": ["The woman", "The serpent", "An angel", "No one"],
+      "answerIndex": 0,
+      "highlight": "The woman You gave to be with me gave me fruit from the tree",
+      "section": 2
     },
     {
       "id": "gen-010-q6",
       "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "The rainbow is a sign of the promise between God and...",
-      "choices": ["The earth", "The moon", "The tower", "The serpent"],
+      "prompt": "Who did the woman say tricked her?",
+      "choices": ["The serpent", "The man", "A bird", "An angel"],
       "answerIndex": 0,
-      "highlight": "the promise between Me and the earth"
+      "highlight": "The serpent tricked me",
+      "section": 2
     }
   ]
 }

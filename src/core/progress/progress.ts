@@ -29,7 +29,11 @@ export const QUESTION_TIME_S = 20;
 
 // ── Save data ──────────────────────────────────────────────────────────────
 
-export const SAVE_VERSION = 1;
+/**
+ * Version 2 (2026-11-25): Genesis was re-split into longer passages with new ids, so progress
+ * from version 1 no longer lines up. Loading a version 1 save keeps only its settings.
+ */
+export const SAVE_VERSION = 2;
 
 /** A blessing slot holds the id of the passage that awarded the blessing, or null when empty. */
 const slotsSchema = z
@@ -114,13 +118,20 @@ export function newSave(): SaveData {
 
 /**
  * Reads stored JSON. Unknown or corrupt data never crashes the game: bad fields fall back to
- * defaults, and anything unreadable (or from another version) starts a fresh save.
+ * defaults, a version 1 save keeps its settings only, and anything unreadable (or from another
+ * version) starts a fresh save.
  */
 export function loadSave(raw: string | null | undefined): SaveData {
   if (!raw) return newSave();
   try {
-    const parsed = saveSchema.safeParse(JSON.parse(raw));
-    return parsed.success ? parsed.data : newSave();
+    const json: unknown = JSON.parse(raw);
+    const parsed = saveSchema.safeParse(json);
+    if (parsed.success) return parsed.data;
+    const old = json as { version?: unknown; settings?: unknown } | null;
+    if (old?.version === 1) {
+      return { ...newSave(), settings: saveSchema.shape.settings.parse(old.settings ?? {}) };
+    }
+    return newSave();
   } catch {
     return newSave();
   }

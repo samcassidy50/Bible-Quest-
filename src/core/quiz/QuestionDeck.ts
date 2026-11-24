@@ -11,7 +11,8 @@ export interface DeckItem {
  * Draws questions without replacement (docs/DESIGN.md §2.3). When the pool runs out it is
  * reshuffled, and the first draw of the new round never repeats the last question asked.
  * Questions in `seen` (asked in earlier battles) come after the unseen ones in the first round,
- * so replaying a passage asks new questions before old ones.
+ * so replaying a passage asks new questions before old ones. Unseen questions in `preferred`
+ * (the section just read) come first of all.
  */
 export class QuestionDeck<Q extends DeckItem> {
   private readonly pool: readonly Q[];
@@ -19,14 +20,17 @@ export class QuestionDeck<Q extends DeckItem> {
   private last: Q | null = null;
   private _round = 0;
   private seen: ReadonlySet<string>;
+  private preferred: ReadonlySet<string>;
 
   constructor(
     questions: readonly Q[],
     private readonly rng: Rng,
     difficulties?: readonly Difficulty[],
     seen: Iterable<string> = [],
+    preferred: Iterable<string> = [],
   ) {
     this.seen = new Set(seen);
+    this.preferred = new Set(preferred);
     const ids = new Set<string>();
     for (const q of questions) {
       if (ids.has(q.id)) throw new Error(`Duplicate question id "${q.id}"`);
@@ -56,11 +60,13 @@ export class QuestionDeck<Q extends DeckItem> {
 
   private refill(): void {
     const shuffled = this.rng.shuffle(this.pool);
-    // Unseen first (stable, so each half stays shuffled); only the first round looks at `seen`.
+    // Unseen first, preferred ones leading (stable, so each part stays shuffled); only the first
+    // round looks at `seen` and `preferred`.
     this.queue =
       this._round === 0
         ? [
-            ...shuffled.filter((q) => !this.seen.has(q.id)),
+            ...shuffled.filter((q) => !this.seen.has(q.id) && this.preferred.has(q.id)),
+            ...shuffled.filter((q) => !this.seen.has(q.id) && !this.preferred.has(q.id)),
             ...shuffled.filter((q) => this.seen.has(q.id)),
           ]
         : shuffled;
