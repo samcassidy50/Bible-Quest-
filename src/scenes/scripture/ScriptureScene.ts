@@ -35,6 +35,8 @@ import { Backdrop } from '../backdrop/Backdrop';
 
 const BANNER_H = 118;
 const REF_BOX_W = 250;
+/** Characters per ticker chunk: about 1,500 px at the verse font size. */
+const TICKER_CHUNK_CHARS = 60;
 const TICKER_STYLE = { fontFamily: FONT_VERSE, fontSize: '44px', color: '#fdf6e3' };
 /** The word being read sits at this fraction of the screen width. */
 const READ_AT = 0.5;
@@ -64,7 +66,8 @@ export class ScriptureScene extends Phaser.Scene {
   private hero!: Fighter;
   private banner!: Phaser.GameObjects.Graphics;
   private refLabel!: Phaser.GameObjects.Text;
-  private ticker!: Phaser.GameObjects.Text;
+  private ticker!: Phaser.GameObjects.Container;
+  private tickerWidth = 0;
   private tickerMask!: Phaser.GameObjects.Graphics;
   private wordGlows = new Map<string, Phaser.GameObjects.Text>();
   private wordOffsets = new Map<string, number>();
@@ -167,11 +170,8 @@ export class ScriptureScene extends Phaser.Scene {
       })
       .setOrigin(0, 0.5)
       .setDepth(22);
-    this.ticker = this.add
-      .text(0, 0, this.text, TICKER_STYLE)
-      .setOrigin(0, 0.5)
-      .setDepth(21)
-      .setShadow(0, 3, '#0b0816', 4, false, true);
+    this.ticker = this.buildTicker();
+    this.ticker.setDepth(21);
     this.tickerMask = this.make.graphics({}, false);
     this.ticker.setMask(this.tickerMask.createGeometryMask());
 
@@ -452,6 +452,37 @@ export class ScriptureScene extends Phaser.Scene {
     this.startReading();
   }
 
+  /**
+   * The verse line as a row of short text chunks. One long Text would need a canvas wider than the
+   * GPU's max texture size (as little as 4096 px on phones) and render as nothing, so each chunk
+   * stays well under that.
+   */
+  private buildTicker(): Phaser.GameObjects.Container {
+    const row = this.add.container(0, 0);
+    const words = this.text.split(/(?<= )/); // keep the trailing space on each word
+    const chunks: string[] = [];
+    let cur = '';
+    for (const w of words) {
+      cur += w;
+      if (cur.length >= TICKER_CHUNK_CHARS) {
+        chunks.push(cur);
+        cur = '';
+      }
+    }
+    if (cur) chunks.push(cur);
+    let x = 0;
+    for (const chunk of chunks) {
+      const t = this.add
+        .text(x, 0, chunk, TICKER_STYLE)
+        .setOrigin(0, 0.5)
+        .setShadow(0, 3, '#0b0816', 4, false, true);
+      row.add(t);
+      x += t.width;
+    }
+    this.tickerWidth = x;
+    return row;
+  }
+
   private toggleFullText(): void {
     if (this.fullText) {
       this.fullText.destroy();
@@ -570,7 +601,7 @@ export class ScriptureScene extends Phaser.Scene {
             ? this.encounter.verses.filter((_, i) => this.clips[i]).map((v) => v.ref)
             : [],
         tickerX: Math.round(this.ticker.x),
-        tickerWidth: Math.round(this.ticker.width),
+        tickerWidth: Math.round(this.tickerWidth),
         orbs: this.tracker.all.map((o) => ({ ...o, atMs: scheduled.get(o.id) ?? -1 })),
         energy: this.tracker.collected.length,
         collected: this.tracker.collected,
