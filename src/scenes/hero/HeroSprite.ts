@@ -32,7 +32,24 @@ export function currentHero(scene: Phaser.Scene): HeroKind {
 }
 /** Native pixels → design pixels. The standing hero is 64 px tall natively, 192 on screen. */
 export const HERO_SCALE = 3;
-const POWER_GLOW = 0xffd36b;
+
+const HALO_KEY = 'hero-power-halo';
+
+/** A soft radial glow, painted once on a canvas texture. */
+function haloTexture(textures: Phaser.Textures.TextureManager): string {
+  if (textures.exists(HALO_KEY)) return HALO_KEY;
+  const size = 160;
+  const tex = textures.createCanvas(HALO_KEY, size, size);
+  const ctx = tex!.getContext();
+  const g = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+  g.addColorStop(0, 'rgba(255,211,107,0.7)');
+  g.addColorStop(0.5, 'rgba(255,211,107,0.3)');
+  g.addColorStop(1, 'rgba(255,211,107,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, size, size);
+  tex!.refresh();
+  return HALO_KEY;
+}
 
 /** Queues the hero sheet on a loader (call from a scene's preload). */
 export function loadHeroSheet(load: Phaser.Loader.LoaderPlugin): void {
@@ -60,7 +77,8 @@ export class HeroSprite extends Phaser.GameObjects.Sprite {
   private base: HeroClipName = 'idle';
   private finish?: () => void;
   private onEvent?: (name: string) => void;
-  private glow?: Phaser.FX.Glow;
+  /** Soft halo behind the hero during the powered attack (a plain game object, no FX pipeline). */
+  private halo?: Phaser.GameObjects.Image;
   /** Loops stay on their first frame (?freeze=1 screenshots); one-shots still play. */
   frozen = false;
   /** Every clip started, oldest first (exposed to tests). */
@@ -79,6 +97,7 @@ export class HeroSprite extends Phaser.GameObjects.Sprite {
     scene.events.on(Phaser.Scenes.Events.UPDATE, this.onUpdate, this);
     this.once(Phaser.GameObjects.Events.DESTROY, () => {
       scene.events.off(Phaser.Scenes.Events.UPDATE, this.onUpdate, this);
+      this.setPowerGlow(false);
       this.finish?.();
     });
     scene.add.existing(this);
@@ -150,15 +169,27 @@ export class HeroSprite extends Phaser.GameObjects.Sprite {
     done?.();
   }
 
-  /** A warm halo while the powered attack plays (WebGL only; the art itself has no glow). */
+  /** A warm halo while the powered attack plays. Drawn as an additive circle, not a Phaser FX. */
   private setPowerGlow(on: boolean): void {
-    const fx = this.preFX;
-    if (!fx) return;
-    if (on && !this.glow) this.glow = fx.addGlow(POWER_GLOW, 3, 0, false, 0.1, 12);
-    if (!on && this.glow) {
-      fx.remove(this.glow);
-      this.glow = undefined;
+    if (on && !this.halo) {
+      const halo = this.scene.add
+        .image(0, 0, haloTexture(this.scene.textures))
+        .setBlendMode(Phaser.BlendModes.ADD);
+      // The sprite lives inside the fighter's containers; sit just behind it in the same one.
+      const box = this.parentContainer;
+      if (box) box.addAt(halo, Math.max(0, box.getIndex(this)));
+      else this.scene.children.moveBelow(halo, this);
+      this.halo = halo;
+      this.followHalo();
     }
+    if (!on && this.halo) {
+      this.halo.destroy();
+      this.halo = undefined;
+    }
+  }
+
+  private followHalo(): void {
+    this.halo?.setPosition(this.x, this.y - 32 * this.scaleY).setScale(this.scaleY / HERO_SCALE);
   }
 
   private onUpdate(_t: number, delta: number): void {
@@ -171,6 +202,7 @@ export class HeroSprite extends Phaser.GameObjects.Sprite {
       for (const e of eventsBetween(clip, before, this.time)) this.onEvent?.(e);
     }
     this.setFrame(HERO_FRAMES[frameAt(clip, this.time)]);
+    this.followHalo();
 
     if (!clip.loop && localTime(clip, this.time) >= clip.duration) {
       const done = this.finish;
