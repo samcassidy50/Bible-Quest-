@@ -57,6 +57,7 @@ const LANDMARK_AT: Record<string, { x: number; dy: number }> = {
   grove: { x: 0.76, dy: -27 }, // the tree, rooted behind the undergrowth
   fields: { x: 0.8, dy: -30 },
   shipyard: { x: 0.78, dy: -30 },
+  sodom: { x: 0.74, dy: -24 }, // the city gate, standing on the street behind the houses
 };
 
 /** The light painted into a sky (native sky pixels, 560x200): effects gather around it. */
@@ -88,11 +89,15 @@ const LOOKS: Record<string, Look> = {
   'flood-storm': { sky: [0x151a24, 0x2a3240, 0x4c5868] },
   'flood-clearing': { sky: [0x5f86b4, 0x9db8d4, 0xf6dcae] },
   babel: { sky: [0x3f74b8, 0x8fb4d8, 0xf8dca2] },
-  // These four are always painted; the colours only show if an image fails to load.
+  // These are always painted; the colours only show if an image fails to load.
   shore: { sky: [0x2f78c8, 0x8fc8ec, 0xf0f8ec] },
   grove: { sky: [0x27356e, 0x8494c4, 0xfbe0a8] },
   fields: { sky: [0x1c1830, 0x6a4660, 0xf8d888] },
   shipyard: { sky: [0x1a202e, 0x5a6676, 0xf6e6ae] },
+  wilds: { sky: [0x3576c4, 0x8ebee6, 0xf6f0cc] },
+  sodom: { sky: [0x0e0c22, 0x603054, 0xf0ac68] },
+  plain: { sky: [0x3a4a7a, 0x967c9a, 0xfce2aa] },
+  brimstone: { sky: [0x140a0e, 0x702416, 0xf49a40] },
 };
 
 /** Draws `fn` at x and again one tile left/right when near an edge, so tiles repeat seamlessly. */
@@ -1292,6 +1297,141 @@ export class Backdrop {
         }
         break;
       }
+      case 'wilds':
+        // Birds wheeling over the young earth, and butterflies in the long grass.
+        this.birds(add, loop, rng, 0x2e4e78, 5);
+        for (let i = 0; i < 6; i++) {
+          const colors = [0xffffff, 0xffd84a, 0xc49bff];
+          const b = add(this.scene.add.container(rng.next() * W, gy - 10 - rng.next() * 60));
+          const wing = this.scene.add.ellipse(0, 0, 8, 11, colors[i % 3]!, 0.9);
+          const wing2 = this.scene.add.ellipse(5, 0, 8, 11, colors[i % 3]!, 0.9);
+          b.add([wing, wing2]);
+          loop([wing, wing2], { scaleX: 0.2, duration: 150, yoyo: true });
+          loop(b, {
+            x: b.x + 140 - rng.next() * 280,
+            y: b.y - 30,
+            duration: 4000 + rng.next() * 3000,
+            yoyo: true,
+            ease: 'Sine.inOut',
+          });
+        }
+        break;
+      case 'sodom':
+        // Sparks lifting from the lamps and torches as night falls.
+        for (let i = 0; i < 14; i++) {
+          const d = add(
+            this.scene.add.circle(
+              rng.next() * W,
+              gy - rng.next() * 120,
+              1.5 + rng.next() * 1.5,
+              i % 2 ? 0xffd278 : 0xf08a3a,
+              0.8,
+            ),
+          );
+          loop(d, {
+            y: d.y - 70,
+            x: d.x + 20 - rng.next() * 40,
+            alpha: 0,
+            duration: 2600 + rng.next() * 2400,
+            delay: rng.next() * 3000,
+          });
+        }
+        break;
+      case 'plain':
+        // Morning mist lifting off the plain, and birds heading for the hills.
+        for (let i = 0; i < 5; i++) {
+          const m = add(
+            this.scene.add.ellipse(
+              rng.next() * W,
+              gy - 10 - rng.next() * 40,
+              420,
+              46,
+              0xf6dcc8,
+              0.12,
+            ),
+          );
+          loop(m, {
+            x: m.x + 180,
+            alpha: 0.03,
+            duration: 10000 + rng.next() * 6000,
+            yoyo: true,
+            ease: 'Sine.inOut',
+          });
+        }
+        this.birds(add, loop, rng, 0x4a3e5e, 3);
+        break;
+      case 'brimstone': {
+        // Burning sulfur raining down, embers rising, the sky flaring red.
+        for (let i = 0; i < 22; i++) {
+          const x = rng.next() * (W + 300);
+          const y = -40 - rng.next() * gy;
+          const f = add(
+            this.scene.add
+              .line(0, 0, x, y, x + 14, y - 40, i % 3 ? 0xf8a83a : 0xfff0a0, 0.85)
+              .setOrigin(0, 0)
+              .setLineWidth(2.5),
+          );
+          loop(f, {
+            x: -gy * 0.35,
+            y: gy + 80,
+            duration: 1400 + rng.next() * 900,
+            delay: rng.next() * 2000,
+          });
+        }
+        for (let i = 0; i < 18; i++) {
+          const e = add(
+            this.scene.add.circle(
+              rng.next() * W,
+              gy + rng.next() * 40,
+              1.5 + rng.next() * 1.5,
+              0xf07828,
+              0.9,
+            ),
+          );
+          loop(e, {
+            y: e.y - 140 - rng.next() * 80,
+            x: e.x - 30,
+            alpha: 0,
+            duration: 2400 + rng.next() * 2000,
+            delay: rng.next() * 2500,
+          });
+        }
+        if (!this.freeze) {
+          const flare = () => {
+            this.flash.setFillStyle(0xff7a30, 0.14);
+            this.scene.tweens.add({ targets: this.flash, fillAlpha: 0, duration: 700 });
+            this.fxTimers.push(this.scene.time.delayedCall(3000 + rng.next() * 4000, flare));
+          };
+          this.fxTimers.push(this.scene.time.delayedCall(1500, flare));
+        }
+        break;
+      }
+    }
+  }
+
+  /** A few birds flapping slowly across the sky. */
+  private birds(
+    add: <O extends Phaser.GameObjects.GameObject>(o: O) => O,
+    loop: (targets: object, props: Record<string, unknown>) => void,
+    rng: Rng,
+    color: number,
+    n: number,
+  ): void {
+    const { W, groundY: gy } = this;
+    for (let i = 0; i < n; i++) {
+      const b = add(this.scene.add.container(rng.next() * W, 70 + rng.next() * gy * 0.35));
+      const left = this.scene.add.rectangle(-5, 0, 10, 2.5, color, 0.85).setAngle(22);
+      const right = this.scene.add.rectangle(5, 0, 10, 2.5, color, 0.85).setAngle(-22);
+      b.add([left, right]);
+      loop(left, { angle: -18, duration: 320 + i * 30, yoyo: true, ease: 'Sine.inOut' });
+      loop(right, { angle: 18, duration: 320 + i * 30, yoyo: true, ease: 'Sine.inOut' });
+      loop(b, {
+        x: b.x + (i % 2 ? -1 : 1) * W * 0.35,
+        y: b.y - 30 + rng.next() * 60,
+        duration: 14000 + rng.next() * 8000,
+        yoyo: true,
+        ease: 'Sine.inOut',
+      });
     }
   }
 }

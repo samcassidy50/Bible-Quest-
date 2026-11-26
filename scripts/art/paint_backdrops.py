@@ -2126,6 +2126,472 @@ def paint_shipyard() -> Layers:
     )
     return L
 
+# ── Sodom and the young earth's wilds ─────────────────────────────────────────
+
+
+def grazer(cv: Canvas, x: float, base: float, s: float, c: Color, face: int, horns: bool) -> None:
+    """A distant grazing animal in silhouette: body, legs, neck and head (face = ±1)."""
+    bx, by = x, base - s * 1.1
+    for py in span(by - s * 0.45, by + s * 0.45):
+        for px in span(bx - s * 0.9, bx + s * 0.9):
+            dx, dy = (native(px) - bx) / (s * 0.9), (native(py) - by) / (s * 0.45)
+            if dx * dx + dy * dy <= 1:
+                cv.put(px, py, c)
+    for lx in (-0.6, -0.35, 0.4, 0.65):
+        stroke(cv, [(bx + lx * s, by + s * 0.2), (bx + lx * s, base)], 0.7, 0.6, [c])
+    hx, hy = bx + face * s * 1.15, by - s * 0.55
+    stroke(cv, [(bx + face * s * 0.7, by - s * 0.1), (hx, hy)], 0.9, 0.7, [c])
+    dot(cv, hx + face * s * 0.15, hy + s * 0.05, max(0.6, s * 0.22), c)
+    if horns:
+        stroke(cv, [(hx, hy - s * 0.1), (hx - face * s * 0.25, hy - s * 0.7)], 0.5, 0.5, [c])
+
+
+def acacia(cv: Canvas, rng: random.Random, x: float, base: float, h: float, bark_r: list[Color], leaf_r: list[Color], seed: int) -> None:
+    """A flat-topped tree of the open plain: a leaning trunk that forks, a wide shallow crown."""
+    lean = rng.uniform(-0.15, 0.15) * h
+    fork = (x + lean, base - h * 0.55)
+    stroke(cv, [(x, base), (x + lean * 0.5, base - h * 0.3), fork], 2.2, 1.4, bark_r, outline=bark_r[0])
+    crown_y = base - h * 0.85
+    tips = [(fork[0] - h * 0.32, crown_y + 1), (fork[0] + h * 0.05, crown_y - 1), (fork[0] + h * 0.34, crown_y + 1.5)]
+    for tx, ty in tips:
+        stroke(cv, [fork, ((fork[0] + tx) / 2, (fork[1] + ty) / 2 + 1), (tx, ty)], 1.3, 0.8, bark_r, outline=bark_r[0])
+    w = h * 0.55
+    circles = [(fork[0] - w + 2 * w * i / 6 + rng.uniform(-1, 1), crown_y - rng.uniform(0, 2), h * rng.uniform(0.1, 0.14)) for i in range(7)]
+    blob(cv, circles, leaf_r, outline=leaf_r[0], seed=seed, tex=0.22, tex_cell=2, cut_below=crown_y + h * 0.08)
+
+
+def flame(cv: Canvas, x: float, base: float, w: float, h: float, seed: int, r: Optional[list[Color]] = None) -> None:
+    """A tongue of fire: dark red at the edge to white-yellow at the heart, flickering at the tip."""
+    r = r or ramp('#6a1410', '#a8261a', '#d8481e', '#f07828', '#f8a83a', '#fcd862', '#fff4b4')
+    for py in span(base - h, base):
+        v = native(py)
+        f = (base - v) / h  # 0 at the base, 1 at the tip
+        if not 0 <= f <= 1:
+            continue
+        sway = math.sin(f * 5 + seed) * w * 0.18 * f
+        half = w / 2 * (1 - f) ** 0.7 * (0.85 + 0.15 * math.sin(f * 11 + seed * 1.7))
+        cx = x + sway
+        for px in span(cx - half, cx + half):
+            e = abs(native(px) - cx) / max(half, 1e-6)
+            if e > 1:
+                continue
+            t = (1 - e) * 0.85 + (1 - f) * 0.35 - 0.1
+            cv.put(px, py, shade(r, t, px, py))
+
+
+def plume(cv: Canvas, x: float, base: float, top: float, w: float, c: Color, strength: float, seed: int, drift: float) -> None:
+    """A column of smoke widening and thinning as it rises, bent by the wind."""
+    for py in span(top, base):
+        v = native(py)
+        f = (base - v) / (base - top)
+        cx = x + drift * f * f
+        half = w * (0.4 + f * 1.1)
+        for px in span(cx - half - 2, cx + half + 2):
+            u = native(px)
+            n = fbm(u, v, seed, T if cv.wrap else None, cells=(16, 8, 4), sy=1.4)
+            e = abs(u - cx) / half
+            k = (1 - e) * (1 - f * 0.75) + (n - 0.5) * 0.9
+            if k > 0:
+                mix_put(cv, px, py, c, k * strength)
+
+
+def wall_block(cv: Canvas, x: float, base: float, w: float, h: float, r: list[Color], seed: int, crenels: bool) -> None:
+    """A mud-brick wall or tower face, lit from LIGHT, with a parapet of merlons on top."""
+    lit_left = LIGHT[0] < 0
+    for px, py in poly_pixels([(x, base - h), (x + w, base - h), (x + w, base), (x, base)]):
+        u, v = native(px), native(py)
+        rel = (u - x) / w
+        shadow = rel > 0.82 if lit_left else rel < 0.18
+        mortar, tone = brick(u, v, seed)
+        t = 0.58 + (tone - 0.5) * 0.18 - (0.3 if shadow else 0) - (0.12 if mortar else 0) - (v - (base - h)) / h * 0.12
+        if v - (base - h) < 1.5:
+            t = 0.88 if not shadow else 0.55
+        cv.put(px, py, shade(r, t, px, py))
+    if crenels:
+        n = max(2, int(w / 6))
+        for i in range(n):
+            mx = x + (i + 0.25) * w / n
+            for px, py in poly_pixels([(mx, base - h - 3), (mx + w / n * 0.5, base - h - 3), (mx + w / n * 0.5, base - h), (mx, base - h)]):
+                cv.put(px, py, shade(r, 0.8 if not (LIGHT[0] < 0 and native(px) > x + w * 0.82) else 0.5, px, py))
+
+
+def city_gate(r: list[Color], dark: Color, wood_r: list[Color], lit: Color, outline: Color) -> Canvas:
+    """The gate of a walled city at dusk: two towers, an arched gateway, torches burning."""
+    cv = Canvas(150, 92)
+    base = 92
+    wall_block(cv, 4, base, 142, 46, r, 401, True)
+    for tx in (22, 98):
+        wall_block(cv, tx, base, 30, 72, r, 402 + tx, True)
+        for wy in (base - 60, base - 44):  # narrow lit windows in the towers
+            for px, py in poly_pixels([(tx + 13, wy), (tx + 17, wy), (tx + 17, wy + 6), (tx + 13, wy + 6)]):
+                cv.put(px, py, lit)
+    gx0, gx1, gtop = 60, 90, base - 34
+    for px, py in poly_pixels([(gx0, gtop + 8), (gx1, gtop + 8), (gx1, base), (gx0, base)]):
+        cv.put(px, py, dark)
+    for py in span(gtop, gtop + 8):  # the round arch
+        for px in span(gx0, gx1):
+            dx, dy = (native(px) - (gx0 + gx1) / 2) / ((gx1 - gx0) / 2), (native(py) - (gtop + 8)) / 8
+            if dx * dx + dy * dy <= 1:
+                cv.put(px, py, dark)
+    for px, py in poly_pixels([(gx0 + 2, base - 22), (gx0 + 10, base - 22), (gx0 + 10, base), (gx0 + 2, base)]):  # one leaf open
+        u = native(px)
+        cv.put(px, py, shade(wood_r, 0.45 + (0.2 if (u % 3) * K >= 1 else -0.15), px, py))
+    for tx in (gx0 - 5, gx1 + 5):
+        stroke(cv, [(tx, base - 20), (tx, base - 30)], 1.4, 1.2, wood_r)
+    outline_pass(cv, outline)
+    for tx in (gx0 - 5, gx1 + 5):
+        flame(cv, tx, base - 29, 4.5, 9, tx)
+    return cv
+
+
+def paint_wilds() -> Layers:
+    """Gen 1:20-25: the young earth before any field or house, birds overhead, herds on the plain."""
+    global LIGHT
+    LIGHT = (0.55, -0.83)
+    L = Layers()
+    rng = random.Random(501)
+    sky_r = ramp('#3576c4', '#4686ce', '#5a98d6', '#72aade', '#8ebee6', '#acd0ea', '#cadfe6', '#e6ecdc', '#f6f0cc')
+    sky_gradient(L.sky, sky_r, gamma=1.1)
+    glow(L.sky, 430, 58, 12, 44, ramp('#bcdcf0', '#dcecea', '#f4f4d4', '#fffad8'))
+    disc(L.sky, 430, 58, 10, hexc('#fffef2'), hexc('#fff2c4'))
+    cloud_r = ramp('#9cbce0', '#bcd4ee', '#dceaf6', '#f4f9fd', '#ffffff')
+    for i, (cx, base, w, h) in enumerate([(90, 84, 80, 30), (250, 62, 56, 22), (330, 118, 96, 34), (520, 96, 66, 26)]):
+        cumulus(L.sky, rng, cx, base, w, h, cloud_r, seed=510 + i)
+    for cx, y, w in [(180, 160, 130), (420, 170, 120)]:
+        streak_cloud(L.sky, rng, cx, y, w, hexc('#f4f6ee'), hexc('#dfe8e8'))
+    flock = [(150, 46), (160, 41), (170, 47), (180, 40), (191, 46), (360, 72), (369, 67), (378, 73), (470, 130), (480, 124)]
+    for bx, by in flock:
+        bird(L.sky, bx, by, 2 + (bx % 2), hexc('#2e4e78'))
+
+    far = L.far
+    ridge_fill(
+        far, lambda x: 46 - wave(x, [(1, 14, 0.8), (3, 6, 2.1), (6, 3, 0.4)]) - fbm(x, 0, 520, cells=(32, 16, 8)) * 6,
+        ramp('#7c9cc4', '#8aa8cc', '#9ab4d4', '#acc2dc', '#c2d2e4'), seed=521, bottom=FAR_H - PAD, base_t=0.55,
+        slope_gain=0.5, fade=0.004, tex=0.1,
+    )
+    plain_r = ramp('#6a8a4a', '#7a9850', '#8ca658', '#a0b464', '#b6c272', '#cad084')
+    ftops = ridge_fill(
+        far, lambda x: 76 - wave(x, [(2, 3, 0.5), (5, 1.5, 1.7)]) - fbm(x, 3, 522, cells=(16, 8)) * 2, plain_r, seed=523,
+        bottom=FAR_H - PAD, base_t=0.6, slope_gain=0.4, fade=0.006, tex=0.12, sy=0.5,
+    )
+    sea_r = ramp('#4a86b4', '#5c98c2', '#74aed0', '#a2cce0', '#e4f4f4')
+    for px in range(far.w):  # a winding river catching the light
+        u = native(px)
+        cy = 86 + wave(u, [(2, 3, 1.1), (5, 1.2, 0.2)])
+        for py in span(cy - 1.4, cy + 1.4):
+            if native(py) > ftops[int(u) % T] + 2:
+                far.put(px, py, sea_r[3] if fbm(u, native(py), 524, cells=(4, 2)) > 0.72 else shade(sea_r, 0.45, px, py))
+    herd_c = hexc('#3e4a2c')
+    for hx in (70.0, 300.0, 430.0):
+        for k in range(rng.randint(3, 5)):
+            x = hx + k * rng.uniform(5, 8)
+            grazer(far, x, ftops[int(x) % T] + rng.uniform(4, 9), rng.uniform(1.6, 2.2), herd_c, rng.choice((-1, 1)), rng.random() < 0.4)
+
+    mid = L.mid
+    grass_r = ramp('#3c6a2e', '#4a7a32', '#5a8c38', '#6e9e40', '#86b04a', '#a0c058', '#bccf6a')
+    mtops = ridge_fill(
+        mid, lambda x: 76 - wave(x, [(2, 3, 0.4), (5, 2, 1.6), (11, 0.8, 0.9)]) - fbm(x, 2, 530, cells=(16, 8)) * 2,
+        grass_r, seed=531, bottom=MID_H - PAD, base_t=0.6, slope_gain=0.4, fade=0.01, tex=0.18,
+    )
+    bark_r = ramp('#2e2016', '#46301e', '#5e4228', '#785634')
+    leaf_r = ramp('#2a4a24', '#36602a', '#467432', '#5a883a', '#729c46', '#8eb054')
+    for i, x in enumerate(scatter_points(rng, 4, 0, T, 90)):
+        acacia(mid, rng, x, mtops[int(x) % T] + 6, rng.uniform(40, 52), bark_r, leaf_r, seed=540 + i)
+    for i, x in enumerate(scatter_points(rng, 12, 0, T, 18)):
+        base = mtops[int(x) % T] + 7
+        rad = rng.uniform(3, 5.5)
+        blob(mid, [(x - rad * 0.5, base - rad * 0.7, rad * 0.8), (x + rad * 0.5, base - rad * 0.8, rad)], leaf_r,
+             outline=leaf_r[0], seed=550 + i, tex=0.2, tex_cell=2, cut_below=base)
+
+    g = L.ground
+    surface = 5
+    long_r = ramp('#3e6a2c', '#4c7a30', '#5c8c36', '#70a03e', '#88b248', '#a4c256', '#c2d268', '#dcde84')
+
+    def grassland(u: float, v: float, d: float, px: int, py: int) -> Color:
+        n = fbm(u, v, 561, cells=(32, 16, 8))
+        streak = vnoise(u, v, 1.5, 7, 562, T)
+        warm = fbm(u, v, 563, cells=(64, 32), sy=0.4)
+        t = 0.62 - d * 0.004 + (n - 0.5) * 0.45 + (streak - 0.5) * 0.35 + (warm - 0.5) * 0.4
+        if d < 1:
+            t = 0.95
+        return shade(long_r, t, px, py)
+
+    ground_fill(g, surface, grassland)
+    tufts(g, rng, surface, long_r, 190, max_h=6)
+    for _ in range(80):  # tall seeding grass stems
+        x, y = rng.uniform(0, T), rng.uniform(surface + 4, GROUND_H - 4)
+        h = rng.uniform(3, 6) * (0.7 + y / GROUND_H * 0.6)
+        stroke(g, [(x, y), (x + rng.uniform(-1, 1), y - h)], 0.6, 0.5, long_r[3:])
+        dot(g, x, y - h, 0.6, long_r[-1])
+    petals = [hexc('#ffffff'), hexc('#ffd84a'), hexc('#c49bff'), hexc('#ff8a5a')]
+    for _ in range(26):
+        cx, cy = rng.randrange(T), surface + 5 + (GROUND_H - surface - 10) * rng.random()
+        k = rng.randrange(len(petals))
+        for _ in range(rng.randint(2, 5)):
+            x, y = cx + rng.randint(-6, 6), int(cy + rng.randint(-3, 3))
+            flower(g, x, y, petals[k], hexc('#e8a030'), long_r[0], y > surface + 20)
+    stone_r = ramp('#3a3c34', '#5c5e52', '#868676', '#b0ae9a')
+    for _ in range(10):
+        x, y = rng.uniform(0, T), rng.uniform(surface + 4, GROUND_H - 6)
+        w = rng.uniform(1.5, 3.0) * (0.7 + y / GROUND_H)
+        ball(g, x, y, w, w * 0.65, stone_r)
+    return L
+
+
+def paint_sodom() -> Layers:
+    """Gen 19:1-11: Sodom at nightfall: a walled city of mud brick, lamps lit, a sky going dark."""
+    global LIGHT
+    LIGHT = (-0.7, -0.7)
+    L = Layers()
+    rng = random.Random(601)
+    sky_r = ramp('#0e0c22', '#16122e', '#20183a', '#2e1e46', '#44264e', '#603054', '#863e56', '#ac5258', '#cc6e58', '#e48e5c', '#f0ac68')
+    sky_gradient(L.sky, sky_r, gamma=0.85)
+    stars(L.sky, rng, 260, lambda x, y: max(0.0, 1 - y / 90) ** 1.5, [hexc('#8a86b0'), hexc('#c8c4e4'), hexc('#ffffff')])
+    glow(L.sky, 120, 196, 14, 90, ramp('#c45e4e', '#dc7a52', '#ee9c5c', '#fcc478'), power=1.8)
+    for cx, y, w in ((90, 168, 220), (300, 156, 280), (480, 172, 200), (220, 184, 300)):
+        streak_cloud(L.sky, rng, cx, y, w, hexc('#7a3a56'), hexc('#5a2c4e'))
+    dot(L.sky, 452, 52, 3.2, hexc('#f4f0dc'))  # the evening star
+    dot(L.sky, 452, 52, 1.8, hexc('#ffffff'))
+
+    far = L.far
+    hill_r = ramp('#1e1630', '#281c3a', '#342244', '#422a4c', '#523452', '#643e56')
+    ftops = ridge_fill(
+        far, lambda x: 70 - wave(x, [(1, 8, 0.4), (3, 4, 1.8), (7, 1.5, 0.6)]) - fbm(x, 0, 610, cells=(32, 16)) * 3,
+        hill_r, seed=611, bottom=FAR_H - PAD, base_t=0.5, slope_gain=0.5, fade=0.004, tex=0.1,
+    )
+    roof_c = [hexc('#3a2a46'), hexc('#4e3652'), hexc('#6a4658')]
+    lamp = [hexc('#f0a848'), hexc('#ffd278')]
+    for x in scatter_points(rng, 22, 0, T, 14):  # houses of the city spread over the hills
+        w, h = rng.uniform(8, 15), rng.uniform(4, 9)
+        top = ftops[int(x) % T] + 3 - h
+        for px, py in poly_pixels([(x - w / 2, top), (x + w / 2, top), (x + w / 2, top + h + 8), (x - w / 2, top + h + 8)]):
+            u, v = native(px), native(py)
+            far.put(px, py, roof_c[2] if v - top < 1 else roof_c[0] if u > x + w / 4 else roof_c[1])
+        for _ in range(rng.randint(0, 2)):
+            wx, wy = rng.uniform(x - w / 2 + 1.5, x + w / 2 - 3), rng.uniform(top + 2, top + h)
+            for px, py in poly_pixels([(wx, wy), (wx + 1.5, wy), (wx + 1.5, wy + 1.5), (wx, wy + 1.5)]):
+                far.put(px, py, rng.choice(lamp))
+    mist(far, 96, 5, hexc('#5a3452'), 0.45, seed=612)
+
+    mid = L.mid
+    ground_r = ramp('#1e1418', '#2a1c1e', '#3a2624', '#4c322a', '#5e3e30')
+    mtops = ridge_fill(
+        mid, lambda x: 80 - wave(x, [(2, 1.5, 0.4), (5, 1, 1.4)]), ground_r, seed=620, bottom=MID_H - PAD, base_t=0.5,
+        slope_gain=0.3, fade=0.01, tex=0.15,
+    )
+    brick_r = ramp('#2a1a20', '#3c2428', '#52302e', '#683e36', '#7e4c3e', '#965c48', '#ae6e54')
+    xs = scatter_points(rng, 8, 0, T, 52)
+    for i, x in enumerate(xs):
+        w, h = rng.uniform(18, 30), rng.uniform(16, 32)
+        base = mtops[int(x) % T] + 4
+        win = rng.choice(lamp) if i % 3 else hexc('#140c12')
+        building(mid, rng, x - w / 2, base, w, h, brick_r, win, seed=630 + i)
+        if rng.random() < 0.5:
+            building(mid, rng, x - w / 2 + 2, base - h, w * 0.5, h * 0.45, brick_r, win, seed=640 + i)
+    trunk_r = ramp('#1c1210', '#2c1e16', '#3e2c1e', '#523c28')
+    frond_r = ramp('#101a16', '#18261c', '#203222', '#2c4028', '#3a4e2e')
+    for x in scatter_points(rng, 5, 20, T + 20, 60):
+        x = x % T
+        if all(min(abs(x - b), T - abs(x - b)) > 18 for b in xs):
+            palm(mid, x, mtops[int(x) % T] + 3, rng.uniform(24, 32), trunk_r, frond_r, 0)
+
+    g = L.ground
+    surface = 5
+    stone_r = ramp('#24181c', '#322226', '#422e2e', '#543a36', '#6a4a40', '#805a4a', '#9a6e56')
+
+    def cobbles(u: float, v: float, d: float, px: int, py: int) -> Color:
+        f1, f2, ox, oy = worley(u, v * 1.7, 9, 650)
+        if f2 - f1 < 0.7:
+            return stone_r[0]
+        n = fbm(u, v, 651, cells=(16, 8, 4))
+        t = 0.5 + (n - 0.5) * 0.35 + (ox * LIGHT[0] + oy * 1.7 * LIGHT[1]) / 9 * 0.4 - d * 0.003
+        if d < 1:
+            t += 0.3
+        return shade(stone_r, t, px, py)
+
+    ground_fill(g, surface, cobbles)
+    rough_top(g, surface, stone_r, 652, 3)
+    tufts(g, rng, surface, ramp('#1e1a1a', '#3a3428', '#56502e', '#6e6636'), 50, max_h=3)
+    pot_r = ramp('#3a1e16', '#5c3020', '#80462a', '#a05e36', '#be7a48')
+    for _ in range(9):  # clay jars by the roadside
+        x, y = rng.uniform(0, T), rng.uniform(surface + 6, GROUND_H - 10)
+        s = rng.uniform(2.2, 3.4) * (0.7 + y / GROUND_H)
+        ball(g, x, y, s, s * 1.15, pot_r)
+        ball(g, x, y - s * 1.05, s * 0.45, s * 0.25, pot_r)
+    L.landmark = city_gate(brick_r, hexc('#0c0810'), ramp('#1a100c', '#2e1e14', '#46301e', '#5e4428'), lamp[0], hexc('#0e0a12'))
+    return L
+
+
+def paint_plain() -> Layers:
+    """Gen 19:15-22: first light over the plain, the hills to flee to, little Zoar on its rise."""
+    global LIGHT
+    LIGHT = (0.75, -0.65)
+    L = Layers()
+    rng = random.Random(701)
+    sky_r = ramp('#3a4a7a', '#4a5686', '#5e6490', '#787096', '#967c9a', '#b68a9a', '#d49c96', '#eab494', '#f6cc98', '#fce2aa')
+    sky_gradient(L.sky, sky_r, gamma=1.0)
+    glow(L.sky, 296, 128, 13, 58, ramp('#eeb08c', '#f6c690', '#fcdc9c', '#fff0c0'), power=1.7)
+    disc(L.sky, 296, 128, 12, hexc('#fff6d6'), hexc('#ffe2a0'))
+    for cx, y, w in ((110, 120, 180), (280, 140, 240), (430, 150, 200), (170, 166, 260), (520, 124, 120)):
+        streak_cloud(L.sky, rng, cx, y, w, hexc('#f4c8b0'), hexc('#dca2a0'))
+    stars(L.sky, rng, 60, lambda x, y: max(0.0, 1 - y / 50) * max(0.0, 1 - x / 300), [hexc('#a8aed0'), hexc('#e4e6f4')])
+
+    far = L.far
+    mtops = ridge_fill(
+        far, lambda x: 30 - wave(x, [(1, 16, 2.2), (2, 8, 0.6), (4, 5, 1.4), (9, 2, 0.3)]) - fbm(x, 0, 710, cells=(32, 16, 8)) * 8,
+        ramp('#4a4a74', '#56547e', '#646088', '#766c90', '#8a7a96', '#a08a9a', '#c4a4a2'), seed=711, bottom=FAR_H - PAD,
+        base_t=0.5, slope_gain=0.9, fade=0.003, tex=0.1, rim_t=0.4,
+    )
+    ptops = ridge_fill(
+        far, lambda x: 78 - wave(x, [(2, 4, 1.0), (3, 2, 0.1), (7, 1, 1.7)]) - fbm(x, 2, 712, cells=(16, 8)) * 2,
+        ramp('#5e5058', '#6c5c5c', '#7c6a60', '#8e7a66', '#a28c6e', '#b89e78'), seed=713, bottom=FAR_H - PAD,
+        base_t=0.55, slope_gain=0.5, fade=0.005, tex=0.12, sy=0.5,
+    )
+    town_r = [hexc('#7a6466'), hexc('#a08480'), hexc('#c8a490')]
+    zx = 380.0
+    for k, (dx, w, h) in enumerate(((-9, 7, 5), (-2, 8, 8), (6, 7, 6), (12, 5, 4), (-14, 5, 3))):  # Zoar, a little town
+        x, base = zx + dx, ptops[int(zx + dx) % T] + 2
+        for px, py in poly_pixels([(x, base - h), (x + w, base - h), (x + w, base), (x, base)]):
+            far.put(px, py, town_r[2] if native(px) > x + w * 0.65 else town_r[1])
+        dot(far, x + 2.5, base - h + 2.5, 0.5, town_r[0])
+    mist(far, 90, 5, hexc('#d8aa96'), 0.3, seed=714)
+
+    mid = L.mid
+    scrub_r = ramp('#3a3430', '#4c4434', '#605438', '#76663e', '#8e7a48', '#a69056')
+    mt = ridge_fill(
+        mid, lambda x: 78 - wave(x, [(2, 2.5, 0.2), (4, 1.5, 1.2), (9, 0.7, 2.4)]) - fbm(x, 1, 720, cells=(16, 8)) * 2,
+        scrub_r, seed=721, bottom=MID_H - PAD, base_t=0.55, slope_gain=0.5, fade=0.01, tex=0.18,
+    )
+    leaf_r = ramp('#2e3428', '#3c4630', '#4e5838', '#626a40', '#7a7e4c', '#949258')
+    bark_r = ramp('#1e1612', '#30241a', '#463424', '#5c4630')
+    for i, x in enumerate(scatter_points(rng, 4, 0, T, 100)):  # feathery tamarisks
+        base = mt[int(x) % T] + 5
+        h = rng.uniform(28, 36)
+        stroke(mid, [(x, base), (x + 1, base - h * 0.4)], 2.0, 1.3, bark_r, outline=bark_r[0])
+        circles = [(x + rng.uniform(-h * 0.25, h * 0.25), base - h * rng.uniform(0.45, 0.95), h * rng.uniform(0.12, 0.2)) for _ in range(9)]
+        blob(mid, circles, leaf_r, outline=leaf_r[0], seed=730 + i, tex=0.3, tex_cell=1.5)
+    for i, x in enumerate(scatter_points(rng, 16, 0, T, 14)):
+        base = mt[int(x) % T] + 6
+        rad = rng.uniform(2.5, 4.5)
+        blob(mid, [(x - rad * 0.5, base - rad * 0.6, rad * 0.8), (x + rad * 0.4, base - rad * 0.7, rad)], leaf_r,
+             outline=leaf_r[0], seed=740 + i, tex=0.25, tex_cell=2, cut_below=base)
+
+    g = L.ground
+    surface = 5
+    dust_r = ramp('#4a3c34', '#5c4a3a', '#705a42', '#866c4c', '#9c7e58', '#b49266', '#caa676', '#dcba8a')
+    dry_r = ramp('#4a4a30', '#5e5c36', '#74703e', '#8c8448', '#a49a56', '#bcb066')
+
+    def plain(u: float, v: float, d: float, px: int, py: int) -> Color:
+        n = fbm(u, v, 751, cells=(32, 16, 8, 4))
+        path = abs(v - 40 - wave(u, [(1, 10, 0.3), (2, 6, 1.9)])) < 6 + n * 4  # a worn track across the plain
+        if path or fbm(u, v, 752, cells=(64, 32, 16), sy=0.4) > 0.62:
+            t = 0.6 + (n - 0.5) * 0.45 - d * 0.002 + (0.12 if path else 0)
+            return shade(dust_r, t, px, py)
+        streak = vnoise(u, v, 1.5, 6, 753, T)
+        t = 0.55 - d * 0.004 + (n - 0.5) * 0.4 + (streak - 0.5) * 0.3
+        if d < 1:
+            t = 0.9
+        return shade(dry_r, t, px, py)
+
+    ground_fill(g, surface, plain)
+    tufts(g, rng, surface, dry_r, 120, max_h=5)
+    stone_r = ramp('#3a3230', '#5a4e48', '#847262', '#b09c86')
+    for _ in range(16):
+        x, y = rng.uniform(0, T), rng.uniform(surface + 3, GROUND_H - 6)
+        w = rng.uniform(1.5, 3.0) * (0.7 + y / GROUND_H)
+        ball(g, x, y, w, w * 0.65, stone_r)
+    for _ in range(40):
+        x, y = rng.uniform(0, T), rng.uniform(surface + 3, GROUND_H - 4)
+        h = rng.uniform(2, 4) * (0.7 + y / GROUND_H * 0.6)
+        for dx in (-1, 0, 1):
+            stroke(g, [(x + dx * 0.8, y), (x + dx * 1.6, y - h)], 0.6, 0.5, dry_r[1:5])
+    return L
+
+
+def paint_brimstone() -> Layers:
+    """Gen 19:24-28: fire falling from the sky on the cities of the plain, smoke like a furnace."""
+    global LIGHT
+    LIGHT = (-0.3, -0.95)
+    L = Layers()
+    rng = random.Random(801)
+    sky_r = ramp('#140a0e', '#1e0e12', '#2c1214', '#3e1616', '#541c16', '#702416', '#902e16', '#b03c18', '#cc5420', '#e4742c', '#f49a40')
+    sky_gradient(L.sky, sky_r, gamma=0.8)
+    cloud_field(L.sky, ramp('#120a0c', '#1e1012', '#2e1614', '#4a1e16', '#702a18', '#a8401c', '#e06a2a'), 811, -20, 150, 0.7, sy=0.35, soft=4, rim=-3)
+    fire_r = ramp('#a8261a', '#d8481e', '#f07828', '#f8a83a', '#fcd862', '#fff4b4')
+    for _ in range(26):  # burning sulfur raining down
+        x, y = rng.uniform(0, SKY_W), rng.uniform(10, 150)
+        ln = rng.uniform(10, 22)
+        for k in range(int(ln * K)):
+            f = k / (ln * K)
+            px, py = round((x - f * ln * 0.35) * K), round((y - f * ln) * K)
+            L.sky.put(px, py, shade(fire_r, 1 - f, px, py))
+            if f < 0.3:
+                L.sky.put(px + 1, py, shade(fire_r, 0.8 - f, px, py))
+    glow(L.sky, 280, 200, 30, 120, ramp('#b83c1a', '#d8581e', '#f07a2a', '#fca040'), power=1.5)
+
+    far = L.far
+    city_c = hexc('#1a0c0c')
+    ftops = ridge_fill(
+        far, lambda x: 84 - wave(x, [(1, 4, 0.6), (3, 2, 1.8)]), ramp('#1a0c0c', '#240f0e', '#301410', '#401a12'), seed=820,
+        bottom=FAR_H - PAD, base_t=0.4, slope_gain=0.3, fade=0.004, tex=0.08,
+    )
+    for i, x in enumerate(scatter_points(rng, 22, 0, T, 14)):  # the burning cities' skyline
+        w, h = rng.uniform(8, 18), rng.uniform(8, 20)
+        top = ftops[int(x) % T] + 2 - h
+        for px, py in poly_pixels([(x - w / 2, top), (x + w / 2, top), (x + w / 2, ftops[int(x) % T] + 4), (x - w / 2, ftops[int(x) % T] + 4)]):
+            far.put(px, py, city_c)
+        if rng.random() < 0.7:
+            flame(far, x + rng.uniform(-w / 4, w / 4), top + 1, rng.uniform(5, 9), rng.uniform(8, 16), 821 + i)
+    for i, x in enumerate(scatter_points(rng, 6, 0, T, 70)):
+        plume(far, x, ftops[int(x) % T] - 10, 4, rng.uniform(6, 10), hexc('#24141a'), 0.85, 830 + i, drift=-18)
+    mist(far, 90, 7, hexc('#e0602a'), 0.4, seed=840)
+
+    mid = L.mid
+    char_r = ramp('#120a0a', '#1c0e0c', '#28140e', '#361a12', '#482216', '#5e2c1a')
+    mtops = ridge_fill(
+        mid, lambda x: 76 - wave(x, [(2, 3, 0.9), (5, 1.5, 0.2), (11, 0.8, 1.3)]) - fbm(x, 1, 850, cells=(16, 8)) * 2,
+        char_r, seed=851, bottom=MID_H - PAD, base_t=0.5, slope_gain=0.6, fade=0.01, tex=0.18,
+    )
+    wood_r = ramp('#0a0606', '#160c0a', '#22140e', '#321c12')
+    for x in scatter_points(rng, 5, 0, T, 80):
+        dead_tree(mid, rng, x, mtops[int(x) % T] + 3, rng.uniform(26, 40), wood_r, wood_r[0])
+    for i, x in enumerate(scatter_points(rng, 10, 0, T, 30)):
+        flame(mid, x, mtops[int(x) % T] + 4, rng.uniform(5, 9), rng.uniform(8, 15), 860 + i)
+
+    g = L.ground
+    surface = 5
+    ash_r = ramp('#1a1210', '#261a16', '#34241c', '#443024', '#563e2c', '#6c4e36', '#846244')
+    ember_r = ramp('#8a1e10', '#c83a16', '#f06a22', '#fca23a', '#ffd870')
+    salt_r = ramp('#8a8484', '#b4aeac', '#d8d4d0', '#f4f2ee')
+
+    def scorched(u: float, v: float, d: float, px: int, py: int) -> Color:
+        f1, f2, ox, oy = worley(u, v * 1.6, 12, 870)
+        edge = f2 - f1
+        if edge < 0.8:
+            return shade(ember_r, 0.75 - edge * 0.5 + (fbm(u, v, 871, cells=(8, 4)) - 0.5) * 0.5, px, py)
+        n = fbm(u, v, 872, cells=(32, 16, 8, 4))
+        if fbm(u, v, 873, cells=(32, 16), sy=0.4) > 0.68 and d > 4:  # crusts of salt
+            return shade(salt_r, 0.55 + (n - 0.5) * 0.6, px, py)
+        t = 0.45 + (n - 0.5) * 0.4 + (ox * LIGHT[0] + oy * 1.6 * LIGHT[1]) / 12 * 0.3 - d * 0.002
+        if edge < 1.6:
+            t += 0.15  # glow reflected on the near edges of the cracks
+        if d < 1:
+            t += 0.3
+        return shade(ash_r, t, px, py)
+
+    ground_fill(g, surface, scorched)
+    rough_top(g, surface, ash_r, 874, 3)
+    for _ in range(60):  # embers
+        x, y = rng.uniform(0, T), rng.uniform(surface + 2, GROUND_H - 3)
+        dot(g, math.floor(x) + 0.5, math.floor(y) + 0.5, 0.5, rng.choice(ember_r[2:]))
+    stone_r = ramp('#140c0a', '#2a1a14', '#44281c', '#6a3c22')
+    for _ in range(14):
+        x, y = rng.uniform(0, T), rng.uniform(surface + 3, GROUND_H - 6)
+        w = rng.uniform(1.5, 3.0) * (0.7 + y / GROUND_H)
+        ball(g, x, y, w, w * 0.65, stone_r)
+    return L
+
+
 
 # name → (painter, landmark position as in Backdrop.ts LANDMARK_AT: x fraction, dy design px)
 ENVIRONMENTS: dict[str, tuple[Callable[[], Layers], tuple[float, int]]] = {
@@ -2140,6 +2606,10 @@ ENVIRONMENTS: dict[str, tuple[Callable[[], Layers], tuple[float, int]]] = {
     'grove': (paint_grove, (0.76, -27)),
     'fields': (paint_fields, (0.8, -30)),
     'shipyard': (paint_shipyard, (0.78, -30)),
+    'wilds': (paint_wilds, (0.75, 0)),
+    'sodom': (paint_sodom, (0.74, -24)),
+    'plain': (paint_plain, (0.75, 0)),
+    'brimstone': (paint_brimstone, (0.75, 0)),
 }
 
 

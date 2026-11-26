@@ -124,5 +124,5 @@ re-run it.
 # Backdrop art
 
 Every passage has its own environment, painted by `python3 scripts/art/paint_backdrops.py`
-(previews in `art/backdrop-previews/`): deep, light, shore, garden, grove, wilderness, fields,
-shipyard, flood-storm, flood-clearing and babel. See the Backgrounds section of `CLAUDE.md`.
+(previews in `art/backdrop-previews/`): deep, light, shore, wilds, garden, grove, wilderness,
+fields, shipyard, flood-storm, flood-clearing, babel, sodom, plain and brimstone. See the Backgrounds section of `CLAUDE.md`.

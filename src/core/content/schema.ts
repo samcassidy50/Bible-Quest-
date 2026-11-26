@@ -67,6 +67,7 @@ export const SETTINGS = [
   'deep',
   'light',
   'shore',
+  'wilds',
   'garden',
   'grove',
   'wilderness',
@@ -74,6 +75,9 @@ export const SETTINGS = [
   'shipyard',
   'flood',
   'babel',
+  'sodom',
+  'plain',
+  'brimstone',
 ] as const;
 export type Setting = (typeof SETTINGS)[number];
 

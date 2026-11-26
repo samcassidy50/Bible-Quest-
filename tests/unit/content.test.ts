@@ -105,7 +105,7 @@ describe('content: Genesis', () => {
       'deep',
       'shore',
       'light',
-      'fields',
+      'wilds',
       'shore',
       'light',
       'garden',
@@ -123,9 +123,9 @@ describe('content: Genesis', () => {
       'fields',
       'flood',
       'babel',
-      'fields',
-      'fields',
-      'wilderness',
+      'sodom',
+      'plain',
+      'brimstone',
     ]);
     // The flood rages, then clears for the dove, the landing and the rainbow.
     expect(ENCOUNTERS.filter((e) => e.setting === 'flood').map((e) => e.weather)).toEqual([

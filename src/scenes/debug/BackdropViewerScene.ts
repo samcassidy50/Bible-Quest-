@@ -10,6 +10,7 @@ export const BACKDROP_VARIANTS: { id: string; setting: Setting; weather?: Weathe
   { id: 'deep', setting: 'deep' },
   { id: 'light', setting: 'light' },
   { id: 'shore', setting: 'shore' },
+  { id: 'wilds', setting: 'wilds' },
   { id: 'garden', setting: 'garden' },
   { id: 'grove', setting: 'grove' },
   { id: 'wilderness', setting: 'wilderness' },
@@ -18,6 +19,9 @@ export const BACKDROP_VARIANTS: { id: string; setting: Setting; weather?: Weathe
   { id: 'flood-storm', setting: 'flood', weather: 'storm' },
   { id: 'flood-clearing', setting: 'flood', weather: 'clearing' },
   { id: 'babel', setting: 'babel' },
+  { id: 'sodom', setting: 'sodom' },
+  { id: 'plain', setting: 'plain' },
+  { id: 'brimstone', setting: 'brimstone' },
 ];
 
 /**

@@ -3,19 +3,23 @@ import { snap, state, waitFor } from './helpers';
 
 test.describe.configure({ timeout: 90_000 });
 
-/** Every environment and a passage set in it (flood twice: storm and clearing), in story order. */
+/** Every environment and a passage set in it (flood twice: storm and clearing), in viewer order. */
 const ENVIRONMENTS: [string, string][] = [
   ['deep', 'gen-001'],
-  ['shore', 'gen-002'],
   ['light', 'gen-003'],
-  ['fields', 'gen-004'],
+  ['shore', 'gen-002'],
+  ['wilds', 'gen-004'],
   ['garden', 'gen-007'],
   ['grove', 'gen-009'],
   ['wilderness', 'gen-011'],
+  ['fields', 'gen-026'],
   ['shipyard', 'gen-019'],
   ['flood-storm', 'gen-022'],
   ['flood-clearing', 'gen-024'],
   ['babel', 'gen-031'],
+  ['sodom', 'gen-052'],
+  ['plain', 'gen-053'],
+  ['brimstone', 'gen-054'],
 ];
 
 for (const [name, id] of ENVIRONMENTS) {
@@ -40,6 +44,7 @@ const PAINTED: Record<string, string[]> = {
   'flood-storm': ['sky', 'far', 'mid', 'ground', 'landmark'],
   'flood-clearing': ['sky', 'far', 'mid', 'ground', 'landmark'],
   babel: ['sky', 'far', 'mid', 'ground', 'landmark'],
+  sodom: ['sky', 'far', 'mid', 'ground', 'landmark'],
 };
 
 test('backdrop viewer shows every environment with no text, tap for the next', async ({ page }) => {
