@@ -45,12 +45,12 @@ describe('map layout', () => {
           expect(Math.hypot(a.x - b.x, a.y - b.y), `${a.id}–${b.id}`).toBeGreaterThan(170);
   });
 
-  it('Beginnings is one trail, then it forks into the Noah and Babel paths', () => {
+  it('Beginnings is one trail, then it forks into the Noah, Babel and Sodom paths', () => {
     expect(mapNode('gen-001')!.after).toBeUndefined();
     for (let i = 1; i < BEGINNINGS.length; i++)
       expect(mapNode(BEGINNINGS[i]!)!.after).toBe(BEGINNINGS[i - 1]);
-    expect(childrenOf('gen-011').map((n) => n.id)).toEqual(['gen-019', 'gen-031']);
-    expect(MAP_PATHS.map((p) => p.ids[0])).toEqual(['gen-019', 'gen-031']);
+    expect(childrenOf('gen-011').map((n) => n.id)).toEqual(['gen-019', 'gen-031', 'gen-052']);
+    expect(MAP_PATHS.map((p) => p.ids[0])).toEqual(['gen-019', 'gen-031', 'gen-052']);
     expect(MAP_PATHS[0]!.ids).toHaveLength(9);
     for (const n of MAP_NODES.slice(1)) expect(parentOf(n), n.id).toBeDefined();
   });
@@ -61,6 +61,8 @@ describe('map layout', () => {
     expect(nextOnMap('gen-026')).toBe('gen-027');
     expect(nextOnMap('gen-027')).toBeNull();
     expect(nextOnMap('gen-031')).toBeNull();
+    expect(nextOnMap('gen-052')).toBe('gen-053');
+    expect(nextOnMap('gen-054')).toBeNull();
   });
 });
 
@@ -76,12 +78,13 @@ describe('reveal rules', () => {
     expect(states.slice(0, 4).map((s) => s.state)).toEqual(['done', 'done', 'open', 'hidden']);
   });
 
-  it('finishing Beginnings opens both paths, and each path then opens on its own', () => {
+  it('finishing Beginnings opens every path, and each path then opens on its own', () => {
     expect(open(won(...BEGINNINGS.slice(0, 10)))).toEqual(['gen-011']);
     const fork = won(...BEGINNINGS);
-    expect(open(fork)).toEqual(['gen-019', 'gen-031']);
-    expect(open(won(...BEGINNINGS, 'gen-019'))).toEqual(['gen-020', 'gen-031']);
-    expect(open(won(...BEGINNINGS, 'gen-031'))).toEqual(['gen-019']);
+    expect(open(fork)).toEqual(['gen-019', 'gen-031', 'gen-052']);
+    expect(open(won(...BEGINNINGS, 'gen-019'))).toEqual(['gen-020', 'gen-031', 'gen-052']);
+    expect(open(won(...BEGINNINGS, 'gen-031'))).toEqual(['gen-019', 'gen-052']);
+    expect(open(won(...BEGINNINGS, 'gen-052'))).toEqual(['gen-019', 'gen-031', 'gen-053']);
   });
 
   it('shows the choice of paths until one is started', () => {
@@ -104,7 +107,7 @@ describe('reveal rules', () => {
     expect(newlyRevealed(s)).toEqual(['gen-002']);
     expect(markSeenOnMap(s, ['gen-001'])).toBe(s);
     s = markSeenOnMap(won(...BEGINNINGS), BEGINNINGS);
-    expect(newlyRevealed(s)).toEqual(['gen-019', 'gen-031']);
+    expect(newlyRevealed(s)).toEqual(['gen-019', 'gen-031', 'gen-052']);
   });
 
   it('puts the hero at the furthest open location, or at the fork while choosing', () => {
@@ -112,7 +115,9 @@ describe('reveal rules', () => {
     expect(focusNode(won('gen-001', 'gen-002')).id).toBe('gen-003');
     expect(focusNode(won(...BEGINNINGS)).id).toBe('gen-011');
     expect(focusNode(won(...BEGINNINGS, 'gen-019', 'gen-020')).id).toBe('gen-021');
-    expect(focusNode(won(...BEGINNINGS, 'gen-031')).id).toBe('gen-019');
+    // Babel done, Noah and Sodom both unstarted: the hero waits at the fork.
+    expect(focusNode(won(...BEGINNINGS, 'gen-031')).id).toBe('gen-011');
+    expect(focusNode(won(...BEGINNINGS, 'gen-052')).id).toBe('gen-053');
     expect(focusNode(newSave(), true).id).toBe('gen-027');
   });
 });

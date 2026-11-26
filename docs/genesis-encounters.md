@@ -9,8 +9,8 @@ so you can judge the split and the tone. The in-game text is still retold **vers
 `content/source/retelling/GEN.txt` from a public-domain translation (BSB/WEB) open beside the
 writer, as the content rules require. Everything here is an AI draft for a human to review.
 
-**Built so far (2026-11-25):** encounters 1–11 (the Beginnings arc), then a choice of two paths on
-the map: 19–27 (Noah) and 31 (Babel). Each encounter's id is its number here (`gen-019`). The
+**Built so far (2026-11-26):** encounters 1–11 (the Beginnings arc), then a choice of three paths
+on the map: 19–27 (Noah), 31 (Babel) and 52–54 (a short side path: Sodom's destruction). Each encounter's id is its number here (`gen-019`). The
 others are left out for now, as picked in the Genesis Passage Picker.
 
 **Flags** (nothing is skipped unless you say so):

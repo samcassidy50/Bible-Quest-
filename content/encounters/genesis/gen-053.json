@@ -1,0 +1,148 @@
+{
+  "id": "gen-053",
+  "title": "Run to the Hills",
+  "passage": "GEN 19:12-22",
+  "setting": "fields",
+  "sections": [
+    {
+      "verses": "12-14",
+      "foe": {
+        "id": "scoffing-wisp",
+        "name": "Scoffing Wisp",
+        "maxHp": 50,
+        "attack": 10,
+        "color": "#7a6a8a",
+        "size": 0.85,
+        "sprite": "gust"
+      },
+      "orbs": [
+        {
+          "word": "destroy"
+        },
+        {
+          "word": "joking"
+        }
+      ]
+    },
+    {
+      "verses": "15-17",
+      "foe": {
+        "id": "lingering-ooze",
+        "name": "Lingering Ooze",
+        "maxHp": 50,
+        "attack": 11,
+        "color": "#4a6a8a",
+        "size": 0.95,
+        "sprite": "slime-blue"
+      },
+      "orbs": [
+        {
+          "word": "hand"
+        },
+        {
+          "word": "mountains"
+        }
+      ]
+    },
+    {
+      "verses": "18-22",
+      "foe": {
+        "id": "dread-of-the-hills",
+        "name": "Dread of the Hills",
+        "maxHp": 80,
+        "attack": 12,
+        "color": "#5c4a3a",
+        "size": 1.4,
+        "sprite": "minotaur"
+      },
+      "orbs": [
+        {
+          "word": "little"
+        }
+      ]
+    }
+  ],
+  "rune": "haste",
+  "questions": [
+    {
+      "id": "gen-053-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the angels say they were going to do to the city?",
+      "choices": ["Destroy it", "Build a wall", "Make it king", "Count its people"],
+      "answerIndex": 0,
+      "highlight": "we are going to destroy it",
+      "section": 1
+    },
+    {
+      "id": "gen-053-q2",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did the young men think when Lot warned them?",
+      "choices": [
+        "That he was joking",
+        "That he was right",
+        "That he was a king",
+        "That he was lost"
+      ],
+      "answerIndex": 0,
+      "highlight": "they thought he was joking",
+      "section": 1
+    },
+    {
+      "id": "gen-053-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "When Lot was slow to go, what did the angels do?",
+      "choices": ["Took him by the hand", "Left without him", "Shouted at him", "Carried his bags"],
+      "answerIndex": 0,
+      "highlight": "the men took him by the hand",
+      "section": 2
+    },
+    {
+      "id": "gen-053-q4",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Why did the angels lead Lot’s family out?",
+      "choices": [
+        "Because the Lord was kind to him",
+        "Because Lot paid them",
+        "Because the city was flooding",
+        "Because Lot was a king"
+      ],
+      "answerIndex": 0,
+      "highlight": "because the Lord was kind to him",
+      "section": 2
+    },
+    {
+      "id": "gen-053-q5",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "The angels told Lot’s family not to look back.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "Don’t look back",
+      "section": 2
+    },
+    {
+      "id": "gen-053-q6",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Where did Lot ask to run instead of the mountains?",
+      "choices": ["A little town close by", "Back to Sodom", "To Egypt", "Into a cave"],
+      "answerIndex": 0,
+      "highlight": "it is only a little one",
+      "section": 3
+    },
+    {
+      "id": "gen-053-q7",
+      "type": "fill_blank",
+      "difficulty": "medium",
+      "prompt": "The town was called Zoar, which means “____.”",
+      "choices": ["little", "safe", "far", "bright"],
+      "answerIndex": 0,
+      "highlight": "That is why the town was called Zoar",
+      "section": 3
+    }
+  ]
+}

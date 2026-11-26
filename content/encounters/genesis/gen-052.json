@@ -1,0 +1,140 @@
+{
+  "id": "gen-052",
+  "title": "Angels in Sodom",
+  "passage": "GEN 19:1-11",
+  "setting": "fields",
+  "sections": [
+    {
+      "verses": "1-3",
+      "foe": {
+        "id": "dusk-shade",
+        "name": "Dusk Shade",
+        "maxHp": 50,
+        "attack": 10,
+        "color": "#3a2f4a",
+        "size": 0.85,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "angels"
+        },
+        {
+          "word": "feast"
+        }
+      ]
+    },
+    {
+      "verses": "4-9",
+      "foe": {
+        "id": "cruel-clamor",
+        "name": "Cruel Clamor",
+        "maxHp": 50,
+        "attack": 11,
+        "color": "#5a3a3a",
+        "size": 1.0,
+        "sprite": "gust"
+      },
+      "orbs": [
+        {
+          "word": "wicked"
+        }
+      ]
+    },
+    {
+      "verses": "10-11",
+      "foe": {
+        "id": "shadow-of-sodom",
+        "name": "Shadow of Sodom",
+        "maxHp": 80,
+        "attack": 12,
+        "color": "#241a2e",
+        "size": 1.4,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "door"
+        }
+      ]
+    }
+  ],
+  "rune": "guard",
+  "questions": [
+    {
+      "id": "gen-052-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where was Lot sitting when the angels came?",
+      "choices": ["At the city gate", "In a tent", "By a well", "On a mountain"],
+      "answerIndex": 0,
+      "highlight": "Lot was sitting at the city gate",
+      "section": 1
+    },
+    {
+      "id": "gen-052-q2",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did Lot make for his visitors?",
+      "choices": ["A feast", "A tent", "A fire", "A boat"],
+      "answerIndex": 0,
+      "highlight": "He made them a feast",
+      "section": 1
+    },
+    {
+      "id": "gen-052-q3",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "At first the visitors said they would spend the night in the street.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "we will spend the night in the street",
+      "section": 1
+    },
+    {
+      "id": "gen-052-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who surrounded Lot’s house?",
+      "choices": ["The men of Sodom", "Wild animals", "An army of kings", "Abraham’s servants"],
+      "answerIndex": 0,
+      "highlight": "the men of Sodom surrounded the house",
+      "section": 2
+    },
+    {
+      "id": "gen-052-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did Lot ask the men of the city not to do?",
+      "choices": ["Such a wicked thing", "Light a fire", "Go to sleep", "Sing so loud"],
+      "answerIndex": 0,
+      "highlight": "don’t do such a wicked thing",
+      "section": 2
+    },
+    {
+      "id": "gen-052-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the visitors do when Lot was in danger?",
+      "choices": [
+        "Pulled him back into the house",
+        "Ran away",
+        "Hid on the roof",
+        "Called for Abraham"
+      ],
+      "answerIndex": 0,
+      "highlight": "pulled Lot back into the house",
+      "section": 3
+    },
+    {
+      "id": "gen-052-q7",
+      "type": "fill_blank",
+      "difficulty": "medium",
+      "prompt": "The men at the door wore themselves out trying to find the ____.",
+      "choices": ["door", "gate", "well", "road"],
+      "answerIndex": 0,
+      "highlight": "trying to find the door",
+      "section": 3
+    }
+  ]
+}

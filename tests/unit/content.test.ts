@@ -9,13 +9,14 @@ import { encounterText, textUpToSection } from '../../src/core/content/types';
  */
 const BEGINNINGS = Array.from({ length: 11 }, (_, i) => `gen-${String(i + 1).padStart(3, '0')}`);
 const NOAH = Array.from({ length: 9 }, (_, i) => `gen-0${19 + i}`);
+const SODOM = ['gen-052', 'gen-053', 'gen-054'];
 
 describe('content: Genesis', () => {
-  it('has Beginnings, then the Noah and Babel paths, in reading order', () => {
-    expect(ENCOUNTERS.map((e) => e.id)).toEqual([...BEGINNINGS, ...NOAH, 'gen-031']);
+  it('has Beginnings, then the Noah, Babel and Sodom paths, in reading order', () => {
+    expect(ENCOUNTERS.map((e) => e.id)).toEqual([...BEGINNINGS, ...NOAH, 'gen-031', ...SODOM]);
   });
 
-  it('reads Genesis 1:1–3:19, 6:9–9:17 and 11:1-9 with no gaps or overlaps', () => {
+  it('reads Genesis 1:1–3:19, 6:9–9:17, 11:1-9 and 19:1-29 with no gaps or overlaps', () => {
     expect(ENCOUNTERS.map((e) => e.passage)).toEqual([
       'GEN 1:1-5',
       'GEN 1:6-13',
@@ -38,6 +39,9 @@ describe('content: Genesis', () => {
       'GEN 9:1-7',
       'GEN 9:8-17',
       'GEN 11:1-9',
+      'GEN 19:1-11',
+      'GEN 19:12-22',
+      'GEN 19:23-29',
     ]);
   });
 
@@ -119,6 +123,9 @@ describe('content: Genesis', () => {
       'fields',
       'flood',
       'babel',
+      'fields',
+      'fields',
+      'wilderness',
     ]);
     // The flood rages, then clears for the dove, the landing and the rainbow.
     expect(ENCOUNTERS.filter((e) => e.setting === 'flood').map((e) => e.weather)).toEqual([
@@ -145,10 +152,12 @@ describe('content: Genesis', () => {
     expect(getEncounter('gen-009').title).toBe('The Tricky Serpent');
     expect(getEncounter('nope').id).toBe('gen-001');
     expect(nextEncounter('gen-001')?.id).toBe('gen-002');
-    expect(nextEncounter('gen-011')).toBeNull(); // the player chooses Noah or Babel
+    expect(nextEncounter('gen-011')).toBeNull(); // the player chooses Noah, Babel or Sodom
     expect(nextEncounter('gen-019')?.id).toBe('gen-020');
     expect(nextEncounter('gen-027')).toBeNull();
     expect(nextEncounter('gen-031')).toBeNull();
+    expect(nextEncounter('gen-052')?.id).toBe('gen-053');
+    expect(nextEncounter('gen-054')).toBeNull();
     expect(nextEncounter('nope')).toBeNull();
   });
 });

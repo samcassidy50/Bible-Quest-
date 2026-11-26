@@ -1,0 +1,133 @@
+{
+  "id": "gen-054",
+  "title": "Fire from Heaven",
+  "passage": "GEN 19:23-29",
+  "setting": "wilderness",
+  "sections": [
+    {
+      "verses": "23-24",
+      "foe": {
+        "id": "brimstone-blob",
+        "name": "Brimstone Blob",
+        "maxHp": 50,
+        "attack": 10,
+        "color": "#c0502a",
+        "size": 0.85,
+        "sprite": "slime-lava"
+      },
+      "orbs": [
+        {
+          "word": "sun"
+        },
+        {
+          "word": "fire"
+        }
+      ]
+    },
+    {
+      "verses": "25-26",
+      "foe": {
+        "id": "backward-glance",
+        "name": "Backward Glance",
+        "maxHp": 50,
+        "attack": 11,
+        "color": "#8a7a6a",
+        "size": 0.95,
+        "sprite": "hissling"
+      },
+      "orbs": [
+        {
+          "word": "salt"
+        }
+      ]
+    },
+    {
+      "verses": "27-29",
+      "foe": {
+        "id": "furnace-smoke",
+        "name": "Furnace Smoke",
+        "maxHp": 80,
+        "attack": 12,
+        "color": "#3a3030",
+        "size": 1.4,
+        "sprite": "storm-cloud"
+      },
+      "orbs": [
+        {
+          "word": "smoke"
+        },
+        {
+          "word": "remembered"
+        }
+      ]
+    }
+  ],
+  "rune": "mending",
+  "questions": [
+    {
+      "id": "gen-054-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where was Lot when the sun came up?",
+      "choices": ["In Zoar", "In Sodom", "On the mountain", "In Egypt"],
+      "answerIndex": 0,
+      "highlight": "when Lot reached Zoar",
+      "section": 1
+    },
+    {
+      "id": "gen-054-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the Lord rain down on Sodom and Gomorrah?",
+      "choices": ["Burning sulfur and fire", "Hail", "Bread", "Water"],
+      "answerIndex": 0,
+      "highlight": "burning sulfur and fire",
+      "section": 1
+    },
+    {
+      "id": "gen-054-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What happened to Lot’s wife when she looked back?",
+      "choices": [
+        "She became a pillar of salt",
+        "She fell asleep",
+        "She ran back home",
+        "She became a bird"
+      ],
+      "answerIndex": 0,
+      "highlight": "she became a pillar of salt",
+      "section": 2
+    },
+    {
+      "id": "gen-054-q4",
+      "type": "true_false",
+      "difficulty": "medium",
+      "prompt": "Even the plants that grew on the ground were destroyed.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "everything that grew on the ground",
+      "section": 2
+    },
+    {
+      "id": "gen-054-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did Abraham see rising from the land?",
+      "choices": ["Smoke like a huge furnace", "A rainbow", "A tower", "A flock of birds"],
+      "answerIndex": 0,
+      "highlight": "like the smoke of a huge furnace",
+      "section": 3
+    },
+    {
+      "id": "gen-054-q6",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Who did God remember when He saved Lot?",
+      "choices": ["Abraham", "Noah", "Adam", "Isaac"],
+      "answerIndex": 0,
+      "highlight": "He remembered Abraham",
+      "section": 3
+    }
+  ]
+}

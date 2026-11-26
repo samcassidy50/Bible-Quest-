@@ -6,7 +6,7 @@ import type { SaveData } from '../progress/progress';
  * wide and WORLD_H tall (the design height), panned horizontally on phones.
  *
  * The map is a tree of paths: each location names the one it follows (`after`). Beginnings is one
- * trail; after it the player chooses a path (Noah or Babel), and each path opens on its own.
+ * trail; after it the player chooses a path (Noah, Babel or Sodom), and each path opens on its own.
  */
 export const WORLD_W = 4200;
 export const WORLD_H = 720;
@@ -56,11 +56,13 @@ const NOAH = [
   'gen-027',
 ];
 const BABEL = ['gen-031'];
+const SODOM = ['gen-052', 'gen-053', 'gen-054'];
 
 /** The paths after Beginnings, offered as a choice at its last location. */
 export const MAP_PATHS: readonly MapPath[] = [
   { name: 'Noah and the Flood', ids: NOAH },
   { name: 'The Tower of Babel', ids: BABEL },
+  { name: 'Escape from Sodom', ids: SODOM },
 ];
 
 const PLACES: Record<string, [number, number, string]> = {
@@ -88,6 +90,10 @@ const PLACES: Record<string, [number, number, string]> = {
   'gen-027': [3880, 320, '🌈'],
   // Babel: south-east, down onto the plain of Shinar.
   'gen-031': [2420, 570, '🗼'],
+  // Sodom: east along the bottom, across the plain toward Zoar.
+  'gen-052': [2580, 470, '👼'],
+  'gen-053': [2940, 480, '🏃'],
+  'gen-054': [3110, 580, '🔥'],
 };
 
 /** Each location follows the one before it on its trail; a path's first follows `from`. */
@@ -99,14 +105,17 @@ const AFTER = new Map([
   ...trail(BEGINNINGS),
   ...trail(NOAH, 'gen-011'),
   ...trail(BABEL, 'gen-011'),
+  ...trail(SODOM, 'gen-011'),
 ]);
 
 /** Locations in reading order (Beginnings, then each path). */
-export const MAP_NODES: readonly MapNode[] = [...BEGINNINGS, ...NOAH, ...BABEL].map((id) => {
-  const [x, y, icon] = PLACES[id]!;
-  const after = AFTER.get(id);
-  return after ? { id, x, y, icon, after } : { id, x, y, icon };
-});
+export const MAP_NODES: readonly MapNode[] = [...BEGINNINGS, ...NOAH, ...BABEL, ...SODOM].map(
+  (id) => {
+    const [x, y, icon] = PLACES[id]!;
+    const after = AFTER.get(id);
+    return after ? { id, x, y, icon, after } : { id, x, y, icon };
+  },
+);
 
 const byId = new Map(MAP_NODES.map((n) => [n.id, n]));
 
