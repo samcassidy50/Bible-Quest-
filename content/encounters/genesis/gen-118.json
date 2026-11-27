@@ -1,0 +1,158 @@
+{
+  "id": "gen-118",
+  "title": "Joseph’s Dreams",
+  "passage": "GEN 37:1-11",
+  "setting": "canaan",
+  "sections": [
+    {
+      "verses": "1-4",
+      "foe": {
+        "id": "green-envy",
+        "name": "Green Envy",
+        "maxHp": 50,
+        "attack": 11,
+        "color": "#5a8a3a",
+        "size": 0.85,
+        "sprite": "serpent"
+      },
+      "orbs": [
+        {
+          "word": "robe"
+        },
+        {
+          "word": "sheep"
+        }
+      ]
+    },
+    {
+      "verses": "5-8",
+      "foe": {
+        "id": "proud-whisper",
+        "name": "Proud Whisper",
+        "maxHp": 50,
+        "attack": 11,
+        "color": "#8aa0b8",
+        "size": 0.9,
+        "sprite": "gust"
+      },
+      "orbs": [
+        {
+          "word": "dream"
+        },
+        {
+          "word": "bundles"
+        }
+      ]
+    },
+    {
+      "verses": "9-11",
+      "foe": {
+        "id": "jealous-glare",
+        "name": "Jealous Glare",
+        "maxHp": 80,
+        "attack": 12,
+        "color": "#3e3a5a",
+        "size": 1.35,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "stars"
+        }
+      ]
+    }
+  ],
+  "rune": "might",
+  "questions": [
+    {
+      "id": "gen-118-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How old was Joseph?",
+      "choices": ["Seventeen", "Seven", "Twelve", "Thirty"],
+      "answerIndex": 0,
+      "highlight": "Joseph was seventeen years old",
+      "section": 1
+    },
+    {
+      "id": "gen-118-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Israel make for Joseph?",
+      "choices": ["A robe of many colors", "A wooden staff", "A shepherd’s tent", "A silver cup"],
+      "answerIndex": 0,
+      "highlight": "He made Joseph a robe of many colors",
+      "section": 1
+    },
+    {
+      "id": "gen-118-q3",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "Joseph’s brothers spoke kindly to him.",
+      "choices": ["True", "False"],
+      "answerIndex": 1,
+      "highlight": "could not say a kind word to him",
+      "section": 1
+    },
+    {
+      "id": "gen-118-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "In Joseph’s first dream, what were the brothers tying up in the field?",
+      "choices": ["Bundles of grain", "Sheep", "Firewood", "Grapevines"],
+      "answerIndex": 0,
+      "highlight": "We were tying up bundles of grain in the field",
+      "section": 2
+    },
+    {
+      "id": "gen-118-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did the brothers’ bundles do?",
+      "choices": [
+        "Bowed down to Joseph’s bundle",
+        "Fell over in the wind",
+        "Ran away",
+        "Turned into stars"
+      ],
+      "answerIndex": 0,
+      "highlight": "bowed down to my bundle",
+      "section": 2
+    },
+    {
+      "id": "gen-118-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What bowed down to Joseph in his second dream?",
+      "choices": [
+        "The sun, the moon and eleven stars",
+        "Twelve camels",
+        "The trees of the field",
+        "A king and his army"
+      ],
+      "answerIndex": 0,
+      "highlight": "The sun, the moon and eleven stars were bowing down to me",
+      "section": 3
+    },
+    {
+      "id": "gen-118-q7",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who scolded Joseph about the second dream?",
+      "choices": ["His father", "His mother", "Reuben", "A shepherd"],
+      "answerIndex": 0,
+      "highlight": "his father scolded him",
+      "section": 3
+    },
+    {
+      "id": "gen-118-q8",
+      "type": "true_false",
+      "difficulty": "medium",
+      "prompt": "Joseph’s father kept thinking about what Joseph had said.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "his father kept thinking about what Joseph had said",
+      "section": 3
+    }
+  ]
+}

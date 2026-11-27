@@ -1,0 +1,142 @@
+{
+  "id": "gen-126",
+  "title": "Joseph in Prison",
+  "passage": "GEN 39:13-23",
+  "setting": "prison",
+  "sections": [
+    {
+      "verses": "13-18",
+      "foe": {
+        "id": "false-tongue",
+        "name": "False Tongue",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#5a5a8a",
+        "size": 0.9,
+        "sprite": "serpent"
+      },
+      "orbs": [
+        {
+          "word": "cloak"
+        }
+      ]
+    },
+    {
+      "verses": "19-20",
+      "foe": {
+        "id": "unfair-chains",
+        "name": "Unfair Chains",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#4a4a4a",
+        "size": 0.95,
+        "sprite": "slime-blue"
+      },
+      "orbs": [
+        {
+          "word": "prison"
+        }
+      ]
+    },
+    {
+      "verses": "21-23",
+      "foe": {
+        "id": "prison-gloom",
+        "name": "Prison Gloom",
+        "maxHp": 80,
+        "attack": 13,
+        "color": "#241e2a",
+        "size": 1.4,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "kind"
+        }
+      ]
+    }
+  ],
+  "rune": "renewal",
+  "questions": [
+    {
+      "id": "gen-126-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who did she call when Joseph ran outside?",
+      "choices": ["Her servants", "The jailer", "Pharaoh", "Joseph’s brothers"],
+      "answerIndex": 0,
+      "highlight": "she called her servants",
+      "section": 1
+    },
+    {
+      "id": "gen-126-q2",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "How long did she keep Joseph’s cloak beside her?",
+      "choices": [
+        "Until Joseph’s master came home",
+        "For one hour",
+        "Until morning",
+        "For a whole year"
+      ],
+      "answerIndex": 0,
+      "highlight": "She kept his cloak beside her until Joseph’s master came home",
+      "section": 1
+    },
+    {
+      "id": "gen-126-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How did Potiphar feel when he heard his wife’s story?",
+      "choices": ["Very angry", "Happy", "Sleepy", "Proud of Joseph"],
+      "answerIndex": 0,
+      "highlight": "he became very angry",
+      "section": 2
+    },
+    {
+      "id": "gen-126-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where did Potiphar put Joseph?",
+      "choices": [
+        "In the prison for the king’s prisoners",
+        "On a ship",
+        "In the palace",
+        "Back in the pit"
+      ],
+      "answerIndex": 0,
+      "highlight": "the prison where the king’s prisoners were kept",
+      "section": 2
+    },
+    {
+      "id": "gen-126-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who was with Joseph even in prison?",
+      "choices": ["The Lord", "His father", "Potiphar", "No one"],
+      "answerIndex": 0,
+      "highlight": "But the Lord was with Joseph",
+      "section": 3
+    },
+    {
+      "id": "gen-126-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the jailer put Joseph in charge of?",
+      "choices": ["All the prisoners", "The king’s horses", "The palace kitchen", "The city gate"],
+      "answerIndex": 0,
+      "highlight": "The jailer put Joseph in charge of all the prisoners",
+      "section": 3
+    },
+    {
+      "id": "gen-126-q7",
+      "type": "true_false",
+      "difficulty": "medium",
+      "prompt": "The jailer checked everything Joseph did.",
+      "choices": ["True", "False"],
+      "answerIndex": 1,
+      "highlight": "did not need to check on anything Joseph was in charge of",
+      "section": 3
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "id": "gen-120",
+  "title": "Sold to Egypt",
+  "passage": "GEN 37:25-36",
+  "setting": "caravan",
+  "sections": [
+    {
+      "verses": "25-28",
+      "foe": {
+        "id": "silver-greed",
+        "name": "Silver Greed",
+        "maxHp": 50,
+        "attack": 11,
+        "color": "#c8902a",
+        "size": 0.9,
+        "sprite": "slime-lava"
+      },
+      "orbs": [
+        {
+          "word": "camels"
+        },
+        {
+          "word": "silver"
+        }
+      ]
+    },
+    {
+      "verses": "29-32",
+      "foe": {
+        "id": "robe-of-lies",
+        "name": "Robe of Lies",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#6a5a8a",
+        "size": 0.9,
+        "sprite": "hissling"
+      },
+      "orbs": [
+        {
+          "word": "goat"
+        }
+      ]
+    },
+    {
+      "verses": "33-36",
+      "foe": {
+        "id": "weeping-gloom",
+        "name": "Weeping Gloom",
+        "maxHp": 80,
+        "attack": 12,
+        "color": "#3a5a7a",
+        "size": 1.35,
+        "sprite": "storm-cloud"
+      },
+      "orbs": [
+        {
+          "word": "comfort"
+        }
+      ]
+    }
+  ],
+  "rune": "life",
+  "questions": [
+    {
+      "id": "gen-120-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What were the traders’ camels carrying?",
+      "choices": ["Spices, balm and myrrh", "Gold and jewels", "Water jars", "Wood for building"],
+      "answerIndex": 0,
+      "highlight": "Their camels were carrying spices, balm and myrrh",
+      "section": 1
+    },
+    {
+      "id": "gen-120-q2",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Which brother said, “Let’s sell him”?",
+      "choices": ["Judah", "Reuben", "Joseph", "Benjamin"],
+      "answerIndex": 0,
+      "highlight": "Judah said to his brothers",
+      "section": 1
+    },
+    {
+      "id": "gen-120-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How much silver was Joseph sold for?",
+      "choices": ["Twenty pieces", "Two pieces", "Fifty pieces", "One hundred pieces"],
+      "answerIndex": 0,
+      "highlight": "twenty pieces of silver",
+      "section": 1
+    },
+    {
+      "id": "gen-120-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Reuben do when he found the pit empty?",
+      "choices": ["He tore his clothes", "He laughed", "He went to sleep", "He ran to Egypt"],
+      "answerIndex": 0,
+      "highlight": "He tore his clothes because he was so upset",
+      "section": 2
+    },
+    {
+      "id": "gen-120-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did the brothers dip Joseph’s robe in?",
+      "choices": ["A young goat’s blood", "River water", "Red paint", "Olive oil"],
+      "answerIndex": 0,
+      "highlight": "killed a young goat, and dipped the robe in its blood",
+      "section": 2
+    },
+    {
+      "id": "gen-120-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Jacob think had happened to Joseph?",
+      "choices": [
+        "A wild animal ate him",
+        "He became a king",
+        "He went to visit friends",
+        "He was lost in the desert"
+      ],
+      "answerIndex": 0,
+      "highlight": "A wild animal has eaten him",
+      "section": 3
+    },
+    {
+      "id": "gen-120-q7",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "Jacob let his children comfort him.",
+      "choices": ["True", "False"],
+      "answerIndex": 1,
+      "highlight": "he would not be comforted",
+      "section": 3
+    },
+    {
+      "id": "gen-120-q8",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who bought Joseph in Egypt?",
+      "choices": ["Potiphar", "Pharaoh", "A shepherd", "Judah"],
+      "answerIndex": 0,
+      "highlight": "to Potiphar, one of Pharaoh’s officers",
+      "section": 3
+    }
+  ]
+}

@@ -1,0 +1,145 @@
+{
+  "id": "gen-119",
+  "title": "Into the Pit",
+  "passage": "GEN 37:12-24",
+  "setting": "dothan",
+  "sections": [
+    {
+      "verses": "12-17",
+      "foe": {
+        "id": "wandering-way",
+        "name": "Wandering Way",
+        "maxHp": 50,
+        "attack": 11,
+        "color": "#a0b4c0",
+        "size": 0.9,
+        "sprite": "gust"
+      },
+      "orbs": [
+        {
+          "word": "Shechem"
+        },
+        {
+          "word": "Dothan"
+        }
+      ]
+    },
+    {
+      "verses": "18-20",
+      "foe": {
+        "id": "dark-plot",
+        "name": "Dark Plot",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#3a2f4a",
+        "size": 0.9,
+        "sprite": "hissling"
+      },
+      "orbs": [
+        {
+          "word": "dreamer"
+        }
+      ]
+    },
+    {
+      "verses": "21-24",
+      "foe": {
+        "id": "hollow-dread",
+        "name": "Hollow Dread",
+        "maxHp": 80,
+        "attack": 12,
+        "color": "#2a2430",
+        "size": 1.4,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "pit"
+        }
+      ]
+    }
+  ],
+  "rune": "zeal",
+  "questions": [
+    {
+      "id": "gen-119-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where did Jacob first send Joseph to find his brothers?",
+      "choices": ["Shechem", "Egypt", "Dothan", "Bethlehem"],
+      "answerIndex": 0,
+      "highlight": "His brothers went to Shechem",
+      "section": 1
+    },
+    {
+      "id": "gen-119-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who found Joseph wandering in a field?",
+      "choices": ["A man", "A lion", "Reuben", "A trader"],
+      "answerIndex": 0,
+      "highlight": "A man found Joseph wandering in a field",
+      "section": 1
+    },
+    {
+      "id": "gen-119-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where did Joseph finally find his brothers?",
+      "choices": ["In Dothan", "In Egypt", "In Hebron", "By the sea"],
+      "answerIndex": 0,
+      "highlight": "found them in Dothan",
+      "section": 1
+    },
+    {
+      "id": "gen-119-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the brothers call Joseph when they saw him coming?",
+      "choices": ["The dreamer", "The shepherd", "The little one", "The king"],
+      "answerIndex": 0,
+      "highlight": "here comes the dreamer",
+      "section": 2
+    },
+    {
+      "id": "gen-119-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did the brothers plan to say had happened to Joseph?",
+      "choices": ["A wild animal ate him", "He ran away", "He got lost", "He fell in a river"],
+      "answerIndex": 0,
+      "highlight": "We will say a wild animal ate him",
+      "section": 2
+    },
+    {
+      "id": "gen-119-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Which brother tried to save Joseph’s life?",
+      "choices": ["Reuben", "Judah", "Simeon", "Levi"],
+      "answerIndex": 0,
+      "highlight": "Reuben heard this and tried to save him",
+      "section": 3
+    },
+    {
+      "id": "gen-119-q7",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the brothers pull off Joseph?",
+      "choices": ["His robe", "His sandals", "His bag", "His ring"],
+      "answerIndex": 0,
+      "highlight": "they pulled off his robe",
+      "section": 3
+    },
+    {
+      "id": "gen-119-q8",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "The pit had water in it.",
+      "choices": ["True", "False"],
+      "answerIndex": 1,
+      "highlight": "There was no water in it",
+      "section": 3
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "id": "gen-125",
+  "title": "Joseph Says No",
+  "passage": "GEN 39:7-12",
+  "setting": "estate",
+  "sections": [
+    {
+      "verses": "7-9",
+      "foe": {
+        "id": "sly-temptation",
+        "name": "Sly Temptation",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#7a4a8a",
+        "size": 0.9,
+        "sprite": "hissling"
+      },
+      "orbs": [
+        {
+          "word": "God"
+        }
+      ]
+    },
+    {
+      "verses": "10-12",
+      "foe": {
+        "id": "clinging-lure",
+        "name": "Clinging Lure",
+        "maxHp": 80,
+        "attack": 12,
+        "color": "#4a6a3a",
+        "size": 1.35,
+        "sprite": "thorn-plant"
+      },
+      "orbs": [
+        {
+          "word": "cloak"
+        }
+      ]
+    }
+  ],
+  "rune": "mending",
+  "questions": [
+    {
+      "id": "gen-125-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Why did Joseph say no?",
+      "choices": [
+        "His master trusted him with everything",
+        "He was too busy",
+        "He was going home",
+        "He was afraid of the dark"
+      ],
+      "answerIndex": 0,
+      "highlight": "my master trusts me with everything in this house",
+      "section": 1
+    },
+    {
+      "id": "gen-125-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Joseph said doing this wrong thing would be a sin against whom?",
+      "choices": ["God", "Pharaoh", "His brothers", "The servants"],
+      "answerIndex": 0,
+      "highlight": "sin against God",
+      "section": 1
+    },
+    {
+      "id": "gen-125-q3",
+      "type": "true_false",
+      "difficulty": "medium",
+      "prompt": "Joseph said no one in the house was greater than he was.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "No one in this house is greater than I am",
+      "section": 1
+    },
+    {
+      "id": "gen-125-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How often did she keep asking Joseph?",
+      "choices": ["Day after day", "Only once", "Once a year", "Never"],
+      "answerIndex": 0,
+      "highlight": "She kept asking Joseph day after day",
+      "section": 2
+    },
+    {
+      "id": "gen-125-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph leave in her hand?",
+      "choices": ["His cloak", "His ring", "His sandals", "A cup"],
+      "answerIndex": 0,
+      "highlight": "he left his cloak in her hand",
+      "section": 2
+    },
+    {
+      "id": "gen-125-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph do then?",
+      "choices": ["Ran outside", "Hid in the house", "Went to sleep", "Called Pharaoh"],
+      "answerIndex": 0,
+      "highlight": "he left his cloak in her hand and ran outside",
+      "section": 2
+    }
+  ]
+}

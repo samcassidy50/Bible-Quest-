@@ -305,7 +305,8 @@ test('winning the end of the Noah path opens Joseph in Egypt: a signpost, then a
   for (const id of ids) save.completed[id] = { stars: 3, bestAccuracy: 1 };
   save.seenOnMap = [...ids, 'gen-031', 'gen-052'];
   await seed(page, save);
-  await page.goto('/?scene=map&fast=1');
+  // (A fresh load opens the newest map with something to play; this test starts on Genesis.)
+  await page.goto('/?scene=map&map=genesis&fast=1');
   await waitFor(page, "s.scene === 'map' && s.mapId === 'genesis' && !s.mapRevealing");
   // The hero is at the end of the Noah path, next to the signpost.
   await waitFor(page, "!!s.targets['signpost:egypt'] && !!s.targets.mapSwitch");
@@ -313,7 +314,7 @@ test('winning the end of the Noah path opens Joseph in Egypt: a signpost, then a
   await tap(page, 'signpost:egypt');
   await waitFor(page, "s.scene === 'map' && s.mapId === 'egypt' && !s.mapRevealing");
   const first = (await state(page)).map!.find((m) => m.id === 'gen-118')!;
-  expect(first.state).toBe('soon'); // not written yet
+  expect(first.state).toBe('open');
   expect((await state(page)).map!.find((m) => m.id === 'gen-119')!.open).toBe(false);
   await snap(page, test.info().outputPath('map-egypt.png'));
   await tap(page, 'mapSwitch');

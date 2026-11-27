@@ -1,0 +1,113 @@
+{
+  "id": "gen-124",
+  "title": "God Was with Joseph",
+  "passage": "GEN 39:1-6",
+  "setting": "estate",
+  "sections": [
+    {
+      "verses": "1-3",
+      "foe": {
+        "id": "homesick-ache",
+        "name": "Homesick Ache",
+        "maxHp": 50,
+        "attack": 11,
+        "color": "#9ab0c8",
+        "size": 0.9,
+        "sprite": "squall"
+      },
+      "orbs": [
+        {
+          "word": "Egypt"
+        },
+        {
+          "word": "master"
+        }
+      ]
+    },
+    {
+      "verses": "4-6",
+      "foe": {
+        "id": "heavy-toil",
+        "name": "Heavy Toil",
+        "maxHp": 80,
+        "attack": 12,
+        "color": "#6a4a3a",
+        "size": 1.3,
+        "sprite": "minotaur"
+      },
+      "orbs": [
+        {
+          "word": "blessing"
+        }
+      ]
+    }
+  ],
+  "rune": "guard",
+  "questions": [
+    {
+      "id": "gen-124-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who was with Joseph in Egypt?",
+      "choices": ["The Lord", "His brothers", "His father", "No one"],
+      "answerIndex": 0,
+      "highlight": "The Lord was with Joseph",
+      "section": 1
+    },
+    {
+      "id": "gen-124-q2",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did Joseph’s master see?",
+      "choices": [
+        "The Lord made everything Joseph did go well",
+        "Joseph was lazy",
+        "Joseph wanted to go home",
+        "Joseph was a king"
+      ],
+      "answerIndex": 0,
+      "highlight": "the Lord made everything he did go well",
+      "section": 1
+    },
+    {
+      "id": "gen-124-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who bought Joseph from the Ishmaelites?",
+      "choices": ["Potiphar", "Pharaoh", "A farmer", "Reuben"],
+      "answerIndex": 0,
+      "highlight": "There Potiphar, an Egyptian",
+      "section": 1
+    },
+    {
+      "id": "gen-124-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Potiphar put Joseph in charge of?",
+      "choices": ["His house", "His army", "His ships", "His camels"],
+      "answerIndex": 0,
+      "highlight": "Potiphar put him in charge of his house",
+      "section": 2
+    },
+    {
+      "id": "gen-124-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Whose house did the Lord bless because of Joseph?",
+      "choices": ["The Egyptian’s house", "Pharaoh’s palace", "Jacob’s tent", "The jailer’s house"],
+      "answerIndex": 0,
+      "highlight": "the Lord blessed the Egyptian’s house because of Joseph",
+      "section": 2
+    },
+    {
+      "id": "gen-124-q6",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "After that, Potiphar worried about everything in his house.",
+      "choices": ["True", "False"],
+      "answerIndex": 1,
+      "highlight": "did not worry about anything except the food he ate",
+      "section": 2
+    }
+  ]
+}
