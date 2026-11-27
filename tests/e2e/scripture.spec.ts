@@ -136,6 +136,29 @@ test('Full text panel opens and closes without stopping the reading', async ({ p
   await waitFor(page, '!s.scripture.fullTextOpen');
 });
 
+test('a long section scrolls inside the Full text panel instead of running off the screen', async ({
+  page,
+}) => {
+  // Genesis 47:1-6: six long verses, taller than the room above the banner.
+  await page.goto('/?scene=scripture&encounter=gen-156&seed=1&narration=off&freeze=1');
+  await waitFor(page, 's.scripture && !!s.targets.fulltext');
+  await tap(page, 'fulltext');
+  await waitFor(page, 's.scripture.fullTextOpen && s.scripture.fullTextScrollable');
+  const box = (await page.locator('#game canvas').boundingBox())!;
+  const s = await state(page);
+  const at = (x: number, y: number) => ({
+    x: box.x + (x * box.width) / s.gameWidth,
+    y: box.y + (y * box.height) / s.gameHeight,
+  });
+  const from = at(s.gameWidth / 2, s.gameHeight * 0.55);
+  const to = at(s.gameWidth / 2, s.gameHeight * 0.25);
+  await page.mouse.move(from.x, from.y);
+  await page.mouse.down();
+  await page.mouse.move(to.x, to.y, { steps: 8 });
+  await page.mouse.up();
+  await snap(page, test.info().outputPath('full-text-scrolled.png'));
+});
+
 test('Skip appears after the verse has been heard once, and forfeits orbs', async ({ page }) => {
   // First reading (fast, auto-win) marks the verse as heard; go back to it via Passages.
   await page.goto('/?scene=scripture&seed=1&fast=1&autoAnswer=correct');

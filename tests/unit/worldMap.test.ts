@@ -125,6 +125,9 @@ describe('Joseph in Egypt map', () => {
     expect(startMap(done, false, none)).toBe('genesis');
     expect(startMap(done)).toBe('egypt');
     expect(startMap(newSave(), true, none)).toBe('genesis');
+    // ?unlockAll opens every map but doesn't move where the player starts.
+    expect(startMap(newSave(), true)).toBe('genesis');
+    expect(startMap(done, true)).toBe('egypt');
   });
 
   it('puts a signpost to Egypt on the Genesis map once Egypt is open', () => {

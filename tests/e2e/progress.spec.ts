@@ -320,3 +320,52 @@ test('winning the end of the Noah path opens Joseph in Egypt: a signpost, then a
   await tap(page, 'mapSwitch');
   await waitFor(page, "s.scene === 'map' && s.mapId === 'genesis'");
 });
+
+test('the journal pages through many passages, and a long one scrolls on its page', async ({
+  page,
+}) => {
+  const save = base();
+  const ids = [
+    ...Array.from({ length: 11 }, (_, i) => i + 1),
+    ...Array.from({ length: 9 }, (_, i) => i + 19),
+    ...[118, 119, 120, 124, 125, 126, 127, 128, 129, 130, 154],
+  ].map((n) => `gen-${String(n).padStart(3, '0')}`);
+  for (const id of ids) save.completed[id] = { stars: 3, bestAccuracy: 1 };
+  await seed(page, save);
+  await page.goto('/?scene=journal&fast=1');
+  await waitFor(page, "s.scene === 'journal' && !!s.journalPage");
+  const first = (await state(page)).journalPage!;
+  expect(first.page).toBe(0);
+  expect(first.pages).toBeGreaterThan(1);
+  expect(Object.keys((await state(page)).targets)).not.toContain('entry:gen-154');
+  // Turn to the last page: the last passage won is there to reread.
+  for (let p = 1; p < first.pages; p++) {
+    await tap(page, 'journal:next');
+    await waitFor(page, `s.scene === 'journal' && s.journalPage.page === ${p}`);
+  }
+  await waitFor(page, "!!s.targets['entry:gen-154']");
+  await tap(page, 'entry:gen-154');
+  await waitFor(page, "s.journalOpen === 'gen-154' && s.journalScrollable");
+  await snap(page, test.info().outputPath('journal-last-page.png'));
+});
+
+test('blessings of the same kind share one row with a count', async ({ page }) => {
+  const save = base();
+  // Beginnings and Noah award several Might and Zeal blessings, all for the sword.
+  const ids = [
+    ...Array.from({ length: 11 }, (_, i) => i + 1),
+    ...Array.from({ length: 9 }, (_, i) => i + 19),
+  ].map((n) => `gen-${String(n).padStart(3, '0')}`);
+  for (const id of ids) save.completed[id] = { stars: 3, bestAccuracy: 1 };
+  await seed(page, save);
+  await page.goto('/?scene=runes&fast=1');
+  await waitFor(page, "s.scene === 'runes' && !!s.targets['item:sword']");
+  await tap(page, 'item:sword');
+  await waitFor(page, "s.scene === 'runes' && s.runes.item === 'sword'");
+  const st = await state(page);
+  const rows = Object.keys(st.targets).filter((k) => k.startsWith('rune:'));
+  expect(st.runes!.bag.length).toBeGreaterThan(2);
+  expect(rows.length).toBeLessThanOrEqual(2); // one row per kind
+  for (const k of rows) expect(st.targets[k]!.y).toBeLessThan(st.gameHeight);
+  await snap(page, test.info().outputPath('runes-grouped.png'));
+});

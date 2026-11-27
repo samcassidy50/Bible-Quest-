@@ -82,6 +82,14 @@ export class ScriptureScene extends Phaser.Scene {
   private replayBtn!: Button;
   private fullTextBtn!: Button;
   private fullText?: Phaser.GameObjects.Container;
+  /** The Full text panel's verses, clipped to the panel and scrolled by drag or wheel. */
+  private fullBody?: {
+    text: Phaser.GameObjects.Text;
+    top: number;
+    room: number;
+    panel: Phaser.Geom.Rectangle;
+  };
+  private fullDrag: { y: number; start: number } | null = null;
 
   private tracker!: OrbTracker;
   private schedule: ScheduledOrb[] = [];
@@ -143,6 +151,9 @@ export class ScriptureScene extends Phaser.Scene {
     this.wordGlows = new Map();
     this.wordOffsets = new Map();
     this.fullText = undefined;
+    this.fullBody = undefined;
+    this.fullDrag = null;
+    this.setupFullTextScroll();
     this.finishing = false;
     this.readings = 0;
     this.tracker = new OrbTracker(this.encounter.orbs.map((_, i) => orbId(i)));
@@ -303,7 +314,11 @@ export class ScriptureScene extends Phaser.Scene {
     this.fullTextBtn.setPosition(ins.left + 24 + 85, ins.top + 48);
     this.replayBtn.setPosition(ins.left + 24 + 170 + 16 + 75, ins.top + 48);
     this.skipBtn.setPosition(ins.left + 24 + 170 + 16 + 150 + 16 + 65, ins.top + 48);
-    this.fullText?.setPosition(W / 2, ins.top + 110);
+    if (this.fullText) {
+      // Rebuild the panel so it (and its scroll clip) fits the new screen.
+      this.toggleFullText();
+      this.toggleFullText();
+    }
     this.updateHero();
     this.updateTicker();
     this.sync();
@@ -517,10 +532,11 @@ export class ScriptureScene extends Phaser.Scene {
     if (this.fullText) {
       this.fullText.destroy();
       this.fullText = undefined;
+      this.fullBody = undefined;
       this.sync();
       return;
     }
-    const { width: W } = this.scale.gameSize;
+    const { width: W, height: H } = this.scale.gameSize;
     const pw = Math.min(W - 80, 980);
     const body = this.encounter.verses.map((v) => `${v.ref}  ${v.text}`).join('\n\n');
     const text = this.add.text(-pw / 2 + 36, 66, body, {
@@ -536,12 +552,42 @@ export class ScriptureScene extends Phaser.Scene {
       fontStyle: 'bold',
       color: '#8a5a00',
     });
-    const ph = text.height + 100;
+    // As tall as the verses, but never past the banner: a long section scrolls inside the panel.
+    const top = this.insets.top + 110;
+    const ph = Math.min(text.height + 100, H - BANNER_H - 12 - top);
     const bg = pixelBox(this, UI.panel, 0, ph / 2, pw, ph);
-    this.fullText = this.add
-      .container(W / 2, this.insets.top + 110, [bg, title, text])
-      .setDepth(35);
+    this.fullText = this.add.container(W / 2, top, [bg, title, text]).setDepth(35);
+    const room = ph - 66 - 24;
+    const clip = this.make.graphics({}, false).fillRect(W / 2 - pw / 2, top + 60, pw, room + 6);
+    text.setMask(clip.createGeometryMask());
+    this.fullText.once(Phaser.GameObjects.Events.DESTROY, () => clip.destroy());
+    this.fullBody = {
+      text,
+      top: 66,
+      room,
+      panel: new Phaser.Geom.Rectangle(W / 2 - pw / 2, top, pw, ph),
+    };
     this.sync();
+  }
+
+  /** Drag inside the Full text panel (or turn the mouse wheel) to scroll a long section. */
+  private setupFullTextScroll(): void {
+    const scrollTo = (y: number) => {
+      const b = this.fullBody;
+      if (!b) return;
+      b.text.y = Phaser.Math.Clamp(y, b.top - Math.max(0, b.text.height - b.room), b.top);
+    };
+    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
+      if (this.fullBody?.panel.contains(p.x, p.y))
+        this.fullDrag = { y: p.y, start: this.fullBody.text.y };
+    });
+    this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
+      if (this.fullDrag && p.isDown) scrollTo(this.fullDrag.start + (p.y - this.fullDrag.y));
+    });
+    this.input.on('pointerup', () => (this.fullDrag = null));
+    this.input.on('wheel', (_p: Phaser.Input.Pointer, _o: unknown, _dx: number, dy: number) => {
+      if (this.fullBody) scrollTo(this.fullBody.text.y - dy);
+    });
   }
 
   // ── Finish ─────────────────────────────────────────────────────────────────
@@ -647,6 +693,7 @@ export class ScriptureScene extends Phaser.Scene {
         collected: this.tracker.collected,
         canSkip: this.canSkip,
         fullTextOpen: !!this.fullText,
+        fullTextScrollable: !!this.fullBody && this.fullBody.text.height > this.fullBody.room,
         finishing: this.finishing,
         readings: this.readings,
       },

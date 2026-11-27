@@ -1,7 +1,21 @@
 import Phaser from 'phaser';
 import { ENCOUNTERS } from '../../content';
-import { ITEM_IDS, ITEMS, RUNE_SLOTS, RUNES, type ItemId } from '../../core/battle/runes';
-import { clearSlot, itemOpen, ownedRunes, setRune, validSlots } from '../../core/progress/runes';
+import {
+  ITEM_IDS,
+  ITEMS,
+  RUNE_SLOTS,
+  RUNES,
+  type ItemId,
+  type RuneId,
+} from '../../core/battle/runes';
+import {
+  clearSlot,
+  itemOpen,
+  ownedRunes,
+  setRune,
+  validSlots,
+  type OwnedRune,
+} from '../../core/progress/runes';
 import { progress } from '../../services/progress';
 import { sfx } from '../../services/sfx';
 import { updateTestState } from '../../services/testHooks';
@@ -246,24 +260,35 @@ export class RunesScene extends Phaser.Scene {
         color: PIXEL_INK,
       })
       .setOrigin(0, 0);
+    // One row per kind of blessing (each item takes two kinds), with how many are waiting: a long
+    // map awards many of each, and one row apiece would run off the screen. Tapping a row sets
+    // the first one of that kind.
+    const kinds = new Map<RuneId, OwnedRune[]>();
+    for (const r of bag) kinds.set(r.kind, [...(kinds.get(r.kind) ?? []), r]);
     const rowH = 84;
-    bag.forEach((r, i) => {
+    [...kinds.values()].forEach((group, i) => {
+      const r = group[0]!;
       const y = top + 100 + i * rowH;
-      const isSel = r.id === this.selected;
+      const isSel = !!selected && selected.kind === r.kind && !selected.slot;
       const hit = this.add
         .rectangle(rx + rightW / 2, y, rightW - 48, rowH - 10, isSel ? 0xfff1b0 : 0x000000)
         .setFillStyle(isSel ? 0xfff1b0 : 0x000000, isSel ? 0.9 : 0.08)
         .setStrokeStyle(isSel ? 4 : 0, 0xb07d00);
       runeIcon(this, rx + 70, y, 54, item, r.kind);
       this.add
-        .text(rx + 114, y - 4, RUNES[r.kind].name, {
-          fontFamily: FONT_UI,
-          fontSize: '19px',
-          fontStyle: 'bold',
-          color: runeHex(item),
-          stroke: '#3a2410',
-          strokeThickness: 3,
-        })
+        .text(
+          rx + 114,
+          y - 4,
+          RUNES[r.kind].name + (group.length > 1 ? `  x${group.length}` : ''),
+          {
+            fontFamily: FONT_UI,
+            fontSize: '19px',
+            fontStyle: 'bold',
+            color: runeHex(item),
+            stroke: '#3a2410',
+            strokeThickness: 3,
+          },
+        )
         .setOrigin(0, 1);
       this.add
         .text(rx + 114, y + 2, RUNES[r.kind].effect, {

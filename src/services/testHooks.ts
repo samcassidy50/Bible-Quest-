@@ -66,6 +66,8 @@ export interface ScriptureTestState {
   collected: string[];
   canSkip: boolean;
   fullTextOpen: boolean;
+  /** The Full text panel's verses are taller than the panel and scroll. */
+  fullTextScrollable: boolean;
   finishing: boolean;
   readings: number;
 }
@@ -104,6 +106,10 @@ export interface TestState {
   backdropPainted: string[];
   /** Verse Journal: the passage currently shown. */
   journalOpen: string | null;
+  /** Journal: the passage list's page (0-based) and page count, when there is a list. */
+  journalPage: { page: number; pages: number } | null;
+  /** Journal: the open passage is taller than its page and scrolls. */
+  journalScrollable: boolean;
   /** Foe gallery: the passage on screen and the sprite each of its foes uses (null = placeholder). */
   foeGallery: { encounter: string; foes: (string | null)[] } | null;
   /** Character sheet: the hero shown, each stat's value, and the armor shown. */
@@ -150,6 +156,8 @@ let state: TestState = {
   backdrop: null,
   backdropPainted: [],
   journalOpen: null,
+  journalPage: null,
+  journalScrollable: false,
   foeGallery: null,
   heroSkin: null,
   character: null,

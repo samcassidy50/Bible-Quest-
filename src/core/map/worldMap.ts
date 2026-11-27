@@ -371,12 +371,13 @@ export function choosingPath(save: SaveData, unlockAll = false, map: MapId = 'ge
 }
 
 /**
- * The map to show when the player opens the passage map: the latest unlocked map that has a
- * playable location, so a map whose passages are all still coming soon doesn't take over.
+ * The map to show when the player opens the passage map: the latest map the player has really
+ * opened (by winning, not by `unlockAll`) that has a playable location, so a map whose passages
+ * are all still coming soon doesn't take over, and debug unlocking doesn't move the start.
  */
 export function startMap(save: SaveData, unlockAll = false, built?: IsBuilt): MapId {
   const states = new Map(nodeStates(save, unlockAll, built).map((s) => [s.id, s.state]));
-  const playable = unlockedMaps(save, unlockAll).filter((m) =>
+  const playable = unlockedMaps(save).filter((m) =>
     nodesOn(m).some((n) => states.get(n.id) === 'open' || states.get(n.id) === 'done'),
   );
   return playable[playable.length - 1] ?? 'genesis';
