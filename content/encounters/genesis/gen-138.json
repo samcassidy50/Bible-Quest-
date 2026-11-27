@@ -1,0 +1,113 @@
+{
+  "id": "gen-138",
+  "title": "“You Are Spies!”",
+  "passage": "GEN 42:9-17",
+  "setting": "palace",
+  "sections": [
+    {
+      "verses": "9-13",
+      "foe": {
+        "id": "sharp-suspicion",
+        "name": "Sharp Suspicion",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#5a8a4a",
+        "size": 0.9,
+        "sprite": "serpent"
+      },
+      "orbs": [
+        {
+          "word": "spies"
+        },
+        {
+          "word": "honest"
+        }
+      ]
+    },
+    {
+      "verses": "14-17",
+      "foe": {
+        "id": "locked-doubt",
+        "name": "Locked Doubt",
+        "maxHp": 80,
+        "attack": 13,
+        "color": "#5a4a3a",
+        "size": 1.35,
+        "sprite": "minotaur"
+      },
+      "orbs": [
+        {
+          "word": "tested"
+        }
+      ]
+    }
+  ],
+  "rune": "zeal",
+  "questions": [
+    {
+      "id": "gen-138-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph remember when he saw his brothers?",
+      "choices": [
+        "The dreams he had dreamed about them",
+        "His mother’s songs",
+        "The pit in Dothan",
+        "Pharaoh’s cows"
+      ],
+      "answerIndex": 0,
+      "highlight": "Joseph remembered the dreams",
+      "section": 1
+    },
+    {
+      "id": "gen-138-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph say the brothers were?",
+      "choices": ["Spies", "Kings", "Thieves", "Farmers"],
+      "answerIndex": 0,
+      "highlight": "You are spies!",
+      "section": 1
+    },
+    {
+      "id": "gen-138-q3",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "How many brothers did they say there were in all?",
+      "choices": ["Twelve", "Ten", "Seven", "Eleven"],
+      "answerIndex": 0,
+      "highlight": "are twelve brothers",
+      "section": 1
+    },
+    {
+      "id": "gen-138-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who did Joseph say must come to prove they were honest?",
+      "choices": ["Their youngest brother", "Their father", "Pharaoh", "Their mother"],
+      "answerIndex": 0,
+      "highlight": "unless your youngest brother comes here",
+      "section": 2
+    },
+    {
+      "id": "gen-138-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How long did Joseph keep them in prison?",
+      "choices": ["Three days", "One night", "Seven years", "Forty days"],
+      "answerIndex": 0,
+      "highlight": "he put them all in prison for three days",
+      "section": 2
+    },
+    {
+      "id": "gen-138-q6",
+      "type": "true_false",
+      "difficulty": "medium",
+      "prompt": "Joseph said the rest would stay in prison while one went to get their brother.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "while the rest of you stay in prison",
+      "section": 2
+    }
+  ]
+}

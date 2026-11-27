@@ -1,0 +1,145 @@
+{
+  "id": "gen-136",
+  "title": "Grain Like the Sand",
+  "passage": "GEN 41:47-57",
+  "setting": "granary",
+  "sections": [
+    {
+      "verses": "47-49",
+      "foe": {
+        "id": "greedy-hoarder",
+        "name": "Greedy Hoarder",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#c88a30",
+        "size": 0.9,
+        "sprite": "slime-lava"
+      },
+      "orbs": [
+        {
+          "word": "harvests"
+        },
+        {
+          "word": "sand"
+        }
+      ]
+    },
+    {
+      "verses": "50-52",
+      "foe": {
+        "id": "old-sorrow",
+        "name": "Old Sorrow",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#4a6a9a",
+        "size": 0.95,
+        "sprite": "wave"
+      },
+      "orbs": [
+        {
+          "word": "Manasseh"
+        }
+      ]
+    },
+    {
+      "verses": "53-57",
+      "foe": {
+        "id": "great-famine",
+        "name": "Great Famine",
+        "maxHp": 80,
+        "attack": 13,
+        "color": "#8a5a2a",
+        "size": 1.45,
+        "sprite": "tempest"
+      },
+      "orbs": [
+        {
+          "word": "storehouses"
+        }
+      ]
+    }
+  ],
+  "rune": "peace",
+  "questions": [
+    {
+      "id": "gen-136-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Joseph stored so much grain that it was like what?",
+      "choices": ["The sand of the sea", "A small hill", "A cup of water", "A basket of bread"],
+      "answerIndex": 0,
+      "highlight": "like the sand of the sea",
+      "section": 1
+    },
+    {
+      "id": "gen-136-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Why did Joseph stop counting the grain?",
+      "choices": [
+        "There was too much to count",
+        "He was tired",
+        "He forgot how",
+        "Someone stole it"
+      ],
+      "answerIndex": 0,
+      "highlight": "there was too much to count",
+      "section": 1
+    },
+    {
+      "id": "gen-136-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph name his first son?",
+      "choices": ["Manasseh", "Benjamin", "Reuben", "Judah"],
+      "answerIndex": 0,
+      "highlight": "Joseph named his first son Manasseh",
+      "section": 2
+    },
+    {
+      "id": "gen-136-q4",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Joseph said God had made him forget what?",
+      "choices": ["All his troubles", "His name", "How to count", "The way home"],
+      "answerIndex": 0,
+      "highlight": "God has made me forget all my troubles",
+      "section": 2
+    },
+    {
+      "id": "gen-136-q5",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "The famine came, just as Joseph had said.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "just as Joseph had said",
+      "section": 3
+    },
+    {
+      "id": "gen-136-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who did Pharaoh tell the hungry people to go to?",
+      "choices": ["Joseph", "The magicians", "The river", "Potiphar"],
+      "answerIndex": 0,
+      "highlight": "Go to Joseph and do what he tells you",
+      "section": 3
+    },
+    {
+      "id": "gen-136-q7",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who came to Egypt to buy grain?",
+      "choices": [
+        "People from every country",
+        "Only the Egyptians",
+        "No one at all",
+        "Only Pharaoh’s servants"
+      ],
+      "answerIndex": 0,
+      "highlight": "People from every country came to Egypt",
+      "section": 3
+    }
+  ]
+}

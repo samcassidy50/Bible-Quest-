@@ -15,7 +15,23 @@ const JOSEPH = [
   'gen-118',
   'gen-119',
   'gen-120',
-  ...['124', '125', '126', '127', '128', '129', '130', '131', '132'].map((n) => `gen-${n}`),
+  ...[
+    '124',
+    '125',
+    '126',
+    '127',
+    '128',
+    '129',
+    '130',
+    '131',
+    '132',
+    '133',
+    '134',
+    '135',
+    '136',
+    '137',
+    '138',
+  ].map((n) => `gen-${n}`),
 ];
 
 describe('content: Genesis', () => {
@@ -67,6 +83,12 @@ describe('content: Genesis', () => {
       'GEN 41:1-8',
       'GEN 41:9-16',
       'GEN 41:17-24',
+      'GEN 41:25-32',
+      'GEN 41:33-40',
+      'GEN 41:41-46',
+      'GEN 41:47-57',
+      'GEN 42:1-8',
+      'GEN 42:9-17',
     ]);
   });
 
@@ -163,6 +185,12 @@ describe('content: Genesis', () => {
       'nile',
       'palace',
       'nile',
+      'palace',
+      'palace',
+      'palace',
+      'granary',
+      'granary',
+      'palace',
     ]);
     // The flood rages, then clears for the dove, the landing and the rainbow.
     expect(ENCOUNTERS.filter((e) => e.setting === 'flood').map((e) => e.weather)).toEqual([
@@ -197,7 +225,8 @@ describe('content: Genesis', () => {
     expect(nextEncounter('gen-054')).toBeNull();
     expect(nextEncounter('gen-120')?.id).toBe('gen-124'); // Genesis 38 is left out
     expect(nextEncounter('gen-126')?.id).toBe('gen-127');
-    expect(nextEncounter('gen-132')).toBeNull(); // gen-133 isn't written yet
+    expect(nextEncounter('gen-132')?.id).toBe('gen-133');
+    expect(nextEncounter('gen-138')).toBeNull(); // the next one isn't written yet
     expect(nextEncounter('nope')).toBeNull();
   });
 });

@@ -1,0 +1,118 @@
+{
+  "id": "gen-133",
+  "title": "Seven Good Years",
+  "passage": "GEN 41:25-32",
+  "setting": "palace",
+  "sections": [
+    {
+      "verses": "25-28",
+      "foe": {
+        "id": "puzzling-fog",
+        "name": "Puzzling Fog",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#8a90a0",
+        "size": 0.9,
+        "sprite": "storm-cloud"
+      },
+      "orbs": [
+        {
+          "word": "God"
+        },
+        {
+          "word": "seven years"
+        }
+      ]
+    },
+    {
+      "verses": "29-32",
+      "foe": {
+        "id": "coming-famine",
+        "name": "Coming Famine",
+        "maxHp": 80,
+        "attack": 13,
+        "color": "#7a5a3a",
+        "size": 1.4,
+        "sprite": "tempest"
+      },
+      "orbs": [
+        {
+          "word": "plenty"
+        }
+      ]
+    }
+  ],
+  "rune": "mending",
+  "questions": [
+    {
+      "id": "gen-133-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph say about Pharaoh’s two dreams?",
+      "choices": [
+        "They mean the same thing",
+        "They mean nothing",
+        "One is good and one is bad",
+        "They are only about cows"
+      ],
+      "answerIndex": 0,
+      "highlight": "Pharaoh’s two dreams mean the same thing",
+      "section": 1
+    },
+    {
+      "id": "gen-133-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who had shown Pharaoh what was going to happen?",
+      "choices": ["God", "The magicians", "The cupbearer", "The river"],
+      "answerIndex": 0,
+      "highlight": "God has shown Pharaoh what He is about to do",
+      "section": 1
+    },
+    {
+      "id": "gen-133-q3",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What do the seven good cows mean?",
+      "choices": ["Seven years", "Seven kings", "Seven cities", "Seven days"],
+      "answerIndex": 0,
+      "highlight": "The seven good cows are seven years",
+      "section": 1
+    },
+    {
+      "id": "gen-133-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What would come after the seven years of plenty?",
+      "choices": ["Seven years of famine", "Seven years of rain", "A great flood", "A new king"],
+      "answerIndex": 0,
+      "highlight": "But after them will come seven years of famine",
+      "section": 2
+    },
+    {
+      "id": "gen-133-q5",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "People would still remember the good years during the famine.",
+      "choices": ["True", "False"],
+      "answerIndex": 1,
+      "highlight": "No one will even remember the good years",
+      "section": 2
+    },
+    {
+      "id": "gen-133-q6",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Why did Pharaoh have the dream twice?",
+      "choices": [
+        "God has decided it and will do it soon",
+        "Pharaoh ate too much",
+        "The magicians made it happen",
+        "It was only a joke"
+      ],
+      "answerIndex": 0,
+      "highlight": "because God has decided this, and God will make it happen soon",
+      "section": 2
+    }
+  ]
+}

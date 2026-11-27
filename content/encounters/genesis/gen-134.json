@@ -1,0 +1,118 @@
+{
+  "id": "gen-134",
+  "title": "A Wise Plan",
+  "passage": "GEN 41:33-40",
+  "setting": "palace",
+  "sections": [
+    {
+      "verses": "33-36",
+      "foe": {
+        "id": "careless-waste",
+        "name": "Careless Waste",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#5a8ac8",
+        "size": 0.9,
+        "sprite": "slime-blue"
+      },
+      "orbs": [
+        {
+          "word": "grain"
+        },
+        {
+          "word": "cities"
+        }
+      ]
+    },
+    {
+      "verses": "37-40",
+      "foe": {
+        "id": "doubting-murmur",
+        "name": "Doubting Murmur",
+        "maxHp": 80,
+        "attack": 13,
+        "color": "#8a9ab0",
+        "size": 1.35,
+        "sprite": "squall"
+      },
+      "orbs": [
+        {
+          "word": "Spirit"
+        }
+      ]
+    }
+  ],
+  "rune": "renewal",
+  "questions": [
+    {
+      "id": "gen-134-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What kind of man did Joseph say should be put in charge?",
+      "choices": [
+        "A wise man who knows what to do",
+        "A strong soldier",
+        "A rich trader",
+        "A fast runner"
+      ],
+      "answerIndex": 0,
+      "highlight": "look for a wise man who knows what to do",
+      "section": 1
+    },
+    {
+      "id": "gen-134-q2",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "How much of the crops should be collected in the good years?",
+      "choices": ["A fifth", "All of it", "None of it", "Half"],
+      "answerIndex": 0,
+      "highlight": "collect a fifth of all the crops",
+      "section": 1
+    },
+    {
+      "id": "gen-134-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What was the stored food for?",
+      "choices": [
+        "The seven years of famine",
+        "A big party",
+        "Feeding the camels",
+        "Selling to the brothers right away"
+      ],
+      "answerIndex": 0,
+      "highlight": "saved for the land for the seven years of famine",
+      "section": 1
+    },
+    {
+      "id": "gen-134-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Pharaoh and his officials think of the plan?",
+      "choices": ["They liked it", "They laughed at it", "They were angry", "They forgot it"],
+      "answerIndex": 0,
+      "highlight": "Pharaoh and all his officials liked this plan",
+      "section": 2
+    },
+    {
+      "id": "gen-134-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Pharaoh say was in Joseph?",
+      "choices": ["The Spirit of God", "A great fear", "A bad dream", "Nothing special"],
+      "answerIndex": 0,
+      "highlight": "who has the Spirit of God in him",
+      "section": 2
+    },
+    {
+      "id": "gen-134-q6",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Who would be greater than Joseph?",
+      "choices": ["Only Pharaoh, on his throne", "Potiphar", "The magicians", "Joseph’s brothers"],
+      "answerIndex": 0,
+      "highlight": "Only I, on my throne, will be greater than you",
+      "section": 2
+    }
+  ]
+}

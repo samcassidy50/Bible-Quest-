@@ -1,0 +1,108 @@
+{
+  "id": "gen-135",
+  "title": "Ruler over Egypt",
+  "passage": "GEN 41:41-46",
+  "setting": "palace",
+  "sections": [
+    {
+      "verses": "41-43",
+      "foe": {
+        "id": "grasping-pride",
+        "name": "Grasping Pride",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#c87030",
+        "size": 0.9,
+        "sprite": "slime-lava"
+      },
+      "orbs": [
+        {
+          "word": "ring"
+        },
+        {
+          "word": "chariot"
+        }
+      ]
+    },
+    {
+      "verses": "44-46",
+      "foe": {
+        "id": "dizzy-heights",
+        "name": "Dizzy Heights",
+        "maxHp": 80,
+        "attack": 13,
+        "color": "#e0a040",
+        "size": 1.35,
+        "sprite": "fire-spirit"
+      },
+      "orbs": [
+        {
+          "word": "thirty"
+        }
+      ]
+    }
+  ],
+  "rune": "haste",
+  "questions": [
+    {
+      "id": "gen-135-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Pharaoh put on Joseph’s finger?",
+      "choices": ["His own ring", "A bandage", "A gold coin", "A snake"],
+      "answerIndex": 0,
+      "highlight": "put it on Joseph’s finger",
+      "section": 1
+    },
+    {
+      "id": "gen-135-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Pharaoh put around Joseph’s neck?",
+      "choices": ["A gold chain", "A rope", "A scarf", "A flower necklace"],
+      "answerIndex": 0,
+      "highlight": "put a gold chain around his neck",
+      "section": 1
+    },
+    {
+      "id": "gen-135-q3",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did people shout in front of Joseph’s chariot?",
+      "choices": ["“Bow down!”", "“Run away!”", "“Go home!”", "“Be quiet!”"],
+      "answerIndex": 0,
+      "highlight": "“Bow down!”",
+      "section": 1
+    },
+    {
+      "id": "gen-135-q4",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "Pharaoh gave Joseph a new name.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "Pharaoh gave Joseph a new name",
+      "section": 2
+    },
+    {
+      "id": "gen-135-q5",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "Pharaoh gave Joseph a wife.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "He also gave him a wife, Asenath",
+      "section": 2
+    },
+    {
+      "id": "gen-135-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How old was Joseph when he began to serve Pharaoh?",
+      "choices": ["Thirty", "Seventeen", "Twelve", "Fifty"],
+      "answerIndex": 0,
+      "highlight": "Joseph was thirty years old",
+      "section": 2
+    }
+  ]
+}
