@@ -657,7 +657,7 @@ export class MapScene extends Phaser.Scene {
           label: `🗺️ ${worldMap(next).short}`,
           fontSize: 19,
           fill: 0x6b4a22,
-          onTap: () => this.switchTo(next),
+          onTap: () => !this.revealing && this.switchTo(next),
         }),
       );
       this.menu.set('mapSwitch', b);
