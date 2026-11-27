@@ -1,8 +1,11 @@
 # Map 2: Joseph in Egypt (plan)
 
-Status: **plan, AI-drafted, for review.** Nothing here is built yet. Questions are drafts; their
-exact `highlight` wording is set once the retelling of Genesis 37–50 is written (retold from a
-public-domain translation open beside the writer, then reviewed).
+Status (2026-11-27): **built, as drafts for review.** All 44 passages are playable: the map,
+the nine environments, the retelling (from the World English Bible) with narration, and the
+encounter files. The retelling and the questions are AI drafts that still need a human review.
+The built questions follow this plan closely but not word for word (see the encounter files).
+Foes use only sprite sheets that are committed (serpent, gust, shadow-wolf, storm-cloud…), not
+the newer wisp, hound, bat and slime sheets named below; swap those in once they are committed.
 
 ## What it is
 

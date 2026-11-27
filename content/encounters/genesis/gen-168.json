@@ -1,0 +1,148 @@
+{
+  "id": "gen-168",
+  "title": "God Meant It for Good",
+  "passage": "GEN 50:15-21",
+  "setting": "goshen",
+  "sections": [
+    {
+      "verses": "15-17",
+      "foe": {
+        "id": "old-fear",
+        "name": "Old Fear",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#6a7080",
+        "size": 0.95,
+        "sprite": "storm-cloud"
+      },
+      "orbs": [
+        {
+          "word": "forgive"
+        }
+      ]
+    },
+    {
+      "verses": "18-21",
+      "foe": {
+        "id": "old-grudge",
+        "name": "Old Grudge",
+        "maxHp": 80,
+        "attack": 14,
+        "color": "#1e1824",
+        "size": 1.6,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "good"
+        },
+        {
+          "word": "kindly"
+        }
+      ]
+    }
+  ],
+  "rune": "guard",
+  "questions": [
+    {
+      "id": "gen-168-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Why were the brothers afraid after their father died?",
+      "choices": [
+        "Joseph might pay them back",
+        "They were lost",
+        "The famine came back",
+        "Pharaoh was angry"
+      ],
+      "answerIndex": 0,
+      "highlight": "What if Joseph still hates us",
+      "section": 1
+    },
+    {
+      "id": "gen-168-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the brothers ask Joseph to do?",
+      "choices": ["Forgive them", "Give them gold", "Send them home", "Make them kings"],
+      "answerIndex": 0,
+      "highlight": "Please forgive your brothers",
+      "section": 1
+    },
+    {
+      "id": "gen-168-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph do when their message came?",
+      "choices": ["He cried", "He laughed", "He got angry", "He hid"],
+      "answerIndex": 0,
+      "highlight": "he cried",
+      "section": 1
+    },
+    {
+      "id": "gen-168-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the brothers say when they bowed down?",
+      "choices": [
+        "“We are your servants.”",
+        "“We are kings.”",
+        "“We are hungry.”",
+        "“We are leaving.”"
+      ],
+      "answerIndex": 0,
+      "highlight": "We are your servants",
+      "section": 2
+    },
+    {
+      "id": "gen-168-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Joseph asked, “Am I in the place of…” whom?",
+      "choices": ["God", "Pharaoh", "Our father", "A king"],
+      "answerIndex": 0,
+      "highlight": "Am I in the place of God?",
+      "section": 2
+    },
+    {
+      "id": "gen-168-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Joseph said his brothers meant to hurt him, but God meant it for what?",
+      "choices": ["Good", "Nothing", "A joke", "A test only"],
+      "answerIndex": 0,
+      "highlight": "but God meant it for good",
+      "section": 2
+    },
+    {
+      "id": "gen-168-q7",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Why did God mean it for good?",
+      "choices": [
+        "To save many people’s lives",
+        "To make Joseph rich",
+        "To punish Egypt",
+        "To build a tower"
+      ],
+      "answerIndex": 0,
+      "highlight": "to save many people’s lives",
+      "section": 2
+    },
+    {
+      "id": "gen-168-q8",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph promise his brothers?",
+      "choices": [
+        "To take care of them and their children",
+        "To send them away",
+        "To make them slaves",
+        "To take their land"
+      ],
+      "answerIndex": 0,
+      "highlight": "I will take care of you and your little children",
+      "section": 2
+    }
+  ]
+}

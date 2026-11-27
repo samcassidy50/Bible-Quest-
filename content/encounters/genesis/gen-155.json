@@ -1,0 +1,113 @@
+{
+  "id": "gen-155",
+  "title": "Together Again",
+  "passage": "GEN 46:28-34",
+  "setting": "goshen",
+  "sections": [
+    {
+      "verses": "28-30",
+      "foe": {
+        "id": "lonely-years",
+        "name": "Lonely Years",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#3a5a8a",
+        "size": 0.95,
+        "sprite": "wave"
+      },
+      "orbs": [
+        {
+          "word": "chariot"
+        }
+      ]
+    },
+    {
+      "verses": "31-34",
+      "foe": {
+        "id": "unwelcome-stare",
+        "name": "Unwelcome Stare",
+        "maxHp": 80,
+        "attack": 14,
+        "color": "#2a2434",
+        "size": 1.4,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "shepherds"
+        },
+        {
+          "word": "Goshen"
+        }
+      ]
+    }
+  ],
+  "rune": "life",
+  "questions": [
+    {
+      "id": "gen-155-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who did Jacob send ahead to Joseph?",
+      "choices": ["Judah", "Reuben", "Benjamin", "A servant"],
+      "answerIndex": 0,
+      "highlight": "Jacob sent Judah ahead of him",
+      "section": 1
+    },
+    {
+      "id": "gen-155-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph get ready to go and meet his father?",
+      "choices": ["His chariot", "A boat", "A big feast", "His camel"],
+      "answerIndex": 0,
+      "highlight": "Joseph got his chariot ready",
+      "section": 1
+    },
+    {
+      "id": "gen-155-q3",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Why did Jacob say he was ready to die?",
+      "choices": [
+        "He had seen Joseph’s face alive",
+        "He was very hungry",
+        "He was tired of traveling",
+        "Pharaoh told him to"
+      ],
+      "answerIndex": 0,
+      "highlight": "because I have seen your face and know that you are still alive",
+      "section": 1
+    },
+    {
+      "id": "gen-155-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph say his family’s work was?",
+      "choices": ["Shepherds", "Builders", "Fishermen", "Soldiers"],
+      "answerIndex": 0,
+      "highlight": "They are shepherds",
+      "section": 2
+    },
+    {
+      "id": "gen-155-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where would answering this way let them live?",
+      "choices": ["In the land of Goshen", "In Pharaoh’s palace", "In Canaan", "By the sea"],
+      "answerIndex": 0,
+      "highlight": "Then you will be allowed to live in the land of Goshen",
+      "section": 2
+    },
+    {
+      "id": "gen-155-q6",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "The Egyptians liked shepherds.",
+      "choices": ["True", "False"],
+      "answerIndex": 1,
+      "highlight": "Egyptians do not like shepherds",
+      "section": 2
+    }
+  ]
+}

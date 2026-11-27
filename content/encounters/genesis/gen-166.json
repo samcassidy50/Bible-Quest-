@@ -1,0 +1,110 @@
+{
+  "id": "gen-166",
+  "title": "Joseph Mourns His Father",
+  "passage": "GEN 50:1-6",
+  "setting": "goshen",
+  "sections": [
+    {
+      "verses": "1-3",
+      "foe": {
+        "id": "deep-grief",
+        "name": "Deep Grief",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#3a5a8a",
+        "size": 0.95,
+        "sprite": "wave"
+      },
+      "orbs": [
+        {
+          "word": "seventy"
+        }
+      ]
+    },
+    {
+      "verses": "4-6",
+      "foe": {
+        "id": "broken-promise",
+        "name": "Broken Promise",
+        "maxHp": 80,
+        "attack": 14,
+        "color": "#2a2434",
+        "size": 1.4,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "promise"
+        }
+      ]
+    }
+  ],
+  "rune": "zeal",
+  "questions": [
+    {
+      "id": "gen-166-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph do when his father died?",
+      "choices": ["Cried over him and kissed him", "Went to sleep", "Ran away", "Had a party"],
+      "answerIndex": 0,
+      "highlight": "cried over him and kissed him",
+      "section": 1
+    },
+    {
+      "id": "gen-166-q2",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "How long did it take to prepare Jacob’s body?",
+      "choices": ["Forty days", "Four days", "One year", "Seven days"],
+      "answerIndex": 0,
+      "highlight": "It took forty days",
+      "section": 1
+    },
+    {
+      "id": "gen-166-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How many days did the Egyptians cry for Israel?",
+      "choices": ["Seventy", "Seven", "Three", "One hundred"],
+      "answerIndex": 0,
+      "highlight": "cried for Israel for seventy days",
+      "section": 1
+    },
+    {
+      "id": "gen-166-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where had Jacob asked to be buried?",
+      "choices": ["In the grave he dug in Canaan", "By the Nile", "Under a pyramid", "In Goshen"],
+      "answerIndex": 0,
+      "highlight": "Bury me in the grave I dug for myself in the land of Canaan",
+      "section": 2
+    },
+    {
+      "id": "gen-166-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Pharaoh tell Joseph?",
+      "choices": [
+        "“Go and bury your father.”",
+        "“You must stay here.”",
+        "“Bury him in Egypt.”",
+        "“Send your brothers instead.”"
+      ],
+      "answerIndex": 0,
+      "highlight": "Go and bury your father, just as he made you promise",
+      "section": 2
+    },
+    {
+      "id": "gen-166-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who did Joseph ask to speak to Pharaoh for him?",
+      "choices": ["Pharaoh’s officials", "His brothers", "The doctors", "Benjamin"],
+      "answerIndex": 0,
+      "highlight": "Joseph said to Pharaoh’s officials",
+      "section": 2
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "id": "gen-158",
+  "title": "A Fifth for Pharaoh",
+  "passage": "GEN 47:20-26",
+  "setting": "granary",
+  "sections": [
+    {
+      "verses": "20-22",
+      "foe": {
+        "id": "barren-field",
+        "name": "Barren Field",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#4a6a3a",
+        "size": 0.9,
+        "sprite": "thorn-plant"
+      },
+      "orbs": [
+        {
+          "word": "land"
+        }
+      ]
+    },
+    {
+      "verses": "23-26",
+      "foe": {
+        "id": "grumbling-doubt",
+        "name": "Grumbling Doubt",
+        "maxHp": 80,
+        "attack": 14,
+        "color": "#8a9ab0",
+        "size": 1.35,
+        "sprite": "squall"
+      },
+      "orbs": [
+        {
+          "word": "fifth"
+        },
+        {
+          "word": "seed"
+        }
+      ]
+    }
+  ],
+  "rune": "renewal",
+  "questions": [
+    {
+      "id": "gen-158-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who did Joseph buy the land of Egypt for?",
+      "choices": ["Pharaoh", "Himself", "His brothers", "The priests"],
+      "answerIndex": 0,
+      "highlight": "So Joseph bought all the land in Egypt for Pharaoh",
+      "section": 1
+    },
+    {
+      "id": "gen-158-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Whose land did Joseph not buy?",
+      "choices": ["The priests’ land", "The farmers’ land", "Pharaoh’s land", "Jacob’s land"],
+      "answerIndex": 0,
+      "highlight": "The only land he did not buy was the land of the priests",
+      "section": 1
+    },
+    {
+      "id": "gen-158-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph give the people to plant?",
+      "choices": ["Seed", "Trees", "Rocks", "Flowers"],
+      "answerIndex": 0,
+      "highlight": "Here is seed for you",
+      "section": 2
+    },
+    {
+      "id": "gen-158-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How much of the crops would go to Pharaoh?",
+      "choices": ["A fifth", "All of it", "Half", "None"],
+      "answerIndex": 0,
+      "highlight": "give a fifth of them to Pharaoh",
+      "section": 2
+    },
+    {
+      "id": "gen-158-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the people say to Joseph?",
+      "choices": [
+        "“You have saved our lives!”",
+        "“Go away!”",
+        "“We are spies!”",
+        "“We want more gold!”"
+      ],
+      "answerIndex": 0,
+      "highlight": "You have saved our lives!",
+      "section": 2
+    },
+    {
+      "id": "gen-158-q6",
+      "type": "true_false",
+      "difficulty": "medium",
+      "prompt": "Joseph made this a law in Egypt.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "So Joseph made it a law in Egypt",
+      "section": 2
+    }
+  ]
+}

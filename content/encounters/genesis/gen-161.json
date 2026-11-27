@@ -1,0 +1,123 @@
+{
+  "id": "gen-161",
+  "title": "Crossed Hands",
+  "passage": "GEN 48:13-22",
+  "setting": "goshen",
+  "sections": [
+    {
+      "verses": "13-16",
+      "foe": {
+        "id": "muddled-order",
+        "name": "Muddled Order",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#5a8a4a",
+        "size": 0.9,
+        "sprite": "hissling"
+      },
+      "orbs": [
+        {
+          "word": "right hand"
+        },
+        {
+          "word": "shepherd"
+        }
+      ]
+    },
+    {
+      "verses": "17-22",
+      "foe": {
+        "id": "stubborn-pride",
+        "name": "Stubborn Pride",
+        "maxHp": 80,
+        "attack": 14,
+        "color": "#6a4a3a",
+        "size": 1.4,
+        "sprite": "minotaur"
+      },
+      "orbs": [
+        {
+          "word": "greater"
+        }
+      ]
+    }
+  ],
+  "rune": "might",
+  "questions": [
+    {
+      "id": "gen-161-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "On whose head did Israel put his right hand?",
+      "choices": [
+        "Ephraim’s, the younger boy",
+        "Manasseh’s, the older boy",
+        "Joseph’s",
+        "No one’s"
+      ],
+      "answerIndex": 0,
+      "highlight": "put it on Ephraim’s head, though he was the younger",
+      "section": 1
+    },
+    {
+      "id": "gen-161-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Which boy was the oldest?",
+      "choices": ["Manasseh", "Ephraim", "Benjamin", "Reuben"],
+      "answerIndex": 0,
+      "highlight": "Manasseh was the oldest",
+      "section": 1
+    },
+    {
+      "id": "gen-161-q3",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Israel said God had been his what all his life?",
+      "choices": ["His shepherd", "His soldier", "His servant", "His stranger"],
+      "answerIndex": 0,
+      "highlight": "the God who has been my shepherd",
+      "section": 1
+    },
+    {
+      "id": "gen-161-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How did Joseph feel when he saw his father’s right hand on Ephraim?",
+      "choices": ["He was not pleased", "He laughed", "He fell asleep", "He was very happy"],
+      "answerIndex": 0,
+      "highlight": "he was not pleased",
+      "section": 2
+    },
+    {
+      "id": "gen-161-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Jacob say to Joseph?",
+      "choices": ["“I know, my son, I know.”", "“You are right.”", "“Go away.”", "“I cannot see.”"],
+      "answerIndex": 0,
+      "highlight": "“I know, my son, I know,”",
+      "section": 2
+    },
+    {
+      "id": "gen-161-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Which boy did Jacob say would be greater?",
+      "choices": ["The younger one, Ephraim", "The older one, Manasseh", "Neither", "Joseph"],
+      "answerIndex": 0,
+      "highlight": "his younger brother will be even greater",
+      "section": 2
+    },
+    {
+      "id": "gen-161-q7",
+      "type": "true_false",
+      "difficulty": "medium",
+      "prompt": "Israel said God would bring Joseph back to the land of his fathers.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "will bring you back to the land of your fathers",
+      "section": 2
+    }
+  ]
+}

@@ -1,0 +1,155 @@
+{
+  "id": "gen-160",
+  "title": "Jacob Meets Joseph’s Sons",
+  "passage": "GEN 48:1-12",
+  "setting": "goshen",
+  "sections": [
+    {
+      "verses": "1-4",
+      "foe": {
+        "id": "sickbed-gloom",
+        "name": "Sickbed Gloom",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#6a7080",
+        "size": 0.9,
+        "sprite": "storm-cloud"
+      },
+      "orbs": [
+        {
+          "word": "Luz"
+        },
+        {
+          "word": "blessed"
+        }
+      ]
+    },
+    {
+      "verses": "5-7",
+      "foe": {
+        "id": "old-ache",
+        "name": "Old Ache",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#3a5a8a",
+        "size": 0.95,
+        "sprite": "wave"
+      },
+      "orbs": [
+        {
+          "word": "Rachel"
+        }
+      ]
+    },
+    {
+      "verses": "8-12",
+      "foe": {
+        "id": "dim-eyes",
+        "name": "Dim Eyes",
+        "maxHp": 80,
+        "attack": 14,
+        "color": "#2a2434",
+        "size": 1.4,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "bless"
+        }
+      ]
+    }
+  ],
+  "rune": "peace",
+  "questions": [
+    {
+      "id": "gen-160-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Why did Joseph go to see his father?",
+      "choices": [
+        "His father was sick",
+        "It was his birthday",
+        "He needed grain",
+        "Pharaoh sent him"
+      ],
+      "answerIndex": 0,
+      "highlight": "Your father is sick",
+      "section": 1
+    },
+    {
+      "id": "gen-160-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Which two sons did Joseph bring?",
+      "choices": ["Manasseh and Ephraim", "Reuben and Simeon", "Dan and Gad", "Judah and Levi"],
+      "answerIndex": 0,
+      "highlight": "Manasseh and Ephraim",
+      "section": 1
+    },
+    {
+      "id": "gen-160-q3",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Where did God Almighty appear to Jacob?",
+      "choices": [
+        "At Luz in the land of Canaan",
+        "By the Nile",
+        "In Pharaoh’s palace",
+        "In Goshen"
+      ],
+      "answerIndex": 0,
+      "highlight": "God Almighty appeared to me at Luz",
+      "section": 1
+    },
+    {
+      "id": "gen-160-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Jacob said Joseph’s two sons would count as whose?",
+      "choices": ["His own sons", "Pharaoh’s sons", "Their uncles’ sons", "No one’s"],
+      "answerIndex": 0,
+      "highlight": "will count as my own sons",
+      "section": 2
+    },
+    {
+      "id": "gen-160-q5",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "Jacob said they would be his just like Reuben and Simeon.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "just as Reuben and Simeon are mine",
+      "section": 2
+    },
+    {
+      "id": "gen-160-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Why could Israel hardly see?",
+      "choices": ["He was old", "It was dark", "He was crying", "There was dust"],
+      "answerIndex": 0,
+      "highlight": "Israel’s eyes were weak because he was old",
+      "section": 3
+    },
+    {
+      "id": "gen-160-q7",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What had Jacob never thought he would see again?",
+      "choices": ["Joseph’s face", "The sea", "His tent", "Canaan"],
+      "answerIndex": 0,
+      "highlight": "I never thought I would see your face again",
+      "section": 3
+    },
+    {
+      "id": "gen-160-q8",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "God let Jacob see Joseph’s children too.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "God has even let me see your children",
+      "section": 3
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "id": "gen-150",
+  "title": "“Bring My Father Here”",
+  "passage": "GEN 45:9-15",
+  "setting": "estate",
+  "sections": [
+    {
+      "verses": "9-13",
+      "foe": {
+        "id": "rushing-worry",
+        "name": "Rushing Worry",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#c0a080",
+        "size": 0.9,
+        "sprite": "gust"
+      },
+      "orbs": [
+        {
+          "word": "Goshen"
+        },
+        {
+          "word": "father"
+        }
+      ]
+    },
+    {
+      "verses": "14-15",
+      "foe": {
+        "id": "cold-distance",
+        "name": "Cold Distance",
+        "maxHp": 80,
+        "attack": 14,
+        "color": "#6a7080",
+        "size": 1.35,
+        "sprite": "storm-cloud"
+      },
+      "orbs": [
+        {
+          "word": "kissed"
+        }
+      ]
+    }
+  ],
+  "rune": "renewal",
+  "questions": [
+    {
+      "id": "gen-150-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where would Joseph’s family live?",
+      "choices": ["In the land of Goshen", "In Pharaoh’s palace", "By the sea", "In the desert"],
+      "answerIndex": 0,
+      "highlight": "You will live in the land of Goshen",
+      "section": 1
+    },
+    {
+      "id": "gen-150-q2",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Why did the family need to come to Egypt?",
+      "choices": [
+        "There were five more years of famine",
+        "There was a war",
+        "Their tents were old",
+        "Pharaoh was lonely"
+      ],
+      "answerIndex": 0,
+      "highlight": "there are still five years of famine to come",
+      "section": 1
+    },
+    {
+      "id": "gen-150-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who did Joseph tell his brothers to hurry and bring?",
+      "choices": ["His father", "Their camels", "The magicians", "Their neighbors"],
+      "answerIndex": 0,
+      "highlight": "Hurry and bring my father down here",
+      "section": 1
+    },
+    {
+      "id": "gen-150-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who did Joseph hug first?",
+      "choices": ["Benjamin", "Reuben", "Judah", "Simeon"],
+      "answerIndex": 0,
+      "highlight": "threw his arms around his brother Benjamin",
+      "section": 2
+    },
+    {
+      "id": "gen-150-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph do to all his brothers?",
+      "choices": [
+        "Kissed them and cried",
+        "Sent them to prison",
+        "Gave them a test",
+        "Sold them grain"
+      ],
+      "answerIndex": 0,
+      "highlight": "He kissed all his brothers",
+      "section": 2
+    },
+    {
+      "id": "gen-150-q6",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "After that, Joseph’s brothers talked with him.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "After that his brothers talked with him",
+      "section": 2
+    }
+  ]
+}

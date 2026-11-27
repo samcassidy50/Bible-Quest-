@@ -1,0 +1,125 @@
+{
+  "id": "gen-152",
+  "title": "Joseph Is Alive!",
+  "passage": "GEN 45:25-28",
+  "setting": "canaan",
+  "sections": [
+    {
+      "verses": "25-26",
+      "foe": {
+        "id": "numb-disbelief",
+        "name": "Numb Disbelief",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#6a7080",
+        "size": 0.9,
+        "sprite": "storm-cloud"
+      },
+      "orbs": [
+        {
+          "word": "alive"
+        }
+      ]
+    },
+    {
+      "verses": "27-28",
+      "foe": {
+        "id": "faint-heart",
+        "name": "Faint Heart",
+        "maxHp": 80,
+        "attack": 14,
+        "color": "#3a5a8a",
+        "size": 1.35,
+        "sprite": "wave"
+      },
+      "orbs": [
+        {
+          "word": "carts"
+        }
+      ]
+    }
+  ],
+  "rune": "peace",
+  "questions": [
+    {
+      "id": "gen-152-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the brothers tell Jacob?",
+      "choices": [
+        "Joseph is still alive",
+        "Benjamin is lost",
+        "The famine is over",
+        "Pharaoh is coming"
+      ],
+      "answerIndex": 0,
+      "highlight": "Joseph is still alive!",
+      "section": 1
+    },
+    {
+      "id": "gen-152-q2",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "Jacob believed them right away.",
+      "choices": ["True", "False"],
+      "answerIndex": 1,
+      "highlight": "he did not believe them",
+      "section": 1
+    },
+    {
+      "id": "gen-152-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where did the brothers go when they left Egypt?",
+      "choices": [
+        "To their father Jacob in Canaan",
+        "To the Nile",
+        "To Pharaoh’s palace",
+        "To the sea"
+      ],
+      "answerIndex": 0,
+      "highlight": "came to their father Jacob in the land of Canaan",
+      "section": 1
+    },
+    {
+      "id": "gen-152-q6",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did the brothers say Joseph ruled over?",
+      "choices": ["All the land of Egypt", "A small village", "Only the storehouses", "The prison"],
+      "answerIndex": 0,
+      "highlight": "He is the ruler over all the land of Egypt!",
+      "section": 1
+    },
+    {
+      "id": "gen-152-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Jacob see that made his spirit come back to life?",
+      "choices": [
+        "The carts Joseph had sent",
+        "A rainbow",
+        "A letter from Pharaoh",
+        "Joseph’s old robe"
+      ],
+      "answerIndex": 0,
+      "highlight": "when he saw the carts Joseph had sent",
+      "section": 2
+    },
+    {
+      "id": "gen-152-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Jacob decide to do?",
+      "choices": [
+        "Go and see Joseph before he died",
+        "Stay home forever",
+        "Send Benjamin alone",
+        "Sell his sheep"
+      ],
+      "answerIndex": 0,
+      "highlight": "I will go and see him before I die",
+      "section": 2
+    }
+  ]
+}

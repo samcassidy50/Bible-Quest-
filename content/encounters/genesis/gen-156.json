@@ -1,0 +1,140 @@
+{
+  "id": "gen-156",
+  "title": "Jacob Blesses Pharaoh",
+  "passage": "GEN 47:1-12",
+  "setting": "palace",
+  "sections": [
+    {
+      "verses": "1-6",
+      "foe": {
+        "id": "shy-nerves",
+        "name": "Shy Nerves",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#c0a080",
+        "size": 0.9,
+        "sprite": "gust"
+      },
+      "orbs": [
+        {
+          "word": "Goshen"
+        },
+        {
+          "word": "shepherds"
+        }
+      ]
+    },
+    {
+      "verses": "7-10",
+      "foe": {
+        "id": "weary-years",
+        "name": "Weary Years",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#6a7080",
+        "size": 0.95,
+        "sprite": "storm-cloud"
+      },
+      "orbs": [
+        {
+          "word": "blessed"
+        }
+      ]
+    },
+    {
+      "verses": "11-12",
+      "foe": {
+        "id": "gnawing-famine",
+        "name": "Gnawing Famine",
+        "maxHp": 80,
+        "attack": 14,
+        "color": "#8a6a3a",
+        "size": 1.45,
+        "sprite": "tempest"
+      },
+      "orbs": [
+        {
+          "word": "Rameses"
+        }
+      ]
+    }
+  ],
+  "rune": "guard",
+  "questions": [
+    {
+      "id": "gen-156-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How many brothers did Joseph bring to meet Pharaoh?",
+      "choices": ["Five", "Two", "Ten", "Eleven"],
+      "answerIndex": 0,
+      "highlight": "He chose five of his brothers",
+      "section": 1
+    },
+    {
+      "id": "gen-156-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where did Pharaoh say the family could live?",
+      "choices": ["In Goshen", "In his palace", "In the desert", "Back in Canaan"],
+      "answerIndex": 0,
+      "highlight": "Let them live in Goshen",
+      "section": 1
+    },
+    {
+      "id": "gen-156-q3",
+      "type": "true_false",
+      "difficulty": "medium",
+      "prompt": "Pharaoh said some of them could look after his own animals.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "put them in charge of my own animals",
+      "section": 1
+    },
+    {
+      "id": "gen-156-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who blessed Pharaoh?",
+      "choices": ["Jacob", "Joseph", "Reuben", "Benjamin"],
+      "answerIndex": 0,
+      "highlight": "Jacob blessed Pharaoh",
+      "section": 2
+    },
+    {
+      "id": "gen-156-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How old did Jacob say he was?",
+      "choices": ["One hundred thirty", "Seventy", "Seventeen", "Two hundred"],
+      "answerIndex": 0,
+      "highlight": "one hundred thirty years",
+      "section": 2
+    },
+    {
+      "id": "gen-156-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What land did Joseph give his family?",
+      "choices": [
+        "The land of Rameses, the best part of the country",
+        "A small field by the river",
+        "A tent in the desert",
+        "Pharaoh’s palace"
+      ],
+      "answerIndex": 0,
+      "highlight": "the land of Rameses",
+      "section": 3
+    },
+    {
+      "id": "gen-156-q7",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph give all his father’s family?",
+      "choices": ["Food", "Gold", "Swords", "Camels"],
+      "answerIndex": 0,
+      "highlight": "Joseph gave his father, his brothers and all his father’s family food",
+      "section": 3
+    }
+  ]
+}

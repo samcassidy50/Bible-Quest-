@@ -10,7 +10,7 @@ import { encounterText, textUpToSection } from '../../src/core/content/types';
 const BEGINNINGS = Array.from({ length: 11 }, (_, i) => `gen-${String(i + 1).padStart(3, '0')}`);
 const NOAH = Array.from({ length: 9 }, (_, i) => `gen-0${19 + i}`);
 const SODOM = ['gen-052', 'gen-053', 'gen-054'];
-/** Joseph in Egypt, written so far (docs/joseph-map-plan.md). */
+/** Joseph in Egypt: the 44 chosen passages (docs/joseph-map-plan.md). */
 const JOSEPH = [
   'gen-118',
   'gen-119',
@@ -37,6 +37,26 @@ const JOSEPH = [
     '142',
     '143',
     '144',
+    '145',
+    '146',
+    '147',
+    '148',
+    '149',
+    '150',
+    '151',
+    '152',
+    '153',
+    '154',
+    '155',
+    '156',
+    '157',
+    '158',
+    '159',
+    '160',
+    '161',
+    '166',
+    '167',
+    '168',
   ].map((n) => `gen-${n}`),
 ];
 
@@ -51,7 +71,7 @@ describe('content: Genesis', () => {
     ]);
   });
 
-  it('reads Genesis 1:1–3:19, 6:9–9:17, 11:1-9, 19:1-29, 37 and 39:1–41:24 with no gaps or overlaps', () => {
+  it('reads Genesis 1:1–3:19, 6:9–9:17, 11:1-9, 19:1-29, 37, 39–48 and 50:1-21 with no gaps or overlaps', () => {
     expect(ENCOUNTERS.map((e) => e.passage)).toEqual([
       'GEN 1:1-5',
       'GEN 1:6-13',
@@ -101,6 +121,26 @@ describe('content: Genesis', () => {
       'GEN 43:11-18',
       'GEN 43:19-25',
       'GEN 43:26-34',
+      'GEN 44:1-10',
+      'GEN 44:11-17',
+      'GEN 44:18-26',
+      'GEN 44:27-34',
+      'GEN 45:1-8',
+      'GEN 45:9-15',
+      'GEN 45:16-24',
+      'GEN 45:25-28',
+      'GEN 46:1-7',
+      'GEN 46:8-27',
+      'GEN 46:28-34',
+      'GEN 47:1-12',
+      'GEN 47:13-19',
+      'GEN 47:20-26',
+      'GEN 47:27-31',
+      'GEN 48:1-12',
+      'GEN 48:13-22',
+      'GEN 50:1-6',
+      'GEN 50:7-14',
+      'GEN 50:15-21',
     ]);
   });
 
@@ -209,6 +249,26 @@ describe('content: Genesis', () => {
       'caravan',
       'estate',
       'estate',
+      'caravan',
+      'caravan',
+      'estate',
+      'estate',
+      'estate',
+      'estate',
+      'palace',
+      'canaan',
+      'wilderness',
+      'caravan',
+      'goshen',
+      'palace',
+      'granary',
+      'granary',
+      'goshen',
+      'goshen',
+      'goshen',
+      'goshen',
+      'plain',
+      'goshen',
     ]);
     // The flood rages, then clears for the dove, the landing and the rainbow.
     expect(ENCOUNTERS.filter((e) => e.setting === 'flood').map((e) => e.weather)).toEqual([
@@ -245,7 +305,11 @@ describe('content: Genesis', () => {
     expect(nextEncounter('gen-126')?.id).toBe('gen-127');
     expect(nextEncounter('gen-132')?.id).toBe('gen-133');
     expect(nextEncounter('gen-138')?.id).toBe('gen-139');
-    expect(nextEncounter('gen-144')).toBeNull(); // the next one isn't written yet
+    expect(nextEncounter('gen-144')?.id).toBe('gen-145');
+    expect(nextEncounter('gen-150')?.id).toBe('gen-151');
+    expect(nextEncounter('gen-156')?.id).toBe('gen-157');
+    expect(nextEncounter('gen-161')?.id).toBe('gen-166'); // Genesis 49 is left out
+    expect(nextEncounter('gen-168')).toBeNull(); // the end of the Joseph trail
     expect(nextEncounter('nope')).toBeNull();
   });
 });

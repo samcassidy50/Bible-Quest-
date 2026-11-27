@@ -1,0 +1,128 @@
+{
+  "id": "gen-148",
+  "title": "“Take Me Instead”",
+  "passage": "GEN 44:27-34",
+  "setting": "estate",
+  "sections": [
+    {
+      "verses": "27-31",
+      "foe": {
+        "id": "fathers-sorrow",
+        "name": "Father’s Sorrow",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#3a5a8a",
+        "size": 0.95,
+        "sprite": "wave"
+      },
+      "orbs": [
+        {
+          "word": "sons"
+        },
+        {
+          "word": "sorrow"
+        }
+      ]
+    },
+    {
+      "verses": "32-34",
+      "foe": {
+        "id": "selfish-pull",
+        "name": "Selfish Pull",
+        "maxHp": 80,
+        "attack": 14,
+        "color": "#2a2434",
+        "size": 1.4,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "instead"
+        }
+      ]
+    }
+  ],
+  "rune": "guard",
+  "questions": [
+    {
+      "id": "gen-148-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How many sons did Jacob’s wife give him?",
+      "choices": ["Two", "Twelve", "One", "Five"],
+      "answerIndex": 0,
+      "highlight": "my wife gave me two sons",
+      "section": 1
+    },
+    {
+      "id": "gen-148-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Jacob think had happened to his lost son?",
+      "choices": [
+        "He had been torn to pieces",
+        "He became a king",
+        "He went fishing",
+        "He moved away"
+      ],
+      "answerIndex": 0,
+      "highlight": "He must have been torn to pieces",
+      "section": 1
+    },
+    {
+      "id": "gen-148-q3",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What would happen to their father if the boy did not come home?",
+      "choices": [
+        "He would die",
+        "He would be happy",
+        "He would go to Egypt",
+        "He would get a new son"
+      ],
+      "answerIndex": 0,
+      "highlight": "when he sees that the boy is not there, he will die",
+      "section": 1
+    },
+    {
+      "id": "gen-148-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who had Judah promised to keep the boy safe for?",
+      "choices": ["His father", "Pharaoh", "Reuben", "The servant"],
+      "answerIndex": 0,
+      "highlight": "I promised my father I would keep the boy safe",
+      "section": 2
+    },
+    {
+      "id": "gen-148-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Judah offer to do?",
+      "choices": [
+        "Stay as a slave instead of the boy",
+        "Pay with silver",
+        "Run away",
+        "Fight the guards"
+      ],
+      "answerIndex": 0,
+      "highlight": "stay here as my lord’s slave instead of the boy",
+      "section": 2
+    },
+    {
+      "id": "gen-148-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Why did Judah want to stay?",
+      "choices": [
+        "He could not bear to see his father’s sorrow",
+        "He liked Egypt",
+        "He was tired",
+        "He wanted the silver cup"
+      ],
+      "answerIndex": 0,
+      "highlight": "I could not bear to see the sorrow",
+      "section": 2
+    }
+  ]
+}

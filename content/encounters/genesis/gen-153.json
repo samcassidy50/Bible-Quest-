@@ -1,0 +1,113 @@
+{
+  "id": "gen-153",
+  "title": "Don’t Be Afraid to Go",
+  "passage": "GEN 46:1-7",
+  "setting": "wilderness",
+  "sections": [
+    {
+      "verses": "1-4",
+      "foe": {
+        "id": "night-fear",
+        "name": "Night Fear",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#8a9ab0",
+        "size": 0.9,
+        "sprite": "squall"
+      },
+      "orbs": [
+        {
+          "word": "vision"
+        },
+        {
+          "word": "great nation"
+        }
+      ]
+    },
+    {
+      "verses": "5-7",
+      "foe": {
+        "id": "clinging-home",
+        "name": "Clinging Home",
+        "maxHp": 80,
+        "attack": 14,
+        "color": "#4a6a3a",
+        "size": 1.35,
+        "sprite": "thorn-plant"
+      },
+      "orbs": [
+        {
+          "word": "carts"
+        }
+      ]
+    }
+  ],
+  "rune": "might",
+  "questions": [
+    {
+      "id": "gen-153-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where did Israel offer sacrifices to God?",
+      "choices": ["At Beersheba", "In Egypt", "At the Nile", "In Pharaoh’s palace"],
+      "answerIndex": 0,
+      "highlight": "When he came to Beersheba",
+      "section": 1
+    },
+    {
+      "id": "gen-153-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "When did God speak to Israel?",
+      "choices": [
+        "At night, in a vision",
+        "At noon, in the market",
+        "In a letter",
+        "Through Pharaoh"
+      ],
+      "answerIndex": 0,
+      "highlight": "That night God spoke to Israel in a vision",
+      "section": 1
+    },
+    {
+      "id": "gen-153-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did God tell Jacob not to be afraid of?",
+      "choices": ["Going down to Egypt", "The dark", "Wild animals", "His sons"],
+      "answerIndex": 0,
+      "highlight": "Don’t be afraid to go down to Egypt",
+      "section": 1
+    },
+    {
+      "id": "gen-153-q4",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did God promise to make Jacob’s family?",
+      "choices": ["A great nation", "A small tribe", "Very rich", "Kings of Egypt"],
+      "answerIndex": 0,
+      "highlight": "I will make your family into a great nation there",
+      "section": 1
+    },
+    {
+      "id": "gen-153-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How did the family travel to Egypt?",
+      "choices": ["In the carts Pharaoh had sent", "On a ship", "On foot only", "On flying camels"],
+      "answerIndex": 0,
+      "highlight": "in the carts Pharaoh had sent",
+      "section": 2
+    },
+    {
+      "id": "gen-153-q6",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "Jacob left all his animals behind in Canaan.",
+      "choices": ["True", "False"],
+      "answerIndex": 1,
+      "highlight": "They also took their animals",
+      "section": 2
+    }
+  ]
+}

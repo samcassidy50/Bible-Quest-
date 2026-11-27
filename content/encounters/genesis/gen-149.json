@@ -1,0 +1,113 @@
+{
+  "id": "gen-149",
+  "title": "“I Am Joseph!”",
+  "passage": "GEN 45:1-8",
+  "setting": "estate",
+  "sections": [
+    {
+      "verses": "1-3",
+      "foe": {
+        "id": "bursting-tears",
+        "name": "Bursting Tears",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#3a6a9a",
+        "size": 0.95,
+        "sprite": "wave"
+      },
+      "orbs": [
+        {
+          "word": "Joseph"
+        }
+      ]
+    },
+    {
+      "verses": "4-8",
+      "foe": {
+        "id": "shames-shadow",
+        "name": "Shame’s Shadow",
+        "maxHp": 80,
+        "attack": 14,
+        "color": "#241e2a",
+        "size": 1.45,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "save lives"
+        },
+        {
+          "word": "God"
+        }
+      ]
+    }
+  ],
+  "rune": "mending",
+  "questions": [
+    {
+      "id": "gen-149-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph tell everyone else to do?",
+      "choices": ["Go out of the room", "Bring more food", "Sing a song", "Bow down"],
+      "answerIndex": 0,
+      "highlight": "Send everyone out of here!",
+      "section": 1
+    },
+    {
+      "id": "gen-149-q2",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "Joseph cried so loudly that the Egyptians heard him.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "He cried so loudly that the Egyptians heard it",
+      "section": 1
+    },
+    {
+      "id": "gen-149-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What was the first thing Joseph asked his brothers?",
+      "choices": [
+        "“Is my father still alive?”",
+        "“Where is my robe?”",
+        "“Are you hungry?”",
+        "“Who are you?”"
+      ],
+      "answerIndex": 0,
+      "highlight": "Is my father still alive?",
+      "section": 1
+    },
+    {
+      "id": "gen-149-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Why did God send Joseph to Egypt ahead of them?",
+      "choices": ["To save lives", "To become rich", "To hide from them", "To build a tower"],
+      "answerIndex": 0,
+      "highlight": "God sent me ahead of you to save lives",
+      "section": 2
+    },
+    {
+      "id": "gen-149-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "How many more years of famine were coming?",
+      "choices": ["Five", "Seven", "Two", "Ten"],
+      "answerIndex": 0,
+      "highlight": "for five more years",
+      "section": 2
+    },
+    {
+      "id": "gen-149-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Joseph said it was not his brothers who sent him there, but who?",
+      "choices": ["God", "Pharaoh", "The traders", "Potiphar"],
+      "answerIndex": 0,
+      "highlight": "So it was not you who sent me here, but God",
+      "section": 2
+    }
+  ]
+}

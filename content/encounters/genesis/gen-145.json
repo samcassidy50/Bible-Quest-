@@ -1,0 +1,118 @@
+{
+  "id": "gen-145",
+  "title": "The Silver Cup",
+  "passage": "GEN 44:1-10",
+  "setting": "caravan",
+  "sections": [
+    {
+      "verses": "1-5",
+      "foe": {
+        "id": "gleaming-trap",
+        "name": "Gleaming Trap",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#c87030",
+        "size": 0.9,
+        "sprite": "slime-lava"
+      },
+      "orbs": [
+        {
+          "word": "cup"
+        },
+        {
+          "word": "silver"
+        }
+      ]
+    },
+    {
+      "verses": "6-10",
+      "foe": {
+        "id": "rash-vow",
+        "name": "Rash Vow",
+        "maxHp": 80,
+        "attack": 14,
+        "color": "#e09040",
+        "size": 1.35,
+        "sprite": "fire-spirit"
+      },
+      "orbs": [
+        {
+          "word": "slave"
+        }
+      ]
+    }
+  ],
+  "rune": "might",
+  "questions": [
+    {
+      "id": "gen-145-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph have put in the youngest brother’s sack?",
+      "choices": ["His silver cup", "A gold ring", "A sword", "A letter"],
+      "answerIndex": 0,
+      "highlight": "put my cup, the silver cup, at the top of the youngest one’s sack",
+      "section": 1
+    },
+    {
+      "id": "gen-145-q2",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "Each man’s money was put back in his sack too.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "put each man’s money at the top of his sack",
+      "section": 1
+    },
+    {
+      "id": "gen-145-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "When were the brothers sent on their way?",
+      "choices": [
+        "As soon as it was light in the morning",
+        "In the middle of the night",
+        "At noon",
+        "After a week"
+      ],
+      "answerIndex": 0,
+      "highlight": "As soon as it was light in the morning",
+      "section": 1
+    },
+    {
+      "id": "gen-145-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the brothers say when the servant caught up with them?",
+      "choices": [
+        "Your servants would never do that",
+        "We are sorry, we took it",
+        "Let us go to sleep",
+        "We want more grain"
+      ],
+      "answerIndex": 0,
+      "highlight": "Your servants would never do anything like that!",
+      "section": 2
+    },
+    {
+      "id": "gen-145-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "The brothers said whoever had the cup should what?",
+      "choices": ["Die", "Get a reward", "Go home first", "Keep it"],
+      "answerIndex": 0,
+      "highlight": "he will die",
+      "section": 2
+    },
+    {
+      "id": "gen-145-q6",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "The servant said only the one with the cup would be a slave.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "But only the one who has the cup will be my slave",
+      "section": 2
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "id": "gen-147",
+  "title": "Judah Speaks Up",
+  "passage": "GEN 44:18-26",
+  "setting": "estate",
+  "sections": [
+    {
+      "verses": "18-22",
+      "foe": {
+        "id": "choking-silence",
+        "name": "Choking Silence",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#6a8ac8",
+        "size": 0.9,
+        "sprite": "slime-blue"
+      },
+      "orbs": [
+        {
+          "word": "father"
+        },
+        {
+          "word": "brother"
+        }
+      ]
+    },
+    {
+      "verses": "23-26",
+      "foe": {
+        "id": "wall-of-fear",
+        "name": "Wall of Fear",
+        "maxHp": 80,
+        "attack": 14,
+        "color": "#2a2434",
+        "size": 1.4,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "youngest"
+        }
+      ]
+    }
+  ],
+  "rune": "life",
+  "questions": [
+    {
+      "id": "gen-147-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Judah ask Joseph not to be?",
+      "choices": ["Angry", "Sad", "Hungry", "Late"],
+      "answerIndex": 0,
+      "highlight": "Please don’t be angry with your servant",
+      "section": 1
+    },
+    {
+      "id": "gen-147-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did they tell Joseph about their father and the youngest boy?",
+      "choices": [
+        "The father loves him",
+        "The father is far away",
+        "The boy is a king",
+        "The boy is a shepherd"
+      ],
+      "answerIndex": 0,
+      "highlight": "his father loves him",
+      "section": 1
+    },
+    {
+      "id": "gen-147-q3",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did the brothers say would happen if the boy left his father?",
+      "choices": [
+        "His father would die",
+        "His father would be glad",
+        "His father would move to Egypt",
+        "Nothing"
+      ],
+      "answerIndex": 0,
+      "highlight": "If he leaves him, his father will die",
+      "section": 1
+    },
+    {
+      "id": "gen-147-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Joseph had said they could not see him again unless who came?",
+      "choices": ["Their youngest brother", "Their father", "Pharaoh", "Their mother"],
+      "answerIndex": 0,
+      "highlight": "Unless your youngest brother comes down with you",
+      "section": 2
+    },
+    {
+      "id": "gen-147-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did their father ask them to do?",
+      "choices": [
+        "Go back and buy a little food",
+        "Stay home forever",
+        "Sell their sheep",
+        "Build a house"
+      ],
+      "answerIndex": 0,
+      "highlight": "Go back and buy us a little food",
+      "section": 2
+    },
+    {
+      "id": "gen-147-q6",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "The brothers said they could only go if their youngest brother came too.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "We can only go if our youngest brother is with us",
+      "section": 2
+    }
+  ]
+}

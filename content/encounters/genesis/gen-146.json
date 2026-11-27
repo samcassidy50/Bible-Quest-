@@ -1,0 +1,115 @@
+{
+  "id": "gen-146",
+  "title": "Found in Benjamin’s Sack",
+  "passage": "GEN 44:11-17",
+  "setting": "caravan",
+  "sections": [
+    {
+      "verses": "11-13",
+      "foe": {
+        "id": "sinking-dread",
+        "name": "Sinking Dread",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#5a6070",
+        "size": 0.9,
+        "sprite": "storm-cloud"
+      },
+      "orbs": [
+        {
+          "word": "sack"
+        }
+      ]
+    },
+    {
+      "verses": "14-17",
+      "foe": {
+        "id": "crushing-blame",
+        "name": "Crushing Blame",
+        "maxHp": 80,
+        "attack": 14,
+        "color": "#6a4a3a",
+        "size": 1.35,
+        "sprite": "minotaur"
+      },
+      "orbs": [
+        {
+          "word": "peace"
+        }
+      ]
+    }
+  ],
+  "rune": "zeal",
+  "questions": [
+    {
+      "id": "gen-146-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "In what order did the servant search the sacks?",
+      "choices": [
+        "From the oldest to the youngest",
+        "From the youngest to the oldest",
+        "Only Benjamin’s",
+        "He did not search"
+      ],
+      "answerIndex": 0,
+      "highlight": "starting with the oldest and ending with the youngest",
+      "section": 1
+    },
+    {
+      "id": "gen-146-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Whose sack had the cup?",
+      "choices": ["Benjamin’s", "Reuben’s", "Judah’s", "Simeon’s"],
+      "answerIndex": 0,
+      "highlight": "the cup was found in Benjamin’s sack",
+      "section": 1
+    },
+    {
+      "id": "gen-146-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the brothers do then?",
+      "choices": ["Tore their clothes and went back", "Ran away home", "Hid the cup", "Laughed"],
+      "answerIndex": 0,
+      "highlight": "The brothers tore their clothes",
+      "section": 1
+    },
+    {
+      "id": "gen-146-q4",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Which brother spoke for them all?",
+      "choices": ["Judah", "Reuben", "Benjamin", "Levi"],
+      "answerIndex": 0,
+      "highlight": "Judah said, “What can we say to my lord?",
+      "section": 2
+    },
+    {
+      "id": "gen-146-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who did Joseph say would be his slave?",
+      "choices": [
+        "Only the man who had the cup",
+        "All the brothers",
+        "None of them",
+        "Their father"
+      ],
+      "answerIndex": 0,
+      "highlight": "Only the man who had the cup will be my slave",
+      "section": 2
+    },
+    {
+      "id": "gen-146-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Joseph told the rest of the brothers to go back how?",
+      "choices": ["To their father in peace", "In chains", "Without food", "By boat"],
+      "answerIndex": 0,
+      "highlight": "go back to your father in peace",
+      "section": 2
+    }
+  ]
+}

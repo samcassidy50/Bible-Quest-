@@ -1,0 +1,118 @@
+{
+  "id": "gen-151",
+  "title": "Carts from Pharaoh",
+  "passage": "GEN 45:16-24",
+  "setting": "palace",
+  "sections": [
+    {
+      "verses": "16-20",
+      "foe": {
+        "id": "stingy-grip",
+        "name": "Stingy Grip",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#c87030",
+        "size": 0.9,
+        "sprite": "slime-lava"
+      },
+      "orbs": [
+        {
+          "word": "carts"
+        },
+        {
+          "word": "best"
+        }
+      ]
+    },
+    {
+      "verses": "21-24",
+      "foe": {
+        "id": "quarrel-spark",
+        "name": "Quarrel Spark",
+        "maxHp": 80,
+        "attack": 14,
+        "color": "#e06030",
+        "size": 1.35,
+        "sprite": "fire-spirit"
+      },
+      "orbs": [
+        {
+          "word": "quarrel"
+        }
+      ]
+    }
+  ],
+  "rune": "haste",
+  "questions": [
+    {
+      "id": "gen-151-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How did Pharaoh feel when he heard Joseph’s brothers had come?",
+      "choices": ["Pleased", "Angry", "Afraid", "Bored"],
+      "answerIndex": 0,
+      "highlight": "Pharaoh and his officials were pleased",
+      "section": 1
+    },
+    {
+      "id": "gen-151-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Pharaoh promise to give the family?",
+      "choices": ["The best land in Egypt", "A ship", "A small tent", "Nothing"],
+      "answerIndex": 0,
+      "highlight": "I will give you the best land in Egypt",
+      "section": 1
+    },
+    {
+      "id": "gen-151-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Pharaoh send for the little children and wives?",
+      "choices": ["Carts", "Camels", "Boats", "Horses with wings"],
+      "answerIndex": 0,
+      "highlight": "Take carts from Egypt for your little children and your wives",
+      "section": 1
+    },
+    {
+      "id": "gen-151-q4",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did Benjamin get?",
+      "choices": ["Silver and five sets of clothes", "A crown", "A camel", "A silver cup"],
+      "answerIndex": 0,
+      "highlight": "three hundred pieces of silver and five sets of clothes",
+      "section": 2
+    },
+    {
+      "id": "gen-151-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph send his father?",
+      "choices": [
+        "Donkeys loaded with good things",
+        "A letter only",
+        "A chariot of gold",
+        "Twelve sheep"
+      ],
+      "answerIndex": 0,
+      "highlight": "ten donkeys loaded with good things from Egypt",
+      "section": 2
+    },
+    {
+      "id": "gen-151-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph tell his brothers as they left?",
+      "choices": [
+        "“Don’t quarrel on the way!”",
+        "“Hurry, run!”",
+        "“Never come back!”",
+        "“Sell the carts!”"
+      ],
+      "answerIndex": 0,
+      "highlight": "Don’t quarrel on the way!",
+      "section": 2
+    }
+  ]
+}

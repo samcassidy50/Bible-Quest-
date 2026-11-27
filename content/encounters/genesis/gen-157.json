@@ -1,0 +1,108 @@
+{
+  "id": "gen-157",
+  "title": "The Hungry Years",
+  "passage": "GEN 47:13-19",
+  "setting": "granary",
+  "sections": [
+    {
+      "verses": "13-15",
+      "foe": {
+        "id": "empty-purse",
+        "name": "Empty Purse",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#6a8ac8",
+        "size": 0.9,
+        "sprite": "slime-blue"
+      },
+      "orbs": [
+        {
+          "word": "money"
+        }
+      ]
+    },
+    {
+      "verses": "16-19",
+      "foe": {
+        "id": "hollow-hunger",
+        "name": "Hollow Hunger",
+        "maxHp": 80,
+        "attack": 14,
+        "color": "#2a2434",
+        "size": 1.4,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "seed"
+        },
+        {
+          "word": "animals"
+        }
+      ]
+    }
+  ],
+  "rune": "mending",
+  "questions": [
+    {
+      "id": "gen-157-q1",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "There was plenty of food everywhere.",
+      "choices": ["True", "False"],
+      "answerIndex": 1,
+      "highlight": "There was no food anywhere",
+      "section": 1
+    },
+    {
+      "id": "gen-157-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph collect for the grain?",
+      "choices": ["All the money", "Stones", "Sheep wool", "Nothing"],
+      "answerIndex": 0,
+      "highlight": "Joseph collected all the money",
+      "section": 1
+    },
+    {
+      "id": "gen-157-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the Egyptians say had run out?",
+      "choices": ["Their money", "Their water", "Their sheep", "Their patience"],
+      "answerIndex": 0,
+      "highlight": "Our money is gone",
+      "section": 1
+    },
+    {
+      "id": "gen-157-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph ask the people to bring when their money was gone?",
+      "choices": ["Their animals", "Their children", "Their clothes", "Their houses"],
+      "answerIndex": 0,
+      "highlight": "bring me your animals",
+      "section": 2
+    },
+    {
+      "id": "gen-157-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did the people ask Joseph to buy at the end?",
+      "choices": ["Themselves and their land", "Their camels", "Their pots", "Their songs"],
+      "answerIndex": 0,
+      "highlight": "Buy us and our land",
+      "section": 2
+    },
+    {
+      "id": "gen-157-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did they ask Joseph to give them besides food?",
+      "choices": ["Seed", "Gold", "Swords", "Boats"],
+      "answerIndex": 0,
+      "highlight": "Give us seed",
+      "section": 2
+    }
+  ]
+}

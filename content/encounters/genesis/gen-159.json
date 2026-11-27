@@ -1,0 +1,110 @@
+{
+  "id": "gen-159",
+  "title": "Bury Me with My Fathers",
+  "passage": "GEN 47:27-31",
+  "setting": "goshen",
+  "sections": [
+    {
+      "verses": "27-28",
+      "foe": {
+        "id": "fading-days",
+        "name": "Fading Days",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#6a7080",
+        "size": 0.9,
+        "sprite": "storm-cloud"
+      },
+      "orbs": [
+        {
+          "word": "Goshen"
+        }
+      ]
+    },
+    {
+      "verses": "29-31",
+      "foe": {
+        "id": "far-from-home",
+        "name": "Far-from-Home",
+        "maxHp": 80,
+        "attack": 14,
+        "color": "#c0a080",
+        "size": 1.35,
+        "sprite": "gust"
+      },
+      "orbs": [
+        {
+          "word": "promise"
+        }
+      ]
+    }
+  ],
+  "rune": "haste",
+  "questions": [
+    {
+      "id": "gen-159-q1",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "Israel’s family grew very large in Goshen.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "grew into a very large family",
+      "section": 1
+    },
+    {
+      "id": "gen-159-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How many years did Jacob live in Egypt?",
+      "choices": ["Seventeen", "Seven", "Seventy", "Two"],
+      "answerIndex": 0,
+      "highlight": "Jacob lived in Egypt for seventeen years",
+      "section": 1
+    },
+    {
+      "id": "gen-159-q6",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "How old did Jacob live to be?",
+      "choices": ["One hundred forty-seven", "Seventeen", "Seventy", "One hundred"],
+      "answerIndex": 0,
+      "highlight": "He lived to be one hundred forty-seven years old",
+      "section": 1
+    },
+    {
+      "id": "gen-159-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Jacob ask Joseph not to do?",
+      "choices": ["Bury him in Egypt", "Visit him", "Feed the sheep", "Talk to Pharaoh"],
+      "answerIndex": 0,
+      "highlight": "Please don’t bury me in Egypt",
+      "section": 2
+    },
+    {
+      "id": "gen-159-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where did Jacob want to be buried?",
+      "choices": [
+        "Where his fathers were buried",
+        "By the Nile",
+        "In Pharaoh’s palace",
+        "In Goshen"
+      ],
+      "answerIndex": 0,
+      "highlight": "bury me where they are buried",
+      "section": 2
+    },
+    {
+      "id": "gen-159-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did Israel do after Joseph promised?",
+      "choices": ["Bowed in worship", "Went to sleep", "Ate a meal", "Went on a trip"],
+      "answerIndex": 0,
+      "highlight": "Israel bowed in worship",
+      "section": 2
+    }
+  ]
+}

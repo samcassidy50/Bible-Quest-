@@ -1,0 +1,162 @@
+{
+  "id": "gen-154",
+  "title": "Seventy in All",
+  "passage": "GEN 46:8-27",
+  "setting": "caravan",
+  "sections": [
+    {
+      "verses": "8-15",
+      "foe": {
+        "id": "long-road",
+        "name": "Long Road",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#c0a080",
+        "size": 0.9,
+        "sprite": "gust"
+      },
+      "orbs": [
+        {
+          "word": "Reuben"
+        },
+        {
+          "word": "Leah"
+        }
+      ]
+    },
+    {
+      "verses": "16-18",
+      "foe": {
+        "id": "weary-feet",
+        "name": "Weary Feet",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#6a8ac8",
+        "size": 0.9,
+        "sprite": "slime-blue"
+      },
+      "orbs": [
+        {
+          "word": "Zilpah"
+        }
+      ]
+    },
+    {
+      "verses": "19-22",
+      "foe": {
+        "id": "dusty-gust",
+        "name": "Dusty Gust",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#8a9ab0",
+        "size": 0.95,
+        "sprite": "squall"
+      },
+      "orbs": [
+        {
+          "word": "Rachel"
+        }
+      ]
+    },
+    {
+      "verses": "23-27",
+      "foe": {
+        "id": "desert-storm",
+        "name": "Desert Storm",
+        "maxHp": 80,
+        "attack": 13,
+        "color": "#8a6a3a",
+        "size": 1.45,
+        "sprite": "tempest"
+      },
+      "orbs": [
+        {
+          "word": "seventy"
+        }
+      ]
+    }
+  ],
+  "rune": "zeal",
+  "questions": [
+    {
+      "id": "gen-154-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who was Jacob’s oldest son?",
+      "choices": ["Reuben", "Joseph", "Benjamin", "Judah"],
+      "answerIndex": 0,
+      "highlight": "Reuben was Jacob’s oldest son",
+      "section": 1
+    },
+    {
+      "id": "gen-154-q2",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Whose children are listed first?",
+      "choices": ["Leah’s", "Rachel’s", "Bilhah’s", "Zilpah’s"],
+      "answerIndex": 0,
+      "highlight": "These were the sons Leah had",
+      "section": 1
+    },
+    {
+      "id": "gen-154-q3",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Gad’s family and which other brother’s family came from Zilpah?",
+      "choices": ["Asher’s", "Joseph’s", "Reuben’s", "Dan’s"],
+      "answerIndex": 0,
+      "highlight": "Asher’s sons were",
+      "section": 2
+    },
+    {
+      "id": "gen-154-q4",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "Zilpah was the servant Laban had given to Leah.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "the servant Laban had given to his daughter Leah",
+      "section": 2
+    },
+    {
+      "id": "gen-154-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who were the sons of Jacob’s wife Rachel?",
+      "choices": ["Joseph and Benjamin", "Reuben and Simeon", "Dan and Gad", "Levi and Judah"],
+      "answerIndex": 0,
+      "highlight": "The sons of Jacob’s wife Rachel were Joseph and Benjamin",
+      "section": 3
+    },
+    {
+      "id": "gen-154-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where were Joseph’s sons Manasseh and Ephraim born?",
+      "choices": ["In Egypt", "In Canaan", "In Goshen", "On the road"],
+      "answerIndex": 0,
+      "highlight": "In Egypt, Joseph’s sons Manasseh and Ephraim were born",
+      "section": 3
+    },
+    {
+      "id": "gen-154-q7",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Dan’s and Naphtali’s families were the children of whom?",
+      "choices": ["Bilhah", "Leah", "Zilpah", "Rachel"],
+      "answerIndex": 0,
+      "highlight": "These were the children of Bilhah",
+      "section": 4
+    },
+    {
+      "id": "gen-154-q8",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How many of Jacob’s family came to Egypt in all?",
+      "choices": ["Seventy", "Twelve", "Seven", "One hundred"],
+      "answerIndex": 0,
+      "highlight": "numbered seventy",
+      "section": 4
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "id": "gen-167",
+  "title": "The Journey Home",
+  "passage": "GEN 50:7-14",
+  "setting": "plain",
+  "sections": [
+    {
+      "verses": "7-11",
+      "foe": {
+        "id": "mourning-wind",
+        "name": "Mourning Wind",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#c0a080",
+        "size": 0.9,
+        "sprite": "gust"
+      },
+      "orbs": [
+        {
+          "word": "horsemen"
+        },
+        {
+          "word": "Jordan"
+        }
+      ]
+    },
+    {
+      "verses": "12-14",
+      "foe": {
+        "id": "long-shadow",
+        "name": "Long Shadow",
+        "maxHp": 80,
+        "attack": 14,
+        "color": "#2a2434",
+        "size": 1.4,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "Machpelah"
+        }
+      ]
+    }
+  ],
+  "rune": "life",
+  "questions": [
+    {
+      "id": "gen-167-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who went with Joseph to bury his father?",
+      "choices": [
+        "Pharaoh’s officials and all the family",
+        "No one",
+        "Only Benjamin",
+        "Only the priests"
+      ],
+      "answerIndex": 0,
+      "highlight": "All of Pharaoh’s officials went with him",
+      "section": 1
+    },
+    {
+      "id": "gen-167-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who stayed behind in Goshen?",
+      "choices": [
+        "The little children and the flocks and herds",
+        "Joseph",
+        "All the brothers",
+        "Pharaoh"
+      ],
+      "answerIndex": 0,
+      "highlight": "They left only their little children and their flocks and herds",
+      "section": 1
+    },
+    {
+      "id": "gen-167-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How many days did Joseph mourn by the Jordan?",
+      "choices": ["Seven", "Seventy", "Forty", "One"],
+      "answerIndex": 0,
+      "highlight": "Joseph mourned for his father for seven days",
+      "section": 1
+    },
+    {
+      "id": "gen-167-q4",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What does the name Abel Mizraim mean?",
+      "choices": ["The mourning of Egypt", "The happy river", "The new land", "The big tent"],
+      "answerIndex": 0,
+      "highlight": "the mourning of Egypt",
+      "section": 1
+    },
+    {
+      "id": "gen-167-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where did the sons bury Jacob?",
+      "choices": [
+        "In the cave in the field of Machpelah",
+        "By the Nile",
+        "In Pharaoh’s palace",
+        "In the pit at Dothan"
+      ],
+      "answerIndex": 0,
+      "highlight": "buried him in the cave in the field of Machpelah",
+      "section": 2
+    },
+    {
+      "id": "gen-167-q6",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "After the burial, Joseph went back to Egypt.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "Joseph went back to Egypt",
+      "section": 2
+    }
+  ]
+}
