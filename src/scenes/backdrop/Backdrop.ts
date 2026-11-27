@@ -59,6 +59,12 @@ const LANDMARK_AT: Record<string, { x: number; dy: number }> = {
   shipyard: { x: 0.78, dy: -30 },
   sodom: { x: 0.74, dy: -24 }, // the city gate, standing on the street behind the houses
   canaan: { x: 0.76, dy: -24 }, // Jacob's tent, pitched behind the olive trees
+  dothan: { x: 0.7, dy: -22 }, // the dry pit
+  caravan: { x: 0.78, dy: -24 }, // a loaded camel by a palm
+  estate: { x: 0.76, dy: -30 }, // the great house's painted doorway
+  palace: { x: 0.6, dy: -10 }, // Pharaoh's throne on its steps
+  granary: { x: 0.8, dy: -28 }, // the tall storehouse
+  goshen: { x: 0.76, dy: -26 }, // the family's homestead
 };
 
 /** The light painted into a sky (native sky pixels, 560x200): effects gather around it. */
@@ -100,6 +106,14 @@ const LOOKS: Record<string, Look> = {
   plain: { sky: [0x3a4a7a, 0x967c9a, 0xfce2aa] },
   brimstone: { sky: [0x140a0e, 0x702416, 0xf49a40] },
   canaan: { sky: [0x4a7cc0, 0xa2c0d6, 0xf6e6b4] },
+  dothan: { sky: [0x3e78c4, 0xa0c6de, 0xf8dc9c] },
+  caravan: { sky: [0x2a2a5a, 0x8a5872, 0xf8d07a] },
+  estate: { sky: [0x2e70c8, 0x8cbce2, 0xf2e6b8] },
+  prison: { sky: [0x14121a, 0x302a30, 0x5a4e48] },
+  nile: { sky: [0x4a86c8, 0xa6c8d8, 0xf8e2a4] },
+  palace: { sky: [0x0e1a3a, 0xac865a, 0xe2c290] },
+  granary: { sky: [0x5a7ab0, 0xbab8b4, 0xf8d07a] },
+  goshen: { sky: [0x3a5a96, 0x9c9ca4, 0xf8d080] },
 };
 
 /** Draws `fn` at x and again one tile left/right when near an edge, so tiles repeat seamlessly. */
@@ -1363,8 +1377,72 @@ export class Backdrop {
         this.birds(add, loop, rng, 0x4a3e5e, 3);
         break;
       case 'canaan':
-        // Birds over the hill country on a warm afternoon.
+      case 'goshen':
+        // Birds over the hill country, or over Goshen's fields at evening.
         this.birds(add, loop, rng, 0x3a4e72, 4);
+        break;
+      case 'dothan':
+      case 'caravan':
+      case 'granary':
+        // Dust and chaff blowing across dry ground.
+        for (let i = 0; i < 16; i++) {
+          const d = add(
+            this.scene.add.circle(
+              rng.next() * W,
+              gy - rng.next() * 140,
+              1.5 + rng.next() * 2,
+              this.key === 'granary' && i % 2 ? 0xe8c860 : 0xd8b07a,
+              0.5,
+            ),
+          );
+          loop(d, {
+            x: d.x - 280,
+            y: d.y + 18,
+            alpha: 0,
+            duration: 4200 + rng.next() * 3000,
+            delay: rng.next() * 3000,
+          });
+        }
+        break;
+      case 'estate':
+      case 'nile':
+        // Sunlight glinting on the river, and birds overhead.
+        for (let i = 0; i < (this.key === 'nile' ? 12 : 0); i++) {
+          const s = add(
+            this.scene.add.star(rng.next() * W, gy - 70 - rng.next() * 60, 4, 1, 4, 0xffffff, 0.85),
+          );
+          loop(s, {
+            alpha: 0,
+            duration: 700 + rng.next() * 900,
+            yoyo: true,
+            delay: rng.next() * 1000,
+          });
+        }
+        this.birds(add, loop, rng, 0x3a4a5e, 3);
+        break;
+      case 'prison':
+      case 'palace':
+        // Dust motes drifting in the light (the prison) or in the braziers' glow (the palace).
+        for (let i = 0; i < 18; i++) {
+          const m = add(
+            this.scene.add.circle(
+              this.key === 'prison' ? W * (0.6 + rng.next() * 0.25) : rng.next() * W,
+              gy - 40 - rng.next() * 260,
+              1.5 + rng.next(),
+              this.key === 'prison' ? 0xe8e0c8 : 0xf8c060,
+              0.6,
+            ),
+          );
+          loop(m, {
+            x: m.x + 30 - rng.next() * 60,
+            y: m.y - 40,
+            alpha: 0.05,
+            duration: 3000 + rng.next() * 3000,
+            yoyo: true,
+            ease: 'Sine.inOut',
+            delay: rng.next() * 2000,
+          });
+        }
         break;
       case 'brimstone': {
         // Burning sulfur raining down, embers rising, the sky flaring red.

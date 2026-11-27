@@ -23,6 +23,14 @@ export const BACKDROP_VARIANTS: { id: string; setting: Setting; weather?: Weathe
   { id: 'plain', setting: 'plain' },
   { id: 'brimstone', setting: 'brimstone' },
   { id: 'canaan', setting: 'canaan' },
+  { id: 'dothan', setting: 'dothan' },
+  { id: 'caravan', setting: 'caravan' },
+  { id: 'estate', setting: 'estate' },
+  { id: 'prison', setting: 'prison' },
+  { id: 'nile', setting: 'nile' },
+  { id: 'palace', setting: 'palace' },
+  { id: 'granary', setting: 'granary' },
+  { id: 'goshen', setting: 'goshen' },
 ];
 
 /**

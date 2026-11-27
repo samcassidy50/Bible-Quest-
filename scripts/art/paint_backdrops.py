@@ -2717,6 +2717,743 @@ def paint_canaan() -> Layers:
 
 
 
+# ── Joseph in Egypt (Genesis 37–50) ───────────────────────────────────────────
+
+
+def camel(cv: Canvas, x: float, base: float, s: float, r: list[Color], d: int = 1, load: Optional[list[Color]] = None) -> None:
+    """A camel side-on (d = facing): humped body, long legs, curved neck; packs if `load`."""
+    by = base - s * 1.55
+    blob(cv, [(x, by, s * 0.55), (x - d * s * 0.45, by + s * 0.1, s * 0.42), (x + d * s * 0.42, by + s * 0.1, s * 0.4)], r,
+         seed=int(x * 7) % 997, tex=0.1, tex_cell=2)
+    for lx in (-0.6, -0.4, 0.45, 0.65):
+        stroke(cv, [(x + lx * s, by + s * 0.3), (x + lx * s + 0.3, base - s * 0.5), (x + lx * s, base)], s * 0.18, s * 0.13, r)
+    nx, ny = x + d * s * 0.85, by - s * 0.05
+    hx, hy = x + d * s * 1.35, by - s * 0.75
+    stroke(cv, [(nx, ny), (x + d * s * 1.2, by + s * 0.05), (hx, hy)], s * 0.3, s * 0.2, r)
+    blob(cv, [(hx + d * s * 0.18, hy - s * 0.02, s * 0.2)], r, seed=3, tex=0.05)
+    if load:
+        for k, c in enumerate((-0.55, 0.55)):
+            ball(cv, x + c * s * 0.6, by + s * 0.15 - k * 0.3, s * 0.32, s * 0.36, load)
+
+
+def lotus_column(cv: Canvas, x: float, base: float, h: float, w: float, stone_r: list[Color], paint: list[Color], outline: Color) -> None:
+    """An Egyptian column: a shaft with painted bands, a flared lotus capital and an abacus slab."""
+    for px, py in poly_pixels([(x - w / 2, base - h * 0.86), (x + w / 2, base - h * 0.86), (x + w / 2, base), (x - w / 2, base)]):
+        u, v = native(px), native(py)
+        rel = (u - (x - w / 2)) / w
+        t = 0.35 + rel * 0.5 if LIGHT[0] > 0 else 0.85 - rel * 0.5
+        band = (base - v) % (h * 0.2)
+        if band < 1.6:
+            cv.put(px, py, paint[int((base - v) / (h * 0.2)) % len(paint)])
+        else:
+            cv.put(px, py, shade(stone_r, t, px, py))
+    cap_y = base - h * 0.86
+    for px, py in poly_pixels([(x - w / 2, cap_y), (x + w / 2, cap_y), (x + w * 0.95, cap_y - h * 0.1), (x - w * 0.95, cap_y - h * 0.1)]):
+        u = native(px)
+        k = int((u - x) / (w * 0.3) + 10) % 2
+        cv.put(px, py, paint[1] if k else shade(stone_r, 0.7, px, py))
+    for px, py in poly_pixels([(x - w * 0.95, cap_y - h * 0.1), (x + w * 0.95, cap_y - h * 0.1), (x + w * 0.95, base - h), (x - w * 0.95, base - h)]):
+        cv.put(px, py, shade(stone_r, 0.8, px, py))
+    for px, py in poly_pixels([(x - w / 2 - 0.6, base - h), (x - w / 2, base - h), (x - w / 2, base), (x - w / 2 - 0.6, base)]):
+        cv.put(px, py, outline)
+
+
+def paved(u: float, v: float, d: float, px: int, py: int, r: list[Color], seed: int, bw: float = 14, bh: float = 7) -> Color:
+    """Large stone flags in running bond, lit from LIGHT, getting darker away from the edge."""
+    mortar, tone = brick(u, v, seed, bw=bw, bh=bh)
+    n = fbm(u, v, seed + 1, cells=(16, 8, 4))
+    t = 0.55 + (tone - 0.5) * 0.25 + (n - 0.5) * 0.25 - d * 0.002 - (0.3 if mortar else 0)
+    if d < 1:
+        t += 0.3
+    return shade(r, t, px, py)
+
+
+def cistern(stone_r: list[Color], dark: Color, outline: Color) -> Canvas:
+    """The dry pit at Dothan: a ring of rough stones round a dark mouth, a rope trailing over."""
+    cv = Canvas(64, 30)
+    base = 30
+    for px, py in poly_pixels([(10, base - 4), (54, base - 4), (52, base - 12), (12, base - 12)]):
+        cv.put(px, py, dark)
+    for i in range(11):
+        a = i / 10
+        x = 8 + a * 48
+        y = base - 9 - math.sin(a * math.pi) * 5
+        ball(cv, x, y, 4.2, 3.2, stone_r)
+        ball(cv, x + 2, base - 4 + math.sin(a * math.pi) * 1.5, 4.4, 3.4, stone_r)
+    stroke(cv, [(40, base - 14), (44, base - 9), (43, base - 4)], 0.9, 0.8, ramp('#5a4428', '#7a5e3a', '#9a7c50'))
+    outline_pass(cv, outline)
+    return cv
+
+
+def paint_dothan() -> Layers:
+    """Gen 37:12-24: the wide dry pastures of Dothan at midday, far flocks, a lone acacia, the pit."""
+    global LIGHT
+    LIGHT = (0.5, -0.86)
+    L = Layers()
+    rng = random.Random(1201)
+    sky_r = ramp('#3e78c4', '#4e88cc', '#64a0d6', '#80b4dc', '#a0c6de', '#c0d4d8', '#dcdcc8', '#eedcb0', '#f8dc9c')
+    sky_gradient(L.sky, sky_r, gamma=1.2)
+    glow(L.sky, 300, 36, 14, 70, ramp('#c4dcec', '#e4ecdc', '#fff6d0', '#fffbe8'))
+    disc(L.sky, 300, 36, 11, hexc('#fffef6'), hexc('#fff4cc'))
+    for cx, y, w in ((120, 150, 200), (420, 140, 220), (280, 172, 260)):
+        streak_cloud(L.sky, rng, cx, y, w, hexc('#f4ead0'), hexc('#e4d8bc'))
+
+    far = L.far
+    ridge_fill(
+        far, lambda x: 56 - wave(x, [(1, 8, 1.1), (3, 4, 0.3), (6, 2, 1.9)]) - fbm(x, 0, 1210, cells=(32, 16)) * 4,
+        ramp('#a49890', '#b0a294', '#bcae9a', '#c8baa2', '#d6c8ac'), seed=1211, bottom=FAR_H - PAD, base_t=0.55,
+        slope_gain=0.4, fade=0.004, tex=0.08,
+    )
+    ftops = ridge_fill(
+        far, lambda x: 80 - wave(x, [(2, 2.5, 0.4), (5, 1.2, 1.1)]) - fbm(x, 3, 1212, cells=(16, 8)) * 2,
+        ramp('#9a8a58', '#a8965e', '#b6a266', '#c4ae70', '#d2bc7c'), seed=1213, bottom=FAR_H - PAD, base_t=0.55,
+        slope_gain=0.3, fade=0.006, tex=0.12, sy=0.5,
+    )
+    for hx in (60.0, 250.0, 420.0):
+        for k in range(rng.randint(4, 7)):
+            x = hx + k * rng.uniform(3, 5)
+            dot(far, x, ftops[int(x) % T] + rng.uniform(4, 10), 0.9, hexc('#efe6cc'))
+    mist(far, 84, 5, hexc('#e8d8b0'), 0.35, seed=1214)
+
+    mid = L.mid
+    dry_r = ramp('#7a6a3e', '#8a7844', '#9c884c', '#ae9856', '#c0a862', '#d0b870')
+    mtops = ridge_fill(
+        mid, lambda x: 80 - wave(x, [(2, 2, 0.9), (5, 1.2, 0.2)]) - fbm(x, 2, 1220, cells=(16, 8)) * 2,
+        dry_r, seed=1221, bottom=MID_H - PAD, base_t=0.58, slope_gain=0.35, fade=0.01, tex=0.16,
+    )
+    bark_r = ramp('#2e2016', '#463020', '#5e442c', '#76583a')
+    leaf_r = ramp('#3e4a2a', '#4c5a30', '#5e6c38', '#728044', '#889452')
+    for i, x in enumerate(scatter_points(rng, 2, 0, T, 200)):
+        acacia(mid, rng, x, mtops[int(x) % T] + 6, rng.uniform(42, 50), bark_r, leaf_r, seed=1230 + i)
+    for i, x in enumerate(scatter_points(rng, 12, 0, T, 22)):
+        thorn_bush(mid, rng, x, mtops[int(x) % T] + 6, rng.uniform(6, 9), rng.uniform(4, 6), ramp('#4a4028', '#5e5232', '#74663e', '#8a7a4a'))
+
+    g = L.ground
+    surface = 5
+    dust_r = ramp('#7a6446', '#8c7450', '#a0865c', '#b49868', '#c8aa76', '#dabc86', '#e8cc98')
+    straw_r = ramp('#7a6a36', '#8e7c3e', '#a28e48', '#b8a254', '#ccb462')
+
+    def pasture(u: float, v: float, d: float, px: int, py: int) -> Color:
+        n = fbm(u, v, 1241, cells=(32, 16, 8, 4))
+        if fbm(u, v, 1246, cells=(64, 32, 16), sy=0.4) > 0.55:
+            return shade(dust_r, 0.55 + (n - 0.5) * 0.45 - d * 0.002 + (0.3 if d < 1 else 0), px, py)
+        t = 0.5 - d * 0.003 + (n - 0.5) * 0.4 + (vnoise(u, v, 1.5, 6, 1243, T) - 0.5) * 0.35
+        return shade(straw_r, t + (0.4 if d < 1 else 0), px, py)
+
+    ground_fill(g, surface, pasture)
+    tufts(g, rng, surface, straw_r, 130, max_h=5)
+    stone_r = ramp('#4e4234', '#74644e', '#9c8a6c', '#c2b08e')
+    for _ in range(16):
+        x, y = rng.uniform(0, T), rng.uniform(surface + 3, GROUND_H - 6)
+        w = rng.uniform(1.5, 3.2) * (0.7 + y / GROUND_H)
+        ball(g, x, y, w, w * 0.65, stone_r)
+    L.landmark = cistern(stone_r, hexc('#120c08'), hexc('#2a2016'))
+    return L
+
+
+def paint_caravan() -> Layers:
+    """Gen 37:25-36, 43-46: the trade road down to Egypt at dusk, dunes and a line of camels."""
+    global LIGHT
+    LIGHT = (-0.75, -0.6)
+    L = Layers()
+    rng = random.Random(1301)
+    sky_r = ramp('#2a2a5a', '#3a3466', '#4e3e6e', '#6a4a72', '#8a5872', '#ac6870', '#cc7c68', '#e49a64', '#f2b866', '#f8d07a')
+    sky_gradient(L.sky, sky_r, gamma=0.95)
+    glow(L.sky, 110, 176, 16, 90, ramp('#d8805c', '#ec9a5e', '#f8bc6a', '#ffe0a0'), power=1.7)
+    disc(L.sky, 110, 176, 15, hexc('#fff0c4'), hexc('#ffd47c'))
+    for cx, y, w in ((300, 132, 260), (470, 150, 180), (200, 160, 220)):
+        streak_cloud(L.sky, rng, cx, y, w, hexc('#f0a07a'), hexc('#c4706c'))
+    stars(L.sky, rng, 90, lambda x, y: max(0.0, 1 - y / 70) * min(1.0, x / 280), [hexc('#a8a4cc'), hexc('#e8e4f4')])
+
+    far = L.far
+    ftops = ridge_fill(
+        far, lambda x: 60 - wave(x, [(1, 6, 0.2), (2, 5, 1.4), (4, 3, 0.8), (8, 1.2, 2.2)]),
+        ramp('#5a3e58', '#6e4a5c', '#845860', '#9c6662', '#b67664'), seed=1311, bottom=FAR_H - PAD, base_t=0.5,
+        slope_gain=1.2, fade=0.004, tex=0.05, rim_t=0.3,
+    )
+    for k in range(9):  # a far caravan along the dune crest
+        x = 120 + k * 7
+        camel(far, x, ftops[int(x) % T] + 1.5, 2.6, [hexc('#3a2638')], d=1)
+
+    mid = L.mid
+    sand_r = ramp('#6a4440', '#7e5446', '#94644c', '#aa7652', '#c08858', '#d29a62')
+    mtops = ridge_fill(
+        mid, lambda x: 74 - wave(x, [(2, 4, 0.6), (3, 3, 1.9), (7, 1.2, 0.3)]),
+        sand_r, seed=1321, bottom=MID_H - PAD, base_t=0.5, slope_gain=1.0, fade=0.01, tex=0.06,
+    )
+    trunk_r = ramp('#2a1a18', '#3e2820', '#54382a', '#6a4834')
+    frond_r = ramp('#1e2a22', '#2a3a28', '#36482e', '#465a36', '#566a3e')
+    for x in scatter_points(rng, 3, 0, T, 120):
+        for dx in (0, 7):
+            palm(mid, x + dx, mtops[int(x + dx) % T] + 4, rng.uniform(28, 36), trunk_r, frond_r, 0)
+
+    g = L.ground
+    surface = 5
+    road_r = ramp('#5e4036', '#72503e', '#886046', '#9e724e', '#b48458', '#c89664', '#d8a872')
+
+    def road(u: float, v: float, d: float, px: int, py: int) -> Color:
+        n = fbm(u, v, 1341, cells=(32, 16, 8, 4))
+        ripple = math.sin((u * 0.35 + v * 1.6) + fbm(u, v, 1342, cells=(32, 16)) * 6) * 0.08
+        rut = any(abs(v - c - wave(u, [(1, 3, 0.5)])) < 1.2 for c in (34, 44))
+        t = 0.6 + (n - 0.5) * 0.35 + ripple - d * 0.002 - (0.2 if rut else 0)
+        if d < 1:
+            t += 0.25
+        return shade(road_r, t, px, py)
+
+    ground_fill(g, surface, road)
+    rough_top(g, surface, road_r, 1343, 2.5)
+    stone_r = ramp('#3e2c26', '#5e463a', '#806452', '#a4846c')
+    for _ in range(10):
+        x, y = rng.uniform(0, T), rng.uniform(surface + 3, GROUND_H - 6)
+        w = rng.uniform(1.5, 3.0) * (0.7 + y / GROUND_H)
+        ball(g, x, y, w, w * 0.6, stone_r)
+    for _ in range(10):  # dry scrub at the roadside
+        x, y = rng.uniform(0, T), rng.choice((rng.uniform(surface + 3, 22), rng.uniform(70, GROUND_H - 6)))
+        thorn_bush(g, rng, x, y, rng.uniform(4, 6), rng.uniform(3, 4), ramp('#3a2a20', '#54402c', '#6c5436'))
+
+    lm = Canvas(90, 64)
+    palm(lm, 70, 64, 50, trunk_r, frond_r, 0)
+    camel(lm, 34, 64, 15, ramp('#4a2e24', '#6a4430', '#8a5c3c', '#aa784e', '#c4925e'), d=-1,
+          load=ramp('#3a2c4a', '#5a3e66', '#7a5484', '#a070a0'))
+    outline_pass(lm, hexc('#1e1210'))
+    L.landmark = lm
+    return L
+
+
+def paint_estate() -> Layers:
+    """Gen 39, 43-45: an Egyptian great house: painted columns, a pool, palms, a sunny courtyard."""
+    global LIGHT
+    LIGHT = (0.6, -0.8)
+    L = Layers()
+    rng = random.Random(1401)
+    sky_r = ramp('#2e70c8', '#3e80d0', '#5494d8', '#6ea8de', '#8cbce2', '#acd0e4', '#cadcdc', '#e2e2cc', '#f2e6b8')
+    sky_gradient(L.sky, sky_r, gamma=1.1)
+    glow(L.sky, 460, 50, 12, 46, ramp('#bcd8ec', '#dcecea', '#f8f4d4', '#fffbe0'))
+    disc(L.sky, 460, 50, 10, hexc('#fffef4'), hexc('#fff4c8'))
+    cloud_r = ramp('#a2bcdc', '#c4d6ec', '#e2ecf4', '#f6fafc', '#ffffff')
+    for i, (cx, base, w, h) in enumerate([(120, 80, 70, 24), (320, 100, 56, 20)]):
+        cumulus(L.sky, rng, cx, base, w, h, cloud_r, seed=1410 + i)
+
+    far = L.far
+    wall_r = ramp('#8a6c52', '#a2825e', '#b8966a', '#ccaa7a', '#dcbe8c', '#eacf9e', '#f4dcae')
+    paint = [hexc('#2a5a8a'), hexc('#b04a32'), hexc('#3a7a5a'), hexc('#d8a040')]
+    for px in range(far.w):
+        u = native(px)
+        top = 34 if (u % 128) < 100 else 26
+        for py in range(round(top * K), round((FAR_H - PAD) * K)):
+            v = native(py)
+            mortar, tone = brick(u, v, 1420, bw=6, bh=3)
+            t = 0.55 + (tone - 0.5) * 0.12 - (0.08 if mortar else 0) - (v - top) * 0.002
+            if v - top < 2:
+                t = 0.9
+            if 6 < v - top < 8:
+                far.put(px, py, paint[int(u / 4) % 4])
+                continue
+            far.put(px, py, shade(wall_r, t, px, py))
+    for x in range(8, T, 32):  # a colonnade along the house front
+        lotus_column(far, x, FAR_H - PAD, 52, 5, wall_r, paint, hexc('#4a3424'))
+    for x in range(24, T, 64):  # dark doorways between
+        for px, py in poly_pixels([(x - 5, FAR_H - PAD - 24), (x + 5, FAR_H - PAD - 24), (x + 5, FAR_H - PAD), (x - 5, FAR_H - PAD)]):
+            far.put(px, py, hexc('#2a1c16'))
+
+    mid = L.mid
+    trunk_r = ramp('#3e2a1c', '#5a3e26', '#745232', '#8e6840')
+    frond_r = ramp('#24482a', '#2e5a30', '#3a6e36', '#4e8240', '#66984c')
+    pot_r = ramp('#5c2e1c', '#844228', '#a85a34', '#c87444', '#dc9058')
+    for x in scatter_points(rng, 4, 0, T, 110):
+        palm(mid, x, MID_H - PAD - 2, rng.uniform(46, 58), trunk_r, frond_r, 0)
+    for x in scatter_points(rng, 6, 0, T, 60):
+        ball(mid, x, MID_H - PAD - 6, 5, 5.5, pot_r)
+        blob(mid, [(x - 2, MID_H - PAD - 13, 3.5), (x + 2, MID_H - PAD - 14, 3.8)], frond_r, outline=frond_r[0], seed=int(x), tex=0.2, tex_cell=1.5)
+
+    g = L.ground
+    surface = 5
+    flag_r = ramp('#7a6650', '#8e7a60', '#a48e72', '#b8a284', '#ccb696', '#dcc8a8', '#ecdabc')
+    pool_r = ramp('#1e5a7a', '#2a6e8e', '#3a86a4', '#58a2ba', '#86c2d0', '#c4e4e8')
+
+    def court(u: float, v: float, d: float, px: int, py: int) -> Color:
+        pool = 44 < v < 66 and (u % 256) > 60 and (u % 256) < 200
+        if pool:
+            edge = min(v - 44, 66 - v, (u % 256) - 60, 200 - (u % 256))
+            if edge < 2:
+                return shade(flag_r, 0.9, px, py)
+            n = fbm(u, v, 1441, cells=(16, 8, 4), sy=3)
+            return shade(pool_r, 0.45 + (n - 0.5) * 0.6 + (0.3 if n > 0.68 else 0), px, py)
+        return paved(u, v, d, px, py, flag_r, 1442)
+
+    ground_fill(g, surface, court)
+    lotus_r = [hexc('#f4b8c8'), hexc('#ffffff'), hexc('#3a7a4a')]
+    for _ in range(16):
+        x = rng.uniform(0, T)
+        if 70 < x % 256 < 190:
+            y = rng.uniform(48, 62)
+            dot(g, x, y, 1.6, lotus_r[2])
+            dot(g, x, y - 0.6, 0.8, rng.choice(lotus_r[:2]))
+
+    lm = Canvas(80, 80)
+    for x in (16, 64):
+        lotus_column(lm, x, 80, 74, 9, wall_r, paint, hexc('#3a2818'))
+    for px, py in poly_pixels([(10, 6), (70, 6), (70, 13), (10, 13)]):
+        u = native(px)
+        lm.put(px, py, paint[int(u / 5) % 4] if 8 < native(py) < 11 else shade(wall_r, 0.8, px, py))
+    for px, py in poly_pixels([(21, 13), (59, 13), (59, 80), (21, 80)]):
+        lm.put(px, py, hexc('#241812'))
+    outline_pass(lm, hexc('#2a1c12'))
+    L.landmark = lm
+    return L
+
+
+def paint_prison() -> Layers:
+    """Gen 39:20-40:23: the king's prison: stone walls, torchlight, one shaft of day from a high window."""
+    global LIGHT
+    LIGHT = (-0.4, -0.9)
+    L = Layers()
+    rng = random.Random(1501)
+    wall_r = ramp('#14121a', '#1c1a22', '#26222a', '#302a30', '#3c3436', '#4a403e', '#5a4e48', '#6c5e54')
+    sky = L.sky
+    for py in range(sky.h):  # the back wall of big blocks, darker towards the top
+        v = native(py)
+        for px in range(sky.w):
+            u = native(px)
+            f1, f2, ox, oy = worley(u, v * 1.6, 14, 1510, period=560)
+            t = 0.25 + v / SKY_H * 0.35 + (ox * LIGHT[0] + oy * 1.6 * LIGHT[1]) / 14 * 0.25 + (fbm(u, v, 1511, None, cells=(16, 8)) - 0.5) * 0.2
+            sky.put(px, py, wall_r[0] if f2 - f1 < 1.0 else shade(wall_r, t, px, py))
+    wx0, wx1, wy0, wy1 = 360, 400, 34, 70  # the barred window high up
+    for px, py in poly_pixels([(wx0, wy0), (wx1, wy0), (wx1, wy1), (wx0, wy1)]):
+        sky.put(px, py, shade(ramp('#a8c8e0', '#d4e4ec', '#f4f4e4'), (native(py) - wy0) / (wy1 - wy0), px, py))
+    for bx in range(wx0 + 6, wx1, 8):
+        for px, py in poly_pixels([(bx, wy0), (bx + 2, wy0), (bx + 2, wy1), (bx, wy1)]):
+            sky.put(px, py, hexc('#1a1414'))
+    beam = ramp('#4a4448', '#6a625c', '#8c8070', '#b0a284')
+    for py in span(wy1, SKY_H):  # the shaft of light falling to the floor
+        v = native(py)
+        f = (v - wy1) / (SKY_H - wy1)
+        a0, a1 = wx0 - f * 90, wx1 - f * 40
+        for px in span(a0, a1):
+            u = native(px)
+            if a0 <= u <= a1:
+                mix_put(sky, px, py, shade(beam, 0.8 - f * 0.4, px, py), 0.35 * (1 - f * 0.5))
+
+    far = L.far
+    bar_r = ramp('#1a1616', '#2c2624', '#423a34', '#5a5048')
+    stone_r = ramp('#1a161c', '#242026', '#2e282e', '#3a3236', '#463c3e', '#544846')
+    for px in range(far.w):  # a row of cell arches
+        u = native(px)
+        for py in range(round(20 * K), round((FAR_H - PAD) * K)):
+            v = native(py)
+            cell = u % 64
+            arch_top = 40 + (1 - math.sqrt(max(0.0, 1 - ((cell - 32) / 22) ** 2))) * 22 if 10 < cell < 54 else 999
+            if v > arch_top:
+                far.put(px, py, hexc('#0c0a0e'))
+                continue
+            mortar, tone = brick(u, v, 1520, bw=10, bh=5)
+            far.put(px, py, shade(stone_r, 0.45 + (tone - 0.5) * 0.3 - (0.25 if mortar else 0), px, py))
+    for x0 in range(0, T, 64):
+        for bx in range(x0 + 14, x0 + 52, 6):
+            stroke(far, [(bx, 44), (bx, FAR_H - PAD)], 1.4, 1.4, bar_r)
+        stroke(far, [(x0 + 11, 62), (x0 + 53, 62)], 1.2, 1.2, bar_r)
+
+    mid = L.mid
+    for px in range(mid.w):  # thick pillars with chains hanging
+        u = native(px)
+        if (u % 170) < 26:
+            for py in range(round(6 * K), round((MID_H - PAD) * K)):
+                v = native(py)
+                rel = (u % 170) / 26
+                mortar, tone = brick(u, v, 1530, bw=13, bh=6)
+                t = 0.62 - rel * 0.45 + (tone - 0.5) * 0.2 - (0.2 if mortar else 0)
+                mid.put(px, py, shade(stone_r + [hexc('#6a5a50')], t, px, py))
+    chain_r = ramp('#1e1a18', '#3a3430', '#5a524a', '#7a7064')
+    for x0 in range(0, T, 170):
+        for k in range(12):
+            ball(mid, x0 + 32 + math.sin(k * 0.4) * 2, 30 + k * 2.6, 1.0, 1.4, chain_r)
+    for x in (110, 280, 450):  # hanging lanterns
+        glow(mid, x, 26, 2, 16, ramp('#3a2418', '#7a4a20', '#c87a30', '#f8b24a'), power=2)
+        ball(mid, x, 26, 2.4, 3, ramp('#6a3a18', '#c87a30', '#f8c25a', '#fff0a0'))
+
+    g = L.ground
+    surface = 5
+    floor_r = ramp('#18141a', '#221c20', '#2c2428', '#382e2e', '#463a36', '#54463e', '#665448')
+    straw_r = ramp('#3a3020', '#4e4226', '#62542e', '#786836', '#8e7c40')
+
+    def floor(u: float, v: float, d: float, px: int, py: int) -> Color:
+        if fbm(u, v, 1541, cells=(32, 16, 8), sy=0.5) > 0.7:
+            return shade(straw_r, 0.3 + vnoise(u * 2, v, 1, 4, 1542, T * 2) * 0.7, px, py)
+        lit = max(0.0, 1 - abs((u % 256) - 120) / 60) * 0.25  # where the window's light lands
+        return paved(u, v, d, px, py, floor_r, 1543, bw=16, bh=8) if not lit else shade(
+            floor_r, 0.5 + lit + (fbm(u, v, 1544, cells=(8, 4)) - 0.5) * 0.3 - (0.3 if brick(u, v, 1543, 16, 8)[0] else 0), px, py)
+
+    ground_fill(g, surface, floor)
+    rough_top(g, surface, floor_r, 1545, 2)
+    jug_r = ramp('#2a1810', '#4a2a18', '#6a3e22', '#8a5530')
+    for _ in range(5):
+        x, y = rng.uniform(0, T), rng.uniform(surface + 8, GROUND_H - 12)
+        s = rng.uniform(2.4, 3.2) * (0.8 + y / GROUND_H)
+        ball(g, x, y, s, s * 1.2, jug_r)
+    return L
+
+
+def pyramid_px(cv: Canvas, x: float, base: float, w: float, r: list[Color]) -> None:
+    """A pyramid: a lit face and a shadowed face, faint courses of stone."""
+    h = w * 0.62
+    for px, py in poly_pixels([(x - w / 2, base), (x, base - h), (x + w / 2, base)]):
+        u, v = native(px), native(py)
+        lit = (u > x) == (LIGHT[0] > 0)
+        t = (0.75 if lit else 0.35) - (0.08 if (v % 3) * K < 1 else 0)
+        cv.put(px, py, shade(r, t, px, py))
+
+
+def papyrus(cv: Canvas, rng: random.Random, x: float, base: float, h: float, stem_r: list[Color], head_r: list[Color]) -> None:
+    """A clump of papyrus: tall stems topped with umbrella tufts."""
+    for _ in range(rng.randint(4, 6)):
+        tx = x + rng.uniform(-4, 4)
+        th = h * rng.uniform(0.7, 1.0)
+        top = (tx + rng.uniform(-2, 2), base - th)
+        stroke(cv, [(tx, base), top], 0.9, 0.7, stem_r)
+        for a in range(-3, 4):
+            ang = -math.pi / 2 + a * 0.32
+            stroke(cv, [top, (top[0] + math.cos(ang) * 5.5, top[1] + math.sin(ang) * 3.5 + 1.2)], 0.9, 0.6, head_r)
+
+
+def paint_nile() -> Layers:
+    """Gen 41: the bank of the Nile in the morning: reeds, the river, palms and pyramids beyond."""
+    global LIGHT
+    LIGHT = (0.7, -0.7)
+    L = Layers()
+    rng = random.Random(1601)
+    sky_r = ramp('#4a86c8', '#5a94ce', '#70a6d4', '#8ab8d8', '#a6c8d8', '#c2d4d2', '#dcdcc4', '#eee0b4', '#f8e2a4')
+    sky_gradient(L.sky, sky_r, gamma=1.0)
+    glow(L.sky, 470, 120, 12, 60, ramp('#c8d8dc', '#e8e4c8', '#f8ecbc', '#fff8d8'))
+    disc(L.sky, 470, 120, 11, hexc('#fffcea'), hexc('#ffeeb4'))
+    for cx, y, w in ((140, 140, 220), (360, 160, 260), (520, 176, 160)):
+        streak_cloud(L.sky, rng, cx, y, w, hexc('#f6ecd0'), hexc('#e2d8c0'))
+    for bx, by in [(200, 70), (210, 66), (220, 72), (300, 90), (309, 86)]:  # ibises flying
+        bird(L.sky, bx, by, 2, hexc('#3a4a5e'))
+
+    far = L.far
+    sand_r = ramp('#a88a62', '#b8986a', '#c8a874', '#d6b680', '#e2c48e')
+    stone_r = ramp('#8e7458', '#a68a68', '#c0a47c', '#d8bc90', '#ecd2a6')
+    for x, w in ((140, 64), (196, 44), (100, 30), (380, 36)):
+        pyramid_px(far, x, 58, w, stone_r)
+    btops = ridge_fill(
+        far, lambda x: 58 - wave(x, [(3, 0.8, 0.4), (7, 0.4, 1.2)]), sand_r, seed=1611, bottom=66, base_t=0.6,
+        slope_gain=0.2, fade=0.01, tex=0.08,
+    )
+    trunk_r = ramp('#3a2a1c', '#563e28', '#705434')
+    frond_r = ramp('#2a4a2c', '#365e32', '#46703a', '#5a8444')
+    for x in scatter_points(rng, 9, 0, T, 40):
+        if not 60 < x < 240:
+            palm(far, x, btops[int(x) % T] + 2, rng.uniform(14, 20), trunk_r, frond_r, 0)
+    river_r = ramp('#2a5a7a', '#36708e', '#4a86a2', '#64a0b6', '#8abcc8', '#c4e0e0', '#f4f8ec')
+    for py in range(round(64 * K), round((FAR_H - PAD) * K)):
+        v = native(py)
+        for px in range(far.w):
+            u = native(px)
+            n = fbm(u, v, 1612, cells=(32, 16, 8), sy=4)
+            glint = n > 0.7 and abs(u % T - 240) < 160
+            far.put(px, py, river_r[-2] if glint else shade(river_r, 0.55 - (v - 64) * 0.008 + (n - 0.5) * 0.4, px, py))
+    for x in (60.0, 330.0):  # a papyrus boat with a sail
+        for px, py in poly_pixels([(x - 12, 76), (x + 12, 76), (x + 9, 80), (x - 9, 80)]):
+            far.put(px, py, hexc('#7a5a30'))
+        stroke(far, [(x, 76), (x, 62)], 0.8, 0.7, [hexc('#4a3420')])
+        for px, py in poly_pixels([(x + 0.5, 63), (x + 8, 70), (x + 0.5, 74)]):
+            far.put(px, py, hexc('#f2ead4'))
+
+    mid = L.mid
+    bank_r = ramp('#3e4a26', '#4c5a2c', '#5c6c32', '#6e7e3a', '#829044')
+    mtops = ridge_fill(
+        mid, lambda x: 82 - wave(x, [(3, 1.5, 0.9), (7, 0.8, 0.2)]), bank_r, seed=1621, bottom=MID_H - PAD, base_t=0.5,
+        slope_gain=0.3, fade=0.01, tex=0.2,
+    )
+    stem_r = ramp('#3a5a2a', '#4a6e30', '#5e8238')
+    head_r = ramp('#5a7a30', '#76943a', '#94ac48')
+    for x in scatter_points(rng, 16, 0, T, 22):
+        papyrus(mid, rng, x, mtops[int(x) % T] + 4, rng.uniform(22, 34), stem_r, head_r)
+
+    g = L.ground
+    surface = 5
+    mud_r = ramp('#3e3226', '#4e3e2c', '#604c34', '#745c3e', '#886e4a', '#9c8258')
+    grass_r = ramp('#3a5a2a', '#486a2e', '#587c34', '#6c8e3c', '#84a248', '#a0b858')
+
+    def bank(u: float, v: float, d: float, px: int, py: int) -> Color:
+        n = fbm(u, v, 1641, cells=(32, 16, 8, 4))
+        if fbm(u, v, 1642, cells=(64, 32, 16), sy=0.4) < 0.64:
+            return shade(grass_r, 0.55 + (n - 0.5) * 0.5 - d * 0.003 + (0.35 if d < 1 else 0), px, py)
+        return shade(mud_r, 0.55 + (n - 0.5) * 0.4 - d * 0.002 + (0.3 if d < 1 else 0), px, py)
+
+    ground_fill(g, surface, bank)
+    tufts(g, rng, surface, grass_r, 150, max_h=6)
+    for _ in range(18):  # reeds
+        x, y = rng.uniform(0, T), rng.uniform(surface + 4, GROUND_H - 6)
+        h = rng.uniform(5, 9) * (0.7 + y / GROUND_H * 0.6)
+        for dx in (-1, 0, 1):
+            stroke(g, [(x + dx, y), (x + dx * 1.8, y - h)], 0.6, 0.5, grass_r[2:])
+    return L
+
+
+def paint_palace() -> Layers:
+    """Gen 41, 47: Pharaoh's hall: painted walls, gold and blue columns, braziers, a tiled floor."""
+    global LIGHT
+    LIGHT = (0.5, -0.85)
+    L = Layers()
+    rng = random.Random(1701)
+    sky = L.sky
+    ceil_r = ramp('#0e1a3a', '#14224a', '#1c2c5a')
+    wall_r = ramp('#7a5a3a', '#94704a', '#ac865a', '#c29c6c', '#d4b07e', '#e2c290')
+    paint = [hexc('#2a4a8a'), hexc('#c8a040'), hexc('#a0402e'), hexc('#2e7a6a')]
+    for py in range(sky.h):
+        v = native(py)
+        for px in range(sky.w):
+            u = native(px)
+            if v < 46:
+                sky.put(px, py, shade(ceil_r, v / 46, px, py))
+            elif v < 52:
+                sky.put(px, py, paint[int(u / 6) % 4] if v > 48 else paint[1])
+            else:
+                n = fbm(u, v, 1710, None, cells=(32, 16, 8))
+                band = (v - 52) % 34
+                if 30 < band < 33:
+                    sky.put(px, py, paint[int(u / 5 + v) % 4])
+                else:
+                    sky.put(px, py, shade(wall_r, 0.55 + (n - 0.5) * 0.2 - (v - 52) * 0.0015, px, py))
+    stars(sky, rng, 120, lambda x, y: 1.0 if y < 44 else 0.0, [hexc('#c8a040'), hexc('#f0d070')])
+    for bx in range(40, SKY_W, 120):  # hanging banners
+        for px, py in poly_pixels([(bx - 9, 52), (bx + 9, 52), (bx + 9, 128), (bx, 138), (bx - 9, 128)]):
+            v = native(py)
+            sky.put(px, py, paint[1] if (v - 52) % 20 < 2 else paint[0] if (bx // 120) % 2 else paint[2])
+    for k in range(12):  # a painted frieze of figures (simple, original): walking reed-cutters
+        x = 20 + k * 46
+        for px, py in poly_pixels([(x, 150), (x + 4, 150), (x + 5, 166), (x - 1, 166)]):
+            sky.put(px, py, paint[3])
+        dot(sky, x + 2, 147, 2.2, paint[3])
+
+    far = L.far
+    stone_r = ramp('#8a6c4e', '#a2845e', '#ba9a70', '#d0b084', '#e2c49a', '#f0d6ae')
+    for x in range(16, T, 48):
+        lotus_column(far, x, FAR_H - PAD, 86, 10, stone_r, paint, hexc('#3a2818'))
+    for px in range(far.w):  # the architrave over the columns
+        for py in range(round((FAR_H - PAD - 94) * K), round((FAR_H - PAD - 86) * K)):
+            u, v = native(px), native(py)
+            far.put(px, py, paint[int(u / 6) % 4] if v > FAR_H - PAD - 89 else shade(stone_r, 0.75, px, py))
+
+    mid = L.mid
+    for x in (60.0, 316.0):
+        lotus_column(mid, x, MID_H - PAD, 92, 18, stone_r, paint, hexc('#2a1c12'))
+    bronze = ramp('#3a2414', '#5a3a1e', '#7c5428', '#a07034', '#c48e44')
+    for x in (188.0, 444.0):  # braziers on tripods
+        for dx in (-5, 0, 5):
+            stroke(mid, [(x + dx * 0.4, MID_H - PAD - 16), (x + dx, MID_H - PAD)], 1.0, 0.9, bronze)
+        ball(mid, x, MID_H - PAD - 18, 7, 3.5, bronze)
+        flame(mid, x, MID_H - PAD - 20, 10, 16, int(x))
+
+    g = L.ground
+    surface = 5
+    tile_r = ramp('#5a4a3a', '#6e5c48', '#847058', '#9a866a', '#b09c7e', '#c6b294', '#dcc8aa')
+    blue_r = ramp('#1a2a4a', '#22365c', '#2c4470', '#385486')
+
+    def floor(u: float, v: float, d: float, px: int, py: int) -> Color:
+        cell = 16
+        cx, cy = math.floor(u / cell), math.floor(v / (cell * 0.5))
+        fx, fy = u - cx * cell, v - cy * cell * 0.5
+        if fx * K < 1 or fy * K < 1:
+            return tile_r[0]
+        n = fbm(u, v, 1741, cells=(16, 8))
+        refl = math.exp(-((u % 128) - 40) ** 2 / 300) * 0.25  # sheen under the braziers
+        if (cx + cy) % 2:
+            return shade(blue_r, 0.5 + (n - 0.5) * 0.3 + refl - d * 0.002, px, py)
+        return shade(tile_r, 0.6 + (n - 0.5) * 0.25 + refl - d * 0.002 + (0.3 if d < 1 else 0), px, py)
+
+    ground_fill(g, surface, floor)
+
+    lm = Canvas(70, 64)
+    gold = ramp('#6a4a18', '#8e6420', '#b8862c', '#dcae44', '#f4d46a')
+    for k, (w, y) in enumerate(((70, 64), (58, 58), (46, 52))):  # steps
+        for px, py in poly_pixels([(35 - w / 2, y - 6), (35 + w / 2, y - 6), (35 + w / 2, y), (35 - w / 2, y)]):
+            lm.put(px, py, shade(stone_r, 0.8 - (native(py) - (y - 6)) * 0.06, px, py))
+    for px, py in poly_pixels([(22, 20), (48, 20), (48, 46), (22, 46)]):  # seat back and seat
+        u, v = native(px), native(py)
+        lm.put(px, py, paint[0] if 26 < u < 44 and 24 < v < 40 else shade(gold, 0.5 + (u - 22) * 0.02, px, py))
+    for px, py in poly_pixels([(18, 38), (52, 38), (52, 46), (18, 46)]):
+        lm.put(px, py, shade(gold, 0.7, px, py))
+    for x in (18, 52):
+        ball(lm, x, 36, 3, 3, gold)
+    outline_pass(lm, hexc('#2a1a0a'))
+    L.landmark = lm
+    return L
+
+
+def paint_granary() -> Layers:
+    """Gen 41:47-57, 42, 47: Joseph's storehouses: domed grain stores, a city wall, sacks and carts."""
+    global LIGHT
+    LIGHT = (0.65, -0.75)
+    L = Layers()
+    rng = random.Random(1801)
+    sky_r = ramp('#5a7ab0', '#6a88b6', '#8098bc', '#9caabc', '#bab8b4', '#d2c2a8', '#e6c896', '#f2cc86', '#f8d07a')
+    sky_gradient(L.sky, sky_r, gamma=1.0)
+    glow(L.sky, 440, 96, 14, 70, ramp('#dcc8a0', '#f0d49a', '#fce0a0', '#fff4cc'))
+    disc(L.sky, 440, 96, 12, hexc('#fff8e0'), hexc('#ffe6a4'))
+    for cx, y, w in ((100, 130, 200), (300, 150, 280), (500, 120, 140)):
+        streak_cloud(L.sky, rng, cx, y, w, hexc('#f4dcb4'), hexc('#d8bca0'))
+
+    far = L.far
+    brick_r = ramp('#6a4e36', '#80603e', '#967248', '#ac8654', '#c09a62', '#d4ae72', '#e4c086')
+    for x in range(0, T, 128):
+        wall_block(far, x, FAR_H - PAD, 128, 34, brick_r, 1810 + x, True)
+        wall_block(far, x + 50, FAR_H - PAD, 22, 54, brick_r, 1811 + x, True)
+    for x in scatter_points(rng, 5, 0, T, 90):
+        palm(far, x, FAR_H - PAD - 30, rng.uniform(16, 22), ramp('#4a3424', '#64482e'), ramp('#3a5a32', '#4a6e3a', '#5e8444'), 0)
+
+    mid = L.mid
+    dome_r = ramp('#7a5a3a', '#94704a', '#ae885a', '#c49e6c', '#d8b480', '#e8c896')
+    base = MID_H - PAD - 2
+    for i, x in enumerate(range(20, T, 52)):
+        w, h = 34, 30 + (i % 3) * 4
+        for px, py in poly_pixels([(x - w / 2, base - h * 0.5), (x + w / 2, base - h * 0.5), (x + w / 2, base), (x - w / 2, base)]):
+            u, v = native(px), native(py)
+            mortar, tone = brick(u, v, 1820 + i, bw=5, bh=2.5)
+            t = 0.5 + (u - x) / w * 0.6 + (tone - 0.5) * 0.12 - (0.1 if mortar else 0)
+            mid.put(px, py, shade(dome_r, t, px, py))
+        for py in span(base - h, base - h * 0.5):
+            for px in span(x - w / 2, x + w / 2):
+                u, v = native(px), native(py)
+                dx, dy = (u - x) / (w / 2), (v - (base - h * 0.5)) / (h * 0.5)
+                if dx * dx + dy * dy <= 1:
+                    mid.put(px, py, shade(dome_r, 0.55 + dx * 0.35 - dy * 0.2, px, py))
+        for px, py in poly_pixels([(x - 3, base - 9), (x + 3, base - 9), (x + 3, base), (x - 3, base)]):
+            mid.put(px, py, hexc('#2a1c12'))
+        for px, py in poly_pixels([(x - 1.5, base - h + 2), (x + 1.5, base - h + 2), (x + 1.5, base - h + 5), (x - 1.5, base - h + 5)]):
+            mid.put(px, py, hexc('#3a2818'))
+
+    g = L.ground
+    surface = 5
+    earth_r = ramp('#5e4632', '#72563c', '#886646', '#9e7852', '#b48a5e', '#c89c6c', '#dab07e')
+    grain_r = ramp('#8a6a28', '#a88232', '#c49c40', '#dcb454', '#ecca6c', '#f8e08c')
+    sack_r = ramp('#5a4a34', '#76643e', '#948048', '#b09c5a', '#c8b46e', '#dccb86')
+
+    def floor(u: float, v: float, d: float, px: int, py: int) -> Color:
+        n = fbm(u, v, 1841, cells=(32, 16, 8, 4))
+        if fbm(u, v, 1842, cells=(32, 16, 8)) > 0.72:  # spilt grain
+            return shade(grain_r, 0.3 + (n - 0.5) * 0.5, px, py)
+        return shade(earth_r, 0.55 + (n - 0.5) * 0.35 - d * 0.002 + (0.3 if d < 1 else 0), px, py)
+
+    ground_fill(g, surface, floor)
+    rough_top(g, surface, earth_r, 1843, 2)
+    for _ in range(7):  # heaps of grain
+        x, y = rng.uniform(0, T), rng.uniform(surface + 10, GROUND_H - 14)
+        s = rng.uniform(6, 9) * (0.7 + y / GROUND_H * 0.5)
+        blob(g, [(x, y, s), (x - s * 0.7, y + s * 0.3, s * 0.6), (x + s * 0.7, y + s * 0.3, s * 0.6)], grain_r, seed=int(x), tex=0.3, tex_cell=1, cut_below=y + s * 0.5)
+    for _ in range(10):  # tied sacks
+        x, y = rng.uniform(0, T), rng.uniform(surface + 8, GROUND_H - 8)
+        s = rng.uniform(3, 4.2) * (0.7 + y / GROUND_H * 0.5)
+        ball(g, x, y, s, s * 1.2, sack_r)
+        ball(g, x, y - s * 1.25, s * 0.35, s * 0.3, sack_r)
+
+    lm = Canvas(64, 96)
+    base = 96
+    for px, py in poly_pixels([(10, base - 50), (54, base - 50), (54, base), (10, base)]):
+        u, v = native(px), native(py)
+        mortar, tone = brick(u, v, 1850, bw=5, bh=2.5)
+        lm.put(px, py, shade(dome_r, 0.45 + (u - 10) / 44 * 0.55 + (tone - 0.5) * 0.12 - (0.1 if mortar else 0), px, py))
+    for py in span(base - 92, base - 50):
+        for px in span(10, 54):
+            u, v = native(px), native(py)
+            dx, dy = (u - 32) / 22, (v - (base - 50)) / 42
+            if dx * dx + dy * dy <= 1:
+                lm.put(px, py, shade(dome_r, 0.55 + dx * 0.35 - dy * 0.15, px, py))
+    for px, py in poly_pixels([(26, base - 18), (38, base - 18), (38, base), (26, base)]):
+        lm.put(px, py, hexc('#241810'))
+    for px, py in poly_pixels([(29, base - 86), (35, base - 86), (35, base - 80), (29, base - 80)]):
+        lm.put(px, py, hexc('#2e2014'))
+    wood = ramp('#3a2614', '#5a3c20', '#7a542c')
+    for x in (44, 50):  # a ladder up the side
+        stroke(lm, [(x, base), (x + 6, base - 70)], 1.0, 0.9, wood)
+    for k in range(10):
+        y = base - 4 - k * 7
+        stroke(lm, [(44 + (base - y) / 70 * 6, y), (50 + (base - y) / 70 * 6, y)], 0.8, 0.8, wood)
+    outline_pass(lm, hexc('#2a1a0e'))
+    L.landmark = lm
+    return L
+
+
+def paint_goshen() -> Layers:
+    """Gen 46-50: the green land of Goshen at evening: canals, palms, flocks, a family's homestead."""
+    global LIGHT
+    LIGHT = (-0.7, -0.7)
+    L = Layers()
+    rng = random.Random(1901)
+    sky_r = ramp('#3a5a96', '#4a68a0', '#6078a6', '#7c8aa8', '#9c9ca4', '#bcac9e', '#d8b894', '#ecc488', '#f8d080')
+    sky_gradient(L.sky, sky_r, gamma=1.0)
+    glow(L.sky, 90, 150, 14, 80, ramp('#d8b48c', '#ecc488', '#f8d890', '#fff0c0'), power=1.7)
+    disc(L.sky, 90, 150, 13, hexc('#fff4d4'), hexc('#ffdc90'))
+    cloud_r = ramp('#8a86a4', '#b4a4ac', '#dcc0ac', '#f4d8b4', '#fff0d0')
+    for i, (cx, base, w, h) in enumerate([(260, 96, 80, 24), (460, 84, 70, 22)]):
+        cumulus(L.sky, rng, cx, base, w, h, cloud_r, seed=1910 + i)
+    for bx, by in [(330, 60), (340, 55), (350, 61)]:
+        bird(L.sky, bx, by, 2, hexc('#3e3e5a'))
+
+    far = L.far
+    field_r = ramp('#4a6a3a', '#567842', '#64864a', '#749452', '#86a25c', '#9aae68')
+    ftops = ridge_fill(
+        far, lambda x: 76 - wave(x, [(2, 1.2, 0.5), (5, 0.6, 1.3)]), field_r, seed=1921, bottom=FAR_H - PAD, base_t=0.55,
+        slope_gain=0.2, fade=0.006, tex=0.14, sy=0.4,
+        extra=lambda u, v, d: 0.25 if abs(v - 86 - wave(u, [(1, 2, 0.4)])) < 0.8 else 0,
+    )
+    for x in scatter_points(rng, 12, 0, T, 30):
+        palm(far, x, ftops[int(x) % T] + 2, rng.uniform(12, 18), ramp('#3a2a20', '#54402c'), ramp('#2e4a30', '#3a5c36', '#4c6e3e'), 0)
+    for hx in (80.0, 330.0):
+        for k in range(rng.randint(5, 7)):
+            x = hx + k * rng.uniform(3, 5)
+            dot(far, x, ftops[int(x) % T] + rng.uniform(5, 12), 0.9, hexc('#f0e6d0'))
+    mist(far, 80, 5, hexc('#e8c8a0'), 0.3, seed=1922)
+
+    mid = L.mid
+    grass_r = ramp('#3a5a30', '#466a34', '#547a3a', '#648a40', '#789c4a', '#8eae56')
+    mtops = ridge_fill(
+        mid, lambda x: 80 - wave(x, [(2, 1.5, 0.8), (5, 0.8, 1.9)]), grass_r, seed=1931, bottom=MID_H - PAD, base_t=0.55,
+        slope_gain=0.3, fade=0.01, tex=0.18,
+    )
+    mud_r = ramp('#4a3424', '#64462e', '#7c5a3a', '#967048', '#ae8658', '#c49c6a')
+    xs = scatter_points(rng, 3, 0, T, 130)
+    for i, x in enumerate(xs):
+        building(mid, rng, x - 12, mtops[int(x) % T] + 4, 24, rng.uniform(14, 18), mud_r, hexc('#24180e'), seed=1940 + i)
+    for x in scatter_points(rng, 6, 30, T + 30, 60):
+        x = x % T
+        if all(min(abs(x - b), T - abs(x - b)) > 22 for b in xs):
+            palm(mid, x, mtops[int(x) % T] + 4, rng.uniform(30, 40), ramp('#2e2016', '#463224', '#5e4430'), ramp('#20402a', '#2c5230', '#386436', '#4a7840'), 0)
+
+    g = L.ground
+    surface = 5
+    lush_r = ramp('#2e5226', '#3a622a', '#487230', '#588438', '#6c9642', '#84a84e', '#9cba5e', '#b8cc72')
+    water_r = ramp('#2a4a6a', '#365c7a', '#48708c', '#6488a0', '#88a6b4', '#c0d2cc', '#f4dcb0')
+
+    def pasture(u: float, v: float, d: float, px: int, py: int) -> Color:
+        cy = 60 + wave(u, [(1, 4, 0.9), (3, 1.5, 0.2)])
+        if abs(v - cy) < 4:
+            n = fbm(u, v, 1951, cells=(16, 8, 4), sy=3)
+            return shade(water_r, 0.5 + (n - 0.5) * 0.5 + (0.4 if n > 0.7 else 0), px, py)
+        if abs(v - cy) < 5:
+            return shade(lush_r, 0.25, px, py)
+        n = fbm(u, v, 1952, cells=(32, 16, 8, 4))
+        t = 0.6 - d * 0.003 + (n - 0.5) * 0.45 + (vnoise(u, v, 1.5, 6, 1953, T) - 0.5) * 0.3
+        return shade(lush_r, t + (0.35 if d < 1 else 0), px, py)
+
+    ground_fill(g, surface, pasture)
+    tufts(g, rng, surface, lush_r, 180, max_h=6)
+    wool_r = ramp('#a89c84', '#c8bca2', '#e2d8c0', '#f6f0de')
+    for _ in range(8):
+        x = rng.uniform(0, T)
+        y = rng.choice((rng.uniform(surface + 10, 48), rng.uniform(74, GROUND_H - 10)))
+        sheep(g, x, y, rng.uniform(3, 4.2) * (0.7 + y / GROUND_H * 0.5), wool_r, hexc('#2e2620'), rng.choice((-1, 1)))
+    petals = [hexc('#ffffff'), hexc('#ffd84a'), hexc('#f4a0b4')]
+    for _ in range(20):
+        x, y = rng.randrange(T), int(surface + 5 + (GROUND_H - surface - 10) * rng.random())
+        if abs(y - 60) > 7:
+            flower(g, x, y, rng.choice(petals), hexc('#e8a030'), lush_r[0], y > surface + 20)
+    L.landmark = homestead(mud_r, ramp('#5a4a2a', '#76623a', '#927c48', '#ae9658', '#c8ae6a'), ramp('#3a2616', '#5a3c22', '#7a542e'),
+                           hexc('#1e140c'), hexc('#1a120a'), hexc('#d8d0c4'))
+    return L
+
+
 # name → (painter, landmark position as in Backdrop.ts LANDMARK_AT: x fraction, dy design px)
 ENVIRONMENTS: dict[str, tuple[Callable[[], Layers], tuple[float, int]]] = {
     'deep': (paint_deep, (0.75, 0)),
@@ -2735,6 +3472,14 @@ ENVIRONMENTS: dict[str, tuple[Callable[[], Layers], tuple[float, int]]] = {
     'plain': (paint_plain, (0.75, 0)),
     'brimstone': (paint_brimstone, (0.75, 0)),
     'canaan': (paint_canaan, (0.76, -24)),
+    'dothan': (paint_dothan, (0.7, -22)),
+    'caravan': (paint_caravan, (0.78, -24)),
+    'estate': (paint_estate, (0.76, -30)),
+    'prison': (paint_prison, (0.75, 0)),
+    'nile': (paint_nile, (0.75, 0)),
+    'palace': (paint_palace, (0.6, -10)),
+    'granary': (paint_granary, (0.8, -28)),
+    'goshen': (paint_goshen, (0.76, -26)),
 }
 
 

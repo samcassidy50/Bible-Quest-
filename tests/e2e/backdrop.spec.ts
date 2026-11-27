@@ -46,12 +46,29 @@ const PAINTED: Record<string, string[]> = {
   babel: ['sky', 'far', 'mid', 'ground', 'landmark'],
   sodom: ['sky', 'far', 'mid', 'ground', 'landmark'],
   canaan: ['sky', 'far', 'mid', 'ground', 'landmark'],
+  dothan: ['sky', 'far', 'mid', 'ground', 'landmark'],
+  caravan: ['sky', 'far', 'mid', 'ground', 'landmark'],
+  estate: ['sky', 'far', 'mid', 'ground', 'landmark'],
+  palace: ['sky', 'far', 'mid', 'ground', 'landmark'],
+  granary: ['sky', 'far', 'mid', 'ground', 'landmark'],
+  goshen: ['sky', 'far', 'mid', 'ground', 'landmark'],
 };
 
 test('backdrop viewer shows every environment with no text, tap for the next', async ({ page }) => {
   await page.goto('/?scene=backdrops&freeze=1');
   // Environments with no passage yet (Joseph in Egypt) come last in the viewer.
-  for (const name of [...ENVIRONMENTS.map(([n]) => n), 'canaan']) {
+  for (const name of [
+    ...ENVIRONMENTS.map(([n]) => n),
+    'canaan',
+    'dothan',
+    'caravan',
+    'estate',
+    'prison',
+    'nile',
+    'palace',
+    'granary',
+    'goshen',
+  ]) {
     await waitFor(page, `s.scene === 'backdrops' && s.backdrop === '${name}'`);
     const painted = (await state(page)).backdropPainted;
     expect(painted, `${name} painted layers`).toEqual(

@@ -79,6 +79,14 @@ export const SETTINGS = [
   'plain',
   'brimstone',
   'canaan',
+  'dothan',
+  'caravan',
+  'estate',
+  'prison',
+  'nile',
+  'palace',
+  'granary',
+  'goshen',
 ] as const;
 export type Setting = (typeof SETTINGS)[number];
 
