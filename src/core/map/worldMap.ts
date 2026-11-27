@@ -160,7 +160,7 @@ const GENESIS_PLACES: Record<string, [number, number, string]> = {
   // Sodom: east along the bottom, across the plain toward Zoar.
   'gen-052': [2580, 470, '👼'],
   'gen-053': [2940, 480, '🏃'],
-  'gen-054': [3110, 580, '🔥'],
+  'gen-054': [3110, 565, '🔥'],
 };
 
 /** Medallion glyphs for the Joseph trail, in reading order. */
@@ -222,7 +222,7 @@ function josephPlaces(): Record<string, [number, number, string]> {
     const top = i < perBand;
     const k = top ? i : JOSEPH.length - 1 - i;
     const x = 230 + k * 200;
-    const y = top ? (k % 2 === 0 ? 155 : 280) : k % 2 === 0 ? 580 : 455;
+    const y = top ? (k % 2 === 0 ? 155 : 280) : k % 2 === 0 ? 560 : 455;
     out[id] = [x, y, JOSEPH_ICONS[i]!];
   });
   return out;

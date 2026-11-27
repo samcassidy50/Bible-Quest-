@@ -142,6 +142,11 @@ describe('Joseph in Egypt map', () => {
       expect(Math.hypot(n.x - post.x, n.y - post.y), n.id).toBeGreaterThan(120);
   });
 
+  it('keeps every location clear of the menu buttons along the bottom of a 720px screen', () => {
+    // Medallion, name plate and stars reach 76px below a location; the buttons start at 652.
+    for (const n of MAP_NODES) expect(n.y + 76, n.id).toBeLessThan(652);
+  });
+
   it('every map has a title, a short name and regions', () => {
     for (const m of WORLD_MAPS) {
       expect(m.title.length).toBeGreaterThan(0);
