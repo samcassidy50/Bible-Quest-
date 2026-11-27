@@ -1,0 +1,118 @@
+{
+  "id": "gen-128",
+  "title": "The Cupbearer’s Dream",
+  "passage": "GEN 40:9-15",
+  "setting": "prison",
+  "sections": [
+    {
+      "verses": "9-11",
+      "foe": {
+        "id": "tangled-doubt",
+        "name": "Tangled Doubt",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#4a6a3a",
+        "size": 0.9,
+        "sprite": "thorn-plant"
+      },
+      "orbs": [
+        {
+          "word": "vine"
+        },
+        {
+          "word": "grapes"
+        }
+      ]
+    },
+    {
+      "verses": "12-15",
+      "foe": {
+        "id": "fading-hope",
+        "name": "Fading Hope",
+        "maxHp": 80,
+        "attack": 13,
+        "color": "#8a4a2a",
+        "size": 1.35,
+        "sprite": "fire-spirit"
+      },
+      "orbs": [
+        {
+          "word": "remember"
+        }
+      ]
+    }
+  ],
+  "rune": "peace",
+  "questions": [
+    {
+      "id": "gen-128-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How many branches were on the vine?",
+      "choices": ["Three", "Seven", "Two", "Twelve"],
+      "answerIndex": 0,
+      "highlight": "On the vine were three branches",
+      "section": 1
+    },
+    {
+      "id": "gen-128-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the cupbearer squeeze the grapes into?",
+      "choices": ["Pharaoh’s cup", "A big jar", "His own mouth", "A basket"],
+      "answerIndex": 0,
+      "highlight": "squeezed them into Pharaoh’s cup",
+      "section": 1
+    },
+    {
+      "id": "gen-128-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the three branches mean?",
+      "choices": ["Three days", "Three years", "Three kings", "Three brothers"],
+      "answerIndex": 0,
+      "highlight": "The three branches are three days",
+      "section": 2
+    },
+    {
+      "id": "gen-128-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What would Pharaoh do for the cupbearer?",
+      "choices": [
+        "Give him his job back",
+        "Send him home",
+        "Make him a king",
+        "Keep him in prison"
+      ],
+      "answerIndex": 0,
+      "highlight": "give you your job back",
+      "section": 2
+    },
+    {
+      "id": "gen-128-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did Joseph ask the cupbearer to do?",
+      "choices": [
+        "Remember him and tell Pharaoh about him",
+        "Bring him some grapes",
+        "Find his brothers",
+        "Forget all about him"
+      ],
+      "answerIndex": 0,
+      "highlight": "please remember me and be kind to me",
+      "section": 2
+    },
+    {
+      "id": "gen-128-q6",
+      "type": "true_false",
+      "difficulty": "medium",
+      "prompt": "Joseph said he had done something wrong to deserve the dungeon.",
+      "choices": ["True", "False"],
+      "answerIndex": 1,
+      "highlight": "I have done nothing to deserve being put in this dungeon",
+      "section": 2
+    }
+  ]
+}

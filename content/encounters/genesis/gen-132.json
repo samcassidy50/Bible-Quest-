@@ -1,0 +1,113 @@
+{
+  "id": "gen-132",
+  "title": "Seven Fat Cows",
+  "passage": "GEN 41:17-24",
+  "setting": "nile",
+  "sections": [
+    {
+      "verses": "17-21",
+      "foe": {
+        "id": "gnawing-want",
+        "name": "Gnawing Want",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#6a7a3a",
+        "size": 0.9,
+        "sprite": "hissling"
+      },
+      "orbs": [
+        {
+          "word": "cows"
+        },
+        {
+          "word": "marsh"
+        }
+      ]
+    },
+    {
+      "verses": "22-24",
+      "foe": {
+        "id": "dry-east-wind",
+        "name": "Dry East Wind",
+        "maxHp": 80,
+        "attack": 13,
+        "color": "#b09060",
+        "size": 1.4,
+        "sprite": "gust"
+      },
+      "orbs": [
+        {
+          "word": "wind"
+        }
+      ]
+    }
+  ],
+  "rune": "guard",
+  "questions": [
+    {
+      "id": "gen-132-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where was Pharaoh standing in his dream?",
+      "choices": [
+        "On the bank of the Nile",
+        "On a mountain",
+        "In his throne room",
+        "In a field of wheat"
+      ],
+      "answerIndex": 0,
+      "highlight": "standing on the bank of the Nile",
+      "section": 1
+    },
+    {
+      "id": "gen-132-q2",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "Pharaoh had seen cows that ugly before.",
+      "choices": ["True", "False"],
+      "answerIndex": 1,
+      "highlight": "I have never seen such ugly cows",
+      "section": 1
+    },
+    {
+      "id": "gen-132-q3",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "How did the thin cows look after eating the fat ones?",
+      "choices": ["Still as ugly as before", "Big and fat", "Sleepy and slow", "Bright and shiny"],
+      "answerIndex": 0,
+      "highlight": "They were still as ugly as before",
+      "section": 1
+    },
+    {
+      "id": "gen-132-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How many heads of grain grew on one stalk?",
+      "choices": ["Seven", "Two", "Three", "Twelve"],
+      "answerIndex": 0,
+      "highlight": "seven heads of grain, full and good, growing on one stalk",
+      "section": 2
+    },
+    {
+      "id": "gen-132-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What dried up the thin heads of grain?",
+      "choices": ["The east wind", "A fire", "The hot sun", "A swarm of bugs"],
+      "answerIndex": 0,
+      "highlight": "dried up by the east wind",
+      "section": 2
+    },
+    {
+      "id": "gen-132-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who could not explain the dream to Pharaoh?",
+      "choices": ["The magicians", "Joseph", "The cupbearer", "His mother"],
+      "answerIndex": 0,
+      "highlight": "I told this to the magicians",
+      "section": 2
+    }
+  ]
+}

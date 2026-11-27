@@ -1,0 +1,113 @@
+{
+  "id": "gen-127",
+  "title": "Two Dreams in Prison",
+  "passage": "GEN 40:1-8",
+  "setting": "prison",
+  "sections": [
+    {
+      "verses": "1-4",
+      "foe": {
+        "id": "night-worry",
+        "name": "Night Worry",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#4a4a6a",
+        "size": 0.9,
+        "sprite": "storm-cloud"
+      },
+      "orbs": [
+        {
+          "word": "cupbearer"
+        },
+        {
+          "word": "baker"
+        }
+      ]
+    },
+    {
+      "verses": "5-8",
+      "foe": {
+        "id": "gloomy-frown",
+        "name": "Gloomy Frown",
+        "maxHp": 80,
+        "attack": 13,
+        "color": "#2a2434",
+        "size": 1.35,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "dreams"
+        }
+      ]
+    }
+  ],
+  "rune": "haste",
+  "questions": [
+    {
+      "id": "gen-127-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Which two of Pharaoh’s officers made him angry?",
+      "choices": [
+        "The chief cupbearer and the chief baker",
+        "The captain and the jailer",
+        "Two shepherds",
+        "Two soldiers"
+      ],
+      "answerIndex": 0,
+      "highlight": "the chief cupbearer and the chief baker",
+      "section": 1
+    },
+    {
+      "id": "gen-127-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who was put in charge of the two officers in prison?",
+      "choices": ["Joseph", "Potiphar", "Pharaoh", "Judah"],
+      "answerIndex": 0,
+      "highlight": "The captain of the guard put Joseph in charge of them",
+      "section": 1
+    },
+    {
+      "id": "gen-127-q3",
+      "type": "true_false",
+      "difficulty": "medium",
+      "prompt": "The two officers stayed in prison for only one night.",
+      "choices": ["True", "False"],
+      "answerIndex": 1,
+      "highlight": "They stayed in prison for a long time",
+      "section": 1
+    },
+    {
+      "id": "gen-127-q4",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "Both men had a dream on the same night.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "One night the cupbearer and the baker who were in prison both had a dream",
+      "section": 2
+    },
+    {
+      "id": "gen-127-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How did the two men look in the morning?",
+      "choices": ["Sad", "Happy", "Sleepy", "Angry"],
+      "answerIndex": 0,
+      "highlight": "he saw that they looked sad",
+      "section": 2
+    },
+    {
+      "id": "gen-127-q6",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Joseph said the meanings of dreams belong to whom?",
+      "choices": ["God", "Pharaoh", "The magicians", "The stars"],
+      "answerIndex": 0,
+      "highlight": "Don’t the meanings of dreams belong to God?",
+      "section": 2
+    }
+  ]
+}

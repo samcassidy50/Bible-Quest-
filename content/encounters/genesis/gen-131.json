@@ -1,0 +1,118 @@
+{
+  "id": "gen-131",
+  "title": "Remember Joseph!",
+  "passage": "GEN 41:9-16",
+  "setting": "palace",
+  "sections": [
+    {
+      "verses": "9-13",
+      "foe": {
+        "id": "dusty-forgetting",
+        "name": "Dusty Forgetting",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#8a8070",
+        "size": 0.9,
+        "sprite": "storm-cloud"
+      },
+      "orbs": [
+        {
+          "word": "Hebrew"
+        },
+        {
+          "word": "remember"
+        }
+      ]
+    },
+    {
+      "verses": "14-16",
+      "foe": {
+        "id": "puffed-up-pride",
+        "name": "Puffed-Up Pride",
+        "maxHp": 80,
+        "attack": 13,
+        "color": "#4a7ac8",
+        "size": 1.4,
+        "sprite": "slime-blue"
+      },
+      "orbs": [
+        {
+          "word": "God"
+        }
+      ]
+    }
+  ],
+  "rune": "life",
+  "questions": [
+    {
+      "id": "gen-131-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who finally remembered Joseph?",
+      "choices": ["The chief cupbearer", "The chief baker", "Potiphar", "Pharaoh’s wife"],
+      "answerIndex": 0,
+      "highlight": "Then the chief cupbearer said to Pharaoh",
+      "section": 1
+    },
+    {
+      "id": "gen-131-q2",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "What did the cupbearer call Joseph?",
+      "choices": [
+        "A young Hebrew man",
+        "An old wise man",
+        "A prince of Egypt",
+        "A traveler from the sea"
+      ],
+      "answerIndex": 0,
+      "highlight": "A young Hebrew man was there with us",
+      "section": 1
+    },
+    {
+      "id": "gen-131-q3",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "Everything happened just as Joseph had said.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "And it happened just as he said",
+      "section": 1
+    },
+    {
+      "id": "gen-131-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where did they bring Joseph out of?",
+      "choices": ["The dungeon", "The palace", "A ship", "The pit at Dothan"],
+      "answerIndex": 0,
+      "highlight": "they quickly brought him out of the dungeon",
+      "section": 2
+    },
+    {
+      "id": "gen-131-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph do before he came in to Pharaoh?",
+      "choices": [
+        "Shaved and changed his clothes",
+        "Ate a big meal",
+        "Went to sleep",
+        "Wrote a letter"
+      ],
+      "answerIndex": 0,
+      "highlight": "He shaved, changed his clothes",
+      "section": 2
+    },
+    {
+      "id": "gen-131-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who did Joseph say would give Pharaoh an answer?",
+      "choices": ["God", "Joseph himself", "The magicians", "The cupbearer"],
+      "answerIndex": 0,
+      "highlight": "God will give Pharaoh a good answer",
+      "section": 2
+    }
+  ]
+}

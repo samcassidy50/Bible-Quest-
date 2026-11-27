@@ -1,0 +1,113 @@
+{
+  "id": "gen-129",
+  "title": "The Baker’s Dream",
+  "passage": "GEN 40:16-23",
+  "setting": "prison",
+  "sections": [
+    {
+      "verses": "16-19",
+      "foe": {
+        "id": "pecking-flock",
+        "name": "Pecking Flock",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#6a7a8a",
+        "size": 0.9,
+        "sprite": "squall"
+      },
+      "orbs": [
+        {
+          "word": "baskets"
+        },
+        {
+          "word": "bread"
+        }
+      ]
+    },
+    {
+      "verses": "20-23",
+      "foe": {
+        "id": "forgetful-fog",
+        "name": "Forgetful Fog",
+        "maxHp": 80,
+        "attack": 13,
+        "color": "#5a6070",
+        "size": 1.4,
+        "sprite": "storm-cloud"
+      },
+      "orbs": [
+        {
+          "word": "birthday"
+        }
+      ]
+    }
+  ],
+  "rune": "might",
+  "questions": [
+    {
+      "id": "gen-129-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How many baskets were on the baker’s head?",
+      "choices": ["Three", "One", "Seven", "Ten"],
+      "answerIndex": 0,
+      "highlight": "three baskets of white bread",
+      "section": 1
+    },
+    {
+      "id": "gen-129-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What was eating from the top basket?",
+      "choices": ["Birds", "Mice", "Goats", "Children"],
+      "answerIndex": 0,
+      "highlight": "the birds were eating it",
+      "section": 1
+    },
+    {
+      "id": "gen-129-q3",
+      "type": "true_false",
+      "difficulty": "medium",
+      "prompt": "Joseph said the baker’s dream had a happy meaning.",
+      "choices": ["True", "False"],
+      "answerIndex": 1,
+      "highlight": "Pharaoh will take away your life",
+      "section": 1
+    },
+    {
+      "id": "gen-129-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What special day was it three days later?",
+      "choices": ["Pharaoh’s birthday", "A wedding", "A harvest day", "The first day of the year"],
+      "answerIndex": 0,
+      "highlight": "it was Pharaoh’s birthday",
+      "section": 2
+    },
+    {
+      "id": "gen-129-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Pharaoh give the chief cupbearer?",
+      "choices": ["His job back", "A new house", "A gold chain", "A ship"],
+      "answerIndex": 0,
+      "highlight": "He gave the chief cupbearer his job back",
+      "section": 2
+    },
+    {
+      "id": "gen-129-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the cupbearer do about Joseph?",
+      "choices": [
+        "He forgot all about him",
+        "He told Pharaoh right away",
+        "He visited him",
+        "He sent him bread"
+      ],
+      "answerIndex": 0,
+      "highlight": "He forgot all about him",
+      "section": 2
+    }
+  ]
+}

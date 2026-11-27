@@ -11,7 +11,12 @@ const BEGINNINGS = Array.from({ length: 11 }, (_, i) => `gen-${String(i + 1).pad
 const NOAH = Array.from({ length: 9 }, (_, i) => `gen-0${19 + i}`);
 const SODOM = ['gen-052', 'gen-053', 'gen-054'];
 /** Joseph in Egypt, written so far (docs/joseph-map-plan.md). */
-const JOSEPH = ['gen-118', 'gen-119', 'gen-120', 'gen-124', 'gen-125', 'gen-126'];
+const JOSEPH = [
+  'gen-118',
+  'gen-119',
+  'gen-120',
+  ...['124', '125', '126', '127', '128', '129', '130', '131', '132'].map((n) => `gen-${n}`),
+];
 
 describe('content: Genesis', () => {
   it('has Beginnings, the Noah, Babel and Sodom paths, then Joseph, in reading order', () => {
@@ -24,7 +29,7 @@ describe('content: Genesis', () => {
     ]);
   });
 
-  it('reads Genesis 1:1–3:19, 6:9–9:17, 11:1-9, 19:1-29, 37 and 39 with no gaps or overlaps', () => {
+  it('reads Genesis 1:1–3:19, 6:9–9:17, 11:1-9, 19:1-29, 37 and 39:1–41:24 with no gaps or overlaps', () => {
     expect(ENCOUNTERS.map((e) => e.passage)).toEqual([
       'GEN 1:1-5',
       'GEN 1:6-13',
@@ -56,6 +61,12 @@ describe('content: Genesis', () => {
       'GEN 39:1-6',
       'GEN 39:7-12',
       'GEN 39:13-23',
+      'GEN 40:1-8',
+      'GEN 40:9-15',
+      'GEN 40:16-23',
+      'GEN 41:1-8',
+      'GEN 41:9-16',
+      'GEN 41:17-24',
     ]);
   });
 
@@ -146,6 +157,12 @@ describe('content: Genesis', () => {
       'estate',
       'estate',
       'prison',
+      'prison',
+      'prison',
+      'prison',
+      'nile',
+      'palace',
+      'nile',
     ]);
     // The flood rages, then clears for the dove, the landing and the rainbow.
     expect(ENCOUNTERS.filter((e) => e.setting === 'flood').map((e) => e.weather)).toEqual([
@@ -179,7 +196,8 @@ describe('content: Genesis', () => {
     expect(nextEncounter('gen-052')?.id).toBe('gen-053');
     expect(nextEncounter('gen-054')).toBeNull();
     expect(nextEncounter('gen-120')?.id).toBe('gen-124'); // Genesis 38 is left out
-    expect(nextEncounter('gen-126')).toBeNull(); // gen-127 isn't written yet
+    expect(nextEncounter('gen-126')?.id).toBe('gen-127');
+    expect(nextEncounter('gen-132')).toBeNull(); // gen-133 isn't written yet
     expect(nextEncounter('nope')).toBeNull();
   });
 });

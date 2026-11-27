@@ -1,0 +1,113 @@
+{
+  "id": "gen-130",
+  "title": "Pharaoh’s Dreams",
+  "passage": "GEN 41:1-8",
+  "setting": "nile",
+  "sections": [
+    {
+      "verses": "1-4",
+      "foe": {
+        "id": "lean-hunger",
+        "name": "Lean Hunger",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#5a4a3a",
+        "size": 0.9,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "cows"
+        },
+        {
+          "word": "Nile"
+        }
+      ]
+    },
+    {
+      "verses": "5-8",
+      "foe": {
+        "id": "troubled-mind",
+        "name": "Troubled Mind",
+        "maxHp": 80,
+        "attack": 13,
+        "color": "#3a4a6a",
+        "size": 1.4,
+        "sprite": "tempest"
+      },
+      "orbs": [
+        {
+          "word": "grain"
+        }
+      ]
+    }
+  ],
+  "rune": "zeal",
+  "questions": [
+    {
+      "id": "gen-130-q1",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "How long after the cupbearer’s dream did Pharaoh dream?",
+      "choices": ["Two whole years", "Two days", "One week", "Ten years"],
+      "answerIndex": 0,
+      "highlight": "Two whole years later",
+      "section": 1
+    },
+    {
+      "id": "gen-130-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where did the seven fat cows come up from?",
+      "choices": ["The river", "A cave", "The palace", "The desert"],
+      "answerIndex": 0,
+      "highlight": "Seven cows came up out of the river",
+      "section": 1
+    },
+    {
+      "id": "gen-130-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the thin cows do?",
+      "choices": ["Ate up the fat cows", "Ran away", "Lay down to sleep", "Swam across the river"],
+      "answerIndex": 0,
+      "highlight": "The ugly, thin cows ate up the seven sleek, fat cows",
+      "section": 1
+    },
+    {
+      "id": "gen-130-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What swallowed the seven healthy heads of grain?",
+      "choices": [
+        "Seven thin heads of grain",
+        "A flock of birds",
+        "A great flood",
+        "Seven fat cows"
+      ],
+      "answerIndex": 0,
+      "highlight": "The thin heads of grain swallowed up the seven healthy, full heads",
+      "section": 2
+    },
+    {
+      "id": "gen-130-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How did Pharaoh feel in the morning?",
+      "choices": ["Worried", "Happy", "Hungry", "Brave"],
+      "answerIndex": 0,
+      "highlight": "In the morning he was worried",
+      "section": 2
+    },
+    {
+      "id": "gen-130-q6",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "Pharaoh’s wise men told him what his dreams meant.",
+      "choices": ["True", "False"],
+      "answerIndex": 1,
+      "highlight": "no one could tell Pharaoh what they meant",
+      "section": 2
+    }
+  ]
+}
