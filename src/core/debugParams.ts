@@ -1,4 +1,5 @@
 import { SPECIAL_IDS, type SpecialId } from './battle/types';
+import { MAP_IDS, type MapId } from './map/worldMap';
 
 /**
  * Debug/test URL parameters (see docs/DESIGN.md §8.2).
@@ -45,6 +46,8 @@ export interface DebugParams {
   autoCollect: boolean;
   /** `?oneShot=1`: every damaging hit defeats the foe, to get through fights quickly. */
   oneShot: boolean;
+  /** `?map=egypt` with `?scene=map`: which map to show. */
+  map?: MapId;
   /** `?hero=girl`: draw this hero whatever the save says. */
   hero?: 'boy' | 'girl';
   fast: boolean;
@@ -79,6 +82,9 @@ export function parseDebugParams(search: string): DebugParams {
 
   const hero = p.get('hero');
   if (hero === 'boy' || hero === 'girl') result.hero = hero;
+
+  const map = p.get('map');
+  if (map && (MAP_IDS as readonly string[]).includes(map)) result.map = map as MapId;
 
   const auto = p.get('autoAnswer');
   if (auto === 'correct' || auto === 'wrong') result.autoAnswer = auto;

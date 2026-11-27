@@ -90,6 +90,8 @@ export interface TestState {
   save: SaveData | null;
   /** Passage select: each passage, whether it is open, and its best stars. */
   map: { id: string; open: boolean; state: string; stars: number }[] | null;
+  /** Map: which map is shown (`genesis`, `egypt`). */
+  mapId: string | null;
   /** Map: a reveal animation is playing. */
   mapRevealing: boolean;
   /** Map: the location whose card is open. */
@@ -141,6 +143,7 @@ let state: TestState = {
   sounds: [],
   save: null,
   map: null,
+  mapId: null,
   mapRevealing: false,
   mapCard: null,
   mapChoosing: false,

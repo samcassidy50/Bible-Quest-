@@ -42,7 +42,7 @@ Before saying a task is done, run: `npm run lint && npm run typecheck && npm run
 
 - New `core/` logic ⇒ new Vitest tests in `tests/unit/`.
 - New scene/UI behaviour ⇒ a Playwright test in `tests/e2e/` using the debug params and `window.__TEST__` (`services/testHooks.ts`). Add fields to `TestState` instead of scraping pixels.
-- Debug URL params (dev and e2e builds only): `?scene= &encounter= &seed= &autoAnswer=correct|wrong &fast=1 &freeze=1 &fps=1 &specials= &faith= &narration=off &autoCollect=1 &unlockAll=1 &oneShot=1` (`oneShot`: every damaging hit defeats the foe). Parsed in `core/debugParams.ts`.
+- Debug URL params (dev and e2e builds only): `?scene= &encounter= &seed= &autoAnswer=correct|wrong &fast=1 &freeze=1 &fps=1 &specials= &faith= &narration=off &autoCollect=1 &unlockAll=1 &oneShot=1 &map=egypt` (`oneShot`: every damaging hit defeats the foe; `map`: which map `?scene=map` shows). Parsed in `core/debugParams.ts`.
 - Hero animation viewer: `?scene=rig` (tap a clip to play it) or `?scene=rig&clip=slash` (contact sheet of frames). Check new or changed hero clips here before using them in scenes.
 - Foe gallery: `?scene=foes` (one passage per screen with its three foes in its backdrop; tap or → for the next, `&encounter=gen-005` to start on one, `&freeze=1` for still screenshots).
 

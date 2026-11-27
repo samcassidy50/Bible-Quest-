@@ -97,3 +97,11 @@ describe('parseDebugParams: hero', () => {
     expect(parseDebugParams('?scene=heroSelect').scene).toBe('heroSelect');
   });
 });
+
+describe('parseDebugParams: map', () => {
+  it('accepts only known maps', () => {
+    expect(parseDebugParams('?map=egypt').map).toBe('egypt');
+    expect(parseDebugParams('?map=genesis').map).toBe('genesis');
+    expect(parseDebugParams('?map=narnia').map).toBeUndefined();
+  });
+});

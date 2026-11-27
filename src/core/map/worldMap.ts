@@ -1,15 +1,22 @@
 import type { SaveData } from '../progress/progress';
 
 /**
- * The passage map (an original parchment map of the Genesis lands). Pure layout data and reveal
- * rules; scenes/map/MapScene.ts draws it. Coordinates are world pixels on a map that is WORLD_W
- * wide and WORLD_H tall (the design height), panned horizontally on phones.
+ * The passage maps (original parchment maps). Pure layout data and reveal rules;
+ * scenes/map/MapScene.ts draws them. Coordinates are world pixels on a map that is `width` wide
+ * and WORLD_H tall (the design height), panned horizontally on phones.
  *
- * The map is a tree of paths: each location names the one it follows (`after`). Beginnings is one
- * trail; after it the player chooses a path (Noah, Babel or Sodom), and each path opens on its own.
+ * Each map is a tree of paths: each location names the one it follows (`after`), always on the
+ * same map. On Genesis 1–11, Beginnings is one trail; after it the player chooses a path (Noah,
+ * Babel or Sodom), and each path opens on its own. A later map opens when a location on an
+ * earlier one is won (`opensAfter`): Joseph in Egypt opens at the end of the Noah path.
+ *
+ * A map may list locations whose passages aren't written yet. Pass `built` to the reveal rules:
+ * such a location shows as "coming soon" when it would otherwise be open.
  */
-export const WORLD_W = 4200;
 export const WORLD_H = 720;
+
+export const MAP_IDS = ['genesis', 'egypt'] as const;
+export type MapId = (typeof MAP_IDS)[number];
 
 export interface Point {
   x: number;
@@ -18,9 +25,11 @@ export interface Point {
 
 export interface MapNode extends Point {
   id: string;
+  /** The map this location is on. */
+  map: MapId;
   /** Small emoji glyph shown in the medallion. */
   icon: string;
-  /** The location this one follows; the first location has none. */
+  /** The location this one follows (on the same map); a map's first location has none. */
   after?: string;
 }
 
@@ -29,6 +38,23 @@ export interface MapPath {
   name: string;
   /** Ids of its locations, in reading order. */
   ids: readonly string[];
+}
+
+export interface WorldMap {
+  id: MapId;
+  /** Shown on the plate at the top of the map. */
+  title: string;
+  /** Short name, for the signpost and the map switch button. */
+  short: string;
+  width: number;
+  /** Region names painted on the map. */
+  regions: readonly (Point & { name: string })[];
+  /** Paths offered as a choice at a fork. */
+  paths: readonly MapPath[];
+  /** The location (on an earlier map) whose win opens this map; the first map has none. */
+  opensAfter?: string;
+  /** Where the signpost to this map stands on the map of `opensAfter`. */
+  signpost?: Point;
 }
 
 const BEGINNINGS = [
@@ -58,6 +84,13 @@ const NOAH = [
 const BABEL = ['gen-031'];
 const SODOM = ['gen-052', 'gen-053', 'gen-054'];
 
+/** Joseph in Egypt (docs/joseph-map-plan.md): one trail, Genesis 37, 39–48 and 50:1-21. */
+const JOSEPH = [
+  ...[118, 119, 120],
+  ...Array.from({ length: 38 }, (_, i) => 124 + i), // 124–161
+  ...[166, 167, 168],
+].map((n) => `gen-${String(n).padStart(3, '0')}`);
+
 /** The paths after Beginnings, offered as a choice at its last location. */
 export const MAP_PATHS: readonly MapPath[] = [
   { name: 'Noah and the Flood', ids: NOAH },
@@ -65,7 +98,41 @@ export const MAP_PATHS: readonly MapPath[] = [
   { name: 'Escape from Sodom', ids: SODOM },
 ];
 
-const PLACES: Record<string, [number, number, string]> = {
+export const WORLD_MAPS: readonly WorldMap[] = [
+  {
+    id: 'genesis',
+    title: 'Genesis 1–11 · Beginnings',
+    short: 'Beginnings',
+    width: 4200,
+    regions: [
+      { name: 'THE DEEP', x: 330, y: 170 },
+      { name: 'EDEN', x: 1450, y: 180 },
+      { name: 'ARARAT', x: 3360, y: 640 },
+      { name: 'SHINAR', x: 2780, y: 660 },
+    ],
+    paths: MAP_PATHS,
+  },
+  {
+    id: 'egypt',
+    title: 'Genesis 37–50 · Joseph',
+    short: 'Joseph in Egypt',
+    width: 4700,
+    regions: [
+      // In the gap between the two bands: the top band's places and the bottom band's.
+      { name: 'CANAAN', x: 330, y: 370 },
+      { name: 'GOSHEN', x: 960, y: 370 },
+      { name: 'THE PRISON', x: 1560, y: 370 },
+      { name: 'THE NILE', x: 2400, y: 370 },
+      { name: 'STOREHOUSES', x: 3300, y: 370 },
+      { name: "JOSEPH'S HOUSE", x: 4180, y: 370 },
+    ],
+    paths: [],
+    opensAfter: 'gen-027',
+    signpost: { x: 4040, y: 470 },
+  },
+];
+
+const GENESIS_PLACES: Record<string, [number, number, string]> = {
   // Beginnings: winding left to right through the Deep and Eden.
   'gen-001': [230, 470, '🌑'],
   'gen-002': [420, 300, '🌊'],
@@ -96,6 +163,73 @@ const PLACES: Record<string, [number, number, string]> = {
   'gen-054': [3110, 580, '🔥'],
 };
 
+/** Medallion glyphs for the Joseph trail, in reading order. */
+const JOSEPH_ICONS = [
+  '🌾',
+  '🕳️',
+  '🐪',
+  '🏛️',
+  '🏃',
+  '⛓️',
+  '🌙',
+  '🍇',
+  '🧺',
+  '🐄',
+  '💭',
+  '🌊',
+  '✨',
+  '📜',
+  '💍',
+  '🌾',
+  '🎒',
+  '🕵️',
+  '🔗',
+  '💧',
+  '🤝',
+  '🍯',
+  '🕊️',
+  '🍞',
+  '🏆',
+  '🎒',
+  '🗣️',
+  '❤️',
+  '😭',
+  '🏡',
+  '🛒',
+  '🎉',
+  '⭐',
+  '👨‍👩‍👧‍👦',
+  '🤗',
+  '👑',
+  '🥣',
+  '🌱',
+  '🙏',
+  '👦',
+  '✋',
+  '🕯️',
+  '🐎',
+  '🌅',
+];
+
+/**
+ * Joseph winds in two bands: east along the top (Canaan, down the road to Egypt, the prison, the
+ * Nile, the storehouses), then back west along the bottom (Joseph's house, Goshen).
+ */
+function josephPlaces(): Record<string, [number, number, string]> {
+  const out: Record<string, [number, number, string]> = {};
+  const perBand = JOSEPH.length / 2;
+  JOSEPH.forEach((id, i) => {
+    const top = i < perBand;
+    const k = top ? i : JOSEPH.length - 1 - i;
+    const x = 230 + k * 200;
+    const y = top ? (k % 2 === 0 ? 155 : 280) : k % 2 === 0 ? 580 : 455;
+    out[id] = [x, y, JOSEPH_ICONS[i]!];
+  });
+  return out;
+}
+
+const PLACES: Record<string, [number, number, string]> = { ...GENESIS_PLACES, ...josephPlaces() };
+
 /** Each location follows the one before it on its trail; a path's first follows `from`. */
 function trail(ids: readonly string[], from?: string): [string, string | undefined][] {
   return ids.map((id, i) => [id, i === 0 ? from : ids[i - 1]]);
@@ -106,21 +240,36 @@ const AFTER = new Map([
   ...trail(NOAH, 'gen-011'),
   ...trail(BABEL, 'gen-011'),
   ...trail(SODOM, 'gen-011'),
+  ...trail(JOSEPH),
 ]);
 
-/** Locations in reading order (Beginnings, then each path). */
-export const MAP_NODES: readonly MapNode[] = [...BEGINNINGS, ...NOAH, ...BABEL, ...SODOM].map(
-  (id) => {
+const ON_MAP: [MapId, readonly string[]][] = [
+  ['genesis', [...BEGINNINGS, ...NOAH, ...BABEL, ...SODOM]],
+  ['egypt', JOSEPH],
+];
+
+/** Locations in reading order (each map in turn: Beginnings, then each path, then Joseph). */
+export const MAP_NODES: readonly MapNode[] = ON_MAP.flatMap(([map, ids]) =>
+  ids.map((id) => {
     const [x, y, icon] = PLACES[id]!;
     const after = AFTER.get(id);
-    return after ? { id, x, y, icon, after } : { id, x, y, icon };
-  },
+    return after ? { id, map, x, y, icon, after } : { id, map, x, y, icon };
+  }),
 );
 
 const byId = new Map(MAP_NODES.map((n) => [n.id, n]));
 
 export function mapNode(id: string): MapNode | undefined {
   return byId.get(id);
+}
+
+export function worldMap(id: MapId): WorldMap {
+  return WORLD_MAPS.find((m) => m.id === id)!;
+}
+
+/** The locations on one map, in reading order. */
+export function nodesOn(map: MapId): MapNode[] {
+  return MAP_NODES.filter((n) => n.map === map);
 }
 
 /** The location a node follows, if any. */
@@ -146,55 +295,101 @@ function depth(node: MapNode): number {
   return d;
 }
 
-/** Region names painted on the map (place names from Genesis 1–11). */
-export const MAP_REGIONS: readonly (Point & { name: string })[] = [
-  { name: 'THE DEEP', x: 330, y: 170 },
-  { name: 'EDEN', x: 1450, y: 180 },
-  { name: 'ARARAT', x: 3360, y: 640 },
-  { name: 'SHINAR', x: 2780, y: 660 },
-];
+/** True once the player may see a map: the first always, a later one after its `opensAfter`. */
+export function mapUnlocked(save: SaveData, map: MapId, unlockAll = false): boolean {
+  const opens = worldMap(map).opensAfter;
+  return unlockAll || !opens || opens in save.completed;
+}
 
-export type NodeState = 'done' | 'open' | 'hidden';
+/** The maps the player can visit, in order. */
+export function unlockedMaps(save: SaveData, unlockAll = false): MapId[] {
+  return MAP_IDS.filter((m) => mapUnlocked(save, m, unlockAll));
+}
 
-/** done = won; open = playable now (the first, or one whose trail-mate before it is won); hidden = not yet revealed. */
-export function nodeStates(save: SaveData, unlockAll = false): { id: string; state: NodeState }[] {
+/**
+ * done = won; open = playable now (a map's first location once the map is unlocked, or one whose
+ * trail-mate before it is won); soon = would be open, but its passage isn't written yet;
+ * hidden = not yet revealed.
+ */
+export type NodeState = 'done' | 'open' | 'soon' | 'hidden';
+
+/** Whether a location's passage exists (content decides; everything counts as built by default). */
+export type IsBuilt = (id: string) => boolean;
+const ALL_BUILT: IsBuilt = () => true;
+
+export function nodeStates(
+  save: SaveData,
+  unlockAll = false,
+  built: IsBuilt = ALL_BUILT,
+): { id: string; state: NodeState }[] {
   return MAP_NODES.map((n) => {
     if (n.id in save.completed) return { id: n.id, state: 'done' as const };
-    const open = unlockAll || !n.after || n.after in save.completed;
-    return { id: n.id, state: open ? ('open' as const) : ('hidden' as const) };
+    const reachable = n.after ? n.after in save.completed : mapUnlocked(save, n.map);
+    if (!unlockAll && !reachable) return { id: n.id, state: 'hidden' as const };
+    return { id: n.id, state: built(n.id) ? ('open' as const) : ('soon' as const) };
   });
 }
 
 /** Visible locations the player hasn't seen appear yet (they get the reveal animation). */
-export function newlyRevealed(save: SaveData, unlockAll = false): string[] {
-  return nodeStates(save, unlockAll)
+export function newlyRevealed(save: SaveData, unlockAll = false, built?: IsBuilt): string[] {
+  return nodeStates(save, unlockAll, built)
     .filter((n) => n.state !== 'hidden' && !save.seenOnMap.includes(n.id))
     .map((n) => n.id);
 }
 
 /**
- * Where the hero stands: at the open location furthest along its trail. When the furthest open
- * locations are the start of a choice of paths, the hero waits at the fork instead.
+ * Where the hero stands on a map: at the open location furthest along its trail. When the furthest
+ * open locations are the start of a choice of paths, the hero waits at the fork instead.
  */
-export function focusNode(save: SaveData, unlockAll = false): MapNode {
-  const states = nodeStates(save, unlockAll);
-  const open = MAP_NODES.filter((_, i) => states[i]!.state === 'open');
-  const visible = MAP_NODES.filter((_, i) => states[i]!.state !== 'hidden');
+export function focusNode(
+  save: SaveData,
+  unlockAll = false,
+  map: MapId = 'genesis',
+  built?: IsBuilt,
+): MapNode {
+  const states = new Map(nodeStates(save, unlockAll, built).map((s) => [s.id, s.state]));
+  const here = nodesOn(map);
+  const open = here.filter((n) => states.get(n.id) === 'open');
+  const visible = here.filter((n) => states.get(n.id) !== 'hidden');
   const pool = open.length > 0 ? open : visible;
+  if (pool.length === 0) return here[0]!;
   const best = Math.max(...pool.map(depth));
   const furthest = pool.filter((n) => depth(n) === best);
   const fork = furthest[0]?.after;
   if (furthest.length > 1 && furthest.every((n) => n.after === fork) && fork)
     return byId.get(fork)!;
-  return furthest[0] ?? MAP_NODES[0]!;
+  return furthest[0] ?? here[0]!;
 }
 
-/** True while the player stands at a fork with no path started yet. */
-export function choosingPath(save: SaveData, unlockAll = false): boolean {
-  const fork = focusNode(save, unlockAll);
+/** True while the player stands at a fork on this map with no path started yet. */
+export function choosingPath(save: SaveData, unlockAll = false, map: MapId = 'genesis'): boolean {
+  const fork = focusNode(save, unlockAll, map);
   const kids = childrenOf(fork.id);
   return (
     fork.id in save.completed && kids.length > 1 && kids.every((k) => !(k.id in save.completed))
+  );
+}
+
+/**
+ * The map to show when the player opens the passage map: the latest unlocked map that has a
+ * playable location, so a map whose passages are all still coming soon doesn't take over.
+ */
+export function startMap(save: SaveData, unlockAll = false, built?: IsBuilt): MapId {
+  const states = new Map(nodeStates(save, unlockAll, built).map((s) => [s.id, s.state]));
+  const playable = unlockedMaps(save, unlockAll).filter((m) =>
+    nodesOn(m).some((n) => states.get(n.id) === 'open' || states.get(n.id) === 'done'),
+  );
+  return playable[playable.length - 1] ?? 'genesis';
+}
+
+/** A map whose signpost stands on `map` and is unlocked (the next map to travel to), if any. */
+export function signpostsOn(save: SaveData, map: MapId, unlockAll = false): WorldMap[] {
+  return WORLD_MAPS.filter(
+    (m) =>
+      m.opensAfter &&
+      m.signpost &&
+      mapNode(m.opensAfter)?.map === map &&
+      mapUnlocked(save, m.id, unlockAll),
   );
 }
 

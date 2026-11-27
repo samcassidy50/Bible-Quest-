@@ -3,7 +3,7 @@ import { pixelBox, UI } from '../ui/pixelUi';
 
 /** Parchment tint for the pixel name plates. */
 const PLATE = 0xfff0c8;
-import { ENCOUNTERS } from '../../content';
+import { ENCOUNTERS, isBuilt } from '../../content';
 import type { DebugParams } from '../../core/debugParams';
 import { unlockAllOn } from '../quickTest';
 import {
@@ -13,17 +13,21 @@ import {
   dashedCurve,
   focusNode,
   mapNode,
-  MAP_NODES,
-  MAP_PATHS,
-  MAP_REGIONS,
+  mapUnlocked,
   newlyRevealed,
   nodeStates,
+  nodesOn,
   parentOf,
+  signpostsOn,
+  startMap,
   trailControl,
+  unlockedMaps,
+  worldMap,
   WORLD_H,
-  WORLD_W,
+  type MapId,
   type MapNode,
   type NodeState,
+  type WorldMap,
 } from '../../core/map/worldMap';
 import { markSeenOnMap, totalStars } from '../../core/progress/progress';
 import { runesToSet } from '../../core/progress/runes';
@@ -64,9 +68,17 @@ interface Marker {
  * locations are shown; winning a passage reveals the next one with a trail that draws itself
  * and the hero walking along it. At a fork both paths appear and a sign asks the player to
  * choose one. Drag to pan; tap a location for its card.
+ *
+ * There is one map per part of the story (core/map/worldMap.ts). A later map opens when a
+ * location on an earlier one is won: a signpost appears there, and a button at the top left
+ * switches between the maps the player has opened. The shown map is kept in the registry
+ * (`mapId`), so coming back from a passage returns to its map.
  */
 export class MapScene extends Phaser.Scene {
   private debug!: DebugParams;
+  private mapId: MapId = 'genesis';
+  private world!: WorldMap;
+  private signposts = new Map<MapId, Phaser.GameObjects.Container>();
   private insets: Insets = { top: 0, right: 0, bottom: 0, left: 0 };
   private markers = new Map<string, Marker>();
   private trails = new Map<string, Phaser.GameObjects.Graphics>();
@@ -97,17 +109,26 @@ export class MapScene extends Phaser.Scene {
     this.card = undefined;
     this.cardId = null;
     this.revealing = false;
+    this.signposts = new Map();
+
+    const save = progress.save;
+    const unlockAll = this.unlockAll();
+    const want = (this.registry.get('mapId') as MapId | undefined) ?? this.debug.map;
+    this.mapId =
+      want && mapUnlocked(save, want, unlockAll) ? want : startMap(save, unlockAll, isBuilt);
+    this.registry.set('mapId', this.mapId);
+    this.world = worldMap(this.mapId);
+    const nodes = nodesOn(this.mapId);
 
     const { width: W, height: H } = this.scale.gameSize;
     this.insets = toGameInsets(readSafeAreaInsets(), W, this.scale.displaySize.width);
     const mapH = Math.max(WORLD_H, H);
-    this.cameras.main.setBounds(0, 0, WORLD_W, mapH);
+    this.cameras.main.setBounds(0, 0, this.world.width, mapH);
 
-    const save = progress.save;
-    const unlockAll = this.debug.unlockAll || unlockAllOn();
-    const states = new Map(nodeStates(save, unlockAll).map((s) => [s.id, s.state]));
+    const states = new Map(nodeStates(save, unlockAll, isBuilt).map((s) => [s.id, s.state]));
     // Animate a single reveal or the paths of one fork; big jumps (like ?unlockAll) just appear.
-    const fresh = newlyRevealed(save, unlockAll);
+    const here = new Set(nodes.map((n) => n.id));
+    const fresh = newlyRevealed(save, unlockAll, isBuilt).filter((id) => here.has(id));
     const forkOf = (id: string) => mapNode(id)?.after;
     const animate =
       fresh.length === 1 || (fresh.length === 2 && forkOf(fresh[0]!) === forkOf(fresh[1]!))
@@ -116,15 +137,17 @@ export class MapScene extends Phaser.Scene {
     if (animate.length === 0 && fresh.length > 0) progress.update((s) => markSeenOnMap(s, fresh));
 
     this.drawParchment(mapH);
-    this.drawTerrain();
+    if (this.mapId === 'egypt') this.drawEgypt();
+    else this.drawGenesis();
+    this.drawRegions();
 
-    for (const node of MAP_NODES) {
+    for (const node of nodes) {
       if (!node.after || states.get(node.id) === 'hidden') continue;
       const g = this.add.graphics();
       this.trails.set(node.id, g);
       if (!animate.includes(node.id)) this.drawTrail(g, node, 1);
     }
-    for (const node of MAP_NODES) {
+    for (const node of nodes) {
       const state = states.get(node.id)!;
       if (state === 'hidden') continue;
       const m = this.makeMarker(node, state);
@@ -133,9 +156,16 @@ export class MapScene extends Phaser.Scene {
     }
 
     // Hero stands at the furthest location (or, before a reveal, at the one before it).
-    const focus = focusNode(save, unlockAll);
+    const focus = focusNode(save, unlockAll, this.mapId, isBuilt);
     const firstNew = animate.length > 0 ? mapNode(animate[0]!) : undefined;
-    const start = (firstNew && parentOf(firstNew)) ?? focus;
+    // A signpost to a map the player hasn't visited yet: the hero waits beside it.
+    const newPost = signpostsOn(save, this.mapId, unlockAll).find(
+      (m) => !save.seenOnMap.includes(nodesOn(m.id)[0]!.id),
+    );
+    const start =
+      (firstNew && parentOf(firstNew)) ??
+      (newPost && !unlockAll ? mapNode(newPost.opensAfter!) : undefined) ??
+      focus;
     this.hero = new HeroSprite(this, start.x - HERO_OFFSET_X, start.y + 18)
       .setScale(HERO_SCALE * 0.75)
       .setDepth(20);
@@ -144,10 +174,17 @@ export class MapScene extends Phaser.Scene {
 
     this.choiceSign = this.makeChoiceSign();
     this.choiceSign?.setAlpha(animate.length > 1 ? 0 : 1);
+    for (const m of signpostsOn(save, this.mapId, unlockAll)) this.makeSignpost(m);
     this.buildHud(W, H);
     this.setupDrag();
 
-    updateTestState({ ready: true, scene: 'map', battle: null, scripture: null });
+    updateTestState({
+      ready: true,
+      scene: 'map',
+      battle: null,
+      scripture: null,
+      mapId: this.mapId,
+    });
     this.sync();
     if (animate.length > 0) void this.playReveals(animate);
   }
@@ -155,48 +192,50 @@ export class MapScene extends Phaser.Scene {
   // ── Drawing ────────────────────────────────────────────────────────────────
 
   private drawParchment(mapH: number): void {
+    const w = this.world.width;
     const rng = createRng(7);
     const g = this.add.graphics();
-    g.fillStyle(PAPER, 1).fillRect(0, 0, WORLD_W, mapH);
+    g.fillStyle(PAPER, 1).fillRect(0, 0, w, mapH);
     // Stains and uneven tone.
     const tones = [0xd6b574, 0xeed9a8, 0xc7a263, 0xdcc089];
     for (let i = 0; i < 220; i++) {
       g.fillStyle(tones[i % tones.length]!, 0.07 + rng.next() * 0.12);
-      g.fillCircle(rng.next() * WORLD_W, rng.next() * mapH, 30 + rng.next() * 170);
+      g.fillCircle(rng.next() * w, rng.next() * mapH, 30 + rng.next() * 170);
     }
     // Fold creases.
-    for (let x = 600; x < WORLD_W; x += 600) {
+    for (let x = 600; x < w; x += 600) {
       g.lineStyle(3, 0xffffff, 0.12).lineBetween(x, 0, x, mapH);
       g.lineStyle(2, 0x8a6a3a, 0.12).lineBetween(x + 3, 0, x + 3, mapH);
     }
-    g.lineStyle(3, 0xffffff, 0.12).lineBetween(0, mapH / 2, WORLD_W, mapH / 2);
+    g.lineStyle(3, 0xffffff, 0.12).lineBetween(0, mapH / 2, w, mapH / 2);
     // Burnt, darkened edges.
     const burnt = 0x4a2a0c;
     const band = 110;
     g.fillGradientStyle(burnt, burnt, burnt, burnt, 0.75, 0, 0.75, 0).fillRect(0, 0, band, mapH);
     g.fillGradientStyle(burnt, burnt, burnt, burnt, 0, 0.75, 0, 0.75).fillRect(
-      WORLD_W - band,
+      w - band,
       0,
       band,
       mapH,
     );
-    g.fillGradientStyle(burnt, burnt, burnt, burnt, 0.7, 0.7, 0, 0).fillRect(0, 0, WORLD_W, band);
+    g.fillGradientStyle(burnt, burnt, burnt, burnt, 0.7, 0.7, 0, 0).fillRect(0, 0, w, band);
     g.fillGradientStyle(burnt, burnt, burnt, burnt, 0, 0, 0.7, 0.7).fillRect(
       0,
       mapH - band,
-      WORLD_W,
+      w,
       band,
     );
     for (let i = 0; i < 40; i++) {
       const edge = rng.int(0, 3);
       const t = rng.next();
-      const x = edge === 0 ? 0 : edge === 1 ? WORLD_W : t * WORLD_W;
+      const x = edge === 0 ? 0 : edge === 1 ? w : t * w;
       const y = edge === 2 ? 0 : edge === 3 ? mapH : t * mapH;
       g.fillStyle(0x2e1806, 0.25 + rng.next() * 0.25).fillCircle(x, y, 20 + rng.next() * 50);
     }
   }
 
-  private drawTerrain(): void {
+  /** Genesis 1–11: the Deep, Eden, the flood waters, Ararat and Shinar. */
+  private drawGenesis(): void {
     const rng = createRng(11);
     const g = this.add.graphics();
 
@@ -237,25 +276,117 @@ export class MapScene extends Phaser.Scene {
     // The plain of Shinar, with brick kilns' smoke and a half-built tower.
     this.tower(g, 2760, 590);
 
-    // Low hills across the plains.
+    this.hills(g, rng, 70, 400, this.world.width - 650);
+    this.compass(g, 560, 630);
+  }
+
+  /**
+   * Joseph in Egypt: the hills of Canaan in the north-west, the caravan road south, the Nile with
+   * its pyramids, the storehouses, and the green fields of Goshen along the bottom.
+   */
+  private drawEgypt(): void {
+    const rng = createRng(37);
+    const g = this.add.graphics();
+
+    // Canaan: olive trees on the hills in the north-west.
+    for (let i = 0; i < 26; i++)
+      this.tree(g, 140 + rng.next() * 420, 90 + rng.next() * 230, 0.6 + rng.next() * 0.4);
+
+    // The desert road: dunes between Canaan and Egypt.
+    g.lineStyle(2, 0x9a7440, 0.45);
+    for (let i = 0; i < 34; i++) this.dune(g, 560 + rng.next() * 460, 90 + rng.next() * 240);
+
+    // The Nile runs from top to bottom, with marsh reeds along its banks.
+    const nile: [number, number][] = [
+      [2240, 0],
+      [2320, 160],
+      [2260, 330],
+      [2360, 520],
+      [2300, 720],
+    ];
+    g.lineStyle(26, 0x7f9aa0, 0.4);
+    this.river(g, ...nile);
+    g.lineStyle(8, 0xd8e2dc, 0.4);
+    this.river(g, ...nile);
+    g.lineStyle(2, 0x5f7a3a, 0.5);
+    for (let i = 0; i < 40; i++) this.reed(g, 2180 + rng.next() * 260, 40 + rng.next() * 640);
+
+    // Pyramids on the far bank.
+    for (const [x, y, s] of [
+      [2640, 420, 40],
+      [2720, 432, 30],
+      [2580, 436, 22],
+    ] as const)
+      this.pyramid(g, x, y, s);
+
+    // The storehouses: domed granaries in rows.
+    for (let i = 0; i < 9; i++) this.granary(g, 3500 + (i % 5) * 60, 424 - Math.floor(i / 5) * 36);
+
+    // Goshen: green fields and canals along the bottom, toward the delta.
+    g.fillStyle(0x7f9a4a, 0.22).fillEllipse(1100, 560, 2000, 300);
+    g.lineStyle(4, 0x7f9aa0, 0.35);
+    this.river(g, [2300, 640], [1700, 660], [1100, 630], [400, 670]);
+    for (let i = 0; i < 30; i++)
+      this.tree(g, 160 + rng.next() * 1900, 480 + rng.next() * 190, 0.5 + rng.next() * 0.3);
+
+    this.hills(g, rng, 50, 300, this.world.width - 500);
+    this.compass(g, 4560, 630);
+  }
+
+  /** Low ink hills scattered across the open land. */
+  private hills(
+    g: Phaser.GameObjects.Graphics,
+    rng: ReturnType<typeof createRng>,
+    n: number,
+    x0: number,
+    span: number,
+  ): void {
     g.lineStyle(2, 0x8a6a3a, 0.35);
-    for (let i = 0; i < 70; i++) {
-      const x = 400 + rng.next() * (WORLD_W - 650);
+    for (let i = 0; i < n; i++) {
+      const x = x0 + rng.next() * span;
       const y = 140 + rng.next() * 520;
       g.beginPath()
         .arc(x, y, 18, Math.PI * 1.1, Math.PI * 1.9)
         .strokePath();
     }
+  }
 
-    // Region names.
-    for (const r of MAP_REGIONS) {
+  private drawRegions(): void {
+    for (const r of this.world.regions) {
       this.add
         .text(r.x, r.y, r.name, { fontFamily: FONT_TITLE, fontSize: '34px', color: '#6b4a22' })
         .setOrigin(0.5)
         .setAlpha(0.55)
         .setLetterSpacing(8);
     }
-    this.compass(g, 560, 630);
+  }
+
+  private dune(g: Phaser.GameObjects.Graphics, x: number, y: number): void {
+    g.beginPath()
+      .arc(x, y + 14, 22, Math.PI * 1.15, Math.PI * 1.85)
+      .strokePath();
+  }
+
+  private reed(g: Phaser.GameObjects.Graphics, x: number, y: number): void {
+    g.lineBetween(x, y, x - 3, y - 12).lineBetween(x + 3, y, x + 5, y - 10);
+  }
+
+  private pyramid(g: Phaser.GameObjects.Graphics, x: number, y: number, s: number): void {
+    g.fillStyle(0xd9b878, 0.9).fillTriangle(x - s, y, x, y - s * 0.9, x + s, y);
+    g.fillStyle(0xa98448, 0.75).fillTriangle(x, y - s * 0.9, x + s, y, x + s * 0.15, y);
+    g.lineStyle(2, INK, 0.5).strokeTriangle(x - s, y, x, y - s * 0.9, x + s, y);
+  }
+
+  /** A domed mud-brick grain store. */
+  private granary(g: Phaser.GameObjects.Graphics, x: number, y: number): void {
+    g.fillStyle(0xc9a46a, 0.85).fillRect(x - 18, y - 20, 36, 20);
+    g.fillStyle(0xd6b574, 0.9)
+      .slice(x, y - 20, 18, Math.PI, 0, false)
+      .fillPath();
+    g.lineStyle(2, INK, 0.45).strokeRect(x - 18, y - 20, 36, 20);
+    g.beginPath()
+      .arc(x, y - 20, 18, Math.PI, 0, false)
+      .strokePath();
   }
 
   /** A stepped, unfinished tower in ink, for the plain of Shinar. */
@@ -334,11 +465,11 @@ export class MapScene extends Phaser.Scene {
 
   /** A signpost at the fork while the player has not started either path yet. */
   private makeChoiceSign(): Phaser.GameObjects.Container | undefined {
-    const unlockAll = this.debug.unlockAll || unlockAllOn();
-    if (!choosingPath(progress.save, unlockAll)) return undefined;
-    const fork = focusNode(progress.save, unlockAll);
+    const unlockAll = this.unlockAll();
+    if (!choosingPath(progress.save, unlockAll, this.mapId)) return undefined;
+    const fork = focusNode(progress.save, unlockAll, this.mapId);
     const names = childrenOf(fork.id)
-      .map((k) => MAP_PATHS.find((p) => p.ids[0] === k.id)?.name)
+      .map((k) => this.world.paths.find((p) => p.ids[0] === k.id)?.name)
       .filter((n): n is string => !!n);
     const title = this.add
       .text(0, -14, 'Choose your path', {
@@ -362,7 +493,51 @@ export class MapScene extends Phaser.Scene {
     return this.add.container(fork.x + 20, fork.y - 230, [post, plate, title, sub]).setDepth(15);
   }
 
+  /**
+   * A signpost to the next map, standing past the location that opens it. It bobs until the
+   * player has visited that map.
+   */
+  private makeSignpost(to: WorldMap): void {
+    const p = to.signpost!;
+    const title = this.add
+      .text(0, -12, `To ${to.short}`, {
+        fontFamily: FONT_TITLE,
+        fontSize: '22px',
+        fontStyle: 'bold',
+        color: INK_TEXT,
+      })
+      .setOrigin(0.5);
+    const sub = this.add
+      .text(0, 14, 'Tap to travel ▶', { fontFamily: FONT_UI, fontSize: '16px', color: '#6b4a22' })
+      .setOrigin(0.5);
+    const w = Math.max(title.width, sub.width) + 36;
+    const plate = pixelBox(this, UI.button, 0, 0, w, 66).setTint(PLATE);
+    const post = this.add.rectangle(0, 56, 10, 48, 0x6b4a22).setStrokeStyle(2, INK);
+    const hit = this.add.rectangle(0, 10, w, 110, 0x000000, 0).setInteractive();
+    hit.on('pointerup', () => {
+      if (this.drag.moved || this.revealing) return;
+      sfx.play('uiTap');
+      this.switchTo(to.id);
+    });
+    const c = this.add.container(p.x, p.y, [post, plate, title, sub, hit]).setDepth(15);
+    const first = nodesOn(to.id)[0]!;
+    if (!progress.save.seenOnMap.includes(first.id) && !this.debug.freeze)
+      this.tweens.add({ targets: c, y: p.y - 10, duration: 600, yoyo: true, repeat: -1 });
+    this.signposts.set(to.id, c);
+  }
+
+  private switchTo(id: MapId): void {
+    this.registry.set('mapId', id);
+    this.cameras.main.fadeOut(200, 27, 21, 48);
+    this.cameras.main.once('camerafadeoutcomplete', () => this.scene.restart());
+  }
+
+  private unlockAll(): boolean {
+    return this.debug.unlockAll || unlockAllOn();
+  }
+
   private makeMarker(node: MapNode, state: NodeState): Marker {
+    if (state === 'soon') return this.makeSoonMarker(node);
     const enc = ENCOUNTERS.find((e) => e.id === node.id)!;
     const c = this.add.container(node.x, node.y).setDepth(10);
     const glow = this.add.circle(0, 0, 40, 0xf4c95d, state === 'open' ? 0.45 : 0);
@@ -409,6 +584,25 @@ export class MapScene extends Phaser.Scene {
     return { node, state, c };
   }
 
+  /** A location whose passage isn't written yet: a faded medallion that can't be opened. */
+  private makeSoonMarker(node: MapNode): Marker {
+    const c = this.add.container(node.x, node.y).setDepth(10).setAlpha(0.6);
+    const shadow = this.add.ellipse(3, 30, 56, 14, 0x000000, 0.15);
+    const ring = this.add.circle(0, 0, 28, 0xb89a68).setStrokeStyle(3, INK, 0.6);
+    const inner = this.add.circle(0, 0, 22, 0xe8d6a8).setStrokeStyle(2, 0xb08a4a, 0.6);
+    const icon = this.add.text(0, 1, node.icon, { fontSize: '24px' }).setOrigin(0.5).setAlpha(0.5);
+    const label = this.add
+      .text(0, 50, 'Coming soon', {
+        fontFamily: FONT_TITLE,
+        fontSize: '16px',
+        fontStyle: 'italic',
+        color: INK_TEXT,
+      })
+      .setOrigin(0.5);
+    c.add([shadow, ring, inner, icon, label]);
+    return { node, state: 'soon', c };
+  }
+
   // ── HUD, card, panning ─────────────────────────────────────────────────────
 
   private buildHud(W: number, H: number): void {
@@ -430,7 +624,7 @@ export class MapScene extends Phaser.Scene {
     fixed(pixelBox(this, UI.button, W / 2, ins.top + 41, 480, 63).setTint(PLATE));
     fixed(
       this.add
-        .text(W / 2, ins.top + 41, 'Genesis 1–11 · Beginnings', {
+        .text(W / 2, ins.top + 41, this.world.title, {
           fontFamily: FONT_TITLE,
           fontSize: '30px',
           fontStyle: 'bold',
@@ -450,6 +644,24 @@ export class MapScene extends Phaser.Scene {
         })
         .setOrigin(1, 0.5),
     );
+
+    // With more than one map open, a button at the top left goes to the next one.
+    const maps = unlockedMaps(progress.save, this.unlockAll());
+    if (maps.length > 1) {
+      const next = maps[(maps.indexOf(this.mapId) + 1) % maps.length]!;
+      const b = fixed(
+        new Button(this, ins.left + 24 + 110, ins.top + 41, {
+          width: 220,
+          height: 56,
+          radius: 28,
+          label: `🗺️ ${worldMap(next).short}`,
+          fontSize: 19,
+          fill: 0x6b4a22,
+          onTap: () => this.switchTo(next),
+        }),
+      );
+      this.menu.set('mapSwitch', b);
+    }
 
     const toSet = runesToSet(progress.save, ENCOUNTERS);
     const items: [string, string, number][] = [
@@ -498,7 +710,11 @@ export class MapScene extends Phaser.Scene {
 
   private centerOn(x: number): void {
     const { width: W } = this.scale.gameSize;
-    this.cameras.main.scrollX = Phaser.Math.Clamp(x - W * 0.5, 0, Math.max(0, WORLD_W - W));
+    this.cameras.main.scrollX = Phaser.Math.Clamp(
+      x - W * 0.5,
+      0,
+      Math.max(0, this.world.width - W),
+    );
   }
 
   private openCard(id: string): void {
@@ -556,6 +772,7 @@ export class MapScene extends Phaser.Scene {
 
   private begin(id: string): void {
     this.registry.set('encounterId', id);
+    this.registry.set('mapId', this.mapId);
     this.registry.remove('collectedEnergy');
     this.cameras.main.fadeOut(200, 27, 21, 48);
     this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start('scripture'));
@@ -577,7 +794,7 @@ export class MapScene extends Phaser.Scene {
     const midX = nodes.reduce((sum, n) => sum + n.x, 0) / nodes.length;
     await tweenAsync(this, {
       targets: this.cameras.main,
-      scrollX: Phaser.Math.Clamp(midX - W * 0.5, 0, Math.max(0, WORLD_W - W)),
+      scrollX: Phaser.Math.Clamp(midX - W * 0.5, 0, Math.max(0, this.world.width - W)),
       duration: 600,
       ease: 'Sine.inOut',
     });
@@ -639,14 +856,19 @@ export class MapScene extends Phaser.Scene {
         targets[`stage:${id}`] = { x, y: Math.round(m.node.y + 10) };
     }
     for (const [k, b] of this.menu) targets[k] = { x: Math.round(b.x), y: Math.round(b.y) };
+    for (const [id, c] of this.signposts) {
+      const x = Math.round(c.x - cam.scrollX);
+      if (x > 30 && x < width - 30) targets[`signpost:${id}`] = { x, y: Math.round(c.y + 10) };
+    }
     if (this.card && this.beginBtn) {
       targets['begin'] = {
         x: Math.round(this.card.x + this.beginBtn.x),
         y: Math.round(this.card.y + this.beginBtn.y),
       };
     }
-    const states = nodeStates(progress.save, this.debug.unlockAll || unlockAllOn());
+    const states = nodeStates(progress.save, this.unlockAll(), isBuilt);
     updateTestState({
+      mapId: this.mapId,
       gameWidth: width,
       gameHeight: height,
       targets,

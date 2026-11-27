@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ENCOUNTERS } from '../../src/content';
+import { ENCOUNTERS, isBuilt } from '../../src/content';
 import {
   bezier,
   childrenOf,
@@ -9,13 +9,19 @@ import {
   mapNode,
   MAP_NODES,
   MAP_PATHS,
+  mapUnlocked,
   newlyRevealed,
   nextOnMap,
   nodeStates,
+  nodesOn,
   parentOf,
+  signpostsOn,
+  startMap,
   trailControl,
+  unlockedMaps,
+  worldMap,
   WORLD_H,
-  WORLD_W,
+  WORLD_MAPS,
 } from '../../src/core/map/worldMap';
 import { markSeenOnMap, newSave, recordVictory } from '../../src/core/progress/progress';
 
@@ -28,11 +34,14 @@ const open = (s: ReturnType<typeof newSave>, unlockAll = false) =>
     .map((n) => n.id);
 
 describe('map layout', () => {
-  it('has one location per encounter, in reading order, inside the map', () => {
-    expect(MAP_NODES.map((n) => n.id)).toEqual(ENCOUNTERS.map((e) => e.id));
+  it('has one location per encounter, in reading order, inside its map', () => {
+    expect(MAP_NODES.filter((n) => isBuilt(n.id)).map((n) => n.id)).toEqual(
+      ENCOUNTERS.map((e) => e.id),
+    );
+    expect(new Set(MAP_NODES.map((n) => n.id)).size).toBe(MAP_NODES.length);
     for (const n of MAP_NODES) {
       expect(n.x).toBeGreaterThan(100);
-      expect(n.x).toBeLessThan(WORLD_W - 100);
+      expect(n.x).toBeLessThan(worldMap(n.map).width - 100);
       expect(n.y).toBeGreaterThan(100);
       expect(n.y).toBeLessThan(WORLD_H - 100);
     }
@@ -41,7 +50,7 @@ describe('map layout', () => {
   it('keeps locations apart so their name plates do not overlap', () => {
     for (const a of MAP_NODES)
       for (const b of MAP_NODES)
-        if (a !== b)
+        if (a !== b && a.map === b.map)
           expect(Math.hypot(a.x - b.x, a.y - b.y), `${a.id}–${b.id}`).toBeGreaterThan(170);
   });
 
@@ -52,7 +61,7 @@ describe('map layout', () => {
     expect(childrenOf('gen-011').map((n) => n.id)).toEqual(['gen-019', 'gen-031', 'gen-052']);
     expect(MAP_PATHS.map((p) => p.ids[0])).toEqual(['gen-019', 'gen-031', 'gen-052']);
     expect(MAP_PATHS[0]!.ids).toHaveLength(9);
-    for (const n of MAP_NODES.slice(1)) expect(parentOf(n), n.id).toBeDefined();
+    for (const n of nodesOn('genesis').slice(1)) expect(parentOf(n), n.id).toBeDefined();
   });
 
   it('nextOnMap follows a trail and stops at a fork or the end of a path', () => {
@@ -63,6 +72,81 @@ describe('map layout', () => {
     expect(nextOnMap('gen-031')).toBeNull();
     expect(nextOnMap('gen-052')).toBe('gen-053');
     expect(nextOnMap('gen-054')).toBeNull();
+  });
+});
+
+const NOAH = Array.from({ length: 9 }, (_, i) => `gen-${String(19 + i).padStart(3, '0')}`);
+/** Joseph in Egypt is planned but not written yet: its locations are all "coming soon". */
+const none = () => false;
+
+describe('Joseph in Egypt map', () => {
+  it('is one trail of the 44 chosen Joseph passages, every step on the same map', () => {
+    const ids = nodesOn('egypt').map((n) => n.id);
+    expect(ids).toHaveLength(44);
+    expect(ids[0]).toBe('gen-118');
+    expect(ids).not.toContain('gen-121'); // Judah and Tamar, left out
+    expect(ids).toContain('gen-161');
+    expect(ids.at(-1)).toBe('gen-168');
+    expect(mapNode('gen-118')!.after).toBeUndefined();
+    expect(mapNode('gen-124')!.after).toBe('gen-120');
+    expect(mapNode('gen-166')!.after).toBe('gen-161');
+    for (const n of MAP_NODES) if (n.after) expect(mapNode(n.after)!.map, n.id).toBe(n.map);
+    expect(nextOnMap('gen-168')).toBeNull();
+  });
+
+  it('opens at the end of the Noah path, not at the end of Beginnings', () => {
+    expect(worldMap('egypt').opensAfter).toBe('gen-027');
+    expect(mapUnlocked(won(...BEGINNINGS), 'egypt')).toBe(false);
+    expect(mapUnlocked(won(...BEGINNINGS, 'gen-031', 'gen-052'), 'egypt')).toBe(false);
+    expect(mapUnlocked(won(...BEGINNINGS, ...NOAH), 'egypt')).toBe(true);
+    expect(mapUnlocked(newSave(), 'egypt', true)).toBe(true);
+    expect(mapUnlocked(newSave(), 'genesis')).toBe(true);
+    expect(unlockedMaps(won(...BEGINNINGS))).toEqual(['genesis']);
+    expect(unlockedMaps(won(...BEGINNINGS, ...NOAH))).toEqual(['genesis', 'egypt']);
+  });
+
+  it('shows its first location as coming soon until its passage is written', () => {
+    const state = (s: ReturnType<typeof newSave>, built?: (id: string) => boolean) =>
+      Object.fromEntries(nodeStates(s, false, built).map((n) => [n.id, n.state]));
+    expect(state(won(...BEGINNINGS))['gen-118']).toBe('hidden');
+    const done = won(...BEGINNINGS, ...NOAH);
+    expect(state(done, none)['gen-118']).toBe('soon');
+    expect(state(done, none)['gen-119']).toBe('hidden');
+    expect(state(done)['gen-118']).toBe('open');
+    expect(newlyRevealed(markSeenOnMap(done, [...BEGINNINGS, ...NOAH]), false, none)).toEqual(
+      expect.arrayContaining(['gen-118']),
+    );
+    expect(focusNode(done, false, 'egypt', none).id).toBe('gen-118');
+  });
+
+  it('the map shown first is the latest one with something to play', () => {
+    const done = won(...BEGINNINGS, ...NOAH);
+    expect(startMap(newSave())).toBe('genesis');
+    expect(startMap(done, false, none)).toBe('genesis');
+    expect(startMap(done)).toBe('egypt');
+    expect(startMap(newSave(), true, none)).toBe('genesis');
+  });
+
+  it('puts a signpost to Egypt on the Genesis map once Egypt is open', () => {
+    expect(signpostsOn(won(...BEGINNINGS), 'genesis')).toEqual([]);
+    const done = won(...BEGINNINGS, ...NOAH);
+    expect(signpostsOn(done, 'genesis').map((m) => m.id)).toEqual(['egypt']);
+    expect(signpostsOn(done, 'egypt')).toEqual([]);
+    const post = worldMap('egypt').signpost!;
+    expect(post.x).toBeLessThan(worldMap('genesis').width - 100);
+    // Clear of the Genesis locations' medallions and name plates.
+    for (const n of nodesOn('genesis'))
+      expect(Math.hypot(n.x - post.x, n.y - post.y), n.id).toBeGreaterThan(120);
+  });
+
+  it('every map has a title, a short name and regions', () => {
+    for (const m of WORLD_MAPS) {
+      expect(m.title.length).toBeGreaterThan(0);
+      expect(m.short.length).toBeGreaterThan(0);
+      expect(m.regions.length).toBeGreaterThan(0);
+      expect(nodesOn(m.id).length).toBeGreaterThan(0);
+    }
+    expect(choosingPath(won(...BEGINNINGS), false, 'egypt')).toBe(false);
   });
 });
 

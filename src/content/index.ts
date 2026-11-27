@@ -26,6 +26,11 @@ export const ENCOUNTERS: readonly Encounter[] = (() => {
   return canonicalOrder(built, BOOK_ORDER);
 })();
 
+/** True when the passage for a map location is written (others show as "coming soon"). */
+export function isBuilt(id: string): boolean {
+  return ENCOUNTERS.some((e) => e.id === id);
+}
+
 export function getEncounter(id: string | undefined): Encounter {
   return ENCOUNTERS.find((e) => e.id === id) ?? (ENCOUNTERS[0] as Encounter);
 }

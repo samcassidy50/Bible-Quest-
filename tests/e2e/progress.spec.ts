@@ -293,3 +293,29 @@ test('the character sheet shows the hero, armor and stats', async ({ page }) => 
   await tap(page, 'back');
   await waitFor(page, "s.scene === 'map'");
 });
+
+test('winning the end of the Noah path opens Joseph in Egypt: a signpost, then a map switch', async ({
+  page,
+}) => {
+  const ids = [
+    ...Array.from({ length: 11 }, (_, i) => i + 1),
+    ...Array.from({ length: 9 }, (_, i) => i + 19),
+  ].map((n) => `gen-${String(n).padStart(3, '0')}`);
+  const save = base();
+  for (const id of ids) save.completed[id] = { stars: 3, bestAccuracy: 1 };
+  save.seenOnMap = [...ids, 'gen-031', 'gen-052'];
+  await seed(page, save);
+  await page.goto('/?scene=map&fast=1');
+  await waitFor(page, "s.scene === 'map' && s.mapId === 'genesis' && !s.mapRevealing");
+  // The hero is at the end of the Noah path, next to the signpost.
+  await waitFor(page, "!!s.targets['signpost:egypt'] && !!s.targets.mapSwitch");
+  await snap(page, test.info().outputPath('map-signpost.png'));
+  await tap(page, 'signpost:egypt');
+  await waitFor(page, "s.scene === 'map' && s.mapId === 'egypt' && !s.mapRevealing");
+  const first = (await state(page)).map!.find((m) => m.id === 'gen-118')!;
+  expect(first.state).toBe('soon'); // not written yet
+  expect((await state(page)).map!.find((m) => m.id === 'gen-119')!.open).toBe(false);
+  await snap(page, test.info().outputPath('map-egypt.png'));
+  await tap(page, 'mapSwitch');
+  await waitFor(page, "s.scene === 'map' && s.mapId === 'genesis'");
+});
