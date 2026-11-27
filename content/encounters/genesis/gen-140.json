@@ -1,0 +1,108 @@
+{
+  "id": "gen-140",
+  "title": "Jacob’s Sorrow",
+  "passage": "GEN 42:29-38",
+  "setting": "canaan",
+  "sections": [
+    {
+      "verses": "29-34",
+      "foe": {
+        "id": "heavy-news",
+        "name": "Heavy News",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#6a7080",
+        "size": 0.9,
+        "sprite": "storm-cloud"
+      },
+      "orbs": [
+        {
+          "word": "honest"
+        },
+        {
+          "word": "spies"
+        }
+      ]
+    },
+    {
+      "verses": "35-38",
+      "foe": {
+        "id": "clinging-grief",
+        "name": "Clinging Grief",
+        "maxHp": 80,
+        "attack": 13,
+        "color": "#3a5a8a",
+        "size": 1.4,
+        "sprite": "wave"
+      },
+      "orbs": [
+        {
+          "word": "Benjamin"
+        }
+      ]
+    }
+  ],
+  "rune": "guard",
+  "questions": [
+    {
+      "id": "gen-140-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who did the brothers tell everything that had happened?",
+      "choices": ["Their father Jacob", "Pharaoh", "Their neighbors", "No one"],
+      "answerIndex": 0,
+      "highlight": "they told him everything",
+      "section": 1
+    },
+    {
+      "id": "gen-140-q2",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "The brothers told Jacob the man treated them as spies.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "he treated us as if we were spies",
+      "section": 1
+    },
+    {
+      "id": "gen-140-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who did the man say they must bring back to Egypt?",
+      "choices": ["Their youngest brother", "Their father", "Their camels", "Their sisters"],
+      "answerIndex": 0,
+      "highlight": "Then bring your youngest brother to me",
+      "section": 1
+    },
+    {
+      "id": "gen-140-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did each man find in his sack?",
+      "choices": ["His bag of money", "A snake", "A silver cup", "A letter"],
+      "answerIndex": 0,
+      "highlight": "each man found his bag of money in his sack",
+      "section": 2
+    },
+    {
+      "id": "gen-140-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Which brother promised to bring Benjamin back?",
+      "choices": ["Reuben", "Judah", "Simeon", "Joseph"],
+      "answerIndex": 0,
+      "highlight": "Then Reuben said to his father",
+      "section": 2
+    },
+    {
+      "id": "gen-140-q6",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "Jacob agreed to let Benjamin go to Egypt.",
+      "choices": ["True", "False"],
+      "answerIndex": 1,
+      "highlight": "My son will not go down with you",
+      "section": 2
+    }
+  ]
+}

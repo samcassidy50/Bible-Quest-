@@ -1,0 +1,108 @@
+{
+  "id": "gen-141",
+  "title": "Judah’s Promise",
+  "passage": "GEN 43:1-10",
+  "setting": "canaan",
+  "sections": [
+    {
+      "verses": "1-5",
+      "foe": {
+        "id": "hungry-ache",
+        "name": "Hungry Ache",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#4a3a3a",
+        "size": 0.9,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "famine"
+        },
+        {
+          "word": "food"
+        }
+      ]
+    },
+    {
+      "verses": "6-10",
+      "foe": {
+        "id": "wavering-heart",
+        "name": "Wavering Heart",
+        "maxHp": 80,
+        "attack": 13,
+        "color": "#8a9ab0",
+        "size": 1.35,
+        "sprite": "squall"
+      },
+      "orbs": [
+        {
+          "word": "blame"
+        }
+      ]
+    }
+  ],
+  "rune": "mending",
+  "questions": [
+    {
+      "id": "gen-141-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What had the family run out of?",
+      "choices": ["The grain from Egypt", "Water", "Sheep", "Tents"],
+      "answerIndex": 0,
+      "highlight": "they had eaten all the grain they had brought from Egypt",
+      "section": 1
+    },
+    {
+      "id": "gen-141-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "The man said they could not see him unless who came?",
+      "choices": ["Their brother", "Their father", "Pharaoh", "A camel driver"],
+      "answerIndex": 0,
+      "highlight": "unless your brother is with you",
+      "section": 1
+    },
+    {
+      "id": "gen-141-q3",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Which brother answered their father about going back?",
+      "choices": ["Judah", "Reuben", "Simeon", "Benjamin"],
+      "answerIndex": 0,
+      "highlight": "But Judah said to him",
+      "section": 1
+    },
+    {
+      "id": "gen-141-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who asked Jacob to send the boy with him?",
+      "choices": ["Judah", "Reuben", "Levi", "The man in Egypt"],
+      "answerIndex": 0,
+      "highlight": "Send the boy with me",
+      "section": 2
+    },
+    {
+      "id": "gen-141-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Judah said he would take what if he did not bring Benjamin back?",
+      "choices": ["The blame forever", "All the money", "Twelve sheep", "A long trip"],
+      "answerIndex": 0,
+      "highlight": "let me take the blame forever",
+      "section": 2
+    },
+    {
+      "id": "gen-141-q6",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "Judah said they could have gone and come back twice by now.",
+      "choices": ["True", "False"],
+      "answerIndex": 0,
+      "highlight": "we could have gone and come back twice by now",
+      "section": 2
+    }
+  ]
+}

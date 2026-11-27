@@ -1,0 +1,118 @@
+{
+  "id": "gen-142",
+  "title": "Back to Egypt",
+  "passage": "GEN 43:11-18",
+  "setting": "caravan",
+  "sections": [
+    {
+      "verses": "11-14",
+      "foe": {
+        "id": "anxious-road",
+        "name": "Anxious Road",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#c0a080",
+        "size": 0.9,
+        "sprite": "gust"
+      },
+      "orbs": [
+        {
+          "word": "honey"
+        },
+        {
+          "word": "gift"
+        }
+      ]
+    },
+    {
+      "verses": "15-18",
+      "foe": {
+        "id": "dread-of-chains",
+        "name": "Dread of Chains",
+        "maxHp": 80,
+        "attack": 13,
+        "color": "#2a2434",
+        "size": 1.4,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "noon"
+        }
+      ]
+    }
+  ],
+  "rune": "renewal",
+  "questions": [
+    {
+      "id": "gen-142-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What gift did Jacob send to the man?",
+      "choices": [
+        "Balm, honey, spices and nuts",
+        "Gold and jewels",
+        "A new robe",
+        "A flock of sheep"
+      ],
+      "answerIndex": 0,
+      "highlight": "a little balm, a little honey, spices and myrrh",
+      "section": 1
+    },
+    {
+      "id": "gen-142-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How much money did Jacob tell them to take?",
+      "choices": ["Twice as much", "None", "Half as much", "Just one coin"],
+      "answerIndex": 0,
+      "highlight": "Take twice as much money",
+      "section": 1
+    },
+    {
+      "id": "gen-142-q3",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Jacob prayed that God Almighty would make the man what?",
+      "choices": ["Kind to them", "Angry", "Sleepy", "Rich"],
+      "answerIndex": 0,
+      "highlight": "May God Almighty make the man kind to you",
+      "section": 1
+    },
+    {
+      "id": "gen-142-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where did Joseph tell his servant to take the brothers?",
+      "choices": ["To Joseph’s house", "Back to prison", "To the river", "To the storehouse"],
+      "answerIndex": 0,
+      "highlight": "Take these men to my house",
+      "section": 2
+    },
+    {
+      "id": "gen-142-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Why were the brothers afraid?",
+      "choices": [
+        "Because of the money put back in their sacks",
+        "Because it was dark",
+        "Because of a storm",
+        "Because they were lost"
+      ],
+      "answerIndex": 0,
+      "highlight": "because of the money that was put back in our sacks",
+      "section": 2
+    },
+    {
+      "id": "gen-142-q6",
+      "type": "true_false",
+      "difficulty": "medium",
+      "prompt": "The brothers thought they were going to a happy party.",
+      "choices": ["True", "False"],
+      "answerIndex": 1,
+      "highlight": "make us his slaves",
+      "section": 2
+    }
+  ]
+}

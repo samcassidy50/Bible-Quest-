@@ -1,0 +1,147 @@
+{
+  "id": "gen-139",
+  "title": "Simeon Stays Behind",
+  "passage": "GEN 42:18-28",
+  "setting": "palace",
+  "sections": [
+    {
+      "verses": "18-20",
+      "foe": {
+        "id": "tight-grip",
+        "name": "Tight Grip",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#4a6a3a",
+        "size": 0.9,
+        "sprite": "thorn-plant"
+      },
+      "orbs": [
+        {
+          "word": "honest"
+        }
+      ]
+    },
+    {
+      "verses": "21-24",
+      "foe": {
+        "id": "old-guilt",
+        "name": "Old Guilt",
+        "maxHp": 50,
+        "attack": 13,
+        "color": "#5a4a6a",
+        "size": 0.95,
+        "sprite": "hissling"
+      },
+      "orbs": [
+        {
+          "word": "Simeon"
+        }
+      ]
+    },
+    {
+      "verses": "25-28",
+      "foe": {
+        "id": "trembling-fear",
+        "name": "Trembling Fear",
+        "maxHp": 80,
+        "attack": 13,
+        "color": "#2a2434",
+        "size": 1.4,
+        "sprite": "shadow-wolf"
+      },
+      "orbs": [
+        {
+          "word": "money"
+        }
+      ]
+    }
+  ],
+  "rune": "life",
+  "questions": [
+    {
+      "id": "gen-139-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Joseph told his brothers, “I fear…” whom?",
+      "choices": ["God", "Pharaoh", "The dark", "No one"],
+      "answerIndex": 0,
+      "highlight": "“I fear God.",
+      "section": 1
+    },
+    {
+      "id": "gen-139-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How many brothers had to stay behind in prison?",
+      "choices": ["One", "Two", "Five", "All of them"],
+      "answerIndex": 0,
+      "highlight": "let one of your brothers stay here in prison",
+      "section": 1
+    },
+    {
+      "id": "gen-139-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Why did the brothers think trouble had come to them?",
+      "choices": [
+        "Because of what they did to their brother",
+        "Because they were late",
+        "Because the grain was bad",
+        "Because Pharaoh was angry"
+      ],
+      "answerIndex": 0,
+      "highlight": "We are surely being punished because of our brother",
+      "section": 2
+    },
+    {
+      "id": "gen-139-q4",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "Which brother said, “Didn’t I tell you not to hurt the boy?”",
+      "choices": ["Reuben", "Judah", "Simeon", "Benjamin"],
+      "answerIndex": 0,
+      "highlight": "Reuben said",
+      "section": 2
+    },
+    {
+      "id": "gen-139-q5",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "The brothers knew Joseph could understand what they said.",
+      "choices": ["True", "False"],
+      "answerIndex": 1,
+      "highlight": "They did not know that Joseph could understand them",
+      "section": 2
+    },
+    {
+      "id": "gen-139-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Which brother did Joseph keep?",
+      "choices": ["Simeon", "Reuben", "Judah", "Levi"],
+      "answerIndex": 0,
+      "highlight": "He took Simeon from them",
+      "section": 2
+    },
+    {
+      "id": "gen-139-q7",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph secretly put back in their sacks?",
+      "choices": ["Their money", "A silver cup", "A letter", "A ring"],
+      "answerIndex": 0,
+      "highlight": "to put each man’s money back in his sack",
+      "section": 3
+    },
+    {
+      "id": "gen-139-q8",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How did the brothers feel when they found the money?",
+      "choices": ["Afraid; they trembled", "Happy and proud", "Sleepy", "Angry at the donkeys"],
+      "answerIndex": 0,
+      "highlight": "they turned to each other trembling",
+      "section": 3
+    }
+  ]
+}

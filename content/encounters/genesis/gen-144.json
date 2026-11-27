@@ -1,0 +1,123 @@
+{
+  "id": "gen-144",
+  "title": "A Feast with Joseph",
+  "passage": "GEN 43:26-34",
+  "setting": "estate",
+  "sections": [
+    {
+      "verses": "26-29",
+      "foe": {
+        "id": "holding-back",
+        "name": "Holding Back",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#4a6a3a",
+        "size": 0.9,
+        "sprite": "thorn-plant"
+      },
+      "orbs": [
+        {
+          "word": "gift"
+        },
+        {
+          "word": "Benjamin"
+        }
+      ]
+    },
+    {
+      "verses": "30-34",
+      "foe": {
+        "id": "hidden-tears",
+        "name": "Hidden Tears",
+        "maxHp": 80,
+        "attack": 13,
+        "color": "#3a6a9a",
+        "size": 1.35,
+        "sprite": "wave"
+      },
+      "orbs": [
+        {
+          "word": "five times"
+        }
+      ]
+    }
+  ],
+  "rune": "peace",
+  "questions": [
+    {
+      "id": "gen-144-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who did Joseph ask about?",
+      "choices": ["Their old father", "Pharaoh", "Their camels", "Potiphar"],
+      "answerIndex": 0,
+      "highlight": "How is your old father you told me about?",
+      "section": 1
+    },
+    {
+      "id": "gen-144-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did Joseph say to Benjamin?",
+      "choices": [
+        "“God be kind to you, my son.”",
+        "“You are a spy!”",
+        "“Go home now.”",
+        "“Who are you?”"
+      ],
+      "answerIndex": 0,
+      "highlight": "God be kind to you, my son",
+      "section": 1
+    },
+    {
+      "id": "gen-144-q3",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the brothers do when Joseph came home?",
+      "choices": ["Bowed down to the ground", "Ran away", "Sang a song", "Hid the gift"],
+      "answerIndex": 0,
+      "highlight": "they bowed down to the ground in front of him",
+      "section": 1
+    },
+    {
+      "id": "gen-144-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where did Joseph go to cry?",
+      "choices": ["Into his room", "Out to the fields", "Down to the river", "Up on the roof"],
+      "answerIndex": 0,
+      "highlight": "He went into his room and cried there",
+      "section": 2
+    },
+    {
+      "id": "gen-144-q5",
+      "type": "multiple_choice",
+      "difficulty": "medium",
+      "prompt": "How were the brothers seated?",
+      "choices": [
+        "From the oldest to the youngest",
+        "In a big circle",
+        "From the youngest to the oldest",
+        "Standing up"
+      ],
+      "answerIndex": 0,
+      "highlight": "from the oldest to the youngest",
+      "section": 2
+    },
+    {
+      "id": "gen-144-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "How much food did Benjamin get?",
+      "choices": [
+        "Five times as much as anyone else",
+        "None at all",
+        "Half as much",
+        "The same as everyone"
+      ],
+      "answerIndex": 0,
+      "highlight": "Benjamin got five times as much",
+      "section": 2
+    }
+  ]
+}

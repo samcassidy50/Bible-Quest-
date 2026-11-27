@@ -31,6 +31,12 @@ const JOSEPH = [
     '136',
     '137',
     '138',
+    '139',
+    '140',
+    '141',
+    '142',
+    '143',
+    '144',
   ].map((n) => `gen-${n}`),
 ];
 
@@ -89,6 +95,12 @@ describe('content: Genesis', () => {
       'GEN 41:47-57',
       'GEN 42:1-8',
       'GEN 42:9-17',
+      'GEN 42:18-28',
+      'GEN 42:29-38',
+      'GEN 43:1-10',
+      'GEN 43:11-18',
+      'GEN 43:19-25',
+      'GEN 43:26-34',
     ]);
   });
 
@@ -191,6 +203,12 @@ describe('content: Genesis', () => {
       'granary',
       'granary',
       'palace',
+      'palace',
+      'canaan',
+      'canaan',
+      'caravan',
+      'estate',
+      'estate',
     ]);
     // The flood rages, then clears for the dove, the landing and the rainbow.
     expect(ENCOUNTERS.filter((e) => e.setting === 'flood').map((e) => e.weather)).toEqual([
@@ -226,7 +244,8 @@ describe('content: Genesis', () => {
     expect(nextEncounter('gen-120')?.id).toBe('gen-124'); // Genesis 38 is left out
     expect(nextEncounter('gen-126')?.id).toBe('gen-127');
     expect(nextEncounter('gen-132')?.id).toBe('gen-133');
-    expect(nextEncounter('gen-138')).toBeNull(); // the next one isn't written yet
+    expect(nextEncounter('gen-138')?.id).toBe('gen-139');
+    expect(nextEncounter('gen-144')).toBeNull(); // the next one isn't written yet
     expect(nextEncounter('nope')).toBeNull();
   });
 });

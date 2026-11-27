@@ -1,0 +1,105 @@
+{
+  "id": "gen-143",
+  "title": "Don’t Be Afraid",
+  "passage": "GEN 43:19-25",
+  "setting": "estate",
+  "sections": [
+    {
+      "verses": "19-22",
+      "foe": {
+        "id": "nervous-stammer",
+        "name": "Nervous Stammer",
+        "maxHp": 50,
+        "attack": 12,
+        "color": "#6a8ac8",
+        "size": 0.9,
+        "sprite": "slime-blue"
+      },
+      "orbs": [
+        {
+          "word": "money"
+        }
+      ]
+    },
+    {
+      "verses": "23-25",
+      "foe": {
+        "id": "fleeing-fear",
+        "name": "Fleeing Fear",
+        "maxHp": 80,
+        "attack": 13,
+        "color": "#5a6070",
+        "size": 1.35,
+        "sprite": "storm-cloud"
+      },
+      "orbs": [
+        {
+          "word": "Peace"
+        }
+      ]
+    }
+  ],
+  "rune": "haste",
+  "questions": [
+    {
+      "id": "gen-143-q1",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Where did the brothers talk to Joseph’s servant?",
+      "choices": ["At the door", "In the prison", "By the river", "In the fields"],
+      "answerIndex": 0,
+      "highlight": "spoke to him at the door",
+      "section": 1
+    },
+    {
+      "id": "gen-143-q2",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the brothers bring back?",
+      "choices": ["The money from their sacks", "The grain", "A camel", "Joseph’s robe"],
+      "answerIndex": 0,
+      "highlight": "So we have brought it back with us",
+      "section": 1
+    },
+    {
+      "id": "gen-143-q3",
+      "type": "true_false",
+      "difficulty": "easy",
+      "prompt": "The brothers knew who had put the money in their sacks.",
+      "choices": ["True", "False"],
+      "answerIndex": 1,
+      "highlight": "We do not know who put our money in our sacks",
+      "section": 1
+    },
+    {
+      "id": "gen-143-q4",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the servant tell the brothers?",
+      "choices": ["“Don’t be afraid.”", "“Go away!”", "“You are spies!”", "“Pay me more!”"],
+      "answerIndex": 0,
+      "highlight": "Don’t be afraid",
+      "section": 2
+    },
+    {
+      "id": "gen-143-q5",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "Who did the servant bring out to them?",
+      "choices": ["Simeon", "Benjamin", "Pharaoh", "Reuben"],
+      "answerIndex": 0,
+      "highlight": "Then he brought Simeon out to them",
+      "section": 2
+    },
+    {
+      "id": "gen-143-q6",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "prompt": "What did the servant give the brothers?",
+      "choices": ["Water to wash their feet", "New sandals", "A gold chain", "A map home"],
+      "answerIndex": 0,
+      "highlight": "gave them water to wash their feet",
+      "section": 2
+    }
+  ]
+}
