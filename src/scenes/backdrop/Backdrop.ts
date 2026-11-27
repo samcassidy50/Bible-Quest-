@@ -58,6 +58,7 @@ const LANDMARK_AT: Record<string, { x: number; dy: number }> = {
   fields: { x: 0.8, dy: -30 },
   shipyard: { x: 0.78, dy: -30 },
   sodom: { x: 0.74, dy: -24 }, // the city gate, standing on the street behind the houses
+  canaan: { x: 0.76, dy: -24 }, // Jacob's tent, pitched behind the olive trees
 };
 
 /** The light painted into a sky (native sky pixels, 560x200): effects gather around it. */
@@ -98,6 +99,7 @@ const LOOKS: Record<string, Look> = {
   sodom: { sky: [0x0e0c22, 0x603054, 0xf0ac68] },
   plain: { sky: [0x3a4a7a, 0x967c9a, 0xfce2aa] },
   brimstone: { sky: [0x140a0e, 0x702416, 0xf49a40] },
+  canaan: { sky: [0x4a7cc0, 0xa2c0d6, 0xf6e6b4] },
 };
 
 /** Draws `fn` at x and again one tile left/right when near an edge, so tiles repeat seamlessly. */
@@ -1359,6 +1361,10 @@ export class Backdrop {
           });
         }
         this.birds(add, loop, rng, 0x4a3e5e, 3);
+        break;
+      case 'canaan':
+        // Birds over the hill country on a warm afternoon.
+        this.birds(add, loop, rng, 0x3a4e72, 4);
         break;
       case 'brimstone': {
         // Burning sulfur raining down, embers rising, the sky flaring red.

@@ -45,11 +45,13 @@ const PAINTED: Record<string, string[]> = {
   'flood-clearing': ['sky', 'far', 'mid', 'ground', 'landmark'],
   babel: ['sky', 'far', 'mid', 'ground', 'landmark'],
   sodom: ['sky', 'far', 'mid', 'ground', 'landmark'],
+  canaan: ['sky', 'far', 'mid', 'ground', 'landmark'],
 };
 
 test('backdrop viewer shows every environment with no text, tap for the next', async ({ page }) => {
   await page.goto('/?scene=backdrops&freeze=1');
-  for (const [name] of ENVIRONMENTS) {
+  // Environments with no passage yet (Joseph in Egypt) come last in the viewer.
+  for (const name of [...ENVIRONMENTS.map(([n]) => n), 'canaan']) {
     await waitFor(page, `s.scene === 'backdrops' && s.backdrop === '${name}'`);
     const painted = (await state(page)).backdropPainted;
     expect(painted, `${name} painted layers`).toEqual(

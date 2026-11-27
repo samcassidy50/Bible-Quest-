@@ -2592,6 +2592,130 @@ def paint_brimstone() -> Layers:
     return L
 
 
+def tent(cloth_r: list[Color], stripe: Color, dark: Color, pole_r: list[Color], outline: Color) -> Canvas:
+    """A big goat-hair tent of the patriarchs: a sagging ridge on poles, striped cloth, open door."""
+    cv = Canvas(120, 54)
+    base = 54
+    ridge = [(6, base - 30), (34, base - 40), (60, base - 34), (86, base - 41), (114, base - 30)]
+    top = lambda u: next(  # noqa: E731
+        y0 + (y1 - y0) * (u - x0) / (x1 - x0) for (x0, y0), (x1, y1) in zip(ridge, ridge[1:]) if x0 <= u <= x1
+    )
+    for px, py in poly_pixels([(0, base), *ridge, (120, base)]):
+        u, v = native(px), native(py)
+        if not 6 <= u <= 114:
+            t = 0.25
+        else:
+            t = 0.62 - (v - top(u)) * 0.008 + (fbm(u, v, 901, None, cells=(8, 4)) - 0.5) * 0.25
+            if int(u / 9) % 2 == 0:
+                t -= 0.12
+        cv.put(px, py, shade(cloth_r, t, px, py))
+        if 4 <= (v - top(u) if 6 <= u <= 114 else 0) <= 5.5:
+            cv.put(px, py, stripe)
+    for px, py in poly_pixels([(50, base), (54, base - 22), (66, base - 22), (70, base)]):
+        cv.put(px, py, dark)
+    for x, y in ridge[1:4:2]:
+        stroke(cv, [(x, y - 4), (x, y + 2)], 1.4, 1.2, pole_r)
+    outline_pass(cv, outline)
+    return cv
+
+
+def sheep(cv: Canvas, x: float, base: float, s: float, wool: list[Color], face: Color, d: int) -> None:
+    """A woolly sheep: a round lit fleece, dark face and legs."""
+    for lx in (-0.5, 0.45):
+        stroke(cv, [(x + lx * s, base - s * 0.5), (x + lx * s, base)], 0.8, 0.7, [face])
+    ball(cv, x, base - s * 0.9, s, s * 0.65, wool)
+    dot(cv, x + d * s * 0.95, base - s * 1.05, max(0.7, s * 0.3), face)
+
+
+def olive(cv: Canvas, rng: random.Random, x: float, base: float, h: float, bark_r: list[Color], leaf_r: list[Color], seed: int) -> None:
+    """A gnarled olive tree: twisted short trunk, a broad silvery-green crown."""
+    stroke(cv, [(x, base), (x - 1.5, base - h * 0.25), (x + 1, base - h * 0.5)], 3.0, 1.8, bark_r, outline=bark_r[0])
+    circles = [(x + rng.uniform(-h * 0.4, h * 0.4), base - h * rng.uniform(0.55, 0.9), h * rng.uniform(0.16, 0.24)) for _ in range(8)]
+    blob(cv, circles, leaf_r, outline=leaf_r[0], seed=seed, tex=0.3, tex_cell=1.5)
+
+
+def paint_canaan() -> Layers:
+    """Gen 37, 42-45: Jacob's tents in the hill country of Canaan on a warm afternoon, flocks grazing."""
+    global LIGHT
+    LIGHT = (0.6, -0.8)
+    L = Layers()
+    rng = random.Random(1101)
+    sky_r = ramp('#4a7cc0', '#5a8ac6', '#6e9ccc', '#86aed2', '#a2c0d6', '#bed0d6', '#d8dcd0', '#eae2c4', '#f6e6b4')
+    sky_gradient(L.sky, sky_r, gamma=1.05)
+    glow(L.sky, 410, 70, 12, 50, ramp('#d6dcd0', '#ece6c4', '#f8eebc', '#fff8d4'))
+    disc(L.sky, 410, 70, 10, hexc('#fffcea'), hexc('#fff0bc'))
+    cloud_r = ramp('#a8b8cc', '#c8d2dc', '#e2e6e6', '#f6f6ee', '#ffffff')
+    for i, (cx, base, w, h) in enumerate([(110, 96, 90, 30), (290, 72, 60, 22), (500, 110, 80, 28)]):
+        cumulus(L.sky, rng, cx, base, w, h, cloud_r, seed=1110 + i)
+    streak_cloud(L.sky, rng, 240, 166, 160, hexc('#f2ead0'), hexc('#e0d8c4'))
+
+    far = L.far
+    ridge_fill(
+        far, lambda x: 44 - wave(x, [(1, 12, 0.3), (3, 6, 1.7), (7, 2, 0.9)]) - fbm(x, 0, 1120, cells=(32, 16, 8)) * 5,
+        ramp('#8a96b0', '#96a0b6', '#a4acbc', '#b4b8c2', '#c6c6c6'), seed=1121, bottom=FAR_H - PAD, base_t=0.55,
+        slope_gain=0.5, fade=0.004, tex=0.1,
+    )
+    hill_r = ramp('#7a7a4e', '#8a8654', '#9c945c', '#aea266', '#c0b072', '#d0be80')
+    ftops = ridge_fill(
+        far, lambda x: 72 - wave(x, [(2, 5, 0.9), (4, 2.5, 0.2), (9, 1, 1.4)]) - fbm(x, 3, 1122, cells=(16, 8)) * 3,
+        hill_r, seed=1123, bottom=FAR_H - PAD, base_t=0.55, slope_gain=0.5, fade=0.006, tex=0.14, sy=0.6,
+    )
+    grove_r = ramp('#4a5a3e', '#566844', '#62764c', '#728456')
+    for i, x in enumerate(scatter_points(rng, 14, 0, T, 22)):
+        b = ftops[int(x) % T] + 4
+        blob(far, [(x, b - 2.5, 3), (x + 3, b - 2, 2.4)], grove_r, outline=grove_r[0], seed=1124 + i, tex=0.2, tex_cell=1.5, cut_below=b)
+    wool_far = hexc('#ece4cc')
+    for hx in (120.0, 380.0):
+        for k in range(rng.randint(4, 6)):
+            x = hx + k * rng.uniform(3, 5)
+            dot(far, x, ftops[int(x) % T] + rng.uniform(6, 12), 1.0, wool_far)
+
+    mid = L.mid
+    grass_r = ramp('#5a6a36', '#68783c', '#788842', '#8a984a', '#a0a656', '#b6b464')
+    mtops = ridge_fill(
+        mid, lambda x: 76 - wave(x, [(2, 3, 0.7), (5, 1.6, 1.9), (11, 0.7, 0.4)]) - fbm(x, 2, 1130, cells=(16, 8)) * 2,
+        grass_r, seed=1131, bottom=MID_H - PAD, base_t=0.6, slope_gain=0.4, fade=0.01, tex=0.18,
+    )
+    bark_r = ramp('#2e2418', '#46382a', '#5e4c38', '#786248')
+    leaf_r = ramp('#3e4c36', '#4e5e40', '#60704c', '#74845a', '#8a9868', '#a2ac7c')
+    for i, x in enumerate(scatter_points(rng, 5, 0, T, 80)):
+        olive(mid, rng, x, mtops[int(x) % T] + 6, rng.uniform(26, 34), bark_r, leaf_r, seed=1140 + i)
+    for i, x in enumerate(scatter_points(rng, 10, 0, T, 20)):
+        base = mtops[int(x) % T] + 6
+        rad = rng.uniform(2.5, 4)
+        blob(mid, [(x, base - rad * 0.7, rad)], leaf_r, outline=leaf_r[0], seed=1150 + i, tex=0.2, tex_cell=2, cut_below=base)
+
+    g = L.ground
+    surface = 5
+    turf_r = ramp('#5a6232', '#687038', '#7a803e', '#8e9046', '#a2a050', '#b8b05e', '#ccc070')
+    dust_r = ramp('#6a5a42', '#7e6c4e', '#94805a', '#aa9468', '#c0a878', '#d2ba8a')
+
+    def pasture(u: float, v: float, d: float, px: int, py: int) -> Color:
+        n = fbm(u, v, 1161, cells=(32, 16, 8, 4))
+        path = abs(v - 46 - wave(u, [(1, 8, 1.2), (3, 4, 0.4)])) < 5 + n * 3
+        if path:
+            return shade(dust_r, 0.6 + (n - 0.5) * 0.4 - d * 0.002, px, py)
+        t = 0.58 - d * 0.004 + (n - 0.5) * 0.45 + (vnoise(u, v, 1.5, 6, 1162, T) - 0.5) * 0.3
+        if d < 1:
+            t = 0.92
+        return shade(turf_r, t, px, py)
+
+    ground_fill(g, surface, pasture)
+    tufts(g, rng, surface, turf_r, 150, max_h=5)
+    wool_r = ramp('#a89c84', '#c8bca2', '#e2d8c0', '#f6f0de')
+    for _ in range(7):
+        x, y = rng.uniform(0, T), rng.uniform(surface + 10, GROUND_H - 10)
+        sheep(g, x, y, rng.uniform(3, 4.2) * (0.7 + y / GROUND_H * 0.5), wool_r, hexc('#2e2620'), rng.choice((-1, 1)))
+    stone_r = ramp('#4a4438', '#6e6656', '#968c78', '#bcb29c')
+    for _ in range(12):
+        x, y = rng.uniform(0, T), rng.uniform(surface + 3, GROUND_H - 6)
+        w = rng.uniform(1.5, 3.0) * (0.7 + y / GROUND_H)
+        ball(g, x, y, w, w * 0.65, stone_r)
+    L.landmark = tent(ramp('#2a1e18', '#3a2a20', '#4c382a', '#5e4634', '#70563e'), hexc('#a8723e'), hexc('#140e0a'),
+                      ramp('#3a2a1a', '#5a4228', '#7a5a38'), hexc('#120c08'))
+    return L
+
+
 
 # name → (painter, landmark position as in Backdrop.ts LANDMARK_AT: x fraction, dy design px)
 ENVIRONMENTS: dict[str, tuple[Callable[[], Layers], tuple[float, int]]] = {
@@ -2610,6 +2734,7 @@ ENVIRONMENTS: dict[str, tuple[Callable[[], Layers], tuple[float, int]]] = {
     'sodom': (paint_sodom, (0.74, -24)),
     'plain': (paint_plain, (0.75, 0)),
     'brimstone': (paint_brimstone, (0.75, 0)),
+    'canaan': (paint_canaan, (0.76, -24)),
 }
 
 

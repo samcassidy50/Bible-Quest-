@@ -22,6 +22,7 @@ export const BACKDROP_VARIANTS: { id: string; setting: Setting; weather?: Weathe
   { id: 'sodom', setting: 'sodom' },
   { id: 'plain', setting: 'plain' },
   { id: 'brimstone', setting: 'brimstone' },
+  { id: 'canaan', setting: 'canaan' },
 ];
 
 /**
