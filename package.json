@@ -17,6 +17,9 @@
     "cap:sync": "npm run build && cap sync",
     "ios": "npm run cap:sync && cap run ios",
     "android": "npm run cap:sync && cap run android",
+    "cap:sync:test": "VITE_TEST_HOOKS=true npm run build && cap sync",
+    "android:test": "npm run cap:sync:test && cap run android",
+    "ios:test": "npm run cap:sync:test && cap run ios",
     "validate:content": "vitest run tests/unit/content.test.ts tests/unit/contentBuild.test.ts"
   },
   "dependencies": {
