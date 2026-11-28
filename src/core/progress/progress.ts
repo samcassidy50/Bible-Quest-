@@ -81,6 +81,11 @@ export const saveSchema = z.object({
       readingSpeed: z.enum(['slow', 'normal', 'fast']).catch('normal'),
       autoCollect: z.boolean().catch(false),
       timer: z.boolean().catch(false),
+      /**
+       * Questions are read aloud, and so is each answer the player taps; a separate Confirm button
+       * locks the answer in (for players still learning to read).
+       */
+      readQuestions: z.boolean().catch(true),
       /** Dev builds only: foes fall in one hit and every reading can be skipped. */
       quickTest: z.boolean().catch(false),
       /** Dev and test builds only: every passage on the map is open. */
@@ -94,6 +99,7 @@ export const saveSchema = z.object({
       readingSpeed: 'normal',
       autoCollect: false,
       timer: false,
+      readQuestions: true,
       quickTest: false,
       unlockAll: false,
       hero: null,

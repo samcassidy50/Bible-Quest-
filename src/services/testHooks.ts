@@ -32,7 +32,8 @@ export interface BattleTestState {
   ultimateUnlocked: boolean;
   /** Armor the angel is presenting right now. */
   gift: string | null;
-  question: { id: string; answerIndex: number; choices: number } | null;
+  /** `selected`: read-aloud mode's answer tapped but not yet confirmed. */
+  question: { id: string; answerIndex: number; choices: number; selected: number | null } | null;
   feedback: 'correct' | 'wrong' | null;
   result: 'VICTORY' | 'DEFEAT' | null;
   asked: number;
@@ -41,6 +42,8 @@ export interface BattleTestState {
   heroAnims: string[];
   /** POWER UP bursts shown after right answers this fight. */
   powerUps: number;
+  /** Text the question voice read this fight (questions and tapped answers), oldest first. */
+  spoken: string[];
 }
 
 export interface ScriptureTestState {
@@ -48,6 +51,8 @@ export interface ScriptureTestState {
   /** Which reading section this is (0-based), and how many the passage has. */
   section: number;
   sectionCount: number;
+  /** Energy carried in from the fights before this reading (shown with the new orbs' energy). */
+  carriedEnergy: number;
   durationMs: number;
   elapsedMs: number;
   narrationDone: boolean;

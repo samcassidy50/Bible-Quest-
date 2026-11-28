@@ -82,6 +82,7 @@ The target _layout and feel_ is the screenshot the project started from: a side-
 
 - Each encounter needs **at least 6 questions**, and **at least 2 per section**. Every question names its `section`; its `highlight` must be in that section or an earlier one, so a fight never asks about verses not read yet. Questions are shuffled without replacement and recycled only if the pool runs out.
 - **Short fights (2026-11-20):** foes have less HP and hit harder, and a right answer hits for 3×, so the first two foes fall to one right answer each and a fight at 60% accuracy takes about 5 questions (the balance test keeps the median at 3–6). The save remembers which questions were asked (`asked`); the next fight on a passage asks the unasked ones first, and the list for a passage starts over once all of its questions have been asked.
+- **Longer fights (2026-11-26):** with one foe per reading section, foes got tougher so each takes **2–3 hits**: minions about 50 HP (two right answers), bosses 80 HP (three), a pair 26 HP each (one each). Foe attack dropped to about 60% so a passage of up to 4 fights still meets the balance targets (≥ 92% wins at 60% accuracy). `tests/unit/balance.test.ts` checks every passage at full accuracy takes 2–3 hits per foe. Energy carries across a passage's fights, and each reading shows the carried energy plus its own orbs.
 - Questions must be answerable **from the verse(s) just read**. This is a hard content rule that we check in review.
 - Difficulty tags (`easy` / `medium` / `hard`) let a future difficulty setting filter the pool.
 
@@ -95,7 +96,9 @@ To keep combat age-appropriate and theologically careful, foes are **personified
 | Gen 3 (the Fall)                  | _The Serpent_                                     |
 | Gen 3:17–18 (thorns and thistles) | _Thornbeast_                                      |
 | Gen 6–8 (the Flood)               | _Flood Surge_: a water elemental                  |
-| Gen 11 (Babel)                    | _Tower Golem_                                     |
+| Gen 11 (Babel)                    | _Pride Brute_ (was Tower Golem)                   |
+
+**Foe review (2026-11-26):** every fight's foe was checked against the verses read before it, and foes that clashed with the passage were swapped, using only the existing sprites for now: no thorns or wild beasts before the Fall (Eden has Lazy Oozes and a Whisper of Want; the animals' creation has formless waters), no storms after the rain stops (receding waters and a restless wind while waiting for the dove, puddles as the earth dries), the violence of Gen 6 as a Strife Spark and a Raging Shadow, and Babel as Kiln Sparks ("bake them hard in the fire"), a Babble Gust and a Pride Brute. Purpose-made art (brick golems, a babble imp, fog, mud, a slug and others) is a possible later step.
 
 This is an open question for review: confirm the tone with the stakeholders (see §10).
 
@@ -284,9 +287,9 @@ INTRO → HERO_CHOOSE ─(attack | special)─▶ HERO_QUESTION → HERO_ACTION(
     },
     {
       "id": "gen-001-q3",
-      "type": "fill_blank",
+      "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "God's Spirit was hovering over the surface of the ____.",
+      "prompt": "What was God's Spirit hovering over?",
       "choices": ["waters", "mountains", "garden", "sky"],
       "answerIndex": 0,
       "highlight": "hovering over the surface of the waters",
@@ -329,7 +332,8 @@ Later arcs: Abraham (12–25), Isaac and Jacob (25–36), Joseph (37–50), and 
 - **Audio:** audio unlocks on the first tap (iOS requirement) and respects the device's silent switch for music while still letting narration play when enabled.
 - **Performance budget:** 60 fps on an iPhone 11 and Pixel 6a; 30 fps minimum on a low-end Android device (about 3 GB of RAM). Cold start under 3 s. App size under 150 MB.
 - **HUD:** wave pips (top), pause/settings (top right), hero portrait with HP and Faith meter (bottom left), **action bar** with Attack, 4 special slots and the Ultimate button (bottom right, thumb zone), damage numbers (floating).
-- **Question card:** large tap targets (at least 48 px), readable font (at least 24 px at 720p), and the verse reference shown on the card.
+- **Question card:** large tap targets (at least 48 px), and readable font (at least 24 px at 720p). The card shows only the question and its answers (the passage reference is on the battle screen's top-left).
+- **Read questions aloud** (setting, on by default): the device voice reads each question (tap it to hear it again) and each answer the player taps; the tapped answer is highlighted and a separate **Confirm** button locks it in. With the setting off, tapping an answer answers at once. Prompts are always whole questions (no fill-in-the-blank), so they read well aloud.
 - **Accessibility:** a text-speed slider, narration on/off, captions always on, a high-contrast option, colorblind-safe right/wrong feedback (icon plus color), and no reliance on the timer.
 - **Audio:** music bed, SFX for hits and powered hits, narration ducking (music volume drops during the verse).
 
@@ -382,7 +386,7 @@ Each phase ends in something playable, deployed to a preview URL.
 ### Phase 3: Content pipeline and Genesis arc 1 (≈2 weeks)
 
 - Zod schema, `ContentService`, validation script in CI.
-- All question types (multiple choice, true/false, fill in the blank).
+- All question types (multiple choice, true/false). No fill-in-the-blank: questions are read aloud.
 - The 11 Genesis 1–11 encounters from §4 with reviewed questions.
 - Map/stage select (simple list is fine).
 - Answer choices are shuffled each time a question is shown (true/false stays in order).

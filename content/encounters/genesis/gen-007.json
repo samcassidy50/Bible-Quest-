@@ -7,13 +7,13 @@
     {
       "verses": "8-9",
       "foe": {
-        "id": "thornling-1",
-        "name": "Thornling",
-        "maxHp": 25,
-        "attack": 17,
-        "color": "#3f6b3a",
-        "size": 0.8,
-        "sprite": "thorn-plant"
+        "id": "lazy-ooze-1",
+        "name": "Lazy Ooze",
+        "maxHp": 50,
+        "attack": 10,
+        "color": "#4a6a5a",
+        "size": 0.85,
+        "sprite": "slime-blue"
       },
       "orbs": [
         {
@@ -27,13 +27,13 @@
     {
       "verses": "10-14",
       "foe": {
-        "id": "thornling-2",
-        "name": "Thornling",
-        "maxHp": 25,
-        "attack": 17,
-        "color": "#355c31",
+        "id": "lazy-ooze-2",
+        "name": "Lazy Ooze",
+        "maxHp": 50,
+        "attack": 10,
+        "color": "#3e5c4e",
         "size": 0.9,
-        "sprite": "thorn-plant"
+        "sprite": "slime-blue"
       },
       "orbs": [
         {
@@ -47,13 +47,13 @@
     {
       "verses": "15-17",
       "foe": {
-        "id": "thorn-sentinel",
-        "name": "Thorn Sentinel",
-        "maxHp": 40,
-        "attack": 20,
-        "color": "#24401f",
-        "size": 1.2,
-        "sprite": "thorn-plant"
+        "id": "whisper-of-want",
+        "name": "Whisper of Want",
+        "maxHp": 80,
+        "attack": 12,
+        "color": "#2e7d5b",
+        "size": 1.3,
+        "sprite": "hissling"
       },
       "orbs": [
         {
@@ -118,16 +118,6 @@
       "choices": ["To work it and take care of it", "To hide", "To sleep", "To build a tower"],
       "answerIndex": 0,
       "highlight": "to work it and take care of it",
-      "section": 3
-    },
-    {
-      "id": "gen-007-q6",
-      "type": "fill_blank",
-      "difficulty": "easy",
-      "prompt": "“You may eat from any ____ in the garden.”",
-      "choices": ["tree", "river", "rock", "flower"],
-      "answerIndex": 0,
-      "highlight": "You may eat from any tree in the garden",
       "section": 3
     },
     {

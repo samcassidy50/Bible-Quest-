@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { ENCOUNTERS } from '../../src/content';
-import { battle, heroTurn, playTurn, snap, state, tap, waitFor } from './helpers';
+import { battle, heroTurn, playTurn, snap, state, tap, waitFor, answer } from './helpers';
 
 const ALL = 'sword,shield,breastplate,sandals';
 
@@ -73,7 +73,7 @@ test('tapping through a fight: question card, specials and the ultimate', async 
   await waitFor(page, 's.battle.question && s.targets["answer:0"]');
   await snap(page, test.info().outputPath('question.png'));
   const q = (await battle(page)).question!;
-  await tap(page, `answer:${q.answerIndex}`);
+  await answer(page, q.answerIndex);
   await waitFor(page, 's.battle.question === null');
   await heroTurn(page);
   b = await battle(page);
@@ -84,7 +84,7 @@ test('tapping through a fight: question card, specials and the ultimate', async 
   await tap(page, 'action:shield');
   await waitFor(page, 's.battle.question && s.targets["answer:0"]');
   const q2 = (await battle(page)).question!;
-  await tap(page, `answer:${(q2.answerIndex + 1) % q2.choices}`);
+  await answer(page, (q2.answerIndex + 1) % q2.choices);
   await waitFor(page, '!!s.targets["continue"]');
   await snap(page, test.info().outputPath('wrong-answer.png'));
   await tap(page, 'continue');
@@ -92,6 +92,38 @@ test('tapping through a fight: question card, specials and the ultimate', async 
   b = await battle(page);
   expect(b.energy).toBe(5); // Shield costs 2, even with a wrong answer
   expect(b.faith).toBe(1); // wrong answers don't drain faith
+});
+
+test('read-aloud mode: the question and each tapped answer are read; Confirm answers', async ({
+  page,
+}) => {
+  await page.goto('/?scene=battle&seed=4&specials=sword&energy=10&freeze=1&narration=off');
+  await heroTurn(page);
+  await tap(page, 'action:sword');
+  await waitFor(
+    page,
+    's.battle.question && !!s.targets["confirm"] && s.battle.spoken.length === 1',
+  );
+  const q = (await battle(page)).question!;
+  expect(q.selected).toBeNull();
+
+  // Tapping an answer selects and reads it but does not answer.
+  const wrong = (q.answerIndex + 1) % q.choices;
+  await tap(page, `answer:${wrong}`);
+  await waitFor(page, `s.battle.question.selected === ${wrong}`);
+  await tap(page, `answer:${q.answerIndex}`);
+  await waitFor(page, `s.battle.question.selected === ${q.answerIndex}`);
+  let b = await battle(page);
+  expect(b.spoken).toHaveLength(3);
+  expect(b.feedback).toBeNull();
+  expect(b.phase).toBe('HERO_QUESTION');
+  await snap(page, test.info().outputPath('read-aloud-selected.png'));
+
+  // Confirm locks in the last one tapped.
+  await tap(page, 'confirm');
+  await waitFor(page, 's.battle.question === null');
+  b = await battle(page);
+  expect(b.correct).toBe(1);
 });
 
 test('one tap on a special opens exactly one question and nothing else happens', async ({
@@ -167,9 +199,9 @@ test('answer choices are shuffled, not always first', async ({ page }) => {
 test('sprite foes play their attack, hurt and death frames', async ({ page }) => {
   test.setTimeout(120_000); // two auto-played fights, with foes walking up to attack
   const foes = [
-    ['gen-005', 'slime-lava'],
-    ['gen-007', 'thorn-plant'],
-    ['gen-010', 'shadow-wolf'],
+    ['gen-006', 'flame-wisp'],
+    ['gen-011', 'thorn-plant'],
+    ['gen-010', 'dusk-hound'],
     ['gen-031', 'fire-spirit'],
   ] as const;
   for (const [encounter, sprite] of foes) {
@@ -179,17 +211,17 @@ test('sprite foes play their attack, hurt and death frames', async ({ page }) =>
     await snap(page, test.info().outputPath(`${sprite}.png`));
   }
 
-  // The Babel boss is the third wave.
+  // The Babel boss is the fourth wave.
   await page.goto('/?scene=battle&encounter=gen-031&seed=1&autoAnswer=correct&fast=1');
   await waitFor(
     page,
-    "s.battle && s.battle.wave === 2 && s.battle.foeSprite === 'minotaur' && !s.busy",
+    "s.battle && s.battle.wave === 3 && s.battle.foeSprite === 'minotaur' && !s.busy",
     60_000,
   );
   await snap(page, test.info().outputPath('minotaur.png'));
 
   await page.goto('/?scene=battle&encounter=gen-001&seed=1&autoAnswer=correct&fast=1');
-  await waitFor(page, "s.battle && s.battle.foeSprite === 'slime-blue'");
+  await waitFor(page, "s.battle && s.battle.foeSprite === 'night-bat'");
   await waitFor(page, "s.battle.foeAnims.includes('hurt') && s.battle.foeAnims.includes('attack')");
   // Foes walk up to the hero, attack there, then walk back to their spot.
   await waitFor(page, "s.battle.foeAnims.join(' ').includes('move attack move')");
@@ -200,7 +232,9 @@ test('sprite foes play their attack, hurt and death frames', async ({ page }) =>
 test('painted foes open the serpent, storm and flood passages', async ({ page }) => {
   const foes = [
     ['gen-009', 'hissling'],
-    ['gen-019', 'gust'],
+    ['gen-019', 'fire-spirit'],
+    ['gen-024', 'squall'],
+    ['gen-021', 'squall'],
     ['gen-022', 'wave'],
     ['gen-027', 'squall'],
   ] as const;
@@ -213,18 +247,25 @@ test('painted foes open the serpent, storm and flood passages', async ({ page })
 });
 
 test('painted bosses arrive on the last wave and play their defeat frames', async ({ page }) => {
-  test.setTimeout(120_000);
+  test.setTimeout(240_000);
   const bosses = [
     ['gen-009', 'serpent'],
-    ['gen-019', 'storm-cloud'],
+    ['gen-024', 'flood-surge'],
+    ['gen-021', 'storm-wisp'],
     ['gen-022', 'flood-surge'],
     ['gen-027', 'tempest'],
+    ['gen-007', 'hissling'],
+    ['gen-031', 'minotaur'],
   ] as const;
   for (const [encounter, boss] of bosses) {
     await page.goto(
       `/?scene=battle&encounter=${encounter}&seed=1&autoAnswer=correct&fast=1&oneShot=1`,
     );
-    await waitFor(page, `s.battle && s.battle.wave === 2 && s.battle.foeSprite === '${boss}'`);
+    await waitFor(
+      page,
+      `s.battle && s.battle.wave === s.battle.waveCount - 1 && s.battle.foeSprite === '${boss}'`,
+      60_000,
+    );
     if (encounter === 'gen-009') await snap(page, test.info().outputPath(`${boss}.png`));
     await waitFor(page, "s.battle.result === 'VICTORY' && !!s.targets.primary", 60_000);
     expect((await battle(page)).foeAnims).toContain('death');
@@ -269,7 +310,7 @@ test('a pair wave: two foes on the field, and the back one steps up when the fro
     await heroTurn(page);
     await tap(page, 'action:attack');
     await waitFor(page, '!!s.targets["answer:0"]');
-    await tap(page, `answer:${(await battle(page)).question!.answerIndex}`);
+    await answer(page, (await battle(page)).question!.answerIndex);
   };
   await hit(); // wave 1 falls in one hit
   await waitFor(page, "s.battle.wave === 1 && s.battle.backFoeId === 'wave-2b'", 30_000);
@@ -290,7 +331,7 @@ test('tapping the back foe of a pair targets it, and the hit lands there', async
     await heroTurn(page);
     await tap(page, 'action:attack');
     await waitFor(page, '!!s.targets["answer:0"]');
-    await tap(page, `answer:${(await battle(page)).question!.answerIndex}`);
+    await answer(page, (await battle(page)).question!.answerIndex);
   };
   await hit(); // wave 1
   await waitFor(page, "s.battle.backFoeId === 'wave-2b' && !!s.targets['foe:back']", 30_000);
@@ -332,7 +373,7 @@ test('a right answer drops the card and bursts POWER UP over the field', async (
   await tap(page, 'action:attack');
   await waitFor(page, 's.battle.question && s.targets["answer:0"]');
   const q = (await battle(page)).question!;
-  await tap(page, `answer:${q.answerIndex}`);
+  await answer(page, q.answerIndex);
   await waitFor(page, 's.battle.powerUps === 1');
   await page.waitForTimeout(450);
   await snap(page, test.info().outputPath('power-up.png'));

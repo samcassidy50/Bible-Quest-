@@ -41,6 +41,13 @@ const ROWS: Row[] = [
     next: (s) => ({ narration: !s.narration }),
   },
   {
+    key: 'readQuestions',
+    label: 'Read questions aloud',
+    hint: 'Reads the question and each answer you tap; then tap Confirm',
+    value: (s) => (s.readQuestions ? 'On' : 'Off'),
+    next: (s) => ({ readQuestions: !s.readQuestions }),
+  },
+  {
     key: 'readingSpeed',
     label: 'Reading speed',
     hint: 'How fast the verse is read and scrolls',

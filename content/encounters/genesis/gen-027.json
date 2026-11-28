@@ -10,8 +10,8 @@
       "foe": {
         "id": "squall-1",
         "name": "Squall",
-        "maxHp": 25,
-        "attack": 17,
+        "maxHp": 50,
+        "attack": 10,
         "color": "#5a6f7f",
         "size": 0.85,
         "sprite": "squall"
@@ -30,8 +30,8 @@
       "foe": {
         "id": "squall-2",
         "name": "Squall",
-        "maxHp": 25,
-        "attack": 19,
+        "maxHp": 50,
+        "attack": 11,
         "color": "#4c5f6e",
         "size": 0.9,
         "sprite": "squall"
@@ -50,8 +50,8 @@
       "foe": {
         "id": "tempest",
         "name": "Tempest",
-        "maxHp": 45,
-        "attack": 20,
+        "maxHp": 80,
+        "attack": 12,
         "color": "#26323d",
         "size": 1.4,
         "sprite": "tempest"
@@ -128,16 +128,6 @@
       "choices": ["Remember His promise", "Send rain", "Go to sleep", "Build a tower"],
       "answerIndex": 0,
       "highlight": "I will remember My promise",
-      "section": 3
-    },
-    {
-      "id": "gen-027-q6",
-      "type": "fill_blank",
-      "difficulty": "medium",
-      "prompt": "The promise that lasts ____.",
-      "choices": ["forever", "a week", "a year", "one day"],
-      "answerIndex": 0,
-      "highlight": "the promise that lasts forever",
       "section": 3
     }
   ]

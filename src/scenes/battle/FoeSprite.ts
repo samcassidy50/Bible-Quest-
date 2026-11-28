@@ -14,6 +14,16 @@ import waveUrl from '../../assets/foes/wave.png';
 import floodSurgeUrl from '../../assets/foes/flood-surge.png';
 import squallUrl from '../../assets/foes/squall.png';
 import tempestUrl from '../../assets/foes/tempest.png';
+import duskHoundUrl from '../../assets/foes/dusk-hound.png';
+import nightBatUrl from '../../assets/foes/night-bat.png';
+import spikedSlimeUrl from '../../assets/foes/spiked-slime.png';
+import windWispUrl from '../../assets/foes/wind-wisp.png';
+import flameWispUrl from '../../assets/foes/flame-wisp.png';
+import tideWispUrl from '../../assets/foes/tide-wisp.png';
+import stormWispUrl from '../../assets/foes/storm-wisp.png';
+import leafWispUrl from '../../assets/foes/leaf-wisp.png';
+import shadeWispUrl from '../../assets/foes/shade-wisp.png';
+import surfWispUrl from '../../assets/foes/surf-wisp.png';
 
 export type FoeAnim = 'idle' | 'attack' | 'hurt' | 'death';
 const ROWS: FoeAnim[] = ['idle', 'attack', 'hurt', 'death'];
@@ -153,6 +163,112 @@ const SHEETS: Record<FoeSpriteId, Sheet> = {
   },
   squall: { ...PAINTED, ...GLIDE, url: squallUrl, bodyHeight: 54, shadow: 40, front: 24 },
   tempest: { ...PAINTED, ...GLIDE, url: tempestUrl, bodyHeight: 96, shadow: 40, front: 34 },
+  'dusk-hound': {
+    url: duskHoundUrl,
+    cell: 32,
+    cols: 12,
+    frames: { idle: 6, attack: 11, hurt: 6, death: 12 },
+    feet: { x: 16, y: 33 }, // its paws sit on the bottom edge of the cell
+    bodyHeight: 23,
+    scale: 7,
+    shadow: 30,
+    front: 14,
+  },
+  'night-bat': {
+    url: nightBatUrl,
+    cell: 64,
+    cols: 11,
+    frames: { idle: 4, attack: 7, hurt: 5, death: 11 },
+    feet: { x: 32, y: 54 }, // it flies, so it hangs above the ground line
+    bodyHeight: 19,
+    scale: 8,
+    shadow: 14,
+    gait: 'glide',
+  },
+  'spiked-slime': {
+    url: spikedSlimeUrl,
+    cell: 64,
+    cols: 6,
+    frames: { idle: 4, attack: 4, hurt: 4, death: 6 },
+    feet: { x: 30, y: 48 },
+    bodyHeight: 18,
+    scale: 8,
+    shadow: 22,
+  },
+  // AI-drafted (art/foe-raw), cut by scripts/art/process_generated_foes.py into the painted layout;
+  // it hovers, so its lowest wisp sits above the ground line.
+  'wind-wisp': {
+    ...PAINTED,
+    ...GLIDE,
+    url: windWispUrl,
+    feet: { x: 64, y: 112 },
+    bodyHeight: 61,
+    shadow: 34,
+    front: 22,
+  },
+  'flame-wisp': {
+    ...PAINTED,
+    ...GLIDE,
+    url: flameWispUrl,
+    frames: { idle: 8, attack: 8, hurt: 4, death: 6 },
+    feet: { x: 64, y: 112 },
+    bodyHeight: 62,
+    shadow: 34,
+    front: 24,
+  },
+  // Stands on its own puddle, so its feet are on the ground line.
+  'tide-wisp': {
+    ...PAINTED,
+    url: tideWispUrl,
+    frames: { idle: 8, attack: 5, hurt: 4, death: 6 },
+    bodyHeight: 58,
+    shadow: 34,
+    front: 30,
+  },
+  // The blast is fully out on frame 4.
+  'storm-wisp': {
+    ...PAINTED,
+    ...GLIDE,
+    url: stormWispUrl,
+    feet: { x: 64, y: 112 },
+    bodyHeight: 63,
+    shadow: 36,
+    front: 30,
+    impact: 4,
+  },
+  // Hovering green spirit: its orb flies off on the last attack frame.
+  'leaf-wisp': {
+    ...PAINTED,
+    ...GLIDE,
+    url: leafWispUrl,
+    frames: { idle: 8, attack: 4, hurt: 4, death: 6 },
+    feet: { x: 64, y: 112 },
+    bodyHeight: 61,
+    shadow: 34,
+    front: 28,
+    impact: 3,
+  },
+  'shade-wisp': {
+    ...PAINTED,
+    ...GLIDE,
+    url: shadeWispUrl,
+    frames: { idle: 8, attack: 4, hurt: 4, death: 6 },
+    feet: { x: 64, y: 112 },
+    bodyHeight: 64,
+    shadow: 34,
+    front: 28,
+    impact: 3,
+  },
+  // Stands on its splash; the blast is out from attack frame 4.
+  'surf-wisp': {
+    ...PAINTED,
+    url: surfWispUrl,
+    frames: { idle: 8, attack: 8, hurt: 4, death: 6 },
+    bodyHeight: 56,
+    shadow: 32,
+    front: 30,
+    impact: 4,
+  },
 };
 
 const textureKey = (id: FoeSpriteId) => `foe-${id}`;

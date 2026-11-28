@@ -9,11 +9,11 @@
       "foe": {
         "id": "shadow-wisp-1",
         "name": "Shadow Wisp",
-        "maxHp": 20,
-        "attack": 15,
+        "maxHp": 45,
+        "attack": 9,
         "color": "#4b3b78",
         "size": 0.8,
-        "sprite": "slime-blue"
+        "sprite": "night-bat"
       },
       "orbs": [
         {
@@ -29,11 +29,11 @@
       "foe": {
         "id": "shade-of-the-deep",
         "name": "Shade of the Deep",
-        "maxHp": 40,
-        "attack": 20,
+        "maxHp": 80,
+        "attack": 12,
         "color": "#241a45",
         "size": 1.25,
-        "sprite": "slime-blue"
+        "sprite": "shade-wisp"
       },
       "orbs": [
         {
@@ -66,21 +66,16 @@
       "section": 1
     },
     {
-      "id": "gen-001-q3",
-      "type": "fill_blank",
-      "difficulty": "medium",
-      "prompt": "And the Spirit of God was ____ over the waters.",
-      "choices": ["hovering", "sleeping", "walking", "singing"],
-      "answerIndex": 0,
-      "highlight": "hovering over the waters",
-      "section": 1
-    },
-    {
       "id": "gen-001-q4",
-      "type": "fill_blank",
+      "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "God said, “Let there be ____,” and there was light.",
-      "choices": ["light", "water", "land", "stars"],
+      "prompt": "What did God say, so that there was light?",
+      "choices": [
+        "“Let there be light”",
+        "“Let there be water”",
+        "“Let there be land”",
+        "“Let there be stars”"
+      ],
       "answerIndex": 0,
       "highlight": "Let there be light",
       "section": 2

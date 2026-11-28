@@ -1,6 +1,12 @@
 import Phaser from 'phaser';
 import { BattleEngine } from '../../core/battle/BattleEngine';
-import { QUESTION_TIME_S, recordAsked, recordVictory } from '../../core/progress/progress';
+import {
+  QUESTION_TIME_S,
+  READING_SPEEDS,
+  recordAsked,
+  recordVictory,
+} from '../../core/progress/progress';
+import { createNarration, type Narration } from '../../services/narration';
 import { autoSetOnFirstWin, heroLoadout } from '../../core/progress/runes';
 import { progress } from '../../services/progress';
 import { pickAction } from '../../core/battle/simulate';
@@ -26,7 +32,7 @@ import { ActionBar } from './ActionBar';
 import { ACTION_INFO, COLOR } from './actionInfo';
 import { Fighter } from './Fighter';
 import { HpBar } from './HpBar';
-import { QuestionCard } from './QuestionCard';
+import { QuestionCard, type CardVoice } from './QuestionCard';
 import { ResultPanel } from './ResultPanel';
 import type { ReviveData } from './ReviveScene';
 import { ArmorPage } from './ArmorPage';
@@ -92,6 +98,10 @@ export class BattleScene extends Phaser.Scene {
   private refText!: Phaser.GameObjects.Text;
   private actionBar!: ActionBar;
   private card?: QuestionCard;
+  /** Read-aloud mode (settings → Read questions aloud); undefined when it is off. */
+  private voice?: CardVoice;
+  /** Everything the question voice read this fight, oldest first. */
+  private spoken: string[] = [];
   private result?: ResultPanel;
   /** Top-right button that leaves the fight for the map, and its confirm prompt while open. */
   private leaveButton!: Button;
@@ -128,6 +138,7 @@ export class BattleScene extends Phaser.Scene {
     this.askedHere = [];
     this.correct = 0;
     this.powerUps = 0;
+    this.spoken = [];
 
     this.debug = this.registry.get('debug') as DebugParams;
     this.encounter = getEncounter(
@@ -163,6 +174,9 @@ export class BattleScene extends Phaser.Scene {
     this.scale.on('resize', this.layout, this);
     this.events.once('shutdown', () => this.scale.off('resize', this.layout, this));
     this.events.on('card-continue-ready', () => this.sync());
+    this.events.on('card-selected', this.sync, this);
+    this.events.once('shutdown', () => this.events.off('card-selected', this.sync, this));
+    this.voice = this.createVoice();
 
     this.engine.start();
     this.dealDeck();
@@ -498,6 +512,30 @@ export class BattleScene extends Phaser.Scene {
     }
   }
 
+  /**
+   * Read-aloud mode: questions use the device voice (there are no recorded clips for them). The
+   * voice is silent under ?narration=off and ?fast=1, but the card still asks for Confirm.
+   */
+  private createVoice(): CardVoice | undefined {
+    const settings = progress.save.settings;
+    if (!settings.readQuestions) return undefined;
+    const narration: Narration = createNarration({
+      enabled: !this.debug.narrationOff && !this.debug.fast,
+      wait: (ms) => wait(this, ms),
+      rate: READING_SPEEDS[settings.readingSpeed],
+    });
+    this.events.once('shutdown', () => narration.stop());
+    return {
+      say: (text) => {
+        this.spoken.push(text);
+        narration.stop();
+        void narration.speak(text);
+        this.sync();
+      },
+      stop: () => narration.stop(),
+    };
+  }
+
   private async onAction(action: ActionId): Promise<void> {
     if (this.busy || !this.engine.availableActions().includes(action)) return;
     this.setBusy(true);
@@ -517,14 +555,9 @@ export class BattleScene extends Phaser.Scene {
     this.question = q;
     this.feedback = null;
     this.asked++;
-    this.card = new QuestionCard(
-      this,
-      q,
-      action,
-      this.encounter.reference,
-      (i) => void this.onAnswer(i),
-    );
+    this.card = new QuestionCard(this, q, (i) => void this.onAnswer(i), this.voice);
     await this.card.slideIn();
+    this.card.readQuestion();
     if (progress.save.settings.timer && !this.debug.autoAnswer)
       this.card.startTimer(QUESTION_TIME_S * 1000);
     this.sync();
@@ -897,6 +930,7 @@ export class BattleScene extends Phaser.Scene {
         resolve(data?.energy ?? 0),
       );
       this.registry.set('readingSection', this.engine.waveIndex);
+      this.registry.set('carriedEnergy', this.engine.energy);
       this.scene.run('scripture');
       this.scene.sleep();
     });
@@ -1227,6 +1261,7 @@ export class BattleScene extends Phaser.Scene {
     }
     this.card?.answerButtons.forEach((b, i) => (targets[`answer:${i}`] = center(b)));
     if (this.card?.continueButton) targets['continue'] = center(this.card.continueButton);
+    if (this.card?.confirmButton) targets['confirm'] = center(this.card.confirmButton);
     if (this.targetZones.length === 2) {
       targets['foe:front'] = {
         x: Math.round(this.targetZones[0]!.x),
@@ -1284,6 +1319,7 @@ export class BattleScene extends Phaser.Scene {
               id: this.question.id,
               answerIndex: this.question.answerIndex,
               choices: this.question.choices.length,
+              selected: this.card?.selected ?? null,
             }
           : null,
         feedback: this.feedback,
@@ -1292,6 +1328,7 @@ export class BattleScene extends Phaser.Scene {
         correct: this.correct,
         heroAnims: this.hero.animHistory,
         powerUps: this.powerUps,
+        spoken: this.spoken.concat(),
       },
     });
   }

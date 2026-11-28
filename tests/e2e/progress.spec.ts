@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import type { SaveData } from '../../src/core/progress/progress';
-import { battle, heroTurn, snap, state, tap, waitFor } from './helpers';
+import { battle, heroTurn, snap, state, tap, waitFor, answer } from './helpers';
 
 test.describe.configure({ timeout: 90_000 });
 
@@ -23,6 +23,7 @@ const base = (): SaveData => ({
     readingSpeed: 'normal',
     autoCollect: false,
     timer: false,
+    readQuestions: true,
     quickTest: false,
     unlockAll: false,
     hero: 'boy',
@@ -234,7 +235,7 @@ test('quick test mode: Skip on a first reading, and one hit defeats a foe', asyn
   await heroTurn(page);
   await tap(page, 'action:attack');
   await waitFor(page, 's.battle.question && !!s.targets["answer:0"]');
-  await tap(page, `answer:${(await battle(page)).question!.answerIndex}`);
+  await answer(page, (await battle(page)).question!.answerIndex);
   // One answered Attack defeats the first foe.
   await waitFor(page, "s.sounds.includes('foeDefeat')", 30_000);
   expect((await state(page)).sounds.filter((x) => x === 'foeDefeat')).toHaveLength(1);

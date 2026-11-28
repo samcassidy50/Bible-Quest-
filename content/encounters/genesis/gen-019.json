@@ -7,13 +7,13 @@
     {
       "verses": "9-12",
       "foe": {
-        "id": "gust-1",
-        "name": "Gust",
-        "maxHp": 25,
-        "attack": 17,
-        "color": "#5b6b8a",
-        "size": 0.8,
-        "sprite": "gust"
+        "id": "strife-spark",
+        "name": "Strife Spark",
+        "maxHp": 50,
+        "attack": 10,
+        "color": "#a82c22",
+        "size": 0.9,
+        "sprite": "fire-spirit"
       },
       "orbs": [
         {
@@ -27,13 +27,13 @@
     {
       "verses": "13-16",
       "foe": {
-        "id": "storm-cloud",
-        "name": "Storm Cloud",
-        "maxHp": 45,
-        "attack": 20,
-        "color": "#2c3650",
+        "id": "raging-shadow",
+        "name": "Raging Shadow",
+        "maxHp": 80,
+        "attack": 12,
+        "color": "#3a1a26",
         "size": 1.3,
-        "sprite": "storm-cloud"
+        "sprite": "shadow-wolf"
       },
       "orbs": [
         {
@@ -93,16 +93,6 @@
       "choices": ["Gopher wood", "Oak", "Pine", "Bamboo"],
       "answerIndex": 0,
       "highlight": "gopher wood",
-      "section": 2
-    },
-    {
-      "id": "gen-019-q5",
-      "type": "fill_blank",
-      "difficulty": "easy",
-      "prompt": "“Cover it with ____ inside and out.”",
-      "choices": ["tar", "paint", "gold", "leaves"],
-      "answerIndex": 0,
-      "highlight": "cover it with tar inside and out",
       "section": 2
     },
     {

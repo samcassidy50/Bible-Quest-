@@ -14,12 +14,12 @@ export interface Verse {
 }
 
 /**
- * Phase 1 questions are all choice-based: multiple choice (4), true/false (2 choices),
- * and fill-in-the-blank (choices for the blank).
+ * Phase 1 questions are all choice-based: multiple choice (4) or true/false (2 choices). No
+ * fill-in-the-blank: every prompt is a whole question, so it reads well aloud.
  */
 export interface Question {
   id: string;
-  type: 'multiple_choice' | 'true_false' | 'fill_blank';
+  type: 'multiple_choice' | 'true_false';
   difficulty?: Difficulty;
   prompt: string;
   choices: readonly string[];

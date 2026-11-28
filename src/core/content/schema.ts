@@ -10,7 +10,11 @@ const hexColor = z.string().regex(/^#[0-9a-fA-F]{6}$/, 'a colour like "#4b3b78"'
 const choiceQuestion = z.object({
   id,
   difficulty: z.enum(['easy', 'medium', 'hard']).optional(),
-  prompt: z.string().min(5),
+  /** A whole question: no fill-in-the-blank gaps, since prompts are read aloud. */
+  prompt: z
+    .string()
+    .min(5)
+    .refine((p) => !/_{2,}/.test(p), 'a whole question, not a fill-in-the-blank (no "___")'),
   choices: z.array(z.string().min(1)),
   answerIndex: z.number().int().min(0),
   highlight: z.string().min(2),
@@ -21,10 +25,6 @@ const choiceQuestion = z.object({
 export const questionSchema = z.discriminatedUnion('type', [
   choiceQuestion.extend({
     type: z.literal('multiple_choice'),
-    choices: z.array(z.string().min(1)).length(4),
-  }),
-  choiceQuestion.extend({
-    type: z.literal('fill_blank'),
     choices: z.array(z.string().min(1)).length(4),
   }),
   choiceQuestion.extend({
@@ -49,6 +49,16 @@ export const FOE_SPRITES = [
   'flood-surge',
   'squall',
   'tempest',
+  'dusk-hound',
+  'night-bat',
+  'spiked-slime',
+  'wind-wisp',
+  'flame-wisp',
+  'tide-wisp',
+  'storm-wisp',
+  'leaf-wisp',
+  'shade-wisp',
+  'surf-wisp',
 ] as const;
 export type FoeSpriteId = (typeof FOE_SPRITES)[number];
 

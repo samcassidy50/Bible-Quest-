@@ -136,9 +136,9 @@
     },
     {
       "id": "gen-053-q7",
-      "type": "fill_blank",
+      "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "The town was called Zoar, which means “____.”",
+      "prompt": "What does the name Zoar mean?",
       "choices": ["little", "safe", "far", "bright"],
       "answerIndex": 0,
       "highlight": "That is why the town was called Zoar",

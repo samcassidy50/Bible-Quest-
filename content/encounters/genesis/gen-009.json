@@ -9,8 +9,8 @@
       "foe": {
         "id": "hissling-1",
         "name": "Hissling",
-        "maxHp": 25,
-        "attack": 17,
+        "maxHp": 50,
+        "attack": 10,
         "color": "#2e7d5b",
         "size": 0.8,
         "sprite": "hissling"
@@ -29,8 +29,8 @@
       "foe": {
         "id": "hissling-2",
         "name": "Hissling",
-        "maxHp": 25,
-        "attack": 19,
+        "maxHp": 50,
+        "attack": 11,
         "color": "#256b4d",
         "size": 0.9,
         "sprite": "hissling"
@@ -46,8 +46,8 @@
       "foe": {
         "id": "serpent",
         "name": "The Serpent",
-        "maxHp": 45,
-        "attack": 22,
+        "maxHp": 80,
+        "attack": 13,
         "color": "#123d2b",
         "size": 1.3,
         "sprite": "serpent"
@@ -97,9 +97,9 @@
     },
     {
       "id": "gen-009-q3",
-      "type": "fill_blank",
+      "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "“You will not surely ____,” the serpent told the woman.",
+      "prompt": "What did the serpent tell the woman would not happen to her?",
       "choices": ["die", "eat", "sleep", "leave"],
       "answerIndex": 0,
       "highlight": "You will not surely die",

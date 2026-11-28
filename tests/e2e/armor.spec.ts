@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { battle, heroTurn, snap, state, tap, waitFor } from './helpers';
+import { battle, heroTurn, snap, state, tap, waitFor, answer } from './helpers';
 
 test.describe.configure({ timeout: 90_000 });
 
@@ -46,7 +46,7 @@ test('tapping Receive takes the gift', async ({ page }) => {
       await tap(page, 'action:attack');
       await waitFor(page, '(s.battle.question && !!s.targets["answer:0"]) || !!s.battle.gift');
       const q = (await battle(page)).question;
-      if (q) await tap(page, `answer:${q.answerIndex}`);
+      if (q) await answer(page, q.answerIndex);
     }
     await page.waitForTimeout(150);
   }

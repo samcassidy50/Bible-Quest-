@@ -8,12 +8,12 @@
     {
       "verses": "1-3",
       "foe": {
-        "id": "squall-1",
-        "name": "Squall",
-        "maxHp": 25,
-        "attack": 17,
+        "id": "last-of-the-rain",
+        "name": "Last of the Rain",
+        "maxHp": 50,
+        "attack": 10,
         "color": "#5a6f7f",
-        "size": 0.8,
+        "size": 0.85,
         "sprite": "squall"
       },
       "orbs": [
@@ -25,13 +25,13 @@
     {
       "verses": "4-5",
       "foe": {
-        "id": "squall-2",
-        "name": "Squall",
-        "maxHp": 25,
-        "attack": 19,
-        "color": "#4c5f6e",
-        "size": 0.9,
-        "sprite": "squall"
+        "id": "receding-wave",
+        "name": "Receding Wave",
+        "maxHp": 50,
+        "attack": 11,
+        "color": "#2f6f9a",
+        "size": 0.85,
+        "sprite": "wave"
       },
       "orbs": [
         {
@@ -42,13 +42,13 @@
     {
       "verses": "6-9",
       "foe": {
-        "id": "squall-3",
-        "name": "Squall",
-        "maxHp": 25,
-        "attack": 19,
-        "color": "#56697a",
-        "size": 0.95,
-        "sprite": "squall"
+        "id": "restless-wind",
+        "name": "Restless Wind",
+        "maxHp": 50,
+        "attack": 11,
+        "color": "#5b6b8a",
+        "size": 0.9,
+        "sprite": "gust"
       },
       "orbs": [
         {
@@ -62,13 +62,13 @@
     {
       "verses": "10-12",
       "foe": {
-        "id": "lingering-storm",
-        "name": "Lingering Storm",
-        "maxHp": 45,
-        "attack": 20,
-        "color": "#2c3a46",
+        "id": "lingering-flood",
+        "name": "Lingering Flood",
+        "maxHp": 80,
+        "attack": 12,
+        "color": "#173e5c",
         "size": 1.3,
-        "sprite": "storm-cloud"
+        "sprite": "flood-surge"
       },
       "orbs": [
         {
@@ -81,9 +81,9 @@
   "questions": [
     {
       "id": "gen-024-q1",
-      "type": "fill_blank",
+      "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "But God ____ Noah.",
+      "prompt": "Who did God remember?",
       "choices": ["remembered", "forgot", "chased", "scolded"],
       "answerIndex": 0,
       "highlight": "But God remembered Noah",

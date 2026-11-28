@@ -7,13 +7,13 @@
     {
       "verses": "1-4",
       "foe": {
-        "id": "restless-wind-1",
-        "name": "Restless Wind",
-        "maxHp": 25,
-        "attack": 17,
-        "color": "#55657e",
-        "size": 0.8,
-        "sprite": "gust"
+        "id": "first-drops-1",
+        "name": "First Drops",
+        "maxHp": 50,
+        "attack": 10,
+        "color": "#6a7f8f",
+        "size": 0.85,
+        "sprite": "squall"
       },
       "orbs": [
         {
@@ -30,13 +30,13 @@
     {
       "verses": "5-7",
       "foe": {
-        "id": "restless-wind-2",
-        "name": "Restless Wind",
-        "maxHp": 25,
-        "attack": 19,
-        "color": "#4a5970",
+        "id": "first-drops-2",
+        "name": "First Drops",
+        "maxHp": 50,
+        "attack": 11,
+        "color": "#5c6f7e",
         "size": 0.9,
-        "sprite": "gust"
+        "sprite": "squall"
       },
       "orbs": [
         {
@@ -52,11 +52,11 @@
       "foe": {
         "id": "thunderhead",
         "name": "Thunderhead",
-        "maxHp": 45,
-        "attack": 22,
+        "maxHp": 80,
+        "attack": 13,
         "color": "#232c42",
         "size": 1.35,
-        "sprite": "storm-cloud"
+        "sprite": "storm-wisp"
       },
       "orbs": [
         {
@@ -144,9 +144,9 @@
     },
     {
       "id": "gen-021-q5",
-      "type": "fill_blank",
+      "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "The animals went into the ark two by ____.",
+      "prompt": "How did the animals go into the ark?",
       "choices": ["two", "ten", "night", "day"],
       "answerIndex": 0,
       "highlight": "two by two",

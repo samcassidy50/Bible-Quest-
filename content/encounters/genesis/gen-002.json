@@ -9,11 +9,11 @@
       "foe": {
         "id": "churning-wave-1",
         "name": "Churning Wave",
-        "maxHp": 25,
-        "attack": 17,
+        "maxHp": 50,
+        "attack": 10,
         "color": "#2f6f9a",
         "size": 0.8,
-        "sprite": "wave"
+        "sprite": "surf-wisp"
       },
       "orbs": [
         {
@@ -25,12 +25,12 @@
       "verses": "9-10",
       "foe": {
         "id": "churning-wave-2",
-        "name": "Churning Wave",
-        "maxHp": 25,
-        "attack": 19,
+        "name": "Tide Wisp",
+        "maxHp": 50,
+        "attack": 11,
         "color": "#285f85",
         "size": 0.9,
-        "sprite": "wave"
+        "sprite": "tide-wisp"
       },
       "orbs": [
         {
@@ -43,8 +43,8 @@
       "foe": {
         "id": "restless-deep",
         "name": "Restless Deep",
-        "maxHp": 45,
-        "attack": 22,
+        "maxHp": 80,
+        "attack": 13,
         "color": "#173e5c",
         "size": 1.3,
         "sprite": "flood-surge"
@@ -100,9 +100,9 @@
     },
     {
       "id": "gen-002-q4",
-      "type": "fill_blank",
+      "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "Trees with fruit that have ____ inside.",
+      "prompt": "What did God put inside the fruit of the trees?",
       "choices": ["seeds", "stones", "water", "honey"],
       "answerIndex": 0,
       "highlight": "trees with fruit that have seeds inside",

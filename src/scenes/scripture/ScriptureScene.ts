@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { Encounter, EncounterFoe } from '../../core/content/types';
 import type { DebugParams } from '../../core/debugParams';
+import { TUNING } from '../../core/battle/tuning';
 import { OrbTracker, scheduleOrbs, type ScheduledOrb } from '../../core/scripture/orbs';
 import {
   estimateNarrationMs,
@@ -57,6 +58,8 @@ export class ScriptureScene extends Phaser.Scene {
   private full!: Encounter;
   /** Which reading section this is (0-based). */
   private section = 0;
+  /** Energy the hero brings from the fights before this reading (0 for the first). */
+  private carried = 0;
   private narration!: Narration;
   /** Recorded clip per verse (undefined where the device voice reads it). */
   private clips: (VerseClip | undefined)[] = [];
@@ -118,6 +121,8 @@ export class ScriptureScene extends Phaser.Scene {
       this.full.sections.length - 1,
     );
     this.registry.remove('readingSection');
+    this.carried = this.section > 0 ? ((this.registry.get('carriedEnergy') as number) ?? 0) : 0;
+    this.registry.remove('carriedEnergy');
     const sec = this.full.sections[this.section]!;
     this.encounter = {
       ...this.full,
@@ -176,6 +181,11 @@ export class ScriptureScene extends Phaser.Scene {
   /** A reading between two fights of the same passage: the battle waits, asleep, for it. */
   private get midBattle(): boolean {
     return this.section > 0;
+  }
+
+  /** The energy the hero will have in the next fight: what they carry plus this reading's orbs. */
+  private get shownEnergy(): number {
+    return Math.min(TUNING.energy.max, this.carried + this.tracker.collected.length);
   }
 
   private get lastSection(): boolean {
@@ -263,6 +273,7 @@ export class ScriptureScene extends Phaser.Scene {
       .setShadow(2, 2, '#000', 3);
     const badge = this.add.circle(-40, 62, 34, 0x000000, 0.45).setStrokeStyle(3, ENERGY_COLOR, 0.9);
     this.energyText = new EnergyCount(this, -40, 62, 26, FONT_UI);
+    this.energyText.setValue(this.shownEnergy);
     this.loadout.add([label, badge, this.energyText]);
 
     // Controls, top left.
@@ -468,7 +479,7 @@ export class ScriptureScene extends Phaser.Scene {
     this.sync();
     const m = this.energyText.getWorldTransformMatrix();
     await orb.collectTo(m.tx, m.ty);
-    this.energyText.setValue(this.tracker.collected.length);
+    this.energyText.setValue(this.shownEnergy);
     this.tweens.add({ targets: this.energyText, scale: 1.4, duration: 140, yoyo: true });
   }
 
@@ -690,6 +701,7 @@ export class ScriptureScene extends Phaser.Scene {
         tickerWidth: Math.round(this.tickerWidth),
         orbs: this.tracker.all.map((o) => ({ ...o, atMs: scheduled.get(o.id) ?? -1 })),
         energy: this.tracker.collected.length,
+        carriedEnergy: this.carried,
         collected: this.tracker.collected,
         canSkip: this.canSkip,
         fullTextOpen: !!this.fullText,

@@ -10,8 +10,8 @@
       "foe": {
         "id": "rising-wave-1",
         "name": "Rising Wave",
-        "maxHp": 25,
-        "attack": 17,
+        "maxHp": 50,
+        "attack": 10,
         "color": "#2a6690",
         "size": 0.8,
         "sprite": "wave"
@@ -36,8 +36,8 @@
       "foe": {
         "id": "the-deluge",
         "name": "The Deluge",
-        "maxHp": 45,
-        "attack": 22,
+        "maxHp": 80,
+        "attack": 13,
         "color": "#123450",
         "size": 1.4,
         "sprite": "flood-surge"
@@ -63,10 +63,10 @@
     },
     {
       "id": "gen-023-q2",
-      "type": "fill_blank",
+      "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "The ark ____ on top of the waters.",
-      "choices": ["floated", "sank", "danced", "slept"],
+      "prompt": "What did the ark do on top of the waters?",
+      "choices": ["It floated", "It sank", "It danced", "It slept"],
       "answerIndex": 0,
       "highlight": "the ark floated on top of the waters",
       "section": 1

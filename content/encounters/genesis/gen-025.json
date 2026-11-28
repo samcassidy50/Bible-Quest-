@@ -8,13 +8,13 @@
     {
       "verses": "13-14",
       "foe": {
-        "id": "squall-1",
-        "name": "Squall",
-        "maxHp": 25,
-        "attack": 17,
-        "color": "#62788a",
-        "size": 0.8,
-        "sprite": "squall"
+        "id": "puddle-slime-1",
+        "name": "Puddle Slime",
+        "maxHp": 50,
+        "attack": 10,
+        "color": "#4a6a8a",
+        "size": 0.85,
+        "sprite": "slime-blue"
       },
       "orbs": [
         {
@@ -25,13 +25,13 @@
     {
       "verses": "15-19",
       "foe": {
-        "id": "squall-2",
-        "name": "Squall",
-        "maxHp": 25,
-        "attack": 19,
-        "color": "#536878",
+        "id": "puddle-slime-2",
+        "name": "Puddle Slime",
+        "maxHp": 50,
+        "attack": 11,
+        "color": "#3e5c78",
         "size": 0.9,
-        "sprite": "squall"
+        "sprite": "slime-blue"
       },
       "orbs": [
         {
@@ -44,8 +44,8 @@
       "foe": {
         "id": "fading-tempest",
         "name": "Fading Tempest",
-        "maxHp": 45,
-        "attack": 20,
+        "maxHp": 80,
+        "attack": 12,
         "color": "#34424e",
         "size": 1.3,
         "sprite": "tempest"
@@ -92,9 +92,9 @@
     },
     {
       "id": "gen-025-q2",
-      "type": "fill_blank",
+      "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "“Come out of the ____.”",
+      "prompt": "What did God tell Noah to come out of?",
       "choices": ["ark", "garden", "tower", "cave"],
       "answerIndex": 0,
       "highlight": "Come out of the ark",

@@ -9,11 +9,11 @@
       "foe": {
         "id": "lurking-shadow-1",
         "name": "Lurking Shadow",
-        "maxHp": 25,
-        "attack": 17,
+        "maxHp": 50,
+        "attack": 10,
         "color": "#3a2f4f",
         "size": 0.8,
-        "sprite": "shadow-wolf"
+        "sprite": "dusk-hound"
       },
       "orbs": [
         {
@@ -32,8 +32,8 @@
       "foe": {
         "id": "shadow-of-shame",
         "name": "Shadow of Shame",
-        "maxHp": 45,
-        "attack": 22,
+        "maxHp": 80,
+        "attack": 13,
         "color": "#1a1426",
         "size": 1.25,
         "sprite": "shadow-wolf"
@@ -72,10 +72,15 @@
     },
     {
       "id": "gen-010-q3",
-      "type": "fill_blank",
+      "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "The Lord God called to the man, “Where are ____?”",
-      "choices": ["you", "they", "we", "the animals"],
+      "prompt": "What did the Lord God call out to the man?",
+      "choices": [
+        "“Where are you?”",
+        "“Where are they?”",
+        "“Where are we?”",
+        "“Where are the animals?”"
+      ],
       "answerIndex": 0,
       "highlight": "Where are you?",
       "section": 1

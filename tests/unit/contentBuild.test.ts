@@ -35,6 +35,20 @@ const file = (extra: Record<string, unknown> = {}) => ({
   ...extra,
 });
 
+describe('question prompts', () => {
+  const withFirst = (extra: Record<string, unknown>) =>
+    file({ questions: [q(1, extra), ...[2, 3, 4, 5, 6].map((n) => q(n))] });
+
+  it('rejects fill-in-the-blank prompts (questions are read aloud)', () => {
+    expect(() =>
+      buildEncounter(withFirst({ prompt: 'God made the ____.' }), bible, 'x.json'),
+    ).toThrow(/fill-in-the-blank/);
+    expect(() => buildEncounter(withFirst({ type: 'fill_blank' }), bible, 'x.json')).toThrow(
+      /invalid file/,
+    );
+  });
+});
+
 describe('bible helpers', () => {
   it('parses passages and formats references', () => {
     expect(parsePassage('GEN 1:1-2')).toEqual({ book: 'GEN', chapter: 1, from: 1, to: 2 });

@@ -9,8 +9,8 @@
       "foe": {
         "id": "lonely-gust-1",
         "name": "Lonely Gust",
-        "maxHp": 25,
-        "attack": 17,
+        "maxHp": 50,
+        "attack": 10,
         "color": "#6b7a8a",
         "size": 0.8,
         "sprite": "gust"
@@ -32,8 +32,8 @@
       "foe": {
         "id": "lonely-gust-2",
         "name": "Lonely Gust",
-        "maxHp": 25,
-        "attack": 19,
+        "maxHp": 50,
+        "attack": 11,
         "color": "#5c6b7a",
         "size": 0.9,
         "sprite": "gust"
@@ -52,8 +52,8 @@
       "foe": {
         "id": "gloom-cloud",
         "name": "Gloom Cloud",
-        "maxHp": 45,
-        "attack": 20,
+        "maxHp": 80,
+        "attack": 12,
         "color": "#3a4656",
         "size": 1.3,
         "sprite": "storm-cloud"
@@ -123,16 +123,6 @@
       "section": 2
     },
     {
-      "id": "gen-008-q6",
-      "type": "fill_blank",
-      "difficulty": "medium",
-      "prompt": "“This one is bone of my ____.”",
-      "choices": ["bones", "house", "garden", "family"],
-      "answerIndex": 0,
-      "highlight": "bone of my bones",
-      "section": 2
-    },
-    {
       "id": "gen-008-q7",
       "type": "multiple_choice",
       "difficulty": "medium",
@@ -140,16 +130,6 @@
       "choices": ["His father and mother", "His friends", "His animals", "His garden"],
       "answerIndex": 0,
       "highlight": "a man leaves his father and mother",
-      "section": 3
-    },
-    {
-      "id": "gen-008-q8",
-      "type": "fill_blank",
-      "difficulty": "easy",
-      "prompt": "And the two become ____.",
-      "choices": ["one", "friends", "tired", "strong"],
-      "answerIndex": 0,
-      "highlight": "the two become one",
       "section": 3
     },
     {

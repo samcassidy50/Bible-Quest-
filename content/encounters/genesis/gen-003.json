@@ -9,11 +9,11 @@
       "foe": {
         "id": "shadow-wisp-1",
         "name": "Shadow Wisp",
-        "maxHp": 25,
-        "attack": 15,
+        "maxHp": 50,
+        "attack": 9,
         "color": "#4b3b78",
         "size": 0.8,
-        "sprite": "slime-blue"
+        "sprite": "night-bat"
       },
       "orbs": [
         {
@@ -29,11 +29,11 @@
       "foe": {
         "id": "lingering-dark",
         "name": "Lingering Dark",
-        "maxHp": 40,
-        "attack": 20,
+        "maxHp": 80,
+        "attack": 12,
         "color": "#241a45",
         "size": 1.25,
-        "sprite": "slime-blue"
+        "sprite": "shade-wisp"
       },
       "orbs": [
         {
@@ -86,9 +86,9 @@
     },
     {
       "id": "gen-003-q5",
-      "type": "fill_blank",
+      "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "He made the ____ too.",
+      "prompt": "What else did God make, along with the sun and moon?",
       "choices": ["stars", "trees", "fish", "clouds"],
       "answerIndex": 0,
       "highlight": "He made the stars too",

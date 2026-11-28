@@ -10,8 +10,8 @@
       "foe": {
         "id": "wave-1",
         "name": "Rising Wave",
-        "maxHp": 25,
-        "attack": 17,
+        "maxHp": 50,
+        "attack": 10,
         "color": "#2f6f9a",
         "size": 0.85,
         "sprite": "wave"
@@ -36,16 +36,16 @@
       "foe": {
         "id": "wave-2a",
         "name": "Rising Wave",
-        "maxHp": 20,
-        "attack": 14,
+        "maxHp": 26,
+        "attack": 8,
         "color": "#285f85",
         "size": 0.8,
         "sprite": "wave",
         "partner": {
           "id": "wave-2b",
           "name": "Rising Wave",
-          "maxHp": 20,
-          "attack": 14,
+          "maxHp": 26,
+          "attack": 8,
           "color": "#2f6f9a",
           "size": 0.8,
           "sprite": "wave"
@@ -62,8 +62,8 @@
       "foe": {
         "id": "surge",
         "name": "Flood Surge",
-        "maxHp": 45,
-        "attack": 22,
+        "maxHp": 80,
+        "attack": 13,
         "color": "#173e5c",
         "size": 1.3,
         "sprite": "flood-surge"

@@ -71,6 +71,20 @@ describe('balance: real encounters (no orbs)', () => {
   );
 });
 
+describe('balance: foes take 2–3 hits', () => {
+  // Answering every question right with a plain attack: minions fall to 2 hits, bosses to 3
+  // (a pair of foes to 1 each), so a passage averages 2–3 hits per foe.
+  it.each(ENCOUNTERS.map((e) => [e.id, e] as [string, typeof e]))('%s', (_id, e) => {
+    for (let seed = 1; seed <= 50; seed++) {
+      const r = simulateBattle({ hero: HERO_BASE, waves: e.waves, unlockedSpecials: [] }, 1, seed);
+      expect(r.victory).toBe(true);
+      const perFoe = r.turns / e.waves.length;
+      expect(perFoe).toBeGreaterThanOrEqual(2);
+      expect(perFoe).toBeLessThanOrEqual(3);
+    }
+  });
+});
+
 describe('auto-play policy', () => {
   it('prefers ultimate, then heal when low, then shield, sword, sandals, attack', () => {
     const e = new BattleEngine(oneWave({ unlockedSpecials: ALL, startingFaith: 5 }), createRng(1));

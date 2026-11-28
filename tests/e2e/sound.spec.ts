@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { battle, heroTurn, state, tap, waitFor } from './helpers';
+import { battle, heroTurn, state, tap, waitFor, answer } from './helpers';
 
 test.describe.configure({ timeout: 90_000 });
 
@@ -23,7 +23,7 @@ test('a right answer chimes, swings and clangs; a wrong answer is soft and punch
   await tap(page, 'action:attack');
   await waitFor(page, 's.battle.question && s.targets["answer:0"]');
   let q = (await battle(page)).question!;
-  await tap(page, `answer:${(q.answerIndex + 1) % q.choices}`);
+  await answer(page, (q.answerIndex + 1) % q.choices);
   await waitFor(page, '!!s.targets["continue"]');
   await tap(page, 'continue');
   await heroTurn(page);
@@ -35,7 +35,7 @@ test('a right answer chimes, swings and clangs; a wrong answer is soft and punch
   await tap(page, 'action:attack');
   await waitFor(page, 's.battle.question && s.targets["answer:0"]');
   q = (await battle(page)).question!;
-  await tap(page, `answer:${q.answerIndex}`);
+  await answer(page, q.answerIndex);
   await heroTurn(page);
   sounds = (await state(page)).sounds;
   for (const cue of ['poweredUp', 'swing', 'swordHit']) expect(sounds, cue).toContain(cue);

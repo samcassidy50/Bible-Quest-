@@ -13,7 +13,7 @@
         "attack": 10,
         "color": "#3a2f4a",
         "size": 0.85,
-        "sprite": "shadow-wolf"
+        "sprite": "dusk-hound"
       },
       "orbs": [
         {
@@ -128,9 +128,9 @@
     },
     {
       "id": "gen-052-q7",
-      "type": "fill_blank",
+      "type": "multiple_choice",
       "difficulty": "medium",
-      "prompt": "The men at the door wore themselves out trying to find the ____.",
+      "prompt": "What did the men outside wear themselves out trying to find?",
       "choices": ["door", "gate", "well", "road"],
       "answerIndex": 0,
       "highlight": "trying to find the door",

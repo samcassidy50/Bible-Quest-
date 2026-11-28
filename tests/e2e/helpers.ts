@@ -35,6 +35,18 @@ export async function tap(page: Page, key: string): Promise<void> {
 export const heroTurn = (page: Page) =>
   waitFor(page, "!s.busy && s.battle && s.battle.phase === 'HERO_CHOOSE'");
 
+/**
+ * Taps an answer on the question card. Read-aloud mode (on by default) only selects it, so this
+ * then taps Confirm.
+ */
+export async function answer(page: Page, index: number): Promise<void> {
+  await tap(page, `answer:${index}`);
+  const s = await state(page);
+  if (!s.targets['confirm']) return;
+  await waitFor(page, `s.battle.question && s.battle.question.selected === ${index}`);
+  await tap(page, 'confirm');
+}
+
 /** Picks an action, answers its question (if any) right or wrong, and waits for the turn to end. */
 export async function playTurn(page: Page, action: string, correct = true): Promise<void> {
   await heroTurn(page);
@@ -44,7 +56,7 @@ export async function playTurn(page: Page, action: string, correct = true): Prom
   const b = await battle(page);
   const q = b.question!;
   const index = correct ? q.answerIndex : (q.answerIndex + 1) % q.choices;
-  await tap(page, `answer:${index}`);
+  await answer(page, index);
   if (!correct) {
     await waitFor(page, '!!s.targets["continue"]');
     await tap(page, 'continue');

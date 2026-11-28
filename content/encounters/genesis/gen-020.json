@@ -9,8 +9,8 @@
       "foe": {
         "id": "squall-1",
         "name": "Squall",
-        "maxHp": 25,
-        "attack": 17,
+        "maxHp": 50,
+        "attack": 10,
         "color": "#5a6f7f",
         "size": 0.8,
         "sprite": "squall"
@@ -29,8 +29,8 @@
       "foe": {
         "id": "gathering-storm",
         "name": "Gathering Storm",
-        "maxHp": 45,
-        "attack": 20,
+        "maxHp": 80,
+        "attack": 12,
         "color": "#26323d",
         "size": 1.35,
         "sprite": "storm-cloud"

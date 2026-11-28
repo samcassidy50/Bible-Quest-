@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { battle, heroTurn, snap, state, tap, waitFor } from './helpers';
+import { battle, heroTurn, snap, state, tap, waitFor, answer } from './helpers';
 
 test.describe.configure({ timeout: 90_000 });
 
@@ -42,7 +42,7 @@ test('right answer swings the sword, wrong answer punches, getting hit flinches'
   await tap(page, 'action:attack');
   await waitFor(page, 's.battle.question && s.targets["answer:0"]');
   let q = (await battle(page)).question!;
-  await tap(page, `answer:${(q.answerIndex + 1) % q.choices}`);
+  await answer(page, (q.answerIndex + 1) % q.choices);
   await waitFor(page, '!!s.targets["continue"]');
   await tap(page, 'continue');
   await heroTurn(page);
@@ -54,7 +54,7 @@ test('right answer swings the sword, wrong answer punches, getting hit flinches'
   await tap(page, 'action:attack');
   await waitFor(page, 's.battle.question && s.targets["answer:0"]');
   q = (await battle(page)).question!;
-  await tap(page, `answer:${q.answerIndex}`);
+  await answer(page, q.answerIndex);
   await heroTurn(page);
   anims = (await battle(page)).heroAnims;
   expect(anims).toContain('slash');

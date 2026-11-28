@@ -7,11 +7,11 @@
     {
       "verses": "1-2",
       "foe": {
-        "id": "brick-golem-1",
-        "name": "Brick Golem",
-        "maxHp": 25,
-        "attack": 17,
-        "color": "#9a6a3f",
+        "id": "kiln-spark-1",
+        "name": "Kiln Spark",
+        "maxHp": 50,
+        "attack": 10,
+        "color": "#c0632e",
         "size": 0.85,
         "sprite": "fire-spirit"
       },
@@ -24,11 +24,11 @@
     {
       "verses": "3-4",
       "foe": {
-        "id": "brick-golem-2",
-        "name": "Brick Golem",
-        "maxHp": 25,
-        "attack": 19,
-        "color": "#855a33",
+        "id": "kiln-spark-2",
+        "name": "Kiln Spark",
+        "maxHp": 50,
+        "attack": 11,
+        "color": "#a8552a",
         "size": 0.95,
         "sprite": "fire-spirit"
       },
@@ -47,13 +47,13 @@
     {
       "verses": "5-7",
       "foe": {
-        "id": "brick-golem-3",
-        "name": "Brick Golem",
-        "maxHp": 25,
-        "attack": 19,
-        "color": "#7a5230",
+        "id": "babble-gust",
+        "name": "Babble Gust",
+        "maxHp": 50,
+        "attack": 11,
+        "color": "#8a7a64",
         "size": 1.0,
-        "sprite": "fire-spirit"
+        "sprite": "gust"
       },
       "orbs": [
         {
@@ -64,10 +64,10 @@
     {
       "verses": "8-9",
       "foe": {
-        "id": "tower-golem",
-        "name": "Tower Golem",
-        "maxHp": 45,
-        "attack": 20,
+        "id": "pride-brute",
+        "name": "Pride Brute",
+        "maxHp": 80,
+        "attack": 12,
         "color": "#5c3d22",
         "size": 1.45,
         "sprite": "minotaur"

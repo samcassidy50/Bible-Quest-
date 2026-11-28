@@ -9,11 +9,11 @@
       "foe": {
         "id": "restless-spark-1",
         "name": "Restless Spark",
-        "maxHp": 25,
-        "attack": 17,
+        "maxHp": 50,
+        "attack": 10,
         "color": "#c0632e",
         "size": 0.8,
-        "sprite": "fire-spirit"
+        "sprite": "flame-wisp"
       },
       "orbs": [
         {
@@ -30,13 +30,13 @@
     {
       "verses": "4-7",
       "foe": {
-        "id": "restless-blaze",
-        "name": "Restless Blaze",
-        "maxHp": 45,
-        "attack": 22,
-        "color": "#7a3a1c",
-        "size": 1.3,
-        "sprite": "fire-spirit"
+        "id": "dust-wraith",
+        "name": "Dust Wraith",
+        "maxHp": 80,
+        "attack": 13,
+        "color": "#6b5b45",
+        "size": 1.25,
+        "sprite": "slime-lava"
       },
       "orbs": [
         {
@@ -92,10 +92,10 @@
     },
     {
       "id": "gen-006-q5",
-      "type": "fill_blank",
+      "type": "multiple_choice",
       "difficulty": "easy",
-      "prompt": "He breathed the ____ of life into his nose.",
-      "choices": ["breath", "fire", "water", "song"],
+      "prompt": "What did God breathe into the man’s nose?",
+      "choices": ["The breath of life", "Fire", "Water", "A song"],
       "answerIndex": 0,
       "highlight": "breath of life",
       "section": 2
